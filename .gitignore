@@ -1,0 +1,12 @@
+noteC.pro.user
+Library/Div/Div.pro.user
+Library/Fen/Fen.pro.user
+Library/Xml/Xml.pro.user
+.DS_store
+latex/
+html/
+*.autosave
+
+*.lun
+
+*.tmp
