@@ -1,10 +1,10 @@
 #ifndef ATTRIBUT_BAREMEMANAGER_H
 #define ATTRIBUT_BAREMEMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/Attribut_bareme.h"
 
-class Attribut_baremeManager : public ManagerTemp<Attribut_bareme>
+class Attribut_baremeManager : public ManagerSql<Attribut_bareme>
 {
 public:
     Attribut_baremeManager();

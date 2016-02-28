@@ -1,10 +1,10 @@
 #ifndef TYPENIVEAUMANAGER_H
 #define TYPENIVEAUMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/TypeNiveau.h"
 
-class TypeNiveauManager : public ManagerTemp<TypeNiveau>
+class TypeNiveauManager : public ManagerSql<TypeNiveau>
 {
 public:
     TypeNiveauManager();

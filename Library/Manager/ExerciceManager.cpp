@@ -1,11 +1,11 @@
 #include "ExerciceManager.h"
 
 ExerciceManager::ExerciceManager()
-    : ManagerTemp("exercice",
+    : ManagerSql("exercice",
               QVector<QString>()<<"enonce"<<"feuille"<<"niveau"<<"num"<<"pere"<<"version"<<"correction"<<"source"<<"titre",
               QVector<int>()<<Exercice::PerePos<<Exercice::NumPos<<Exercice::VersionPos) {}
 
 ExerciceManager::ExerciceManager(QSqlDatabase & bdd)
-    : ManagerTemp(bdd,"exercice",
+    : ManagerSql(bdd,"exercice",
               QVector<QString>()<<"enonce"<<"feuille"<<"niveau"<<"num"<<"pere"<<"version"<<"correction"<<"source"<<"titre",
               QVector<int>()<<Exercice::PerePos<<Exercice::NumPos<<Exercice::VersionPos) {}

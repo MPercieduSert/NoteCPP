@@ -1,10 +1,10 @@
 #ifndef TYPECONTROLEMANAGER_H
 #define TYPECONTROLEMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/TypeControle.h"
 
-class TypeControleManager : public ManagerTemp<TypeControle>
+class TypeControleManager : public ManagerSql<TypeControle>
 {
 public:
     TypeControleManager();

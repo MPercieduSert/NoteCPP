@@ -1,10 +1,10 @@
 #ifndef BAREMEMANAGER_H
 #define BAREMEMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/Bareme.h"
 
-class BaremeManager : public ManagerTemp<Bareme>
+class BaremeManager : public ManagerSql<Bareme>
 {
 public:
     BaremeManager();

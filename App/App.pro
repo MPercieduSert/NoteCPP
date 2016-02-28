@@ -24,32 +24,32 @@ SOURCES += main.cpp \
     ../Library/Div/FileInterface.cpp \
     ../Library/Div/Tree.cpp \
     ../Library/Div/TreeItem.cpp \
-    ../Library/Entities/Annee.cpp \
-    ../Library/Entities/Appreciation.cpp \
-    ../Library/Entities/Attribut.cpp \
-    ../Library/Entities/Attribut_bareme.cpp \
-    ../Library/Entities/Attribut_exercice.cpp \
-    ../Library/Entities/Bareme.cpp \
-    ../Library/Entities/Classe.cpp \
-    ../Library/Entities/Coefficient.cpp \
-    ../Library/Entities/Commentaire.cpp \
-    ../Library/Entities/Controle.cpp \
-    ../Library/Entities/Controle_exercice.cpp \
-    ../Library/Entities/Eleve.cpp \
-    ../Library/Entities/Eleve_groupe.cpp \
+#    ../Library/Entities/Annee.cpp \
+#    ../Library/Entities/Appreciation.cpp \
+#    ../Library/Entities/Attribut.cpp \
+#    ../Library/Entities/Attribut_bareme.cpp \
+#    ../Library/Entities/Attribut_exercice.cpp \
+#    ../Library/Entities/Bareme.cpp \
+#    ../Library/Entities/Classe.cpp \
+#    ../Library/Entities/Coefficient.cpp \
+#    ../Library/Entities/Commentaire.cpp \
+#    ../Library/Entities/Controle.cpp \
+#    ../Library/Entities/Controle_exercice.cpp \
+#    ../Library/Entities/Eleve.cpp \
+#    ../Library/Entities/Eleve_groupe.cpp \
     ../Library/Entities/Entity.cpp \
-    ../Library/Entities/EntityAnnee.cpp \
-    ../Library/Entities/Exercice.cpp \
-    ../Library/Entities/Groupe.cpp \
-    ../Library/Entities/ListEntities.cpp \
-    ../Library/Entities/Niveau.cpp \
-    ../Library/Entities/Note.cpp \
-    ../Library/Entities/NumControle.cpp \
-    ../Library/Entities/Point.cpp \
-    ../Library/Entities/Source.cpp \
-    ../Library/Entities/TypeControle.cpp \
-    ../Library/Entities/TypeGroupe.cpp \
-    ../Library/Entities/TypeNiveau.cpp \
+#    ../Library/Entities/EntityAnnee.cpp \
+#    ../Library/Entities/Exercice.cpp \
+#    ../Library/Entities/Groupe.cpp \
+#    ../Library/Entities/ListEntities.cpp \
+#    ../Library/Entities/Niveau.cpp \
+#    ../Library/Entities/Note.cpp \
+#    ../Library/Entities/NumControle.cpp \
+#    ../Library/Entities/Point.cpp \
+#    ../Library/Entities/Source.cpp \
+#    ../Library/Entities/TypeControle.cpp \
+#    ../Library/Entities/TypeGroupe.cpp \
+#    ../Library/Entities/TypeNiveau.cpp \
     ../Library/Fen/Fen.cpp \
     ../Library/Fen/FenExo.cpp \
     ../Library/Fen/FenFoundFile.cpp \
@@ -64,32 +64,32 @@ SOURCES += main.cpp \
     ../Library/Fen/TabListeGroupe.cpp \
     ../Library/Fen/TabMenu.cpp \
     ../Library/Fen/TabModule.cpp \
-    ../Library/Manager/AnneeManager.cpp \
-    ../Library/Manager/AppreciationManager.cpp \
-    ../Library/Manager/Attribut_baremeManager.cpp \
-    ../Library/Manager/Attribut_exerciceManager.cpp \
-    ../Library/Manager/AttributManager.cpp \
-    ../Library/Manager/BaremeManager.cpp \
-    ../Library/Manager/ClasseManager.cpp \
-    ../Library/Manager/CoefficientManager.cpp \
-    ../Library/Manager/CommentaireManager.cpp \
-    ../Library/Manager/Controle_exerciceManager.cpp \
-    ../Library/Manager/ControleManager.cpp \
-    ../Library/Manager/Eleve_groupeManager.cpp \
-    ../Library/Manager/EleveManager.cpp \
-    ../Library/Manager/ExerciceManager.cpp \
-    ../Library/Manager/GroupeManager.cpp \
+#    ../Library/Manager/AnneeManager.cpp \
+#    ../Library/Manager/AppreciationManager.cpp \
+#    ../Library/Manager/Attribut_baremeManager.cpp \
+#    ../Library/Manager/Attribut_exerciceManager.cpp \
+#    ../Library/Manager/AttributManager.cpp \
+#    ../Library/Manager/BaremeManager.cpp \
+#    ../Library/Manager/ClasseManager.cpp \
+#    ../Library/Manager/CoefficientManager.cpp \
+#    ../Library/Manager/CommentaireManager.cpp \
+#    ../Library/Manager/Controle_exerciceManager.cpp \
+#    ../Library/Manager/ControleManager.cpp \
+#    ../Library/Manager/Eleve_groupeManager.cpp \
+#    ../Library/Manager/EleveManager.cpp \
+#    ../Library/Manager/ExerciceManager.cpp \
+#    ../Library/Manager/GroupeManager.cpp \
     ../Library/Manager/Manager.cpp \
-    ../Library/Manager/ManagerAnnee.cpp \
-    ../Library/Manager/ManagerTemp.cpp \
-    ../Library/Manager/NiveauManager.cpp \
-    ../Library/Manager/NoteManager.cpp \
-    ../Library/Manager/NumControleManager.cpp \
-    ../Library/Manager/PointManager.cpp \
-    ../Library/Manager/SourceManager.cpp \
-    ../Library/Manager/TypeControleManager.cpp \
-    ../Library/Manager/TypeGroupeManager.cpp \
-    ../Library/Manager/TypeNiveauManager.cpp \
+#    ../Library/Manager/ManagerAnnee.cpp \
+    ../Library/Manager/ManagerSql.cpp \
+#    ../Library/Manager/NiveauManager.cpp \
+#    ../Library/Manager/NoteManager.cpp \
+#    ../Library/Manager/NumControleManager.cpp \
+#    ../Library/Manager/PointManager.cpp \
+#    ../Library/Manager/SourceManager.cpp \
+#    ../Library/Manager/TypeControleManager.cpp \
+#    ../Library/Manager/TypeGroupeManager.cpp \
+#    ../Library/Manager/TypeNiveauManager.cpp \
     ../Library/Model/ListeEleveModel.cpp \
     ../Library/Model/MAbstractTableModel.cpp \
     ../Library/Widget/SpinBoxAnnee.cpp \
@@ -110,32 +110,32 @@ HEADERS += \
     ../Library/Div/FileInterface.h \
     ../Library/Div/Tree.h \
     ../Library/Div/TreeItem.h \
-    ../Library/Entities/Annee.h \
-    ../Library/Entities/Appreciation.h \
-    ../Library/Entities/Attribut.h \
-    ../Library/Entities/Attribut_bareme.h \
-    ../Library/Entities/Attribut_exercice.h \
-    ../Library/Entities/Bareme.h \
-    ../Library/Entities/Classe.h \
-    ../Library/Entities/Coefficient.h \
-    ../Library/Entities/Commentaire.h \
-    ../Library/Entities/Controle.h \
-    ../Library/Entities/Controle_exercice.h \
-    ../Library/Entities/Eleve.h \
-    ../Library/Entities/Eleve_groupe.h \
+#    ../Library/Entities/Annee.h \
+#    ../Library/Entities/Appreciation.h \
+#    ../Library/Entities/Attribut.h \
+#    ../Library/Entities/Attribut_bareme.h \
+#    ../Library/Entities/Attribut_exercice.h \
+#    ../Library/Entities/Bareme.h \
+#    ../Library/Entities/Classe.h \
+#    ../Library/Entities/Coefficient.h \
+#    ../Library/Entities/Commentaire.h \
+#    ../Library/Entities/Controle.h \
+#    ../Library/Entities/Controle_exercice.h \
+#    ../Library/Entities/Eleve.h \
+#    ../Library/Entities/Eleve_groupe.h \
     ../Library/Entities/Entity.h \
-    ../Library/Entities/EntityAnnee.h \
-    ../Library/Entities/Exercice.h \
-    ../Library/Entities/Groupe.h \
-    ../Library/Entities/ListEntities.h \
-    ../Library/Entities/Niveau.h \
-    ../Library/Entities/Note.h \
-    ../Library/Entities/NumControle.h \
-    ../Library/Entities/Point.h \
-    ../Library/Entities/Source.h \
-    ../Library/Entities/TypeControle.h \
-    ../Library/Entities/TypeGroupe.h \
-    ../Library/Entities/TypeNiveau.h \
+#    ../Library/Entities/EntityAnnee.h \
+#    ../Library/Entities/Exercice.h \
+#    ../Library/Entities/Groupe.h \
+#    ../Library/Entities/ListEntities.h \
+#    ../Library/Entities/Niveau.h \
+#    ../Library/Entities/Note.h \
+#    ../Library/Entities/NumControle.h \
+#    ../Library/Entities/Point.h \
+#    ../Library/Entities/Source.h \
+#    ../Library/Entities/TypeControle.h \
+#    ../Library/Entities/TypeGroupe.h \
+#    ../Library/Entities/TypeNiveau.h \
     ../Library/Fen/Fen.h \
     ../Library/Fen/FenExo.h \
     ../Library/Fen/FenFoundFile.h \
@@ -150,32 +150,32 @@ HEADERS += \
     ../Library/Fen/TabListeGroupe.h \
     ../Library/Fen/TabMenu.h \
     ../Library/Fen/TabModule.h \
-    ../Library/Manager/AnneeManager.h \
-    ../Library/Manager/AppreciationManager.h \
-    ../Library/Manager/Attribut_baremeManager.h \
-    ../Library/Manager/Attribut_exerciceManager.h \
-    ../Library/Manager/AttributManager.h \
-    ../Library/Manager/BaremeManager.h \
-    ../Library/Manager/ClasseManager.h \
-    ../Library/Manager/CoefficientManager.h \
-    ../Library/Manager/CommentaireManager.h \
-    ../Library/Manager/Controle_exerciceManager.h \
-    ../Library/Manager/ControleManager.h \
-    ../Library/Manager/Eleve_groupeManager.h \
-    ../Library/Manager/EleveManager.h \
-    ../Library/Manager/ExerciceManager.h \
-    ../Library/Manager/GroupeManager.h \
+#    ../Library/Manager/AnneeManager.h \
+#    ../Library/Manager/AppreciationManager.h \
+#    ../Library/Manager/Attribut_baremeManager.h \
+#    ../Library/Manager/Attribut_exerciceManager.h \
+#    ../Library/Manager/AttributManager.h \
+#    ../Library/Manager/BaremeManager.h \
+#    ../Library/Manager/ClasseManager.h \
+#    ../Library/Manager/CoefficientManager.h \
+#    ../Library/Manager/CommentaireManager.h \
+#    ../Library/Manager/Controle_exerciceManager.h \
+#    ../Library/Manager/ControleManager.h \
+#    ../Library/Manager/Eleve_groupeManager.h \
+#    ../Library/Manager/EleveManager.h \
+#    ../Library/Manager/ExerciceManager.h \
+#    ../Library/Manager/GroupeManager.h \
     ../Library/Manager/Manager.h \
-    ../Library/Manager/ManagerAnnee.h \
-    ../Library/Manager/ManagerTemp.h \
-    ../Library/Manager/NiveauManager.h \
-    ../Library/Manager/NoteManager.h \
-    ../Library/Manager/NumControleManager.h \
-    ../Library/Manager/PointManager.h \
-    ../Library/Manager/SourceManager.h \
-    ../Library/Manager/TypeControleManager.h \
-    ../Library/Manager/TypeGroupeManager.h \
-    ../Library/Manager/TypeNiveauManager.h \
+#    ../Library/Manager/ManagerAnnee.h \
+    ../Library/Manager/ManagerSql.h \
+#    ../Library/Manager/NiveauManager.h \
+#    ../Library/Manager/NoteManager.h \
+#    ../Library/Manager/NumControleManager.h \
+#    ../Library/Manager/PointManager.h \
+#    ../Library/Manager/SourceManager.h \
+#    ../Library/Manager/TypeControleManager.h \
+#    ../Library/Manager/TypeGroupeManager.h \
+#    ../Library/Manager/TypeNiveauManager.h \
     ../Library/Model/ListeEleveModel.h \
     ../Library/Model/MAbstractTableModel.h \
     ../Library/Widget/SpinBoxAnnee.h \

@@ -1,11 +1,11 @@
 #include "TypeControleManager.h"
 
 TypeControleManager::TypeControleManager()
-    : ManagerTemp("typeControle",
+    : ManagerSql("typeControle",
               QVector<QString>()<<"appreciation"<<"decimale"<<"modifT"<<"nc"<<"nom"<<"total",
               QVector<int>()<<TypeControle::NomPos) {}
 
 TypeControleManager::TypeControleManager(QSqlDatabase & bdd)
-    : ManagerTemp(bdd,"typeControle",
+    : ManagerSql(bdd,"typeControle",
               QVector<QString>()<<"appreciation"<<"decimale"<<"modifT"<<"nc"<<"nom"<<"total",
               QVector<int>()<<TypeControle::NomPos) {}

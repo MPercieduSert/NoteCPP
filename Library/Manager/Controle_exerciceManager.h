@@ -1,10 +1,10 @@
 #ifndef CONTROLE_EXERCICEMANAGER_H
 #define CONTROLE_EXERCICEMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/Controle_exercice.h"
 
-class Controle_exerciceManager : public ManagerTemp<Controle_exercice>
+class Controle_exerciceManager : public ManagerSql<Controle_exercice>
 {
 public:
     Controle_exerciceManager();

@@ -1,10 +1,10 @@
 #ifndef ELEVE_GROUPEMANAGER_H
 #define ELEVE_GROUPEMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/Eleve_groupe.h"
 
-class Eleve_groupeManager : public ManagerTemp<Eleve_groupe>
+class Eleve_groupeManager : public ManagerSql<Eleve_groupe>
 {
 public:
     Eleve_groupeManager();

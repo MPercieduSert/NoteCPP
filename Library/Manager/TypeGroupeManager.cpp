@@ -1,11 +1,11 @@
 #include "TypeGroupeManager.h"
 
 TypeGroupeManager::TypeGroupeManager()
-    : ManagerTemp("typeGroupe",
+    : ManagerSql("typeGroupe",
               QVector<QString>()<<"alpha"<<"classe"<<"nom"<<"type",
               QVector<int>()<<TypeGroupe::ClassePos<<TypeGroupe::NomPos) {}
 
 TypeGroupeManager::TypeGroupeManager(QSqlDatabase & bdd)
-    : ManagerTemp(bdd,"typeGroupe",
+    : ManagerSql(bdd,"typeGroupe",
               QVector<QString>()<<"alpha"<<"classe"<<"nom"<<"type",
               QVector<int>()<<TypeGroupe::ClassePos<<TypeGroupe::NomPos) {}

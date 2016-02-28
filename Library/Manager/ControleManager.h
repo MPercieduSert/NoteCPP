@@ -1,9 +1,9 @@
 #ifndef CONTROLEMANAGER_H
 #define CONTROLEMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/Controle.h"
-class ControleManager : public ManagerTemp<Controle>
+class ControleManager : public ManagerSql<Controle>
 {
 public:
     ControleManager();

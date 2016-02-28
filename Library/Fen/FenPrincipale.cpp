@@ -18,12 +18,12 @@ FenPrincipale::FenPrincipale(QString path, QWidget *parent) :
     fenConfig.isValid();
 
     //!  + Ouverture de la base de donnée.
-    m_bdd.setFileName(m_config.getVars("conf/directories/default").first());
+    m_bdd.setFileName(m_config.getVars("conf/directories/default"));
     FenFoundFile fenBdd(&m_bdd,this);
-    QMap<QString,QString> atts;
-    atts.insert("name","main");
-    atts.insert("default","yes");
-    fenBdd.openInConf("conf/files/databases/database",atts);
+    //QMap<QString,QString> atts;
+    //atts.insert("name","main");
+    //atts.insert("default","yes");
+    fenBdd.openInConf("conf/files/databases/database");
     m_bdd.setBdd();
 
     //! + Selection de l'année courante

@@ -2,10 +2,10 @@
 #define MANAGERANNEE_H
 
 #include <QRegExp>
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/Annee.h"
 
-template<class T> class ManagerAnnee : public ManagerTemp<T>
+template<class T> class ManagerAnnee : public ManagerSql<T>
 {
 protected:
     Annee m_annee;
@@ -23,10 +23,10 @@ public:
 };
 
 template<class T> ManagerAnnee<T>::ManagerAnnee(QSqlDatabase & bdd, const QString &tableName, const QVector<QString> &colonne, const QVector<int> &colonneUnique, const Annee &annee):
-    ManagerTemp<T>(bdd, tableName+"_"+QString::number(annee.id()),colonne,colonneUnique), m_annee(annee) {}
+    ManagerSql<T>(bdd, tableName+"_"+QString::number(annee.id()),colonne,colonneUnique), m_annee(annee) {}
 
 template<class T> ManagerAnnee<T>::ManagerAnnee(const QString &tableName, const QVector<QString> &colonne, const QVector<int> &colonneUnique, const Annee &annee):
-    ManagerTemp<T>(tableName+"_"+QString::number(annee.id()),colonne,colonneUnique), m_annee(annee) {}
+    ManagerSql<T>(tableName+"_"+QString::number(annee.id()),colonne,colonneUnique), m_annee(annee) {}
 
 /*template<class T> void ManagerAnnee<T>::setAnnee(const Annee & annee)
 {

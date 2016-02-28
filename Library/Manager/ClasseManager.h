@@ -1,10 +1,10 @@
 #ifndef CLASSEMANAGER_H
 #define CLASSEMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/Classe.h"
 
-class ClasseManager : public ManagerTemp<Classe>
+class ClasseManager : public ManagerSql<Classe>
 {
 //annee, nbr_phase, niveau, num)
 public:

@@ -1,10 +1,10 @@
 #ifndef TYPEGROUPEMANAGER_H
 #define TYPEGROUPEMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/TypeGroupe.h"
 
-class TypeGroupeManager : public ManagerTemp<TypeGroupe>
+class TypeGroupeManager : public ManagerSql<TypeGroupe>
 {
 public:
     TypeGroupeManager();

@@ -1,10 +1,10 @@
 #ifndef NUMCONTROLEMANAGER_H
 #define NUMCONTROLEMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/NumControle.h"
 
-class NumControleManager : public ManagerTemp<NumControle>
+class NumControleManager : public ManagerSql<NumControle>
 {
 public:
     NumControleManager();

@@ -10,6 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Manager
 TEMPLATE = lib
 CONFIG += staticlib
+CONFIG += c++11
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Entities/release/ -lEntities
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Entities/debug/ -lEntities
@@ -86,61 +87,67 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Entities/libEntities.a
 
 
 HEADERS += \
-    AnneeManager.h \
-    AppreciationManager.h \
-    AttributManager.h \
-    Attribut_baremeManager.h \
-    Attribut_exerciceManager.h \
-    BaremeManager.h \
-    ClasseManager.h \
-    CoefficientManager.h \
-    CommentaireManager.h \
-    ControleManager.h \
-    Controle_exerciceManager.h \
-    EleveManager.h \
-    Eleve_groupeManager.h \
-    ExerciceManager.h \
-    GroupeManager.h \
-    NiveauManager.h \
-    NoteManager.h \
-    NumControleManager.h \
+#    AppreciationManager.h \
+#    AttributManager.h \
+#    Attribut_baremeManager.h \
+#    Attribut_exerciceManager.h \
+#    BaremeManager.h \
+#    ClasseManager.h \
+#    CoefficientManager.h \
+#    CommentaireManager.h \
+#    ControleManager.h \
+#    Controle_exerciceManager.h \
+#    EleveManager.h \
+#    Eleve_groupeManager.h \
+#    ExerciceManager.h \
+#    GroupeManager.h \
+#    NiveauManager.h \
+#    NoteManager.h \
+#    NumControleManager.h \
     Manager.h \
-    ManagerAnnee.h \
-    ManagerTemp.h \
-    PointManager.h \
-    SourceManager.h \
-    TypeControleManager.h \
-    TypeGroupeManager.h \
-    TypeNiveauManager.h
+    ManagerSql.h \
+    LinkSql.h \
+    ArbreLinkSql.h \
+    AnneeLinkSql.h
+#    ManagerAnnee.h \
+#    PointManager.h \
+#    SourceManager.h \
+#    TypeControleManager.h \
+#    TypeGroupeManager.h \
+#    TypeNiveauManager.h \
+
 
 
 SOURCES += \
-    AnneeManager.cpp \
-    AppreciationManager.cpp \
-    AttributManager.cpp \
-    Attribut_baremeManager.cpp \
-    Attribut_exerciceManager.cpp \
-    BaremeManager.cpp \
-    ClasseManager.cpp \
-    CoefficientManager.cpp \
-    CommentaireManager.cpp \
-    ControleManager.cpp \
-    Controle_exerciceManager.cpp \
-    EleveManager.cpp \
-    Eleve_groupeManager.cpp \
-    ExerciceManager.cpp \
-    GroupeManager.cpp \
-    NiveauManager.cpp \
-    NoteManager.cpp \
-    NumControleManager.cpp \
+#    AppreciationManager.cpp \
+#    AttributManager.cpp \
+#    Attribut_baremeManager.cpp \
+#    Attribut_exerciceManager.cpp \
+#    BaremeManager.cpp \
+#    ClasseManager.cpp \
+#    CoefficientManager.cpp \
+#    CommentaireManager.cpp \
+#    ControleManager.cpp \
+#    Controle_exerciceManager.cpp \
+#    EleveManager.cpp \
+#    Eleve_groupeManager.cpp \
+#    ExerciceManager.cpp \
+#    GroupeManager.cpp \
+#    NiveauManager.cpp \
+#    NoteManager.cpp \
+#    NumControleManager.cpp \
     Manager.cpp \
-    ManagerAnnee.cpp \
-    ManagerTemp.cpp \
-    PointManager.cpp \
-    SourceManager.cpp \
-    TypeControleManager.cpp \
-    TypeGroupeManager.cpp \
-    TypeNiveauManager.cpp
+    ManagerSql.cpp \
+    AnneeLinkBdd.cpp \
+    LinkSql.cpp \
+    ArbreLinkSql.cpp
+#    ManagerAnnee.cpp \
+#    PointManager.cpp \
+#    SourceManager.cpp \
+#    TypeControleManager.cpp \
+#    TypeGroupeManager.cpp \
+#    TypeNiveauManager.cpp \
+
 
 unix {
     target.path = /usr/lib

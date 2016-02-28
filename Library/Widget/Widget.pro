@@ -7,7 +7,7 @@
 TARGET = Widget
 TEMPLATE = lib
 CONFIG += staticlib
-
+CONFIG += c++11
 QT += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -19,6 +19,7 @@ SOURCES += \
 HEADERS += \
     SpinBoxAnnee.h \
     SpinBoxNumClasse.h
+
 unix {
     target.path = /usr/lib
     INSTALLS += target

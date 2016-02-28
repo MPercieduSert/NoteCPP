@@ -1,11 +1,11 @@
 #include "TypeNiveauManager.h"
 
 TypeNiveauManager::TypeNiveauManager()
-    : ManagerTemp("typeNiveau",
+    : ManagerSql("typeNiveau",
               QVector<QString>()<<"nom",
               QVector<int>()<<TypeNiveau::NomPos) {}
 
 TypeNiveauManager::TypeNiveauManager(QSqlDatabase & bdd)
-    : ManagerTemp(bdd,"typeNiveau",
+    : ManagerSql(bdd,"typeNiveau",
               QVector<QString>()<<"nom",
               QVector<int>()<<TypeNiveau::NomPos) {}

@@ -1,10 +1,10 @@
 #ifndef GROUPEMANAGER_H
 #define GROUPEMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/Groupe.h"
 
-class GroupeManager : public ManagerTemp<Groupe>
+class GroupeManager : public ManagerSql<Groupe>
 {
 public:
     GroupeManager();

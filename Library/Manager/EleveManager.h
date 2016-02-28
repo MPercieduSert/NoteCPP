@@ -1,10 +1,10 @@
 #ifndef ELEVEMANAGER_H
 #define ELEVEMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/Eleve.h"
 
-class EleveManager : public ManagerTemp<Eleve>
+class EleveManager : public ManagerSql<Eleve>
 {
 public:
     EleveManager();

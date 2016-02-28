@@ -1,11 +1,11 @@
 #include "ControleManager.h"
 
 ControleManager::ControleManager()
-    : ManagerTemp("controle",
+    : ManagerSql("controle",
               QVector<QString>()<<"classe"<<"date"<<"decimale"<<"minima"<<"nom"<<"saisie"<<"total"<<"type",
               QVector<int>()<<Controle::ClassePos<<Controle::NomPos) {}
 
 ControleManager::ControleManager(QSqlDatabase & bdd)
-    : ManagerTemp(bdd,"controle",
+    : ManagerSql(bdd,"controle",
               QVector<QString>()<<"classe"<<"date"<<"decimale"<<"minima"<<"nom"<<"saisie"<<"total"<<"type",
               QVector<int>()<<Controle::ClassePos<<Controle::NomPos) {}

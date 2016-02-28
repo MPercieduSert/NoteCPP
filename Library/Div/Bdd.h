@@ -99,8 +99,6 @@ public:
     //! Créer la base de donnée avec les tables et les entrées par défault.
     bool creer();
 
-    //bool creerAnnee(Annee & annee);
-
     //! Renvoie une réfrence sur la base de donnée.
     QSqlDatabase &db() const
         {return m_bdd;}
@@ -109,7 +107,7 @@ public:
     bool exists() const
         {return QFile::exists(m_fileName);}
 
-    //! Teste si entity existe en base de donnée.
+    //! Teste s'il existe une entitée de même identifiant que entity en base de donnée.
     bool exists(const Entity & entity)
     {
         if(entity.isNew())
@@ -122,30 +120,31 @@ public:
         }
     }
 
-    //! Teste s'il existe déjà une entity avec les valeurs uniques en base de donnée.
+    //! Teste s'il existe une entitée ayant les mêmes valeurs d'attributs uniques que entity en base de donnée.
     bool existsUnique(Entity & entity)
         {return getManager(entity.idEntity())->existsUnique(entity);}
 
-    //! Remplit entity avec les valeurs enregistrées en base de donnée dans l'entity de même identifiant.
+    //! Hydrate l'entitée entity avec les valeurs des attributs de l'entitée enregistrées en base de donnée
+    //! ayant le même identifiant que entity.
     //! Retourne True si l'opération s'est correctement déroulée.
     bool get(Entity & entity)
         {return getManager(entity.idEntity())->get(entity);}
 
-    //! Renvoie la liste des entity de la table d'identtifiant idEntity ordonnée suivant la colonne d'identifiant ordre.
+    //! Renvoie la liste des entitées de la table d'identifiant idEntity ordonnée suivant la colonne d'identifiant ordre.
     ListEntities<Entity> getList(Entity::entityId idEntity, int ordre = Entity::position::IdPos)
         {return getManager(idEntity)->getList(ordre);}
 
-    //! Renvoie la liste des entity de la table d'identtifiant idEntity vérifiant la condition,
+    //! Renvoie la liste des entitées de la table d'identifiant idEntity vérifiant la condition,
     //! valeur de la colonne d'identifiant cle = value, ordonnée suivant la colonne d'identifiant ordre.
     ListEntities<Entity> getList(Entity::entityId idEntity, int cle, const QVariant & value, int order = Entity::position::IdPos)
         {return getManager(idEntity)->getList(cle, value, order);}
 
-    //! Renvoie la liste des entity de la table d'identtifiant idEntity vérifiant la condition,
+    //! Renvoie la liste des entitées de la table d'identifiant idEntity vérifiant la condition,
     //! valeur de la colonne d'identifiant cle = value, ordonnée suivant les colonnes d'identifiant ordre1 puis ordre2.
     ListEntities<Entity> getList(Entity::entityId idEntity, int cle, const QVariant & value, int order1, int order2)
         {return getManager(idEntity)->getList(cle, value, order1, order2);}
 
-    //! Renvoie la liste des entity de la table d'identtifiant idEntity vérifiant les deux conditions,
+    //! Renvoie la liste des entitées de la table d'identifiant idEntity vérifiant les deux conditions,
     //! valeur de la colonne d'identifiant cle1 = value1 et valeur de la colonne d'identifiant cle2 = value2,
     //! ordonnée suivant la colonne d'identifiant ordre.
     ListEntities<Entity> getList(Entity::entityId idEntity, int cle1, int cle2, const QVariant & value1, const QVariant & value2, int order = Entity::position::IdPos)
@@ -155,7 +154,8 @@ public:
     Manager * getManager(Entity::entityId idEntity)
         {return m_managers[idEntity];}
 
-    //! Remplit entity avec les valeurs enregistrées en base de donnée dans l'entity de même valeur unique.
+    //! Hydrate l'entitée entity avec les valeurs des attributs de l'entitée enregistrées en base de donnée
+    //! ayant les mêmes valeurs uniques.
     //! Retourne True si l'opération s'est correctement déroulée.
     bool getUnique(Entity & entity)
         {return getManager(entity.idEntity())->getUnique(entity);}
@@ -183,8 +183,6 @@ public:
     {
         return getManager(entity.idEntity())->save(entity);
     }
-
-    //void setAnnee(const Annee & annee);
 
     //! Transmet la connexion à la base de donnée aux managers.
     void setBdd();

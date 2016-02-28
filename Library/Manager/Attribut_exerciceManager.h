@@ -1,10 +1,10 @@
 #ifndef ATTRIBUT_EXERCICEMANAGER_H
 #define ATTRIBUT_EXERCICEMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/Attribut_exercice.h"
 
-class Attribut_exerciceManager : public ManagerTemp<Attribut_exercice>
+class Attribut_exerciceManager : public ManagerSql<Attribut_exercice>
 {
 public:
     Attribut_exerciceManager();

@@ -1,11 +1,11 @@
 #include "NumControleManager.h"
 
 NumControleManager::NumControleManager()
-    : ManagerTemp("numControle",
+    : ManagerSql("numControle",
               QVector<QString>()<<"classe"<<"num"<<"type",
               QVector<int>()<<NumControle::ClassePos<<NumControle::TypePos) {}
 
 NumControleManager::NumControleManager(QSqlDatabase & bdd)
-    : ManagerTemp(bdd,"numControle",
+    : ManagerSql(bdd,"numControle",
               QVector<QString>()<<"classe"<<"num"<<"type",
               QVector<int>()<<NumControle::ClassePos<<NumControle::TypePos) {}

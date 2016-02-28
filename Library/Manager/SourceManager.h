@@ -1,10 +1,10 @@
 #ifndef SOURCEMANAGER_H
 #define SOURCEMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/Source.h"
 
-class SourceManager : public ManagerTemp<Source>
+class SourceManager : public ManagerSql<Source>
 {
 public:
     SourceManager();

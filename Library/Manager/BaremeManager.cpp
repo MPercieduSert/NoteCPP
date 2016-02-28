@@ -1,11 +1,11 @@
 #include "BaremeManager.h"
 
 BaremeManager::BaremeManager()
-    : ManagerTemp("bareme",
+    : ManagerSql("bareme",
               QVector<QString>()<<"controle"<<"exercice"<<"fraction"<<"num"<<"nom"<<"valeur",
               QVector<int>()<<Bareme::ControlePos<<Bareme::ExercicePos<<Bareme::NumPos) {}
 
 BaremeManager::BaremeManager(QSqlDatabase & bdd)
-    : ManagerTemp(bdd,"bareme",
+    : ManagerSql(bdd,"bareme",
               QVector<QString>()<<"controle"<<"exercice"<<"fraction"<<"num"<<"nom"<<"valeur",
               QVector<int>()<<Bareme::ControlePos<<Bareme::ExercicePos<<Bareme::NumPos) {}

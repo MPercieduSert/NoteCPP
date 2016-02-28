@@ -1,11 +1,11 @@
 #include "AttributManager.h"
 
 AttributManager::AttributManager()
-    : ManagerTemp("attribut",
+    : ManagerSql("attribut",
               QVector<QString>()<<"feuille"<<"niveau"<<"nom"<<"num"<<"pere"<<"nc",
               QVector<int>()<<Attribut::NumPos<<Attribut::PerePos) {}
 
 AttributManager::AttributManager(QSqlDatabase & bdd)
-    : ManagerTemp(bdd,"attribut",
+    : ManagerSql(bdd,"attribut",
               QVector<QString>()<<"feuille"<<"niveau"<<"nom"<<"num"<<"pere"<<"nc",
               QVector<int>()<<Attribut::NumPos<<Attribut::PerePos) {}

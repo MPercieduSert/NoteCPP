@@ -1,10 +1,10 @@
 #ifndef ATTRIBUTMANAGER_H
 #define ATTRIBUTMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/Attribut.h"
 
-class AttributManager : public ManagerTemp<Attribut>
+class AttributManager : public ManagerSql<Attribut>
 {
 public:
     AttributManager();

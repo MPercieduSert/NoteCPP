@@ -1,10 +1,10 @@
 #ifndef EXERCICEMANAGER_H
 #define EXERCICEMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/Exercice.h"
 
-class ExerciceManager : public ManagerTemp<Exercice>
+class ExerciceManager : public ManagerSql<Exercice>
 {
 //
 

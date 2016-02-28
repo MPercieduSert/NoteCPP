@@ -1,3 +1,11 @@
+/*Auteur: PERCIE DU SERT Maxime
+ *Date: 22/02/2016
+ */
+
+/*! \defgroup groupeManager Manageurs
+ * \brief Ensemble de classes représentant les Managers des entitées de la base de donnée.
+ */
+
 #ifndef MANAGER_H
 #define MANAGER_H
 
@@ -11,38 +19,94 @@
 #include "../Entities/Entity.h"
 #include "../Entities/ListEntities.h"
 
+// Macro pour manageur..
+
+//! \ingroup groupeManager
+//! Coprs des deux methodes save.
+#define SAVE if(entity.isValid())                                           \
+{if(entity.isNew())                                                         \
+    {if(existsUnique(entity) == Aucun)                                      \
+        {return add(entity);}                                               \
+     else                                                                   \
+        {QMessageBox::critical(0,"",messageErreursUnique(entity));          \
+        return false;}}                                                     \
+else                                                                        \
+    {if(sameInBdd(entity))                                                  \
+        {return true;}                                                       \
+    else                                                                    \
+        {if(existsUnique(entity) <= Meme)                                  \
+            {return modify(entity);}                                        \
+        else                                                                \
+            {QMessageBox::critical(0,"",messageErreursUnique(entity));      \
+            return false;}}}}                                               \
+else                                                                        \
+    {QMessageBox::critical(0,"",messageErreurs(entity));                    \
+    return false;}
+
+/*! \ingroup groupeManager
+ * \brief Classe abstraite de base des manageurs.
+ *
+ * Classe abstraite de base des manageurs.
+ * Un Manageur est un gestionnaire associé à un type d'entitée,
+ * permettant de faire le lien entre ce type d'entitée et la table correspondante en base donnée.
+ * Cette classe joue le rôle d'interface pour les différents manageurs.
+ */
+
 class Manager
 {
-protected:
-    const QVector<QString> m_colonne;
-    const QVector<int> m_colonneUnique;
-    QSqlQuery m_requete;
-    QString m_sqlAdd;
-    QString m_sqlExists;
-    QString m_sqlExistsUnique;
-    QString m_sqlGet;
-    QString m_sqlGetList;
-    QString m_sqlGetListWhere;
-    QString m_sqlModify;
-    QString m_tableName;
-
 public:
-    Manager(QSqlDatabase & bdd, const QString &tableName, const QVector<QString> & colonne, const QVector<int> &colonneUnique);
-    Manager(const QString &tableName, const QVector<QString> & colonne, const QVector<int> &colonneUnique);
-    virtual ~Manager()  {}
+    //! Les différents cas des résultats des tests d'existence d'unicité.
+    enum ExisteUni {Aucun = 0,  //!< Aucun des ensembles d'unicité n'existent en base de donnée.
+                    Tous = 1,   //!< Tous les ensembles d'unicité existent en base de donnée et concordent.
+                    Meme = 2,  //!< Certains des ensembles d'unicité existent en base de donnée dans la même entitée avec le même identifiant.
+                    Autre = 3,  //!< Certains des ensembles d'unicité existent en base de donnée dans la même entitée avec un autre identifiant.
+                    Conflit = 4//!< Certains des ensembles d'unicité existent en base de donnée dans des entitées.
+                    };
+
+    //! Constructeur vide.
+    Manager()  {}
+
+    //! Destructeur.
+    ~Manager() {}
+
+    //! Teste s'il existe une entitée de même identifiant que entity en base de donnée.
     virtual bool exists(const Entity & entity) = 0;
-    virtual bool existsUnique(Entity & entity) = 0;
+
+    //! Teste s'il existe une entitée ayant les mêmes valeurs d'attributs uniques que l'entitée entity en base de donnée.
+    //! Si le test est positif, l'identitfiant de l'entitée entity est remplacé par celui l'entitée en base de donnée
+    //! ayant les mêmes valeurs d'attributs uniques.
+    virtual Manager::ExisteUni existsUnique(Entity & entity) = 0;
+
+    //! Teste s'il existe une entitée ayant les mêmes valeurs d'attributs uniques que l'entitée entity en base de donnée.
+    virtual Manager::ExisteUni existsUnique(const Entity & entity) = 0;
+
+    //! Hydrate l'entitée entity avec les valeurs des attributs de l'entitée enregistrée en base de donnée
+    //! ayant le même identifiant que entity.
+    //! Retourne True si l'opération s'est correctement déroulée.
     virtual bool get(Entity & entity) = 0;
-    //virtual ListEntities<Entity> getList() = 0;
+
+    //! Renvoie la liste des entitées de la table ordonnée suivant la colonne d'identifiant ordre.
     virtual ListEntities<Entity> getList(int ordre) = 0;
-    //virtual ListEntities<Entity> getList(int cle, const QVariant & value) = 0;
-    virtual ListEntities<Entity> getList(int cle, const QVariant & value, int order) = 0;
-    virtual ListEntities<Entity> getList(int cle, const QVariant & value, int order1, int order2) = 0;
-    //virtual ListEntities<Entity> getList(int cle1, int cle2, const QVariant & value1, const QVariant & value2) = 0;
-    virtual ListEntities<Entity> getList(int cle1, int cle2, const QVariant & value1, const QVariant & value2, int order) = 0;
+
+    //! Renvoie la liste des entitées de la table vérifiant la condition,
+    //! valeur de la colonne d'identifiant cle = value, ordonnée suivant la colonne d'identifiant ordre.
+    virtual ListEntities<Entity> getList(int cle, const QVariant & value, int ordre) = 0;
+
+    //! Renvoie la liste des entitées de la table vérifiant la condition,
+    //! valeur de la colonne d'identifiant cle = value, ordonnée suivant les colonnes d'identifiant ordre1 puis ordre2.
+    virtual ListEntities<Entity> getList(int cle, const QVariant & value, int ordre1, int ordre2) = 0;
+
+    //! Renvoie la liste des entitées de la table vérifiant les deux conditions,
+    //! valeur de la colonne d'identifiant cle1 = value1 et valeur de la colonne d'identifiant cle2 = value2,
+    //! ordonnée suivant la colonne d'identifiant ordre.
+    virtual ListEntities<Entity> getList(int cle1, int cle2, const QVariant & value1, const QVariant & value2, int ordre) = 0;
+
+    //! Hydrate l'entitée entity avec les valeurs des attributs de l'entitée enregistrée en base de donnée
+    //! ayant les mêmes valeurs pour les attributs uniques.
+    //! Retourne True si l'opération s'est correctement déroulée.
     bool getUnique(Entity & entity)
     {
-        if(existsUnique(entity))
+        if(existsUnique(entity) == Manager::Tous)
         {
             return get(entity);
         }
@@ -51,70 +115,38 @@ public:
             return false;
         }
     }
-    int nbrColonne() const {return m_colonne.size();}
+
+    //! Teste s'il y a dans la base de donnée une entitée ayant exactement les mêmes valeurs d'attributs (identifiant compris).
     virtual bool sameInBdd(const Entity & entity) = 0;
+
+    //! Enregistre l'entitée entity en base de donnée et assigne l'identifiant de l'entitée insérée en base de donnée à entity.
     bool save(Entity & entity)
     {
-        if(entity.isValid())
-        {
-            if(entity.isNew())
-            {
-                return add(entity);
-            }
-            else
-            {
-                if(sameInBdd(entity))
-                {
-                    return true;
-                }
-                else
-                {
-                    return modify(entity);
-                }
-            }
-        }
-        else
-        {
-            QMessageBox::critical(0,"",messageErreurs(entity));
-            return false;
-        }
+        SAVE
     }
+
+    //! Enregistre l'entitée entity en base de donnée.
     bool save(const Entity & entity)
     {
-        if(entity.isValid())
-        {
-            if(entity.isNew())
-            {
-                return add(entity);
-            }
-            else
-            {
-                if(sameInBdd(entity))
-                {
-                    return true;
-                }
-                else
-                {
-                    return modify(entity);
-                }
-            }
-        }
-        else
-        {
-            QMessageBox::critical(0,"",messageErreurs(entity));
-            return false;
-        }
+        SAVE
     }
-    void setBdd(QSqlDatabase & bdd)
-    {
-        m_requete = QSqlQuery(bdd);
-    }
+
 protected:
+    //! Insert la nouvelle entitée entity dans la base de donnée
+    //! et assigne l'identifiant de l'entitée insérée en base de donnée à entity.
     virtual bool add(Entity & entity) = 0;
+
+    //! Insert la nouvelle entitée entity dans la base de donnée.
     virtual bool add(const Entity & entity) = 0;
-    QString messageErreurs(const Entity & entity) const;
+
+    //! Message d'erreurs si l'entitée entity n'est pas valide.
+    virtual QString messageErreurs(const Entity & entity) const = 0;
+
+    //! Message d'erreurs s'il existe déjà en base de donnée une entitée ayant les mêmes valeurs d'attributs uniques que entity.
+    virtual QString messageErreursUnique(const Entity & entity) const = 0;
+
+    //! Met à jour l'entitée entity en base de donnée.
     virtual bool modify(const Entity & entity) = 0;
-    void writeStringQuery();
 };
 
 #endif // MANAGER_H

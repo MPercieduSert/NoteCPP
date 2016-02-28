@@ -1,14 +1,14 @@
 #ifndef NIVEAUMANAGER_H
 #define NIVEAUMANAGER_H
 
-#include "ManagerTemp.h"
+#include "ManagerSql.h"
 #include "../Entities/Niveau.h"
-class NiveauManager : public ManagerTemp<Niveau>
+class NiveauManager : public ManagerSql<Niveau>
 {
 public:
     NiveauManager();
     NiveauManager(QSqlDatabase & bdd);
-     ~NiveauManager()    {}
+    ~NiveauManager()    {}
 
 protected:
      void bindValues(const Niveau & niveau)

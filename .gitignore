@@ -10,3 +10,11 @@ html/
 *.lun
 
 *.tmp
+
+ScriptBDD
+
+*.TRF
+
+.~lock.BDD noteCpp.lun#
+
+BDD noteCpp.ddl
