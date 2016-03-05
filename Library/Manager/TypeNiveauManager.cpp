@@ -1,11 +1,17 @@
 #include "TypeNiveauManager.h"
 
-TypeNiveauManager::TypeNiveauManager()
-    : ManagerSql("typeNiveau",
-              QVector<QString>()<<"nom",
-              QVector<int>()<<TypeNiveau::NomPos) {}
+TypeNiveauManager::TypeNiveauManager(QSqlQuery &req)
+    :ManagerSql(req)
+{
 
-TypeNiveauManager::TypeNiveauManager(QSqlDatabase & bdd)
-    : ManagerSql(bdd,"typeNiveau",
-              QVector<QString>()<<"nom",
-              QVector<int>()<<TypeNiveau::NomPos) {}
+}
+
+void TypeNiveauManager::creer()
+{
+    ManagerSql::creer();
+    save(TypeNiveau("Primaire",TypeNiveau::Primaire));
+    save(TypeNiveau("Collège",TypeNiveau::College));
+    save(TypeNiveau("Lycée",TypeNiveau::Lycee));
+    save(TypeNiveau("Classe Préparatoire",TypeNiveau::Prepa));
+    save(TypeNiveau("Licence",TypeNiveau::Licence));
+}

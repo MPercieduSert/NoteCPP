@@ -9,7 +9,6 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include <QMessageBox>
 #include <QSqlError>
 
 #include <QVector>
@@ -23,25 +22,20 @@
 
 //! \ingroup groupeManager
 //! Coprs des deux methodes save.
-#define SAVE if(entity.isValid())                                           \
-{if(entity.isNew())                                                         \
-    {if(existsUnique(entity) == Aucun)                                      \
-        {return add(entity);}                                               \
-     else                                                                   \
-        {QMessageBox::critical(0,"",messageErreursUnique(entity));          \
-        return false;}}                                                     \
-else                                                                        \
-    {if(sameInBdd(entity))                                                  \
-        {return true;}                                                       \
-    else                                                                    \
-        {if(existsUnique(entity) <= Meme)                                  \
-            {return modify(entity);}                                        \
-        else                                                                \
-            {QMessageBox::critical(0,"",messageErreursUnique(entity));      \
-            return false;}}}}                                               \
-else                                                                        \
-    {QMessageBox::critical(0,"",messageErreurs(entity));                    \
-    return false;}
+#define SAVE if(entity.isValid()) \
+{if(entity.isNew()) \
+    {if(existsUnique(entity) == Aucun) \
+        {add(entity);} \
+     else \
+        {throw std::invalid_argument(messageErreursUnique(entity).toStdString());}} \
+else \
+    {if(!sameInBdd(entity)) \
+        {if(existsUnique(entity) <= Meme) \
+            {modify(entity);} \
+        else \
+            {throw std::invalid_argument(messageErreursUnique(entity).toStdString());}}}} \
+else \
+    {throw std::invalid_argument(messageErreurs(entity).toStdString());}
 
 /*! \ingroup groupeManager
  * \brief Classe abstraite de base des manageurs.
@@ -68,6 +62,20 @@ public:
 
     //! Destructeur.
     ~Manager() {}
+
+    //! Supprime de la table en base de donnée l'entitée entity.
+    virtual void del(Entity & entity)
+    {
+        del(entity.id());
+        entity.setId(0);
+    }
+
+    //! Crée dans la base de donnée la table associée l'entitée du manageur.
+    virtual void creer() =0;
+
+    //! Supprime de la table en base de donnée l'entitée entity.
+    virtual void del(const Entity & entity)
+        {del(entity.id());}
 
     //! Teste s'il existe une entitée de même identifiant que entity en base de donnée.
     virtual bool exists(const Entity & entity) = 0;
@@ -120,13 +128,13 @@ public:
     virtual bool sameInBdd(const Entity & entity) = 0;
 
     //! Enregistre l'entitée entity en base de donnée et assigne l'identifiant de l'entitée insérée en base de donnée à entity.
-    bool save(Entity & entity)
+    virtual void save(Entity & entity)
     {
         SAVE
     }
 
     //! Enregistre l'entitée entity en base de donnée.
-    bool save(const Entity & entity)
+    virtual void save(const Entity & entity)
     {
         SAVE
     }
@@ -134,10 +142,13 @@ public:
 protected:
     //! Insert la nouvelle entitée entity dans la base de donnée
     //! et assigne l'identifiant de l'entitée insérée en base de donnée à entity.
-    virtual bool add(Entity & entity) = 0;
+    virtual void add(Entity & entity) = 0;
 
     //! Insert la nouvelle entitée entity dans la base de donnée.
-    virtual bool add(const Entity & entity) = 0;
+    virtual void add(const Entity & entity) = 0;
+
+    //! Supprime de la table en base de donnée l'entitée d'identifiant id.
+    virtual void del(int id) = 0;
 
     //! Message d'erreurs si l'entitée entity n'est pas valide.
     virtual QString messageErreurs(const Entity & entity) const = 0;
@@ -146,7 +157,7 @@ protected:
     virtual QString messageErreursUnique(const Entity & entity) const = 0;
 
     //! Met à jour l'entitée entity en base de donnée.
-    virtual bool modify(const Entity & entity) = 0;
+    virtual void modify(const Entity & entity) = 0;
 };
 
 #endif // MANAGER_H

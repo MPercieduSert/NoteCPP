@@ -1,11 +1,13 @@
 #include "AnneeLinkSql.h"
 
-bool AnneeLinkSql::creer()
+void AnneeLinkSql::creer()
 {
-    return m_requete.exec("create table an ("
-                              "ID integer primary key,"
-                              "an integer not null,"
-                              "constraint IDan unique (an))");
+    exec(QString("create table ")
+         .append(Name)
+         .append(" (ID integer primary key,"
+                 "an integer not null,"
+                 "constraint IDan unique (an))"));
+    m_requete.finish();
 }
 
 QString AnneeLinkSql::writeStringUnique() const

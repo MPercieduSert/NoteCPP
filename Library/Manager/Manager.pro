@@ -99,7 +99,6 @@ HEADERS += \
 #    Controle_exerciceManager.h \
 #    EleveManager.h \
 #    Eleve_groupeManager.h \
-#    ExerciceManager.h \
 #    GroupeManager.h \
 #    NiveauManager.h \
 #    NoteManager.h \
@@ -108,13 +107,21 @@ HEADERS += \
     ManagerSql.h \
     LinkSql.h \
     ArbreLinkSql.h \
-    AnneeLinkSql.h
+    AnneeLinkSql.h \
+    EleveLinkSql.h \
+    ExerciceLinkSql.h \
+    DonneeLinkSql.h \
+    AnneeManager.h \
+    DonneeManager.h \
+    EleveManager.h \
+    ExerciceManager.h \
 #    ManagerAnnee.h \
 #    PointManager.h \
 #    SourceManager.h \
 #    TypeControleManager.h \
 #    TypeGroupeManager.h \
-#    TypeNiveauManager.h \
+    TypeNiveauLinkSql.h \
+    TypeNiveauManager.h
 
 
 
@@ -131,7 +138,6 @@ SOURCES += \
 #    Controle_exerciceManager.cpp \
 #    EleveManager.cpp \
 #    Eleve_groupeManager.cpp \
-#    ExerciceManager.cpp \
 #    GroupeManager.cpp \
 #    NiveauManager.cpp \
 #    NoteManager.cpp \
@@ -140,13 +146,21 @@ SOURCES += \
     ManagerSql.cpp \
     AnneeLinkBdd.cpp \
     LinkSql.cpp \
-    ArbreLinkSql.cpp
+    ArbreLinkSql.cpp \
+    EleveLinkSql.cpp \
+    ExerciceLinkSql.cpp \
+    DonneeLinkSql.cpp \
+    AnneeManager.cpp \
+    DonneeManager.cpp \
+    EleveManager.cpp \
+    ExerciceManager.cpp \
 #    ManagerAnnee.cpp \
 #    PointManager.cpp \
 #    SourceManager.cpp \
 #    TypeControleManager.cpp \
 #    TypeGroupeManager.cpp \
-#    TypeNiveauManager.cpp \
+    TypeNiveauLinkSql.cpp \
+    TypeNiveauManager.cpp
 
 
 unix {

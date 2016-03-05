@@ -2,21 +2,22 @@
  *Date: 02/03/2016
  */
 
-#ifndef ELEVEMANAGER_H
-#define ELEVEMANAGER_H
+#ifndef DONNEEMANAGER_H
+#define DONNEEMANAGER_H
 
 #include "ManagerSql.h"
 #include "DonneeLinkSql.h"
 
+
 /*! \ingroup groupeManager
- * \brief Manager de l'entitée Eleve.
+ * \brief Manager de l'entitée Donnee.
  */
 
-class EleveManager : public ManagerSql<DonneeLinkSql>
+class DonneeManager : public ManagerSql<DonneeLinkSql>
 {
 public:
     //! Constructeur, transmettre en argument une référence sur une objet de requete.
-    EleveManager(QSqlQuery & req);
+    DonneeManager(QSqlQuery & req);
 };
 
-#endif // ELEVEMANAGER_H
+#endif // DONNEEMANAGER_H

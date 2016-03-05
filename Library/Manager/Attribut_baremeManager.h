@@ -2,7 +2,7 @@
 #define ATTRIBUT_BAREMEMANAGER_H
 
 #include "ManagerSql.h"
-#include "../Entities/Attribut_bareme.h"
+#include "../Entities/AttributBareme.h"
 
 class Attribut_baremeManager : public ManagerSql<Attribut_bareme>
 {

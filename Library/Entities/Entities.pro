@@ -13,16 +13,14 @@ CONFIG += c++11
 HEADERS += \
     Annee.h \
 #    Appreciation.h \
-#    Attribut.h \
-#    Attribut_bareme.h \
-#    Attribut_exercice.h \
-#    Bareme.h \
-#    Classe.h \
-#    Commentaire.h \
+    Attribut.h \
+    Bareme.h \
+    Classe.h \
+    Commentaire.h \
 #    Coefficient.h \
 #    Controle.h \
 #    Controle_exercice.h \
-#    Eleve.h \
+    Eleve.h \
 #    Eleve_groupe.h \
     Entity.h \
 #    EntityAnnee.h \
@@ -34,24 +32,29 @@ HEADERS += \
 #    Point.h \
 #    TypeControle.h \
 #    TypeGroupe.h \
-#    TypeNiveau.h \
-#    ListEntities.h \
+    TypeNiveau.h \
+    ListEntities.h \
 #    Source.h
-    ArbreEntity.h
+    ArbreEntity.h \
+    Donnee.h \
+    AttributBareme.h \
+    AttributExercice.h \
+    AttributCommentaire.h \
+    AttributCorrection.h \
+    AttributCours.h \
+    RelEntity.h
 
 SOURCES += \
     Annee.cpp \
 #    Appreciation.cpp \
-#    Attribut.cpp \
-#    Attribut_bareme.cpp \
-#    Attribut_exercice.cpp \
-#    Bareme.cpp \
-#    Classe.cpp \
-#    Commentaire.cpp \
+    Attribut.cpp \
+    Bareme.cpp \
+    Classe.cpp \
+    Commentaire.cpp \
 #    Coefficient.cpp \
 #    Controle.cpp \
 #    Controle_exercice.cpp \
-#    Eleve.cpp \
+    Eleve.cpp \
 #    Eleve_groupe.cpp \
     Entity.cpp \
 #    EntityAnnee.cpp \
@@ -63,10 +66,17 @@ SOURCES += \
 #    Point.cpp \
 #    TypeControle.cpp \
 #    TypeGroupe.cpp \
-#    TypeNiveau.cpp \
-#    ListEntities.cpp \
+    TypeNiveau.cpp \
+    ListEntities.cpp \
 #    Source.cpp
-    ArbreEntity.cpp
+    ArbreEntity.cpp \
+    Donnee.cpp \
+    AttributBareme.cpp \
+    AttributExercice.cpp \
+    AttributCommentaire.cpp \
+    AttributCorrection.cpp \
+    AttributCours.cpp \
+    RelEntity.cpp
 
 unix {
     target.path = /usr/lib

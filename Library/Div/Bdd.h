@@ -47,10 +47,13 @@
 
 class Bdd : public FileInterface
 {
-protected:
+public:
     static const int m_nbrEntity = 23;//! Nombre de type d'entity à gérer
-    QSqlDatabase m_bdd;//! Connexion à la base de donnée.
-    Manager * m_managers[m_nbrEntity];//! Tableau des managers.
+
+protected:
+    QSqlDatabase m_bdd;                 //! Connexion à la base de donnée.
+    QSqlQuery m_requete;                //! Requéte commune aux manageurs.
+    Manager * m_managers[m_nbrEntity];  //! Tableau des manageurs.
 
     AnneeManager m_anneeManager;
     AppreciationManager m_appreciationManager;
@@ -169,20 +172,18 @@ public:
     //! Ouvre la base de donnée.
     bool open()
     {
-        return m_bdd.open();
+        bool bb = m_bdd.open();
+        setBdd();
+        return bb;
     }
 
     //! Enregistre l'entity dans la base de donnée.
     bool save(Entity & entity)
-    {
-        return getManager(entity.idEntity())->save(entity);
-    }
+        {return getManager(entity.idEntity())->save(entity);}
 
     //! Enregistre l'entity dans la base de donnée.
     bool save(const Entity & entity)
-    {
-        return getManager(entity.idEntity())->save(entity);
-    }
+        {return getManager(entity.idEntity())->save(entity);}
 
     //! Transmet la connexion à la base de donnée aux managers.
     void setBdd();

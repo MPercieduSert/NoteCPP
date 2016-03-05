@@ -2,7 +2,7 @@
 #define ATTRIBUT_EXERCICEMANAGER_H
 
 #include "ManagerSql.h"
-#include "../Entities/Attribut_exercice.h"
+#include "../Entities/AttributExercice.h"
 
 class Attribut_exerciceManager : public ManagerSql<Attribut_exercice>
 {

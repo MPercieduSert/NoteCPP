@@ -520,6 +520,8 @@ void Bdd::setAnnee(const Annee & annee)
 
 void Bdd::setBdd()
 {
+    m_requete = QSqlQuery(m_bdd);
+    /*
     m_anneeManager.setBdd(m_bdd);
     m_appreciationManager.setBdd(m_bdd);
     m_attributManager.setBdd(m_bdd);
@@ -543,6 +545,7 @@ void Bdd::setBdd()
     m_typeControleManager.setBdd(m_bdd);
     m_typeGroupeManager.setBdd(m_bdd);
     m_typeNiveauManager.setBdd(m_bdd);
+    */
 }
 
 void Bdd::setFileName(const QString & fileName)

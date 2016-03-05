@@ -15,17 +15,20 @@
 class ArbreLinkSql : public LinkSql
 {
 public:
+    typedef ArbreEntity Ent;      //!< Alias de l'entitée employé par le manageur.
+
     static constexpr char Name[] = "arb";        //!< Nom de l'entitée en base de donnée.
-    static const int NbrAtt = 5;                //!< Nombre d'attributs de l'entitée en en base de donnée.
+    static const int NbrAtt = ArbreEntity::NbrAtt;                //!< Nombre d'attributs de l'entitée en en base de donnée.
     static constexpr std::array<const char*, NbrAtt> Att {{"fl", "nv", "nm", "pr", "ID"}};   //!< Tableau des attributs de l'entitée en base de donnée.
+
     //static const int NbrEnsUni = 1;             //!< Nombre d'ensemble d'attributs uniques de l'entitée autre que l'identifiant.
     //static constexpr std::array<const char*, NbrEnsUni> EnsUni {{"nm=? AND pr=?"}}; //!< Tableau des chaines des ensembles d'attributs uniques de l'entitée.
 
 protected:
-    const QString m_unique;
+    const QString m_unique; //!< Requete Sql sur l'existence d'ensemble d'attribus uniques.
 
 public:
-    //! Construteur, transmettre en argument la requète utilisée par le manageur.
+    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
     ArbreLinkSql(QSqlQuery & requete)
         : LinkSql(requete),
         m_unique(writeStringUnique())
@@ -39,19 +42,11 @@ public:
         m_requete.bindValue(ArbreEntity::FeuillePos, arbre.feuille());
         m_requete.bindValue(ArbreEntity::NiveauPos, arbre.niveau());
         m_requete.bindValue(ArbreEntity::NumPos, arbre.num());
-        m_requete.bindValue(ArbreEntity::ParentPos, arbre.parent());
-    }
-
-    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
-    void bindValuesUnique(const ArbreEntity & arbre)
-    {
-        m_requete.bindValue(0, arbre.num());
-        m_requete.bindValue(1, arbre.parent());
+        m_requete.bindValue(ArbreEntity::ParentPos, zeroToNull(arbre.parent()));
     }
 
     //! Crée la table en base de donnée et renvoie vrai si la création de la table s'est correctement déroulée.
-    bool creer()
-        {return true;}
+    void creer(const QString & name);
 
     //! Hydrate l'entitée entity avec à partir de la requète.
     void fromRequete(ArbreEntity & arbre)
@@ -74,7 +69,14 @@ public:
     }
 
 protected:
-    //! Ecrit la chaine pour initialiser m_unique.
+    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+    void bindValuesUnique(const ArbreEntity & arbre)
+    {
+        m_requete.bindValue(0, arbre.num());
+        m_requete.bindValue(1, zeroToNull(arbre.parent()));
+    }
+
+    //! Renvoie la chaine correspondant à la requète d'unicité d'une ligne.
     QString writeStringUnique() const;
 };
 

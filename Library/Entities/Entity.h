@@ -22,120 +22,255 @@
 
 // Macro pour les entitées
 
+//Constructeurs
+
 //! \ingroup groupeEntity
 //! Constructeur par défaut.
-#define CONSTR_DEFAUT(ENTITY_TYPE) ENTITY_TYPE() \
+#define CONSTR_DEFAUT(ENTITY) \
+    /*! \brief Constructeur par défaut fixant l'identifiant de l'entitée à 0.*/ \
+    ENTITY() \
     {}
 
 //! \ingroup groupeEntity
 //! Constructeur recopiant l'entitée entity.
-#define CONSTR_ENTITY(ENTITY_TYPE) ENTITY_TYPE(const Entity & entity) \
-    : Entity(entity.id())  {set(convert(entity));}
+#define CONSTR_ENTITY(ENTITY) \
+    /*! \brief Constructeur recopiant les attributs l'entitée entity.*/ \
+    ENTITY(const Entity & entity) \
+    : Entity(entity.id()) \
+    {set(convert(entity));}
 
 //! \ingroup groupeEntity
 //! Constructeur fixant l'identifiant.
-#define CONSTR_ID(ENTITY_TYPE) ENTITY_TYPE(int id) \
+#define CONSTR_ID(ENTITY) \
+    /*! \brief Constructeur fixant l'identifiant de l'entitée.*/ \
+    ENTITY(int id) \
     : Entity(id)   {}
 
 //! \ingroup groupeEntity
 //! Constructeur de recopie.
-#define CONSTR_RECOPIE(ENTITY_TYPE) ENTITY_TYPE(const ENTITY_TYPE & entity) \
-    : Entity(entity.id())  {set(entity);}
-
-
-//! \ingroup groupeEntity
-//! Macro définisant le menbre convert permettant la conversion de pointeur après vérification.
-#define CONVERT_ENTITY_PTR(ENTITY_TYPE)     static ENTITY_TYPE * convert(Entity *entity)            \
-{if(verifEntity(entity))                                                                            \
-    {return (ENTITY_TYPE*) entity;}                                                                 \
-else                                                                                                \
-    {throw std::runtime_error("Mauvaise correspondance des Entity");}                               \
-}
-
-//! \ingroup groupeEntity
-//! Macro définisant le menbre convert permettant la conversion de référence constante après vérification.
-#define CONVERT_ENTITY_REF(ENTITY_TYPE)     static ENTITY_TYPE & convert(Entity & entity)           \
-{if(verifEntity(entity))                                                                            \
-    {return *((ENTITY_TYPE*) &entity);}                                                             \
-else                                                                                                \
-    {throw std::runtime_error("Mauvaise correspondance des Entity");}                               \
-}
-
-//! \ingroup groupeEntity
-//! Macro définisant le menbre convert permettant la conversion de référence constante après vérification.
-#define CONVERT_ENTITY_CONST_REF(ENTITY_TYPE) static const ENTITY_TYPE & convert(const Entity & entity) \
-{if(verifEntity(entity))                                                                                \
-    {return *((ENTITY_TYPE*) &entity);}                                                                 \
-else                                                                                                    \
-    {throw std::runtime_error("Mauvaise correspondance des Entity");}                                   \
-}
+#define CONSTR_RECOPIE(ENTITY) \
+    /*! \brief Constructeur de recopie.*/ \
+    ENTITY(const ENTITY & entity) \
+    : Entity(entity.id()) \
+    {set(entity);}
 
 //! \ingroup groupeEntity
 //! Destructeur par défaut.
-#define DESTRUCT(ENTITY_TYPE) ENTITY_TYPE() \
+#define DESTRUCT(ENTITY) \
+    /*! \brief Destructeur.*/ \
+    ~ENTITY() \
     {}
 
 //! \ingroup groupeEntity
+//! Regroupe les macros des constructeurs et la macro du destructeur par défaut.
+#define CONSTR_MACRO(ENTITY) \
+    CONSTR_DEFAUT(ENTITY) \
+    CONSTR_ENTITY(ENTITY) \
+    CONSTR_ID(ENTITY) \
+    CONSTR_RECOPIE(ENTITY) \
+    DESTRUCT(ENTITY)
+
+//Convertion
+
+//! \ingroup groupeEntity
+//! Macro définisant le menbre convert permettant la conversion de pointeur après vérification.
+#define CONVERT_ENTITY_PTR(ENTITY) \
+    /*! \brief Convertit la référence entity en une référence de type ENTITY, aprés vérification.*/ \
+    static ENTITY * convert(Entity *entity) \
+    {if(verifEntity(entity)) \
+        {return (ENTITY*) entity;} \
+    else \
+        {throw std::invalid_argument("Mauvaise correspondance des Entity");}}
+
+//! \ingroup groupeEntity
+//! Macro définisant le menbre convert permettant la conversion de référence constante après vérification.
+#define CONVERT_ENTITY_REF(ENTITY) \
+    /*! \brief Convertit la référence constante entity en une référence constante de type ENTITY, aprés vérification.*/ \
+    static ENTITY & convert(Entity & entity) \
+    {if(verifEntity(entity)) \
+        {return *((ENTITY*) &entity);} \
+    else \
+        {throw std::invalid_argument("Mauvaise correspondance des Entity");}}
+
+//! \ingroup groupeEntity
+//! Macro définisant le menbre convert permettant la conversion de référence constante après vérification.
+#define CONVERT_ENTITY_CONST_REF(ENTITY) \
+    /*! \brief Convertit le pointeur entity en un pointeur de type ENTITY, aprés vérification.*/ \
+    static const ENTITY & convert(const Entity & entity) \
+    {if(verifEntity(entity)) \
+        {return *((ENTITY*) &entity);} \
+    else \
+        {throw std::invalid_argument("Mauvaise correspondance des Entity");}}
+
+//! \ingroup groupeEntity
 //! Macro définissant le membre idEntity renvoyant l'identifiant du type l'entitée.
-#define ID_ENTITY entityId idEntity() const     \
+#define ID_ENTITY(ENTITY) entityId \
+    /*! \brief Renvoie l'identifiant du type ENTITY.*/ \
+    idEntity() const \
     {return IdEntity;}
 
 //! \ingroup groupeEntity
-//! Macro définissant l'opérateur << avec une Entity.
-#define OP_INJ_ENTITY(ENTITY_TYPE) void operator << (const Entity & entity)          \
-{setId(entity.id());        \
-set(convert(entity));}
-
-//! \ingroup groupeEntity
-//! Macro définissant l'opérateur << avec une Entity.
-#define OP_INJ_ENTITY_TYPE(ENTITY_TYPE) void operator << (const ENTITY_TYPE & entity)          \
-{setId(entity.id());        \
-set(entity);}
-
-//! \ingroup groupeEntity
-//! Macro définissant le membre NbrAtt renvoyant le nombre de valeurs de l'entitée.
-#define NBR_VALUE int nbrAtt() const          \
-    {return NbrAtt;}
-
-//! \ingroup groupeEntity
-//! Macro définissant le membre static verifEntity testant si une référence est du type du type de l'entitée.
-#define VERIF_ENTITY_REF static bool verifEntity(const Entity & entity)     \
-    {return IdEntity == entity.idEntity();}
-
-//! \ingroup groupeEntity
 //! Macro définissant le membre static verifEntity testant si un pointeur est du type du type de l'entitée.
-#define VERIF_ENTITY_PTR static bool verifEntity(Entity * entity)           \
+#define VERIF_ENTITY_PTR(ENTITY) \
+    /*! \brief Test si le pointeur entity est aussi un pointeur de type ENTITY.*/ \
+    static bool verifEntity(Entity * entity) \
     {return IdEntity == entity->idEntity();}
 
 //! \ingroup groupeEntity
+//! Macro définissant le membre static verifEntity testant si une référence est du type du type de l'entitée.
+#define VERIF_ENTITY_REF(ENTITY) \
+    /*! \brief Test si la référence entity est aussi une référence de type ENTITY.*/ \
+    static bool verifEntity(const Entity & entity) \
+    {return IdEntity == entity.idEntity();}
+
+//! \ingroup groupeEntity
+//! Regroupe les macros permettant la conversion des entitées.
+#define CONVERT_MACRO(ENTITY) \
+    CONVERT_ENTITY_PTR(ENTITY) \
+    CONVERT_ENTITY_REF(ENTITY) \
+    CONVERT_ENTITY_CONST_REF(ENTITY) \
+    ID_ENTITY(ENTITY) \
+    VERIF_ENTITY_PTR(ENTITY) \
+    VERIF_ENTITY_REF(ENTITY)
+
+// Opérateurs
+
+//! \ingroup groupeEntity
+//! Macro définissant l'opérateur == avec une Entitée de même type.
+#define OP_EGAL(ENTITY) \
+    /*! \brief Test d'égalité entre deux entitées de type ENTITY, c'est-à-dire l'égalité de tous les attributs..*/ \
+    bool operator == (const ENTITY & entity) const \
+    {return egal(entity);}
+
+//! \ingroup groupeEntity
+//! Macro définissant l'opérateur == avec une Entity.
+#define OP_EGAL_ENTITY(ENTITY) \
+    /*! \brief Test d'égalité entre une entitée de type ENTITY et une référence Entity sur une entitée de type ENTITY, c'est-à-dire l'égalité de tous les attributs.*/ \
+    bool operator == (const Entity & entity) const\
+    {return egal(convert(entity));}
+
+//! \ingroup groupeEntity
+//! Macro définissant l'opérateur << avec une Entity.
+#define OP_INJ(ENTITY) \
+    /*! \brief Modifient les valeurs des attributs de l'entitée avec celles des attributs de entity.*/ \
+    void operator << (const ENTITY & entity) \
+    {setId(entity.id()); \
+    set(entity);}
+
+//! \ingroup groupeEntity
+//! Macro définissant l'opérateur << avec une Entity.
+#define OP_INJ_ENTITY(ENTITY) \
+    /*! \brief Modifient les valeurs des attributs de l'entitée avec celles des attributs de entity.*/ \
+    void operator << (const Entity & entity) \
+    {setId(entity.id()); \
+    set(convert(entity));}
+
+//! \ingroup groupeEntity
+//! Regroupe les macros des opérateurs.
+#define OP_MACRO(ENTITY) \
+    OP_EGAL(ENTITY) \
+    OP_EGAL_ENTITY(ENTITY) \
+    OP_INJ(ENTITY) \
+    OP_INJ_ENTITY(ENTITY)
+
+//Membre Divers
+
+//! \ingroup groupeEntity
+//! Macro définissant le membre NbrAtt renvoyant le nombre de valeurs de l'entitée.
+#define NBR_VALUE(ENTITY) \
+    /*! \brief Renvoie le nombre de valeur des entititées de type ENTITY.*/ \
+    int nbrAtt() const \
+    {return NbrAtt;}
+
+//! \ingroup groupeEntity
+//! Regroupe les macros de divers membres.
+#define MEMBRE_DIVER_MACRO(ENTITY) \
+    NBR_VALUE(ENTITY)
+
+//! \ingroup groupeEntity
 //! Macro permettant d'incorporer les macros communes à toutes les entitées.
-#define INCLUCE_METHODE(ENTITY_TYPE)                                                                    \
-    /*! \brief Constructeur par défaut fixant l'identifiant de l'entitée à 0.*/                         \
-    CONSTR_DEFAUT(ENTITY_TYPE)                                                                          \
-    /*! \brief Constructeur recopiant les attributs l'entitée entity.*/                                 \
-    CONSTR_ENTITY(ENTITY_TYPE)                                                                          \
-    /*! \brief Constructeur fixant l'identifiant de l'entitée.*/                                        \
-    CONSTR_ID(ENTITY_TYPE)                                                                              \
-    /*! \brief Constructeur de recopie.*/                                                               \
-    CONSTR_RECOPIE(ENTITY_TYPE)                                                                         \
-    /*! \brief Convertit la référence entity en une référence de type ENTITY_TYPE, aprés vérification.*/\
-    CONVERT_ENTITY_REF(ENTITY_TYPE)                                                                     \
-    /*! \brief Convertit la référence constante entity en une référence constante de type ENTITY_TYPE, aprés vérification.*/\
-    CONVERT_ENTITY_CONST_REF(ENTITY_TYPE)                                                               \
-    /*! \brief Convertit le pointeur entity en un pointeur de type ENTITY_TYPE, aprés vérification.*/   \
-    CONVERT_ENTITY_PTR(ENTITY_TYPE)                                                                     \
-    /*! \brief Renvoie l'identifiant du type ENTITY_TYPE.*/                                             \
-    ID_ENTITY                                                                                           \
-    /*! \brief Modifient les valeurs des attributs de l'entitée avec celles des attributs de entity.*/  \
-    OP_INJ_ENTITY(ENTITY_TYPE)                                                                          \
-    /*! \brief Modifient les valeurs des attributs de l'entitée avec celles des attributs de entity.*/  \
-    OP_INJ_ENTITY_TYPE(ENTITY_TYPE)                                                                     \
-    /*! \brief Renvoie le nombre de valeur des entititées de type ENTITY_TYPE.*/                        \
-    NBR_VALUE                                                                                           \
-    /*! \brief Test si la référence entity est aussi une référence de type ENTITY_TYPE.*/               \
-    VERIF_ENTITY_REF                                                                                    \
-    /*! \brief Test si le pointeur entity est aussi un pointeur de type ENTITY_TYPE.*/                  \
-    VERIF_ENTITY_PTR                                                                                    \
+#define INCLUCE_METHODE(ENTITY) \
+    CONSTR_MACRO(ENTITY) \
+    CONVERT_MACRO(ENTITY) \
+    OP_MACRO(ENTITY) \
+    MEMBRE_DIVER_MACRO(ENTITY)
+
+//Getteurs et Setteurs de différent attribut courant.
+
+//! \ingroup groupeEntity
+//! Implémentation des getteur et setteur d'un booléen.
+#define GET_SET_BOOL(nom,Nom) \
+    /*! \brief Retourne la valeur de l'attribut nom.*/ \
+    bool nom() const {return m_ ## nom;} \
+    /*! \brief Modifie l'attribut nom.*/ \
+    void set ## Nom(bool bb) \
+    {m_ ## nom = bb;}
+
+//! \ingroup groupeEntity
+//! Implémentation des getteur et setteur d'un attribut date valide.
+#define GET_SET_DATE_VALIDE(nom,Nom) \
+    /*! \brief Retourne la valeur de l'attribut nom.*/ \
+    const QDate & nom() const {return m_ ## nom;} \
+    /*! \brief Modifie l'attribut nom.*/ \
+    void set ## Nom(const QDate & date) \
+    {if(date.isValid()) \
+        {m_ ## nom = date;} \
+    else \
+        {m_erreurs.append(QPair<int,int>(m_id,Nom ## Pos));}}
+
+//! \ingroup groupeEntity
+//! Implémentation des getteur et setteur d'une clé.
+#define GET_SET_ID(ATT) \
+    /*! \brief Retourne la valeur de la clé id ## ATT.*/ \
+    int id ## ATT() const {return m_id ## ATT;} \
+    /*! \brief Modifie la clé id ## ATT.*/ \
+    void setId ## ATT(int id) \
+    {if(id > 0) \
+        {m_id ## ATT = id;} \
+    else \
+        {m_erreurs.append(QPair<int,int>(m_id,Id ## ATT ## Pos));}}
+
+//! \ingroup groupeEntity
+//! Implémentation des getteur et setteur d'un entier sans condition.
+#define GET_SET_INT(nom,Nom) \
+    /*! \brief Retourne la valeur de l'attribut nom.*/ \
+    int nom() const {return m_ ## nom;} \
+    /*! \brief Modifie l'attribut nom.*/ \
+    void set ## Nom(int n) \
+    {m_ ## nom = n;}
+
+//! \ingroup groupeEntity
+//! Implémentation des getteur et setteur d'un entier positif.
+#define GET_SET_INT_SUP(nom,Nom,MIN) \
+    /*! \brief Retourne la valeur de l'attribut nom.*/ \
+    int nom() const {return m_ ## nom;} \
+    /*! \brief Modifie l'attribut nom.*/ \
+    void set ## Nom(int n) \
+    {if(n >= MIN) \
+        {m_ ## nom = n;} \
+    else \
+        {m_erreurs.append(QPair<int,int>(m_id,Nom ## Pos));}}
+
+//! \ingroup groupeEntity
+//! Implémentation des getteur et setteur d'un attribut de type QString non vide.
+#define GET_SET_TEXTE_NOT_NULL(nom,Nom) \
+    /*! \brief Retourne la valeur de l'attribut nom.*/ \
+    const QString & nom() const {return m_ ## nom;} \
+    /*! \brief Modifie l'attribut nom.*/ \
+    void set ## Nom(const QString & txt) \
+    {if(!txt.isEmpty()) \
+        {m_ ## nom = txt;} \
+    else \
+        {m_erreurs.append(QPair<int,int>(m_id,Nom ## Pos));}}
+
+//! \ingroup groupeEntity
+//! Implémentation des getteur et setteur d'un attribut de type QString pouvant être vide vide.
+#define GET_SET_TEXTE_NULL(nom,Nom) \
+    /*! \brief Retourne la valeur de l'attribut nom.*/ \
+    const QString & nom() const {return m_ ## nom;} \
+    /*! \brief Modifie l'attribut nom.*/ \
+    void set ## Nom(const QString & txt) \
+    {m_ ## nom = txt;} \
 
 //! \ingroup groupeEntity
 //! Liste des erreurs survenues lors de la modification d'une entitée.
@@ -196,6 +331,7 @@ public:
                     NiveauId = 37,
                     NoteId = 38,
                     PointId = 39,
+                    RelEntityId = -3,
                     SourceId = 40,
                     SurClasseId = 41,
                     SurEleveId = 42,
@@ -275,121 +411,12 @@ public:
     //! Opérateur testant l'égalité de deux entitées, c'est-à-dire l'égalité de tous les attributs.
     virtual bool operator == (const Entity & entity) const =0;
 
-
-
+protected:
+    //! Test d'égalité entre cette entitée et celle transmise en argument, c'est-à-dire l'égalité de tous les attributs.
+    bool egal(const Entity & entity) const
+    {
+        return m_id == entity.m_id;
+    }
 };
 
-/*
-class Annee;
-class Appreciation;
-class Attribut;
-class Attribut_bareme;
-class Attribut_exercice;
-class Bareme;
-class Classe;
-class Commentaire;
-class Coefficient;
-class Controle;
-class Controle_exercice;
-class Eleve;
-class Eleve_groupe;
-class Exercice;
-class Groupe;
-class Note;
-class NumControle;
-class Niveau;
-class Point;
-class Source;
-class TypeControle;
-class TypeGroupe;
-class TypeNiveau;
-*/
-/*
-    friend class Annee;
-    friend class Appreciation;
-    friend class Attribut;
-    friend class Attribut_bareme;
-    friend class Attribut_exercice;
-    friend class Bareme;
-    friend class Classe;
-    friend class Commentaire;
-    friend class Coefficient;
-    friend class Controle;
-    friend class Controle_exercice;
-    friend class Eleve;
-    friend class Eleve_groupe;
-    friend class Exercice;
-    friend class Groupe;
-    friend class Note;
-    friend class NumControle;
-    friend class Niveau;
-    friend class Point;
-    friend class Source;
-    friend class TypeControle;
-    friend class TypeGroupe;
-    friend class TypeNiveau;
-*/
-/*
-virtual void setValue(int pos, const QVariant & val)
-{
-    if(pos == IdPos)
-    {
-        setId(val.toInt());
-    }
-    else
-    {
-        m_erreurs.append(QPair<int,int>(m_id,PosPos));
-    }
-}
-virtual QVariant value(int pos) const
-{
-    if(pos == IdPos)
-    {
-        return QVariant(m_id);
-    }
-    else
-    {
-        return QVariant();
-    }
-}
-*/
-/*
-protected:
-void notDef() const                          {throw std::runtime_error("Fonction non définie");}
-virtual void setBool1(bool bb)                         {notDef();}
-virtual void setBool2(bool bb)                         {notDef();}
-virtual void setBool3(bool bb)                         {notDef();}
-virtual void setDate1(const QDate &  date)                         {notDef();}
-virtual void setDate2(const QDate &  date)                         {notDef();}
-virtual void setDateTime(const QDateTime &  date)                     {notDef();}
-virtual void setDouble(double dd)                       {notDef();}
-virtual void setInt1(int kk)                          {notDef();}
-virtual void setInt2(int kk)                          {notDef();}
-virtual void setInt3(int kk)                          {notDef();}
-virtual void setInt4(int kk)                          {notDef();}
-virtual void setInt5(int kk)                          {notDef();}
-virtual void setInt6(int kk)                          {notDef();}
-virtual void setString1(const QString & string)                       {notDef();}
-virtual void setString2(const QString & string)                       {notDef();}
-virtual void setString3(const QString & string)                       {notDef();}
-virtual void setString4(const QString & string)                       {notDef();}
-
-virtual bool valueBool1() const                 {notDef();return false;}
-virtual bool valueBool2() const                 {notDef();return false;}
-virtual bool valueBool3() const                 {notDef();return false;}
-virtual const QDate & valueDate1() const                {notDef();return QDate();}
-virtual const QDate & valueDate2() const                {notDef();return QDate();}
-virtual const QDateTime & valueDateTime() const        {notDef();return QDateTime();}
-virtual double valueDouble() const                {notDef();return -1;}
-virtual int valueInt1() const                   {notDef();return -1;}
-virtual int valueInt2() const                   {notDef();return -1;}
-virtual int valueInt3() const                   {notDef();return -1;}
-virtual int valueInt4() const                   {notDef();return -1;}
-virtual int valueInt5() const                   {notDef();return -1;}
-virtual int valueInt6() const                   {notDef();return -1;}
-virtual const QString & valueString1() const    {notDef();return QString();}
-virtual const QString & valueString2() const    {notDef();return QString();}
-virtual const QString & valueString3() const    {notDef();return QString();}
-virtual const QString & valueString4() const    {notDef();return QString();}
-*/
 #endif // ENTITY_H

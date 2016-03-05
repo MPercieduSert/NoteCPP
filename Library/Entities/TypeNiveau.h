@@ -1,105 +1,65 @@
+/*Auteur: PERCIE DU SERT Maxime
+ *Date: 29/02/2016
+ */
+
 #ifndef TYPE_NIVEAU_H
 #define TYPE_NIVEAU_H
 
 #include "Entity.h"
 
+/*! \ingroup groupeEntity
+ * \brief Représentation de l'entitée TypeNiveau.
+ */
+
 class TypeNiveau : public Entity
 {
 public:
-    static const entityId IdEntity = TypeNiveauId;
-    static const int NbrValue = 1;
+    //! Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.
+    enum position {NomPos = 0,
+                  IdPos = 1};
+
+    //! Numéro des types de niveaux.
+    enum num {Primaire = 1,
+              College = 2,
+              Lycee = 3,
+              Prepa = 4,
+              Licence =5};
+
+    static const entityId IdEntity = TypeNiveauId;   //!< Identifiant du type des entitées Annee.
+    static constexpr char Name[] = "TypeNiveau";     //!< Nom de l'entitée.
+    static const int NbrAtt = 2;                //!< Nombre d'attributs des entitées Annee.
+    static constexpr std::array<const char*,NbrAtt> Att {{"nom", "ID"}};  //!< Tableau des attributs des entitées Annee.
+
 protected:
     QString m_nom;
 
 public:
-    enum position {NomPos = 0};
-
-    TypeNiveau()    {}
-    TypeNiveau(int id) : Entity(id) {}
-    TypeNiveau(const QString & nom, int id) : Entity(id)    {setNom(nom);}
-    TypeNiveau(const Entity & entity) : Entity(entity.id())
-    {
-        const TypeNiveau & entityT = convert(entity);
-        setNom(entityT.nom());
-    }
-    ~TypeNiveau()   {}
-    //entityId idEntity() const   {return IdEntity;}
-    bool isValid() const        {return Entity::isValid() && (!m_nom.isEmpty());}
-    int nbrValue() const        {return NbrValue;}
-    const QString & nom() const         {return m_nom;}
-    void setNom(const QString & nom)
-    {
-        if(!nom.isEmpty())
-        {
-            m_nom = nom;
-        }
-        else
-        {
-            m_erreurs.append(QPair<int,int>(m_id,NomPos));
-        }
-    }
-    void setValue(int pos, const QVariant & val)
-    {
-        switch (pos)
-        {
-        case IdPos:
-            setId(val.toInt());
-            break;
-
-        case NomPos:
-            setNom(val.toString());
-            break;
-
-        default:
-            m_erreurs.append(QPair<int,int>(m_id,PosPos));
-        }
-    }
-    QVariant value(int pos) const
-    {
-        switch (pos)
-        {
-        case IdPos:
-            return QVariant(id());
-            break;
-
-        case NomPos:
-            return QVariant(nom());
-            break;
-
-        default:
-            return QVariant();
-        }
-    }
-    void operator << (const Entity & entity)
-    {
-        const TypeNiveau & entityT = convert(entity);
-        setId(entity.id());
-        setNom(entityT.nom());
-    }
-    bool operator == (const Entity & entity) const
-    {
-        const TypeNiveau & entityT = convert(entity);
-        return (m_id == entity.id())
-                &&(m_nom == entityT.nom());
-    }
-
     INCLUCE_METHODE(TypeNiveau)
-protected:
-    /*void setString1(const QString & string) {setNom(string);}
 
-    const QString & valueString1() const    {return m_nom;}*/
-    /*bool verifEntity(const Entity & entity) const {return IdEntity == entity.idEntity();}
-    const TypeNiveau & verif(const Entity & entity) const
+    //! Constructeur à partir des valeurs attributs.
+    TypeNiveau(const QString & nom, int id = 0)
+        : Entity(id)
+        {setNom(nom);}
+
+    GET_SET_TEXTE_NOT_NULL(nom,Nom)
+
+    //! Teste si l'entitée est valide.
+    bool isValid() const
+        {return Entity::isValid() && (!m_nom.isEmpty());}
+
+protected:
+    //! Test d'égalité entre cette entitée et celle transmise en argument.
+    bool egal(const TypeNiveau & entity) const
     {
-        if(verifEntity(entity))
-        {
-            return *((TypeNiveau*) &entity);
-        }
-        else
-        {
-            throw std::runtime_error("Mauvaise correspondance des Entity");
-        }
-    }*/
+        return Entity::egal(entity)
+                && (m_nom == entity.m_nom);
+    }
+
+    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+    void set(const TypeNiveau & entity)
+    {
+        setNom(entity.nom());
+    }
 };
 
 #endif // TYPE_NIVEAU_H

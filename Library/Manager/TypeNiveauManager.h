@@ -1,34 +1,26 @@
+/*Auteur: PERCIE DU SERT Maxime
+ *Date: 03/03/2016
+ */
+
 #ifndef TYPENIVEAUMANAGER_H
 #define TYPENIVEAUMANAGER_H
 
 #include "ManagerSql.h"
-#include "../Entities/TypeNiveau.h"
+#include "TypeNiveauLinkSql.h"
 
-class TypeNiveauManager : public ManagerSql<TypeNiveau>
+
+/*! \ingroup groupeManager
+ * \brief Manager de l'entitée TypeNiveau.
+ */
+
+class TypeNiveauManager : public ManagerSql<TypeNiveauLinkSql>
 {
 public:
-    TypeNiveauManager();
-    TypeNiveauManager(QSqlDatabase & bdd);
-     ~TypeNiveauManager()    {}
+    //! Constructeur, transmettre en argument une référence sur une objet de requete.
+    TypeNiveauManager(QSqlQuery & req);
 
-protected:
-     void bindValues(const TypeNiveau & typeNiveau)
-    {
-        m_requete.bindValue(0,typeNiveau.nom());
-    }
-     void bindValuesUnique(const TypeNiveau &typeNiveau)
-    {
-        m_requete.bindValue(0,typeNiveau.nom());
-    }
-     void fromRequete(TypeNiveau & typeNiveau)
-    {
-        typeNiveau.setNom(m_requete.value(0).toString());
-    }
-     TypeNiveau * newFromRequete()
-    {
-        return new TypeNiveau(m_requete.value(1).toString(),
-                              m_requete.value(0).toInt());
-    }
+    //! creer la table et insert les entrées par defaut.
+    void creer();
 };
 
 #endif // TYPENIVEAUMANAGER_H
