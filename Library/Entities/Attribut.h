@@ -13,22 +13,6 @@
 
 class Attribut : public Entity
 {
-public:
-    //! Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.
-    enum position {NomPos = 0,
-                   PrBareme = 1,
-                   PrCommentaire = 2,
-                   PrCorrection = 3,
-                   PrCours = 4,
-                   PrExercice = 5,
-                   NcPos = 6,
-                   IdPos = 7};
-
-    static const entityId IdEntity = AttributId;   //!< Identifiant du type de l'entitée.
-    static constexpr char Name[] = "Attribut";     //!< Nom de l'entitée.
-    static const int NbrAtt = 8;                //!< Nombre d'attributs de l'entitée.
-    static constexpr std::array<const char*,NbrAtt> Att {{"nom", "PrBareme", "PrCommentaire", "PrCorrection", "PrCours", "PrExercice", "nc", "ID"}};  //!< Tableau des attributs de l'entitée.
-
 protected:
     QString m_nom;              //!< Attribut: Nom de l'attribut.
     bool m_prBareme;            //!< Attribut: Vraie si l'attribut peut être associé à un barème.
@@ -39,6 +23,7 @@ protected:
     QString m_nc;               //!< Attribut: Nom cours de l'attribut.
 
 public:
+    NOM_POS_7_ATT(Nom,PrBareme,PrCommentaire,PrCorrection,PrCours,PrExercice,Nc)
     INCLUCE_METHODE(Attribut)
 
     //! Constructeur à partir des valeurs attributs.

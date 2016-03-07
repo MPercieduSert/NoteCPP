@@ -14,55 +14,48 @@
 class Donnee : public Entity
 {
 public:
-    //! Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.
-    enum position {CardPos = 0,
-                   NomPos = 1,
-                   SurPos = 2,
-                   TypePos = 3,
-                   TypeValeurPos = 4,
-                   IdPos = 5};
+    //! Différent type d'affichage.
+    enum affiche_alpha {Sans = 0,
+                        Numeric = 1,
+                        AlphabeticMaj = 2,
+                        AlphabeticMin = 3};
 
     //! Différent type de données.
-    enum typeDn {};
+    enum typeDn {Alpha = 0};
 
-    enum tpVal {Int = 0,
+    enum typeVal {Int = 0,
                 String = 1,
                 Bool = 2,
                 Float = 3,
                 Date = 4};
-
-
-    static const entityId IdEntity = DonneeId;   //!< Identifiant du type de l'entitée.
-    static constexpr char Name[] = "Donnee";     //!< Nom de l'entitée.
-    static const int NbrAtt = 6;                 //!< Nombre d'attributs de l'entitée.
-    static constexpr std::array<const char*,NbrAtt> Att {{"card","nom","sur","type","type_valeur","ID"}};  //!< Tableau des attributs de l'entitée.
 
 protected:
     int m_card;         //!< Attribut: Nombre de valeur posible pour une donnée sur cible fixée.
     QString m_nom;      //!< Attribut: Nom de la donnée.
     int m_sur;          //!< Attribut: Identifiant du type de la cible de la donnée.
     int m_type;         //!< Attribut: Identifiant du type de donnée.
-    int m_typeValeur;   //!< Attribut: Identifiant du type de valeur de la donnée.
+    int m_tpVal;     //!< Attribut: Identifiant du type de valeur de la donnée.
 
 public:
+    NOM_POS_5_ATT(Card,Nom,Sur,Type,TpVal)
     INCLUCE_METHODE(Donnee)
 
     //! Constructeur à partir des valeurs attributs.
-    Donnee(int card, const QString & nom, int sur, int type, int typeVal ,int id = 0)
+    Donnee(int card, const QString & nom, int sur, int type, int tpVal ,int id = 0)
         : Entity(id)
     {
         setCard(card);
         setNom(nom);
         setSur(sur);
         setType(type);
-        setTypeValeur(typeVal);
+        setTpVal(tpVal);
     }
 
     GET_SET_INT_SUP(card,Card,-1)
     GET_SET_TEXTE_NOT_NULL(nom,Nom)
     GET_SET_INT(sur,Sur)
     GET_SET_INT(type,Type)
-    GET_SET_INT(typeValeur,TypeValeur)
+    GET_SET_INT(tpVal,TpVal)
 
     //! Teste si l'entitée est valide.
     bool isValid() const
@@ -77,7 +70,7 @@ protected:
                 && (m_nom == don.m_nom)
                 && (m_sur == don.m_sur)
                 && (m_type == don.m_type)
-                && (m_typeValeur == don.m_typeValeur);
+                && (m_tpVal == don.m_tpVal);
     }
 
     //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
@@ -87,7 +80,7 @@ protected:
         setNom(don.nom());
         setSur(don.sur());
         setType(don.type());
-        setTypeValeur(don.typeValeur());
+        setTpVal(don.tpVal());
     }
 };
 

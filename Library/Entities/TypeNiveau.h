@@ -14,10 +14,6 @@
 class TypeNiveau : public Entity
 {
 public:
-    //! Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.
-    enum position {NomPos = 0,
-                  IdPos = 1};
-
     //! Numéro des types de niveaux.
     enum num {Primaire = 1,
               College = 2,
@@ -25,15 +21,11 @@ public:
               Prepa = 4,
               Licence =5};
 
-    static const entityId IdEntity = TypeNiveauId;   //!< Identifiant du type des entitées Annee.
-    static constexpr char Name[] = "TypeNiveau";     //!< Nom de l'entitée.
-    static const int NbrAtt = 2;                //!< Nombre d'attributs des entitées Annee.
-    static constexpr std::array<const char*,NbrAtt> Att {{"nom", "ID"}};  //!< Tableau des attributs des entitées Annee.
-
 protected:
     QString m_nom;
 
 public:
+    NOM_POS_1_ATT(Nom)
     INCLUCE_METHODE(TypeNiveau)
 
     //! Constructeur à partir des valeurs attributs.

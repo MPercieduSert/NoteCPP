@@ -96,7 +96,7 @@ public:
     }
 
     //! Replace l'itérateur sur le noeud précédent (méthode de parcours incrémentation-décrémentation) puis test si le nouveau noeud n'est pas la racine.
-    bool prévious() const
+    bool previous() const
     {
         --m_i;
         return m_i != m_root;

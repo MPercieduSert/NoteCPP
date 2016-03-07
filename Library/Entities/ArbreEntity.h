@@ -5,7 +5,7 @@
 #ifndef ARBREENTITY_H
 #define ARBREENTITY_H
 
-#include <Entity.h>
+#include "Entity.h"
 
 /*! \ingroup groupeEntity
  * \brief Classe mère des entitées de type arbre.
@@ -13,20 +13,6 @@
 
 class ArbreEntity : public Entity
 {
-public:
-    //! Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.
-    enum position {FeuillePos = 0,
-                  NiveauPos = 1,
-                  NumPos = 2,
-                  ParentPos = 3,
-                  IdPos = 4
-                  };
-
-    static const entityId IdEntity = ArbreId;   //!< Identifiant du type de l'entitée.
-    static constexpr char Name[] = "Arbre";     //!< Nom de l'entitée.
-    static const int NbrAtt = 5;                //!< Nombre d'attributs de l'entitée.
-    static constexpr std::array<const char*, NbrAtt> Att {{"feuille", "niveau", "num", "parent", "ID"}}; //!< //!< Tableau des attributs de l'entitée.
-
 protected:
     bool m_feuille;     //!< Attribut: Vrai si ce noeud de l'arbre n'a pas de descendant.
     int m_niveau;       //!< Attribut: Niveau de profondeur du noeud dans l'arbre. La profondeur d'une racine est 0.
@@ -34,6 +20,7 @@ protected:
     int m_parent;       //!< Clé vers l'arbre: Identifiant du noeud parent.
 
 public:
+    NOM_POS_4_ATT(Feuille,Niveau,Num,Parent)
     INCLUCE_METHODE(ArbreEntity)
 
     //! Constructeur à partir des valeurs attributs.
@@ -54,7 +41,7 @@ public:
     //! Teste si l'entitée est valide.
     bool isValid() const
     {
-        return Entity::isValid() && (m_niveau >= 0) && (!m_num >= 0) && (!m_parent >= 0);
+        return Entity::isValid() && (m_niveau >= 0) && (m_num >= 0) && (m_parent >= 0);
     }
 
 protected:

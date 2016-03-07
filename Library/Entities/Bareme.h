@@ -13,20 +13,6 @@
 
 class Bareme : public Entity
 {
-public:
-    //! Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.
-    enum position {IdExPos = 0,
-                   FractionPos = 1,
-                   NomPos = 2,
-                   NumPos = 3,
-                   ValeurPos = 4,
-                   IdPos = 5};
-
-    static const entityId IdEntity = BaremeId;   //!< Identifiant du type de l'entitée.
-    static constexpr char Name[] = "Bareme";     //!< Nom de l'entitée.
-    static const int NbrAtt = 6;                //!< Nombre d'attributs de l'entitée.
-    static constexpr std::array<const char*,NbrAtt> Att {{"idEx", "fraction", "nom", "num", "valeur", "ID"}};  //!< Tableau des attributs de l'entitée.
-
 protected:
     int m_idEx;         //!< Clé: Clé vers la partie d'exercice sur laquelle porte le barème.
     int m_fraction;     //!< Attribut: nombre de fraction possible des points associés au barème.
@@ -36,6 +22,7 @@ protected:
 
 
 public:
+    NOM_POS_5_ATT(IdEx,Fraction,Nom,Num,Valeur)
     INCLUCE_METHODE(Bareme)
 
     //! Constructeur à partir des valeurs attributs.
@@ -46,6 +33,13 @@ public:
         setNom(nom);
         setNum(num);
         setValeur(valeur);
+    }
+
+    //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
+    Bareme(int idEx, int num)
+    {
+        setIdEx(idEx);
+        setNum(num);
     }
 
     GET_SET_ID(Ex)

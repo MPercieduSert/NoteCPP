@@ -14,20 +14,6 @@
 
 class Eleve : public Entity
 {
-public:
-    //! Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.
-    enum position{FillePos = 0,
-                  NaissancePos = 1,
-                  NomPos = 2,
-                  PrenomPos = 3,
-                  IdPos = 4
-                  };
-
-    static const entityId IdEntity = EleveId;       //!< Identifiant du type de l'entitée.
-    static constexpr char Name[] = "Elevee";        //!< Nom de l'entitée.
-    static const int NbrAtt = 5;                    //!< Nombre d'attributs de l'entitée.
-    static constexpr std::array<const char*, NbrAtt> Att {{"fille","naissance","nom","prenom","ID"}}; //!< Tableau des attributs de l'entitée.
-
 protected:
     bool m_fille;           //!< Attribut: Vraie si l'éléve est une fille.
     QDate m_naissance;      //!< Attribut: Date de naissance de l'éléve.
@@ -35,6 +21,7 @@ protected:
     QString m_prenom;       //!< Attribut: Prenom de l'éléve.
 
 public:
+    NOM_POS_4_ATT(Fille,Naissance,Nom,Prenom)
     INCLUCE_METHODE(Eleve)
 
     //! Constructeur à partir des valeurs attributs.
@@ -42,6 +29,14 @@ public:
         : Entity(id)
     {
         setFille(fille);
+        setNaissance(naissance);
+        setNom(nom);
+        setPrenom(prenom);
+    }
+
+    //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
+    Eleve(const QDate & naissance, const QString &nom, const QString &prenom)
+    {
         setNaissance(naissance);
         setNom(nom);
         setPrenom(prenom);

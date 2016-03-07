@@ -13,24 +13,15 @@
 
 class Commentaire : public Entity
 {
-public:
-    //! Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.
-    enum position {TextePos = 0,
-                   IdPos = 1};
-
-    static const entityId IdEntity = CommentaireId;   //!< Identifiant du type de l'entitée.
-    static constexpr char Name[] = "Commentaire";     //!< Nom de l'entitée.
-    static const int NbrAtt = 2;                //!< Nombre d'attributs de l'entitée.
-    static constexpr std::array<const char*,NbrAtt> Att {{"texte", "ID"}};  //!< Tableau des attributs de l'entitée.
-
 protected:
     QString m_texte;    //!< Attribut: Texte du commentaire.
 
 public:
+    NOM_POS_1_ATT(Texte)
     INCLUCE_METHODE(Commentaire)
 
     //! Constructeur à partir des valeurs attributs.
-    Commentaire(const QString & texte, int id)
+    Commentaire(const QString & texte, int id = 0)
         : Entity(id)
     {
         setTexte(texte);

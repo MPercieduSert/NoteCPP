@@ -1,137 +1,87 @@
+/*Auteur: PERCIE DU SERT Maxime
+ *Date: 05/03/2016
+ */
+
 #ifndef GROUPE_H
 #define GROUPE_H
 
 #include "Entity.h"
 
+/*! \ingroup groupeEntity
+ * \brief Représentation de l'entitée Groupe.
+ */
+
 class Groupe : public Entity
 {
 public:
-    static const entityId IdEntity = GroupeId;
-    static const int NbrValue = 2;
+    enum grPour {GrAnnee = 0,
+                 GrClasse =1};
+
 protected:
-    int m_num;
-    int m_type;
+    int m_idAn;         //!< Clé: Clé vers l'année.
+    int m_idCl;         //!< Clé: Clé vers la classe.
+    int m_alpha;        //!< Attribut: type d'affichage.
+    QString m_nom;      //!< Attribut: Nom du groupe.
+    int m_type;         //!< Attribut: type du groupe.
 
 public:
-    enum position{NumPos = 0,
-                  TypePos = 1};
+    NOM_POS_5_ATT(IdAn,IdCl,Alpha,Nom,Type)
+    INCLUCE_METHODE(Groupe)
 
-    Groupe() {}
-    Groupe(int id) : Entity(id)     {}
-    Groupe(int num, int type, int id = 0) : Entity(id)
+    //! Constructeur à partir des valeurs attributs.
+    Groupe(int idAn, int idCl, int alpha, const QString & nom, int type, int id = 0)
+        : Entity(id)
     {
-        setNum(num);
+        setIdAn(idAn);
+        setIdCl(idCl);
+        setAlpha(alpha);
+        setNom(nom);
         setType(type);
     }
-    Groupe(const Entity & entity) : Entity(entity.id())
+
+    //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
+    Groupe(int cle, const QString & nom, grPour pr)
     {
-        const Groupe & entityT = convert(entity);
-        setNum(entityT.num());
-        setType(entityT.type());
-    }
-    ~Groupe()   {}
-     //entityId idEntity() const   {return IdEntity;}
-     bool isValid() const        {return Entity::isValid() && (m_num > 0) && (m_type > 0);}
-     int nbrValue() const        {return NbrValue;}
-    int num() const                     {return m_num;}
-    void setNum(int num)
-    {
-        if(num > 0)
-        {
-            m_num = num;
-        }
+        if(pr == GrClasse)
+            {setIdCl(cle);}
         else
-        {
-            m_erreurs.append(QPair<int,int>(m_id,NumPos));
-        }
+            {setIdAn(cle);}
+        setNom(nom);
     }
-    void setType(int type)
-    {
-        if(type > 0)
-        {
-            m_type = type;
-        }
-        else
-        {
-            m_erreurs.append(QPair<int,int>(m_id,TypePos));
-        }
-    }
-     void setValue(int pos, const QVariant & val)
-    {
-        switch (pos)
-        {
-        case IdPos:
-            setId(val.toInt());
-            break;
 
-        case NumPos:
-            setNum(val.toInt());
-            break;
+    GET_SET_INT_SUP(idAn,IdAn,0)
+    GET_SET_INT_SUP(idCl,IdCl,0)
+    GET_SET_INT_SUP(alpha,Alpha,0)
+    GET_SET_TEXTE_NOT_NULL(nom,Nom)
+    GET_SET_INT_SUP(type,Type,0)
 
-        case TypePos:
-            setType(val.toInt());
-            break;
+    //! Teste si l'entitée est valide.
+    bool isValid() const
+    {return Entity::isValid()
+                    && ((m_idAn > 0 && m_idCl == 0) || (m_idAn == 0 && m_idCl > 0))
+                    && (m_alpha >= 0) && (!m_nom.isEmpty()) && (m_type >= 0);}
 
-        default:
-            m_erreurs.append(QPair<int,int>(m_id,PosPos));
-        }
-    }
-    int type() const                    {return m_type;}
-     QVariant value(int pos) const
-    {
-        switch (pos)
-        {
-        case IdPos:
-            return QVariant(id());
-            break;
-
-        case NumPos:
-            return QVariant(num());
-            break;
-
-        case TypePos:
-            return QVariant(type());
-            break;
-
-        default:
-            return QVariant();
-        }
-    }
-     void operator << (const Entity & entity)
-    {
-        const Groupe & entityT = convert(entity);
-        setId(entity.id());
-        setNum(entityT.num());
-        setType(entityT.type());
-        // return *this;
-    }
-     bool operator == (const Entity & entity) const
-     {
-         const Groupe & entityT = convert(entity);
-         return (m_id == entity.id())
-                 &&(m_num == entityT.num())
-                 &&(m_type == entityT.type());
-     }
-
-     INCLUCE_METHODE(Groupe)
 protected:
-    /*void setInt1(int kk)        {setNum(kk);}
-    void setInt2(int kk)        {setType(kk);}
-
-    int valueInt1() const       {return m_num;}
-    int valueInt2() const       {return m_type;}*/
-    /*bool verifEntity(const Entity & entity) const {return IdEntity == entity.idEntity();}
-    const Groupe & verif(const Entity & entity) const
+    //! Test d'égalité entre cette entitée et celle transmise en argument.
+    bool egal(const Groupe & entity) const
     {
-        if(verifEntity(entity))
-        {
-            return *((Groupe*) &entity);
-        }
-        else
-        {
-            throw std::runtime_error("Mauvaise correspondance des Entity");
-        }
-    }*/
+        return Entity::egal(entity)
+                && (m_idAn == entity.m_idAn)
+                && (m_idCl == entity.m_idCl)
+                && (m_alpha == entity.m_alpha)
+                &&(m_nom == entity.m_nom)
+                &&(m_type == entity.m_type);
+    }
+
+    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+    void set(const Groupe & entity)
+    {
+        setIdAn(entity.idAn());
+        setIdCl(entity.idCl());
+        setAlpha(entity.alpha());
+        setNom(entity.nom());
+        setType(entity.type());
+    }
 };
 
 #endif // GROUPE_H

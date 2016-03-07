@@ -13,19 +13,6 @@
 
 class Classe : public Entity
 {
-public:
-    //! Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.
-    enum position {IdAnPos = 0,
-                   IdEtabPos = 1,
-                   IdNivPos = 2,
-                   NumPos = 3,
-                   IdPos = 4};
-
-    static const entityId IdEntity = ClasseId;   //!< Identifiant du type de l'entitée.
-    static constexpr char Name[] = "Classe";     //!< Nom de l'entitée.
-    static const int NbrAtt = 6;                //!< Nombre d'attributs de l'entitée.
-    static constexpr std::array<const char*,NbrAtt> Att {{"idAn", "idEtab", "idNiv", "num", "ID"}};  //!< Tableau des attributs de l'entitée.
-
 protected:
     int m_idAn;     //!< Clé: Annee.
     int m_idEtab;   //!< Clé: Etablissement.
@@ -33,6 +20,7 @@ protected:
     int m_num;      //!< Attribut: numéro  de la classe.
 
 public:
+    NOM_POS_4_ATT(IdAn,IdEtab,IdNiv,Num)
     INCLUCE_METHODE(Classe)
 
     //! Constructeur à partir des valeurs attributs.
@@ -50,7 +38,8 @@ public:
     GET_SET_ID(Niv)
     GET_SET_INT_SUP(num,Num,0)
 
-     bool isValid() const
+    //! Teste si l'entitée est valide.
+    bool isValid() const
     {
         return Entity::isValid() && (m_idAn > 0) && (m_idEtab > 0) && (m_idNiv > 0) && (m_num >= 0);
     }

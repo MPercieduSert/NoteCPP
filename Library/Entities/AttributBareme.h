@@ -14,7 +14,7 @@
 class AttributBareme : public RelEntity
 {
 public:
-    REL_SIMPLE(At,Br,AttributBareme)
+
 };
 
 #endif // ATTRIBUTBAREME_H

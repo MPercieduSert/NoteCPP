@@ -1,138 +1,59 @@
+/*Auteur: PERCIE DU SERT Maxime
+ *Date: 05/03/2016
+ */
+
 #ifndef SOURCE_H
 #define SOURCE_H
 
 #include "Entity.h"
 
+/*! \ingroup groupeEntity
+ * \brief Représentation de l'entitée Source.
+ */
+
 class Source : public Entity
 {
-public:
-    static const entityId IdEntity = SourceId;
-    static const int NbrValue = 2;
-
 protected:
-    QString m_nom;
-    int m_type;
+    QString m_nom;      //!< Attribut: nom de la source.
+    int m_type;         //!< Attribut: type de la source.
 
 public:
-    enum position {NomPos = 0,
-                  TypePos = 1};
+    NOM_POS_2_ATT(Nom,Type)
+    INCLUCE_METHODE(Source)
 
-    Source()    {}
-    Source(int id) : Entity(id) {}
+    //! Constructeur à partir des valeurs attributs.
     Source(const QString & nom, int type, int id) : Entity(id)
     {
         setNom(nom);
         setType(type);
     }
-    Source(const Entity & entity) : Entity(entity.id())
-    {
-        const Source & entityT = convert(entity);
-        setNom(entityT.nom());
-        setType(entityT.type());
-    }
-    ~Source()   {}
-     //entityId idEntity() const                   {return IdEntity;}
-     bool isValid() const        {return Entity::isValid() && (!m_nom.isEmpty()) && (m_type >= 0);}
-     int nbrValue() const                        {return NbrValue;}
-    const QString & nom() const         {return m_nom;}
-    void setNom(const QString & nom)
-    {
-        if(!nom.isEmpty())
-        {
-            m_nom = nom;
-        }
-        else
-        {
-            m_erreurs.append(QPair<int,int>(m_id,NomPos));
-        }
-    }
-    void setType(int type)
-    {
-        if(type >= 0)
-        {
-            m_type = type;
-        }
-        else
-        {
-            m_erreurs.append(QPair<int,int>(m_id,TypePos));
-        }
-    }
-     void setValue(int pos, const QVariant & val)
-    {
-        switch (pos)
-        {
-        case IdPos:
-            setId(val.toInt());
-            break;
 
-        case NomPos:
-            setNom(val.toString());
-            break;
+    //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
+    Source(const QString & nom)
+        {setNom(nom);}
 
-        case TypePos:
-            setType(val.toInt());
-            break;
+    GET_SET_TEXTE_NOT_NULL(nom,Nom)
+    GET_SET_INT_SUP(type,Type,0)
 
-        default:
-            m_erreurs.append(QPair<int,int>(m_id,PosPos));
-        }
-    }
-    int type() const                    {return m_type;}
-     QVariant value(int pos) const
-    {
-        switch (pos)
-        {
-        case IdPos:
-            return QVariant(id());
-            break;
+    //! Teste si l'entitée est valide.
+    bool isValid() const
+        {return Entity::isValid() && (!m_nom.isEmpty()) && (m_type >= 0);}
 
-        case NomPos:
-            return QVariant(nom());
-            break;
-
-        case TypePos:
-            return QVariant(type());
-            break;
-
-        default:
-            return QVariant();
-        }
-    }
-     void operator << (const Entity & entity)
-    {
-        const Source & entityT = convert(entity);
-        setId(entity.id());
-        setNom(entityT.nom());
-        setType(entityT.type());
-        // return *this;
-    }
-     bool operator == (const Entity & entity) const
-     {
-         const Source & entityT = convert(entity);
-         return (m_id == entity.id())
-                 &&(m_nom == entityT.nom())
-                 &&(m_type == entityT.type());
-     }
-
-     INCLUCE_METHODE(Source)
 protected:
-    /*void setString1(const QString & string)     {setNom(string);}
-    void setInt1(int kk)                        {setType(kk);}
-
-    const QString & valueString1() const        {return m_nom;}
-    int valueInt1() const                       {return m_type;}*/
-    /*bool verifEntity(const Entity & entity) const {return IdEntity == entity.idEntity();}
-    const Source & verif(const Entity & entity) const
+    //! Test d'égalité entre cette entitée et celle transmise en argument.
+    bool egal(const Source & entity) const
     {
-        if(verifEntity(entity))
-        {
-            return *((Source*) &entity);
-        }
-        else
-        {
-            throw std::runtime_error("Mauvaise correspondance des Entity");
-        }
-    }*/
+        return Entity::egal(entity)
+                &&(m_nom == entity.m_nom)
+                &&(m_type == entity.m_type);
+    }
+
+    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+    void set(const Source & entity)
+    {
+        setNom(entity.nom());
+        setType(entity.type());
+    }
 };
 
 #endif // SOURCE_H

@@ -20,22 +20,6 @@ public:
               QuestionTp = 1,
               };
 
-    //! Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.
-    enum position{IdArbExPos = 0,
-                  DatePos = 1,
-                  TypePos = 2,
-                  VersionPos = 3,
-                  ResumePos = 4,
-                  TextePos = 5,
-                  TitrePos = 6,
-                  IdPos = 7
-                  };
-
-    static const entityId IdEntity = ExerciceId;    //!< Identifiant du type de l'entitée.
-    static constexpr char Name[] = "Exercice";      //!< Nom de l'entitée.
-    static const int NbrAtt = 8;                    //!< Nombre d'attributs de l'entitée.
-    static constexpr std::array<const char*, NbrAtt> Att {{"IDArbEx","date","type","version","resume","texte","titre","ID"}}; //!< Tableau des attributs de l'entitée.
-
 protected:    
     int m_idArbEx;      //!< Clé: Référence sur l'arbre des exercices.
     QDate m_date;       //!< Attribut: Date de la dernière modification.
@@ -47,6 +31,7 @@ protected:
 
 
 public:
+    NOM_POS_7_ATT(IdArbEx,Date,Type,Version,Resume,Texte,Titre)
     INCLUCE_METHODE(Exercice)
 
     //! Constructeur à partir des valeurs attributs.
@@ -61,6 +46,13 @@ public:
         setResume(resume);
         setTexte(texte);
         setTitre(titre);
+    }
+
+    //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
+    Exercice(int idArbrEx, int version)
+    {
+        setIdArbEx(idArbrEx);
+        setVersion(version);
     }
 
     GET_SET_ID(ArbEx)

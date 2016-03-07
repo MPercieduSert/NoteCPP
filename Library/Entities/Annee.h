@@ -13,20 +13,11 @@
 
 class Annee : public Entity
 {
-public:
-    //! Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.
-    enum position {AnneePos = 0,
-                   IdPos = 1};
-
-    static const entityId IdEntity = AnneeId;   //!< Identifiant du type de l'entitée.
-    static constexpr char Name[] = "Annee";     //!< Nom de l'entitée.
-    static const int NbrAtt = 2;                //!< Nombre d'attributs de l'entitée.
-    static constexpr std::array<const char*,NbrAtt> Att {{"annee", "ID"}};  //!< Tableau des attributs de l'entitée.
-
 protected:
-    int m_annee;//!< Attribut: annee de rentrée.
+    int m_annee;    //!< Attribut: annee de rentrée.
 
 public:
+    NOM_POS_1_ATT(Annee)
     INCLUCE_METHODE(Annee)
 
     //! Constructeur à partir des valeurs attributs.

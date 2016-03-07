@@ -22,16 +22,26 @@
 
 // Macro pour les entitées
 
+/*! \defgroup groupeMacroEntity Macros pour les entitées
+ * \ingroup groupeEntity
+ * \brief Ensemble des macros pour les entitées.
+ */
+
 //Constructeurs
 
-//! \ingroup groupeEntity
+/*! \defgroup groupeConstrMacroEntity Constructeurs
+ * \ingroup groupeMacroEntity
+ * \brief Ensemble des macros implémentant des constructeurs et destructeurs d'entitées.
+ */
+
+//! \ingroup groupeConstrMacroEntity
 //! Constructeur par défaut.
 #define CONSTR_DEFAUT(ENTITY) \
     /*! \brief Constructeur par défaut fixant l'identifiant de l'entitée à 0.*/ \
     ENTITY() \
     {}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeConstrMacroEntity
 //! Constructeur recopiant l'entitée entity.
 #define CONSTR_ENTITY(ENTITY) \
     /*! \brief Constructeur recopiant les attributs l'entitée entity.*/ \
@@ -39,14 +49,14 @@
     : Entity(entity.id()) \
     {set(convert(entity));}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeConstrMacroEntity
 //! Constructeur fixant l'identifiant.
 #define CONSTR_ID(ENTITY) \
     /*! \brief Constructeur fixant l'identifiant de l'entitée.*/ \
     ENTITY(int id) \
     : Entity(id)   {}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeConstrMacroEntity
 //! Constructeur de recopie.
 #define CONSTR_RECOPIE(ENTITY) \
     /*! \brief Constructeur de recopie.*/ \
@@ -54,14 +64,14 @@
     : Entity(entity.id()) \
     {set(entity);}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeConstrMacroEntity
 //! Destructeur par défaut.
 #define DESTRUCT(ENTITY) \
     /*! \brief Destructeur.*/ \
     ~ENTITY() \
     {}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeConstrMacroEntity
 //! Regroupe les macros des constructeurs et la macro du destructeur par défaut.
 #define CONSTR_MACRO(ENTITY) \
     CONSTR_DEFAUT(ENTITY) \
@@ -72,7 +82,12 @@
 
 //Convertion
 
-//! \ingroup groupeEntity
+/*! \defgroup groupeConvertMacroEntity Conversion
+ * \ingroup groupeMacroEntity
+ * \brief Ensemble des macros implémentant les méthodes statiques de conversion des références et pointeurs d'entitées.
+ */
+
+//! \ingroup groupeConvertMacroEntity
 //! Macro définisant le menbre convert permettant la conversion de pointeur après vérification.
 #define CONVERT_ENTITY_PTR(ENTITY) \
     /*! \brief Convertit la référence entity en une référence de type ENTITY, aprés vérification.*/ \
@@ -82,7 +97,7 @@
     else \
         {throw std::invalid_argument("Mauvaise correspondance des Entity");}}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeConvertMacroEntity
 //! Macro définisant le menbre convert permettant la conversion de référence constante après vérification.
 #define CONVERT_ENTITY_REF(ENTITY) \
     /*! \brief Convertit la référence constante entity en une référence constante de type ENTITY, aprés vérification.*/ \
@@ -92,7 +107,7 @@
     else \
         {throw std::invalid_argument("Mauvaise correspondance des Entity");}}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeConvertMacroEntity
 //! Macro définisant le menbre convert permettant la conversion de référence constante après vérification.
 #define CONVERT_ENTITY_CONST_REF(ENTITY) \
     /*! \brief Convertit le pointeur entity en un pointeur de type ENTITY, aprés vérification.*/ \
@@ -102,54 +117,68 @@
     else \
         {throw std::invalid_argument("Mauvaise correspondance des Entity");}}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeConvertMacroEntity
 //! Macro définissant le membre idEntity renvoyant l'identifiant du type l'entitée.
 #define ID_ENTITY(ENTITY) entityId \
     /*! \brief Renvoie l'identifiant du type ENTITY.*/ \
     idEntity() const \
     {return IdEntity;}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeConvertEntity
+//! Macro définissant les menbres statique IdEntity et Name.
+#define VAR_STAT_IDENTITY_NAME(ENTITY) \
+    /*! \brief Identifiant du type de l'entitée.*/ \
+    static const entityId IdEntity = ENTITY ## Id; \
+    static constexpr char Name[] = #ENTITY;    //!< Nom de l'entitée.
+
+//! \ingroup groupeConvertMacroEntity
 //! Macro définissant le membre static verifEntity testant si un pointeur est du type du type de l'entitée.
 #define VERIF_ENTITY_PTR(ENTITY) \
     /*! \brief Test si le pointeur entity est aussi un pointeur de type ENTITY.*/ \
     static bool verifEntity(Entity * entity) \
     {return IdEntity == entity->idEntity();}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeConvertMacroEntity
 //! Macro définissant le membre static verifEntity testant si une référence est du type du type de l'entitée.
 #define VERIF_ENTITY_REF(ENTITY) \
     /*! \brief Test si la référence entity est aussi une référence de type ENTITY.*/ \
     static bool verifEntity(const Entity & entity) \
     {return IdEntity == entity.idEntity();}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeConvertMacroEntity
 //! Regroupe les macros permettant la conversion des entitées.
 #define CONVERT_MACRO(ENTITY) \
     CONVERT_ENTITY_PTR(ENTITY) \
     CONVERT_ENTITY_REF(ENTITY) \
     CONVERT_ENTITY_CONST_REF(ENTITY) \
     ID_ENTITY(ENTITY) \
+    VAR_STAT_IDENTITY_NAME(ENTITY) \
     VERIF_ENTITY_PTR(ENTITY) \
     VERIF_ENTITY_REF(ENTITY)
 
 // Opérateurs
 
-//! \ingroup groupeEntity
+/*! \defgroup groupeOpMacroEntity Opérateurs
+ * \ingroup groupeMacroEntity
+ * \brief Ensemble des macros implémentant des opérateurs pour les entitées.
+ */
+
+
+//! \ingroup groupeOpMacroEntity
 //! Macro définissant l'opérateur == avec une Entitée de même type.
 #define OP_EGAL(ENTITY) \
     /*! \brief Test d'égalité entre deux entitées de type ENTITY, c'est-à-dire l'égalité de tous les attributs..*/ \
     bool operator == (const ENTITY & entity) const \
     {return egal(entity);}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeOpMacroEntity
 //! Macro définissant l'opérateur == avec une Entity.
 #define OP_EGAL_ENTITY(ENTITY) \
     /*! \brief Test d'égalité entre une entitée de type ENTITY et une référence Entity sur une entitée de type ENTITY, c'est-à-dire l'égalité de tous les attributs.*/ \
     bool operator == (const Entity & entity) const\
     {return egal(convert(entity));}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeOpMacroEntity
 //! Macro définissant l'opérateur << avec une Entity.
 #define OP_INJ(ENTITY) \
     /*! \brief Modifient les valeurs des attributs de l'entitée avec celles des attributs de entity.*/ \
@@ -157,7 +186,7 @@
     {setId(entity.id()); \
     set(entity);}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeOpMacroEntity
 //! Macro définissant l'opérateur << avec une Entity.
 #define OP_INJ_ENTITY(ENTITY) \
     /*! \brief Modifient les valeurs des attributs de l'entitée avec celles des attributs de entity.*/ \
@@ -165,7 +194,7 @@
     {setId(entity.id()); \
     set(convert(entity));}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeOpMacroEntity
 //! Regroupe les macros des opérateurs.
 #define OP_MACRO(ENTITY) \
     OP_EGAL(ENTITY) \
@@ -175,19 +204,24 @@
 
 //Membre Divers
 
-//! \ingroup groupeEntity
+/*! \defgroup groupeDivEntity Divers
+ * \ingroup groupeMacroEntity
+ * \brief Ensemble de divers macros pour les entitées.
+ */
+
+//! \ingroup groupeDivEntity
 //! Macro définissant le membre NbrAtt renvoyant le nombre de valeurs de l'entitée.
 #define NBR_VALUE(ENTITY) \
     /*! \brief Renvoie le nombre de valeur des entititées de type ENTITY.*/ \
     int nbrAtt() const \
     {return NbrAtt;}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeDivEntity
 //! Regroupe les macros de divers membres.
 #define MEMBRE_DIVER_MACRO(ENTITY) \
     NBR_VALUE(ENTITY)
 
-//! \ingroup groupeEntity
+//! \ingroup groupeDivEntity
 //! Macro permettant d'incorporer les macros communes à toutes les entitées.
 #define INCLUCE_METHODE(ENTITY) \
     CONSTR_MACRO(ENTITY) \
@@ -195,9 +229,101 @@
     OP_MACRO(ENTITY) \
     MEMBRE_DIVER_MACRO(ENTITY)
 
-//Getteurs et Setteurs de différent attribut courant.
+//Nom et position des attributs de l'entitée.
 
-//! \ingroup groupeEntity
+/*! \defgroup groupeNomPosEntity Nom et position
+ * \ingroup groupeMacroEntity
+ * \brief Ensemble de macros définisant le nom et la position des attributs d'une entitée.
+ */
+
+//! \ingroup groupeNomPosEntity
+//! Macro définisant le nom et la position d'un attributs
+#define NOM_POS_1_ATT(ATT1) \
+    /*! \brief Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
+    enum position {ATT1 ## Pos = 0, IdPos = 1}; \
+    /*!< Nombre d'attributs de l'entitée. */ \
+    static const int NbrAtt = 2; \
+    /*! \brief Tableau des attributs de l'entitée.*/ \
+    static constexpr std::array<const char*,NbrAtt> Att {{#ATT1, "ID"}};
+
+//! \ingroup groupeNomPosEntity
+//! Macro définisant le nom et la position de deux attributs
+#define NOM_POS_2_ATT(ATT1,ATT2) \
+    /*! \brief Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
+    enum position {ATT1 ## Pos = 0, ATT2 ## Pos = 1, IdPos = 2}; \
+    /*!< Nombre d'attributs de l'entitée. */ \
+    static const int NbrAtt = 3; \
+    /*! \brief Tableau des attributs de l'entitée.*/ \
+    static constexpr std::array<const char*,NbrAtt> Att {{#ATT1, #ATT2, "ID"}};
+
+//! \ingroup groupeNomPosEntity
+//! Macro définisant le nom et la position de trois attributs
+#define NOM_POS_3_ATT(ATT1,ATT2,ATT3) \
+    /*! \brief Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
+    enum position {ATT1 ## Pos = 0, ATT2 ## Pos = 1, ATT3 ## Pos = 2, IdPos = 3}; \
+    /*!< Nombre d'attributs de l'entitée. */ \
+    static const int NbrAtt = 4; \
+    /*! \brief Tableau des attributs de l'entitée.*/ \
+    static constexpr std::array<const char*,NbrAtt> Att {{#ATT1, #ATT2, #ATT3, "ID"}};
+
+//! \ingroup groupeNomPosEntity
+//! Macro définisant le nom et la position de quatre attributs
+#define NOM_POS_4_ATT(ATT1,ATT2,ATT3,ATT4) \
+    /*! \brief Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
+    enum position {ATT1 ## Pos = 0, ATT2 ## Pos = 1, ATT3 ## Pos = 2, ATT4 ## Pos = 3, IdPos = 4}; \
+    /*!< Nombre d'attributs de l'entitée. */ \
+    static const int NbrAtt = 5; \
+    /*! \brief Tableau des attributs de l'entitée.*/ \
+    static constexpr std::array<const char*,NbrAtt> Att {{#ATT1, #ATT2, #ATT3, #ATT4, "ID"}};
+
+//! \ingroup groupeNomPosEntity
+//! Macro définisant le nom et la position de cinq attributs
+#define NOM_POS_5_ATT(ATT1,ATT2,ATT3,ATT4,ATT5) \
+    /*! \brief Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
+    enum position {ATT1 ## Pos = 0, ATT2 ## Pos = 1, ATT3 ## Pos = 2, ATT4 ## Pos = 3, ATT5 ## Pos = 4, IdPos = 5}; \
+    /*!< Nombre d'attributs de l'entitée. */ \
+    static const int NbrAtt = 6; \
+    /*! \brief Tableau des attributs de l'entitée.*/ \
+    static constexpr std::array<const char*,NbrAtt> Att {{#ATT1, #ATT2, #ATT3, #ATT4, #ATT5, "ID"}};
+
+//! \ingroup groupeNomPosEntity
+//! Macro définisant le nom et la position de cinq attributs
+#define NOM_POS_6_ATT(ATT1,ATT2,ATT3,ATT4,ATT5,ATT6) \
+    /*! \brief Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
+    enum position {ATT1 ## Pos = 0, ATT2 ## Pos = 1, ATT3 ## Pos = 2, ATT4 ## Pos = 3, ATT5 ## Pos = 4, ATT6 ## Pos = 5, IdPos = 6}; \
+    /*!< Nombre d'attributs de l'entitée. */ \
+    static const int NbrAtt = 7; \
+    /*! \brief Tableau des attributs de l'entitée.*/ \
+    static constexpr std::array<const char*,NbrAtt> Att {{#ATT1, #ATT2, #ATT3, #ATT4, #ATT5, #ATT6, "ID"}};
+
+//! \ingroup groupeNomPosEntity
+//! Macro définisant le nom et la position de cinq attributs
+#define NOM_POS_7_ATT(ATT1,ATT2,ATT3,ATT4,ATT5,ATT6,ATT7) \
+    /*! \brief Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
+    enum position {ATT1 ## Pos = 0, ATT2 ## Pos = 1, ATT3 ## Pos = 2, ATT4 ## Pos = 3, ATT5 ## Pos = 4, ATT6 ## Pos = 5, ATT7 ## Pos = 6, IdPos = 7}; \
+    /*!< Nombre d'attributs de l'entitée. */ \
+    static const int NbrAtt = 8; \
+    /*! \brief Tableau des attributs de l'entitée.*/ \
+    static constexpr std::array<const char*,NbrAtt> Att {{#ATT1, #ATT2, #ATT3, #ATT4, #ATT5, #ATT6, #ATT7, "ID"}};
+
+//! \ingroup groupeNomPosEntity
+//! Macro définisant le nom et la position de cinq attributs
+#define NOM_POS_8_ATT(ATT1,ATT2,ATT3,ATT4,ATT5,ATT6,ATT7,ATT8) \
+    /*! \brief Position des attributs dans l'entitée, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
+    enum position {ATT1 ## Pos = 0, ATT2 ## Pos = 1, ATT3 ## Pos = 2, ATT4 ## Pos = 3, ATT5 ## Pos = 4, ATT6 ## Pos = 5, ATT7 ## Pos = 6, ATT8 ## Pos = 7, IdPos = 8}; \
+    /*!< Nombre d'attributs de l'entitée. */ \
+    static const int NbrAtt = 9; \
+    /*! \brief Tableau des attributs de l'entitée.*/ \
+    static constexpr std::array<const char*,NbrAtt> Att {{#ATT1, #ATT2, #ATT3, #ATT4, #ATT5, #ATT6, #ATT7, #ATT8, "ID"}};
+
+//Accesseurs et mutateurs de différent attribut courant
+
+/*! \defgroup groupeGetSetEntity Accesseurs et mutateurs
+ * \ingroup groupeMacroEntity
+ * \brief Ensemble macros implémentant les accesseurs et mutateurs des entitées.
+ */
+
+//! \ingroup groupeGetSetEntity
 //! Implémentation des getteur et setteur d'un booléen.
 #define GET_SET_BOOL(nom,Nom) \
     /*! \brief Retourne la valeur de l'attribut nom.*/ \
@@ -206,7 +332,16 @@
     void set ## Nom(bool bb) \
     {m_ ## nom = bb;}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeGetSetEntity
+//! Implémentation des getteur et setteur d'un attribut date.
+#define GET_SET_DATE(nom,Nom) \
+    /*! \brief Retourne la valeur de l'attribut nom.*/ \
+    const QDate & nom() const {return m_ ## nom;} \
+    /*! \brief Modifie l'attribut nom.*/ \
+    void set ## Nom(const QDate & date) \
+    {m_ ## nom = date;}
+
+//! \ingroup groupeGetSetEntity
 //! Implémentation des getteur et setteur d'un attribut date valide.
 #define GET_SET_DATE_VALIDE(nom,Nom) \
     /*! \brief Retourne la valeur de l'attribut nom.*/ \
@@ -218,7 +353,27 @@
     else \
         {m_erreurs.append(QPair<int,int>(m_id,Nom ## Pos));}}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeGetSetEntity
+//! Implémentation des getteur et setteur d'un attribut date valide.
+#define GET_SET_DATETIME_VALIDE(nom,Nom) \
+    /*! \brief Retourne la valeur de l'attribut nom.*/ \
+    const QDateTime & nom() const {return m_ ## nom;} \
+    /*! \brief Modifie l'attribut nom.*/ \
+    void set ## Nom(const QDateTime & date) \
+    {if(date.isValid()) \
+        {m_ ## nom = date;} \
+    else \
+        {m_erreurs.append(QPair<int,int>(m_id,Nom ## Pos));}}
+//! \ingroup groupeGetSetEntity
+//! Implémentation des getteur et setteur d'un double.
+#define GET_SET_DOUBLE(nom,Nom) \
+    /*! \brief Retourne la valeur de l'attribut nom.*/ \
+    double nom() const {return m_ ## nom;} \
+    /*! \brief Modifie l'attribut nom.*/ \
+    void set ## Nom(double d) \
+    {m_ ## nom = d;}
+
+//! \ingroup groupeGetSetEntity
 //! Implémentation des getteur et setteur d'une clé.
 #define GET_SET_ID(ATT) \
     /*! \brief Retourne la valeur de la clé id ## ATT.*/ \
@@ -230,7 +385,7 @@
     else \
         {m_erreurs.append(QPair<int,int>(m_id,Id ## ATT ## Pos));}}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeGetSetEntity
 //! Implémentation des getteur et setteur d'un entier sans condition.
 #define GET_SET_INT(nom,Nom) \
     /*! \brief Retourne la valeur de l'attribut nom.*/ \
@@ -239,7 +394,7 @@
     void set ## Nom(int n) \
     {m_ ## nom = n;}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeGetSetEntity
 //! Implémentation des getteur et setteur d'un entier positif.
 #define GET_SET_INT_SUP(nom,Nom,MIN) \
     /*! \brief Retourne la valeur de l'attribut nom.*/ \
@@ -251,7 +406,19 @@
     else \
         {m_erreurs.append(QPair<int,int>(m_id,Nom ## Pos));}}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeGetSetEntity
+//! Implémentation des getteur et setteur d'un attribut Qvariant.
+#define GET_SET_QVARIANT_NOT_NULL(nom,Nom) \
+    /*! \brief Retourne la valeur de l'attribut nom.*/ \
+    const QVariant & nom() const {return m_ ## nom;} \
+    /*! \brief Modifie l'attribut nom.*/ \
+    void set ## Nom(const QVariant & valeur) \
+    {if(!valeur.isNull()) \
+        {m_ ## nom = valeur;} \
+    else \
+        {m_erreurs.append(QPair<int,int>(m_id,Nom ## Pos));}}
+
+//! \ingroup groupeGetSetEntity
 //! Implémentation des getteur et setteur d'un attribut de type QString non vide.
 #define GET_SET_TEXTE_NOT_NULL(nom,Nom) \
     /*! \brief Retourne la valeur de l'attribut nom.*/ \
@@ -263,7 +430,7 @@
     else \
         {m_erreurs.append(QPair<int,int>(m_id,Nom ## Pos));}}
 
-//! \ingroup groupeEntity
+//! \ingroup groupeGetSetEntity
 //! Implémentation des getteur et setteur d'un attribut de type QString pouvant être vide vide.
 #define GET_SET_TEXTE_NULL(nom,Nom) \
     /*! \brief Retourne la valeur de l'attribut nom.*/ \
@@ -289,66 +456,67 @@ public:
                    PosPos = -1};
 
     //! Liste des identifiants des types d'entitées.
-    enum entityId  {AnneeId = 0,
-                    ArbreId = -2,
-                    ArbreAttributId = 1,
-                    ArbreCoursId = 2,
-                    ArbreDonneeId = 3,
-                    ArbreEnonceId = 4,
-                    ArbreExerciceId = 5,
-                    AttributId = 6,
-                    AttributCommentaireId = 7,
-                    AttributCorrectionId = 8,
-                    AttributCoursId = 9,
-                    AttributBaremeId = 10,
-                    AttributExerciceId = 11,
-                    BaremeId = 12,
-                    ClasseId = 13,
-                    CoefficientId = 14,
-                    CommentaireId = 15,
-                    CompteurTypeComtrole = 16,
-                    ControleId = 17,
-                    CorrectionId = 18,
-                    CorrectionParId = 19,
-                    CoursId = 20,
-                    CoursParId = 21,
-                    DansEtablissementId = 22,
-                    DansClasseId = 23,
-                    DansGroupeId = 24,
-                    DonneeId = 25,
-                    EleveId = 26,
-                    EnonceId = 27,
-                    EntityId = -1,
-                    EtablissementId = 28,
-                    ExerciceId = 29,
-                    ExerciceParId = 30,
-                    FormeId = 31,
-                    GroupeId = 32,
-                    GroupePourId = 33,
-                    MisClasseId = 34,
-                    MisEleveId = 35,
-                    MisGroupeId = 36,
-                    NiveauId = 37,
-                    NoteId = 38,
-                    PointId = 39,
-                    RelEntityId = -3,
-                    SourceId = 40,
-                    SurClasseId = 41,
-                    SurEleveId = 42,
-                    SurEtablissementId = 43,
-                    SurNiveauId = 44,
-                    SurSourceId = 45,
-                    TexteId = 46,
-                    TypeControleId = 47,
-                    TypeCours = 48,
-                    TypeNiveauId = 49,
-                    TypeUtilisationId = 50,
-                    Utilisation = 51,
-                    UtilisationExerciceId = 52
+    enum entityId  {EntityId = -1,
+                    ArbreEntityId = -2,
+                    AnneeId,
+                    ArbreAttributId,
+                    ArbreCoursId,
+                    ArbreDonneeId,
+                    ArbreEnonceId,
+                    ArbreExerciceId,
+                    AttributId,
+                    AttributCommentaireId,
+                    AttributCorrectionId,
+                    AttributCoursId,
+                    AttributBaremeId,
+                    AttributExerciceId,
+                    BaremeId,
+                    ClasseId,
+                    ClasseEleveId,
+                    CoefficientId,
+                    CommentaireId,
+                    CommentaireClasseId,
+                    CommentaireEleveId,
+                    CommentaireGroupeId,
+                    CompteurTypeControleId,
+                    ControleId,
+                    CorrectionId,
+                    CoursId,
+                    DonneeId,
+                    DonneeClasseId,
+                    DonneeEleveId,
+                    DonneeEtablissementId,
+                    DonneeNiveauId,
+                    DonneeSourceId,
+                    EleveId,
+                    EnonceId,
+                    EtablissementId ,
+                    EtablissementNiveauId,
+                    ExerciceId,
+                    ExerciceCorrectionId,
+                    ExerciceUtilisationId,
+                    FormeId,
+                    GroupeId,
+                    GroupeEleveId,
+                    NiveauId,
+                    NiveauPrecedentId,
+                    NoteId,
+                    PointId,
+                    SourceId,
+                    SourceExerciceId,
+                    SourceCorrectionId,
+                    SourceCoursId,
+                    TexteId,
+                    TypeControleId,
+                    TypeCours,
+                    TypeNiveauId,
+                    TypeUtilisationId,
+                    Utilisation
                    };
 
-    static const entityId IdEntity = EntityId;  //!< Identifiant du type de l'entitée.
-    static constexpr char Name[] = "Entity";    //!< Nom de l'entitée.
+    VAR_STAT_IDENTITY_NAME(Entity)
+    //static const entityId IdEntity = EntityId;  //!< Identifiant du type de l'entitée.
+    //static constexpr char Name[] = "Entity";    //!< Nom de l'entitée.
     static const int NbrAtt = 1;                //!< Nombre d'attributs de l'entitée.
     static constexpr std::array<const char*, NbrAtt> Att {{"ID"}}; //!< Tableau des attributs de l'entitée.
     //static const int NbrEnsUni = 0;             //!< Nombre d'ensemble d'attributs uniques de l'entitée autre que l'identifiant.
