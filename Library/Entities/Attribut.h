@@ -10,64 +10,69 @@
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entitée Attribut.
  */
-
-class Attribut : public Entity
+class Attribut : public NomEntity, public EntityTemp<IdentifiantEntity::AttributId,7,Attribut>, public PrBaremeAttribut, public PrCommentaireAttribut, public PrCorrectionAttribut, public PrCoursAttribut, public PrExerciceAttribut, public NcNullAttribut
 {
-protected:
-    QString m_nom;              //!< Attribut: Nom de l'attribut.
-    bool m_prBareme;            //!< Attribut: Vraie si l'attribut peut être associé à un barème.
-    bool m_prCommentaire;       //!< Attribut: Vraie si l'attribut peut être associé à un commentaire.
-    bool m_prCorrection;        //!< Attribut: Vraie si l'attribut peut être associé à une correction.
-    bool m_prCours;             //!< Attribut: Vraie si l'attribut peut être associé à un cours.
-    bool m_prExercice;          //!< Attribut: Vraie si l'attribut peut être associé à un exercice.
-    QString m_nc;               //!< Attribut: Nom cours de l'attribut.
-
 public:
-    NOM_POS_7_ATT(Nom,PrBareme,PrCommentaire,PrCorrection,PrCours,PrExercice,Nc)
-    INCLUCE_METHODE(Attribut)
+    POS_7_ATT(Nom,PrBareme,PrCommentaire,PrCorrection,PrCours,PrExercice,Nc)
+
+    //! Constructeur par defaut.
+    Attribut(int id = 0)
+        : NomEntity(id)
+    {}
 
     //! Constructeur à partir des valeurs attributs.
-    Attribut(const QString & nom, bool bareme, bool commentaire, bool correction, bool cours, bool exercice, int id = 0, const QString & nc = QString()): Entity(id)
-    {
-        setNom(nom);
-        setPrBareme(bareme);
-        setPrCommentaire(commentaire);
-        setPrCorrection(correction);
-        setPrCours(cours);
-        setPrExercice(exercice);
-        setNc(nc);
-    }
+    Attribut(const QString & nom, bool bareme, bool commentaire, bool correction, bool cours, bool exercice, int id = 0, const QString & nc = QString())
+        : NomEntity(nom,id),
+          PrBaremeAttribut(bareme),
+          PrCommentaireAttribut(commentaire),
+          PrCorrectionAttribut(correction),
+          PrCoursAttribut(cours),
+          PrExerciceAttribut(exercice),
+          NcNullAttribut(nc)
+    {}
 
-    GET_SET_TEXTE_NULL(nc,Nc)
-    GET_SET_TEXTE_NOT_NULL(nom,Nom)
-    GET_SET_BOOL(prBareme,PrBareme)
-    GET_SET_BOOL(prCommentaire,PrCommentaire)
-    GET_SET_BOOL(prCorrection,PrCorrection)
-    GET_SET_BOOL(prCours,PrCours)
-    GET_SET_BOOL(prExercice,PrExercice)
+    //! Constructeur de recopie.
+    Attribut(const Attribut & entity)
+        : NomEntity(entity),
+          PrBaremeAttribut(entity.prBareme()),
+          PrCommentaireAttribut(entity.prCommentaire()),
+          PrCorrectionAttribut(entity.prCorrection()),
+          PrCoursAttribut(entity.prCours()),
+          PrExerciceAttribut(entity.prExercice()),
+          NcNullAttribut(entity.nc())
+    {}
+
+    //! Destructeur.
+    ~Attribut()
+    {}
 
     //! Teste si l'entitée est valide.
     bool isValid() const
-        {return Entity::isValid() && (!m_nom.isEmpty());}
+    {return NomEntity::isValid()
+                && PrBaremeAttribut::valide()
+                && PrCommentaireAttribut::valide()
+                && PrCorrectionAttribut::valide()
+                && PrCoursAttribut::valide()
+                && PrExerciceAttribut::valide()
+                && NcNullAttribut::valide();}
 
 protected:
     //! Test d'égalité entre cette entitée et celle transmise en argument.
     bool egal(const Attribut & entity) const
     {
-        return Entity::egal(entity)
-                &&(m_nom == entity.m_nom)
-                &&(m_prBareme == entity.m_prBareme)
-                &&(m_prCommentaire == entity.m_prCommentaire)
-                &&(m_prCorrection == entity.m_prCorrection)
-                &&(m_prCours == entity.m_prCours)
-                &&(m_prExercice == entity.m_prExercice)
-                &&(m_nc == entity.m_nc);
+        return NomEntity::egal(entity)
+                &&(prBareme() == entity.prBareme())
+                &&(prCommentaire() == entity.prCommentaire())
+                &&(prCorrection() == entity.prCorrection())
+                &&(prCours() == entity.prCours())
+                &&(prExercice() == entity.prExercice())
+                &&(nc() == entity.nc());
     }
 
     //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
     void set(const Attribut & entity)
     {
-        setNom(entity.nom());
+        NomEntity::set(entity);
         setPrBareme(entity.prBareme());
         setPrCommentaire(entity.prCommentaire());
         setPrCorrection(entity.prCorrection());

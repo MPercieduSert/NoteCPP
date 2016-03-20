@@ -10,58 +10,55 @@
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entitée Bareme.
  */
-
-class Classe : public Entity
+class Classe : public NumRelationEntity, public EntityTemp<IdentifiantEntity::ClasseId,5,Classe>,  public IdNivAttribut
 {
-protected:
-    int m_idAn;     //!< Clé: Annee.
-    int m_idEtab;   //!< Clé: Etablissement.
-    int m_idNiv;    //!< Clé: Niveau.
-    int m_num;      //!< Attribut: numéro  de la classe.
-
 public:
-    NOM_POS_4_ATT(IdAn,IdEtab,IdNiv,Num)
-    INCLUCE_METHODE(Classe)
+    POS_4_ATT(IdAn,IdEtab,IdNiv,Num)
+
+    //! Constructeur par defaut.
+    Classe(int id = 0)
+        : NumRelationEntity(id)
+        {}
 
     //! Constructeur à partir des valeurs attributs.
     Classe(int idAn, int idEtab, int idNiv, int num, int id =0)
-        : Entity(id)
-    {
-        setIdAn(idAn);
-        setIdEtab(idEtab);
-        setIdNiv(idNiv);
-        setNum(num);
-    }
+        : NumRelationEntity(idAn, idEtab, num, id),
+          IdNivAttribut(idNiv)
+    {}
 
-    GET_SET_ID(An)
-    GET_SET_ID(Etab)
-    GET_SET_ID(Niv)
-    GET_SET_INT_SUP(num,Num,0)
+    //! Constructeur de recopie.
+    Classe(const Classe & entity)
+        : NumRelationEntity(entity),
+          IdNivAttribut(entity.idNiv())
+        {}
+
+    //! Destructeur.
+    ~Classe()
+        {}
+
+    ALIAS_CLE(An,1)
+    ALIAS_CLE(Etab,2)
 
     //! Teste si l'entitée est valide.
     bool isValid() const
     {
-        return Entity::isValid() && (m_idAn > 0) && (m_idEtab > 0) && (m_idNiv > 0) && (m_num >= 0);
+        return NumRelationEntity::isValid()
+                && (IdNivAttribut::valide());
     }
 
 protected:
     //! Test d'égalité entre cette entitée et celle transmise en argument.
     bool egal(const Classe & entity) const
     {
-        return Entity::egal(entity)
-                &&(m_idAn == entity.m_idAn)
-                &&(m_idEtab == entity.m_idEtab)
-                &&(m_idNiv == entity.m_idNiv)
-                &&(m_num == entity.m_num);
+        return NumRelationEntity::egal(entity)
+                &&(idNiv() == entity.idNiv());
     }
 
     //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
     void set(const Classe & entity)
     {
-        setIdAn(entity.m_idAn);
-        setIdEtab(entity.m_idEtab);
-        setIdNiv(entity.m_idNiv);
-        setNum(entity.m_num);
+        NumRelationEntity::set(entity);
+        setIdNiv(entity.idNiv());
     }
 };
 

@@ -5,34 +5,23 @@
 #ifndef EXERCICELINKSQL_H
 #define EXERCICELINKSQL_H
 
-#include "LinkSql.h"
+#include "LinkSqlUniqueSimple.h"
+#include "ArbreLinkSql.h"
 #include "../Entities/Exercice.h"
 
 /*! \ingroup groupeLinkSql
  * \brief Lien entre l'entitée Annee de programation et sa représentation en base de donnée.
  */
 
-class ExerciceLinkSql : public LinkSql
+class ExerciceLinkSql : public LinkSqlUniqueSimple<Exercice>
 {
-public:
-    typedef Exercice Ent;      //!< Alias de l'entitée employé par le manageur.
-
-    static constexpr char Name[] = "ex";        //!< Nom de l'entitée en base de donnée
-    static const int NbrAtt = Exercice::NbrAtt;                //!< Nombre d'attributs de l'entitée en en base de donnée.
-    static constexpr std::array<const char*, NbrAtt> Att {{"IDarbex","dt","tp","vr","rs","txt","tr","ID"}};   //!< Tableau des attributs de l'entitée en base de donnée.
-
-protected:
-    const QString m_unique; //!< Requete Sql sur l'existence d'ensemble d'attribus uniques.
-
+    USING_LINKSQL(Exercice)
 
 public:
     //! Construteur, transmettre en argument l'objet de requète utilisée par le manageur.
     ExerciceLinkSql(QSqlQuery & requete)
-        : LinkSql(requete),
-        m_unique(writeStringUnique())
+        : LinkSqlUniqueSimple(requete,writeStringUnique())
         {}
-
-    METHODE_UNIQUE(Exercice)
 
     //! Transmet les valeurs des attributs à la requète SQL préparée.
     void bindValues(const Exercice & exo)

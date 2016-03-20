@@ -70,6 +70,8 @@ protected:
     QMenu *m_menuNew;
     QToolBar *m_toolBar;
 
+    Annee m_anneeDefaut;
+
 public:
     /*! \brief Constructeur.
      *

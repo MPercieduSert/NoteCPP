@@ -21,34 +21,12 @@
 #include "../Entities/Annee.h"
 #include "../Entities/Entity.h"
 #include "../Manager/AnneeManager.h"
-#include "../Manager/AppreciationManager.h"
-#include "../Manager/AttributManager.h"
-#include "../Manager/Attribut_baremeManager.h"
-#include "../Manager/Attribut_exerciceManager.h"
-#include "../Manager/BaremeManager.h"
-#include "../Manager/ClasseManager.h"
-#include "../Manager/CommentaireManager.h"
-#include "../Manager/CoefficientManager.h"
-#include "../Manager/ControleManager.h"
-#include "../Manager/Controle_exerciceManager.h"
-#include "../Manager/EleveManager.h"
-#include "../Manager/Eleve_groupeManager.h"
-#include "../Manager/ExerciceManager.h"
-#include "../Manager/GroupeManager.h"
-#include "../Manager/NoteManager.h"
-#include "../Manager/NumControleManager.h"
-#include "../Manager/NiveauManager.h"
-#include "../Manager/Manager.h"
-#include "../Manager/PointManager.h"
-#include "../Manager/SourceManager.h"
-#include "../Manager/TypeControleManager.h"
-#include "../Manager/TypeGroupeManager.h"
-#include "../Manager/TypeNiveauManager.h"
+#include "../Manager/ArbreManager.h"
 
 class Bdd : public FileInterface
 {
 public:
-    static const int m_nbrEntity = 23;//! Nombre de type d'entity à gérer
+    static const int m_nbrEntity = 6;//! Nombre de type d'entity à gérer
 
 protected:
     QSqlDatabase m_bdd;                 //! Connexion à la base de donnée.
@@ -56,6 +34,13 @@ protected:
     Manager * m_managers[m_nbrEntity];  //! Tableau des manageurs.
 
     AnneeManager m_anneeManager;
+    AttributArbreManager m_attributArbreManager;
+    CoursArbreManager m_coursArbreManager;
+    DonneeArbreManager m_donneeArbreManager;
+    EnonceArbreManager m_enonceArbreManager;
+    ExerciceArbreManager m_exerciceArbreManager;
+
+    /*
     AppreciationManager m_appreciationManager;
     AttributManager m_attributManager;
     Attribut_baremeManager m_attribut_baremeManager;
@@ -77,7 +62,7 @@ protected:
     SourceManager m_sourceManager;
     TypeControleManager m_typeControleManager;
     TypeGroupeManager m_typeGroupeManager;
-    TypeNiveauManager m_typeNiveauManager;
+    TypeNiveauManager m_typeNiveauManager;*/
 
 public:
     //! Constructeur. Donner en argument le type ainsi que le chemin de la base de donnée.

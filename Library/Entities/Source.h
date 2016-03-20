@@ -10,50 +10,34 @@
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entitée Source.
  */
-
-class Source : public Entity
+class Source : public TypeNomEntity, public EntityTemp<IdentifiantEntity::SourceId,3,Source>
 {
-protected:
-    QString m_nom;      //!< Attribut: nom de la source.
-    int m_type;         //!< Attribut: type de la source.
-
 public:
-    NOM_POS_2_ATT(Nom,Type)
-    INCLUCE_METHODE(Source)
+    POS_2_ATT(Nom,Type)
+
+    //! Constructeur par defaut.
+    Source(int id = 0)
+        :TypeNomEntity(id)
+    {}
 
     //! Constructeur à partir des valeurs attributs.
-    Source(const QString & nom, int type, int id) : Entity(id)
-    {
-        setNom(nom);
-        setType(type);
-    }
+    Source(const QString & nom, int type = 0, int id=0)
+        : TypeNomEntity(nom,type,id)
+    {}
 
     //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
     Source(const QString & nom)
-        {setNom(nom);}
+        : TypeNomEntity(nom)
+    {}
 
-    GET_SET_TEXTE_NOT_NULL(nom,Nom)
-    GET_SET_INT_SUP(type,Type,0)
+    //! Constructeur de recopie.
+    Source(const Source & entity)
+        : TypeNomEntity(entity)
+    {}
 
-    //! Teste si l'entitée est valide.
-    bool isValid() const
-        {return Entity::isValid() && (!m_nom.isEmpty()) && (m_type >= 0);}
-
-protected:
-    //! Test d'égalité entre cette entitée et celle transmise en argument.
-    bool egal(const Source & entity) const
-    {
-        return Entity::egal(entity)
-                &&(m_nom == entity.m_nom)
-                &&(m_type == entity.m_type);
-    }
-
-    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
-    void set(const Source & entity)
-    {
-        setNom(entity.nom());
-        setType(entity.type());
-    }
+    //! Destructeur.
+    ~Source()
+    {}
 };
 
 #endif // SOURCE_H

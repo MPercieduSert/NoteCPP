@@ -228,13 +228,7 @@ protected:
         exec();
         m_requete.finish();
     }
-/*
-    //! Modifie la base de donnée sur laquelle les requètes sont effectuées
-    void setBdd(QSqlDatabase & bdd)
-    {
-        m_requete = QSqlQuery(bdd);
-    }
-*/
+
     //! Renvoie la chaine des noms des attributs séparés par une virgule sans l'identifiant.
     const QString writeColonne() const;
 
@@ -338,7 +332,7 @@ template<class Lbdd> const QString ManagerSql<Lbdd>::writeColonne() const
 template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringAddQuery() const
 {
     QString sql("INSERT INTO ");
-    sql.append(Lbdd::Name).append(" (").append(writeColonne()).append(") VALUES (");
+    sql.append(Lbdd::Table).append(" (").append(writeColonne()).append(") VALUES (");
     for(int i = 0; i != Lbdd::NbrAtt; ++i) sql.append("?,");
     sql.chop(1);
     sql.append(")");
@@ -349,7 +343,7 @@ template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringAddQuery() const
 template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringDeleteQuery() const
 {
     QString sql("DELETE FROM ");
-    sql.append(Lbdd::Name).append(" WHERE ID=?");
+    sql.append(Lbdd::Table).append(" WHERE ID=?");
     sql.squeeze();
     return sql;
 }
@@ -358,7 +352,7 @@ template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringDeleteQuery() co
 template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringExistsQuery() const
 {
     QString sql("SELECT 1 FROM ");
-    sql.append(Lbdd::Name).append(" WHERE ID=? LIMIT 1");
+    sql.append(Lbdd::Table).append(" WHERE ID=? LIMIT 1");
     sql.squeeze();
     return sql;
 }
@@ -366,7 +360,7 @@ template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringExistsQuery() co
 template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetQuery() const
 {
     QString sql("SELECT ");
-    sql.append(writeColonne()).append(" FROM ").append(Lbdd::Name).append(" WHERE ID=?");
+    sql.append(writeColonne()).append(" FROM ").append(Lbdd::Table).append(" WHERE ID=?");
     sql.squeeze();
     return sql;
 }
@@ -374,7 +368,7 @@ template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetQuery() const
 template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetListQuery() const
 {
     QString sql("SELECT ");
-    sql.append(writeColonne()).append(",ID FROM ").append(Lbdd::Name).append(" ORDER BY %1");
+    sql.append(writeColonne()).append(",ID FROM ").append(Lbdd::Table).append(" ORDER BY %1");
     sql.squeeze();
     return sql;
 }
@@ -382,7 +376,7 @@ template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetListQuery() c
 template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetList1Where1Query() const
 {
     QString sql("SELECT ");
-    sql.append(writeColonne()).append(",ID FROM ").append(Lbdd::Name).append(" WHERE %1=? ORDER BY %2");
+    sql.append(writeColonne()).append(",ID FROM ").append(Lbdd::Table).append(" WHERE %1=? ORDER BY %2");
     sql.squeeze();
     return sql;
 }
@@ -390,7 +384,7 @@ template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetList1Where1Qu
 template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetList1Where2Query() const
 {
     QString sql("SELECT ");
-    sql.append(writeColonne()).append(",ID FROM ").append(Lbdd::Name).append(" WHERE %1=? ORDER BY %2,%3");
+    sql.append(writeColonne()).append(",ID FROM ").append(Lbdd::Table).append(" WHERE %1=? ORDER BY %2,%3");
     sql.squeeze();
     return sql;
 }
@@ -398,7 +392,7 @@ template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetList1Where2Qu
 template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetList2Where1Query() const
 {
     QString sql("SELECT ");
-    sql.append(writeColonne()).append(",ID FROM ").append(Lbdd::Name).append(" WHERE %1=?,%2=? ORDER BY %3");
+    sql.append(writeColonne()).append(",ID FROM ").append(Lbdd::Table).append(" WHERE %1=?,%2=? ORDER BY %3");
     sql.squeeze();
     return sql;
 }
@@ -406,7 +400,7 @@ template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetList2Where1Qu
 template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringLastIdQuery() const
 {
     QString sql("SELECT last_insert_rowid() FROM ");
-    sql.append(Lbdd::Name);
+    sql.append(Lbdd::Table);
     sql.squeeze();
     return sql;
 }
@@ -414,7 +408,7 @@ template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringLastIdQuery() co
 template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringModifyQuery() const
 {
     QString sql("UPDATE ");
-    sql.append(Lbdd::Name).append(" SET ");
+    sql.append(Lbdd::Table).append(" SET ");
     for(int i = 0; i != Lbdd::NbrAtt; ++i) sql.append(Lbdd::Att[i]).append("=?,");
     sql.chop(1);
     sql.append("WHERE ID=?");
@@ -422,98 +416,4 @@ template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringModifyQuery() co
     return sql;
 }
 
-/*
-        const QString m_sqlExistsUnique;
-        m_sqlExistsUnique(writeStringExistsUniqueQuery()),
-    //! Renvoie la chaine correspondant à la requète d'existence d'une ligne avec les attributs unique.
-    const QString writeStringExistsUniqueQuery() const;
-
-template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringExistsUniqueQuery() const
-{
-    QString sql("SELECT 1 FROM ");
-    sql.append(Lbdd::Name).append(" WHERE ");
-    for(int i = 0; i != Lbdd::NbrAttUni; ++i)
-        sql.append(Lbdd::Att[Lbdd::AttUni[i]]).append("=? AND ");
-    sql.chop(5);
-    sql.append(" LIMIT 1");
-    sql.squeeze();
-    return sql;
-}
-*/
-/*
-template<class Lbdd> void ManagerSql<Lbdd>::writeStringQuery()
-{
-    QString colonnes;
-    for(int i = 0; i != nbrColonne(); ++i) colonnes.append(m_colonne.at(i)).append(",");
-    colonnes.chop(1);
-
-    //SQL Add
-    m_sqlAdd = QString("INSERT INTO ");
-    m_sqlAdd.append(m_tableName).append(" (").append(colonnes).append(") VALUES (");
-    for(int i = 0; i != nbrColonne(); ++i) m_sqlAdd.append("?,");
-    m_sqlAdd.chop(1);
-    m_sqlAdd.append(")");
-
-    //SQL Exists
-    m_sqlExists = QString("SELECT 1 FROM ");
-    m_sqlExists.append(m_tableName).append(" WHERE ID=? LIMIT 1");
-
-    //SQL ExistsUnique
-    m_sqlExistsUnique = QString("SELECT 1 FROM ");
-    m_sqlExistsUnique.append(m_tableName).append(" WHERE ");
-    for(int i = 0; i != m_colonneUnique.size(); ++i)
-        m_sqlExistsUnique.append(m_colonne.at(m_colonneUnique.at(i))).append("=? AND ");
-    m_sqlExistsUnique.chop(5);
-    m_sqlExistsUnique.append(" LIMIT 1");
-
-    //SQL Get
-    m_sqlGet = QString("SELECT ");
-    m_sqlGet.append(colonnes).append(" FROM ").append(m_tableName).append(" WHERE ID=?");
-
-    //SQL GetList
-    m_sqlGetList = QString("SELECT ID,");
-    m_sqlGetList.append(colonnes).append(" FROM ").append(m_tableName).append(" ORDER BY %1");
-
-    //SQL GetListWhere
-    m_sqlGetListWhere = QString("SELECT ID,");
-    m_sqlGetListWhere.append(colonnes).append(" FROM ").append(m_tableName).append(" WHERE %1=? ORDER BY %2");
-
-    //SQL Modify
-    m_sqlModify = QString("UPDATE "),
-    m_sqlModify.append(m_tableName).append(" SET ");
-    for(int i = 0; i != m_colonne.size(); ++i) m_sqlModify.append(m_colonne.at(i)).append("=?,");
-    m_sqlModify.chop(1);
-    m_sqlModify.append("WHERE ID=?");
-}
-*/
-/*ListEntities<Entity> getList()
-{
-    m_requete.prepare(m_sqlGetList+"id");
-    return listFormRequete();
-}*/
-/*ListEntities<Entity> getList(int cle, const QVariant & value)
-{
-    m_requete.prepare(m_sqlGetListWhere.arg(m_colonne.at(cle))+" ORDER BY ID");
-    m_requete.bindValue(0,value);
-    return listFormRequete();
-}*/
-/*ListEntities<Entity> getList(int cle1, int cle2, const QVariant & value1, const QVariant & value2)
-{
-    m_requete.prepare(m_sqlGetListWhere.arg(m_colonne.at(cle1))+QString("AND ").append(m_colonne.at(cle2)).append("=? ORDER BY ID"));
-    m_requete.bindValue(0,value1);
-    m_requete.bindValue(1,value2);
-    return listFormRequete();
-}*/
-/*bool verifEntity(const Entity & entity) const {return Ent::IdEntity == entity.idEntity();}
-T & verif(const Entity & entity) const
-{
-    if(verifEntity(entity))
-    {
-        return *((T *) &entity);
-    }
-    else
-    {
-        throw std::runtime_error("Mauvaise correspondance des Entity");
-    }
-}*/
 #endif // MANAGERSQL_H

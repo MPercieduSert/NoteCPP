@@ -10,55 +10,55 @@
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entitée Niveau.
  */
-
-class Niveau : public Entity
+class Niveau : public NcNomEntity, public EntityTemp<IdentifiantEntity::NiveauId,4,Niveau>, public IdTpAttribut
 {
-protected:
-    int m_idTp;      //!< Clé: clé vers le type de niveau.
-    QString m_nc;       //!< Attribut: abréviation du niveau.
-    QString m_nom;      //!< Attribut: nom du niveau
-
 public:
-    NOM_POS_3_ATT(IdTp,Nc,Nom)
-    INCLUCE_METHODE(Niveau)
+    POS_3_ATT(IdTp,Nc,Nom)
+
+    //! Constructeur par defaut.
+    Niveau(int id = 0)
+        :NcNomEntity(id)
+    {}
 
     //! Constructeur à partir des valeurs attributs.
     Niveau(int idTp, const QString & nc, const QString & nom, int id = 0)
-        : Entity(id)
-    {
-        setIdTp(idTp);
-        setNc(nc);
-        setNom(nom);
-    }
+        : NcNomEntity(nc,nom,id),
+          IdTpAttribut(idTp)
+    {}
 
     //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
     Niveau(const QString & nom)
-        {setNom(nom);}
+        : NcNomEntity(nom)
+        {}
 
-    GET_SET_ID(Tp)
-    GET_SET_TEXTE_NOT_NULL(nc,Nc)
-    GET_SET_TEXTE_NOT_NULL(nom,Nom)
+    //! Constructeur de recopie.
+    Niveau(const Niveau & entity)
+        : NcNomEntity(entity),
+          IdTpAttribut(entity.idTp())
+    {}
+
+    //! Destructeur.
+    ~Niveau()
+    {}
 
     //! Teste si l'entitée est valide.
     bool isValid() const
-        {return Entity::isValid() && (m_idTp > 0) && (!m_nc.isEmpty()) && (!m_nom.isEmpty());}
+        {return NcNomEntity::isValid()
+                && IdTpAttribut::valide();}
 
 protected:
     //! Test d'égalité entre cette entitée et celle transmise en argument.
     bool egal(const Niveau & entity) const
     {
-        return Entity::egal(entity)
-                && (m_idTp == entity.m_idTp)
-                &&(m_nc == entity.m_nc)
-                &&(m_nom == entity.m_nom);
+        return NcNomEntity::egal(entity)
+                && (idTp() == entity.idTp());
     }
 
     //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
     void set(const Niveau & entity)
     {
+        NcNomEntity::set(entity);
         setIdTp(entity.idTp());
-        setNc(entity.nc());
-        setNom(entity.nom());
     }
 };
 

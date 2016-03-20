@@ -6,7 +6,7 @@
 #define TYPENIVEAUMANAGER_H
 
 #include "ManagerSql.h"
-#include "TypeNiveauLinkSql.h"
+#include "NomLinkSql.h"
 
 
 /*! \ingroup groupeManager
@@ -18,9 +18,6 @@ class TypeNiveauManager : public ManagerSql<TypeNiveauLinkSql>
 public:
     //! Constructeur, transmettre en argument une référence sur une objet de requete.
     TypeNiveauManager(QSqlQuery & req);
-
-    //! creer la table et insert les entrées par defaut.
-    void creer();
 };
 
 #endif // TYPENIVEAUMANAGER_H

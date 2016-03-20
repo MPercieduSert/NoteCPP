@@ -26,8 +26,25 @@ FenPrincipale::FenPrincipale(QString path, QWidget *parent) :
     fenBdd.openInConf("conf/files/databases/database");
     m_bdd.setBdd();
 
+    Annee an(1);
+
     //! + Selection de l'année courante
-    QVector<Annee> anneeDefaut = ListEntities<Annee>::vector(m_bdd.getList(Entity::AnneeId,Annee::EncoursPos,QVariant(true)));
+    if(m_config.varExists("conf/parametre/initialisation/anneeDefaut"))
+    {
+        m_anneeDefaut.setAnnee(m_config.getVars("conf/parametre/initialisation/anneeDefaut").toInt());
+        if(m_anneeDefaut.annee() != 0)
+            if(!m_bdd.get(m_anneeDefaut))
+            {
+
+            }
+    }
+    else
+    {
+
+    }
+
+
+    /*QVector<Annee> anneeDefaut = ListEntities<Annee>::vector(m_bdd.getList(Entity::AnneeId,Annee::EncoursPos,QVariant(true)));
     if(anneeDefaut.isEmpty())
     {
         QLabel *label = new QLabel(this);
@@ -40,7 +57,7 @@ FenPrincipale::FenPrincipale(QString path, QWidget *parent) :
         m_tabModule = new TabModule(&m_bdd,this);
         setCentralWidget(m_tabModule);
         //exec();
-    }
+    }*/
 }
 
 void FenPrincipale::setEnabledCopierColler(bool bb)

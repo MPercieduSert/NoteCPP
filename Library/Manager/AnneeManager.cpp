@@ -1,7 +1,8 @@
 #include "AnneeManager.h"
 
-AnneeManager::AnneeManager(QSqlQuery &req)
-    :ManagerSql(req)
+AnneeManager::AnneeManager(QSqlQuery & req)
+    : ManagerSql<AnneeLinkSql>(req)
 {
 
 }
+

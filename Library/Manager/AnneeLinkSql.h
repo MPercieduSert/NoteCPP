@@ -5,50 +5,31 @@
 #ifndef ANNEELINKSQL_H
 #define ANNEELINKSQL_H
 
-#include "LinkSql.h"
+#include "LinkSqlUniqueSimple.h"
 #include "../Entities/Annee.h"
 
 /*! \ingroup groupeLinkSql
  * \brief Lien entre l'entitée Annee de programation et sa représentation en base de donnée.
  */
 
-class AnneeLinkSql : public LinkSql
+class AnneeLinkSql : public LinkSqlUniqueSimple<Annee>
 {
-public:
-    typedef Annee Ent;      //!< Alias de l'entitée employé par le manageur.
-
-    static constexpr char Name[] = "an";        //!< Nom de l'entitée en base de donnée
-    static const int NbrAtt = Annee::NbrAtt;                //!< Nombre d'attributs de l'entitée en en base de donnée.
-    static constexpr std::array<const char*, NbrAtt> Att {{"an", "ID"}};   //!< Tableau des attributs de l'entitée en base de donnée.
-    //static const int NbrEnsUni = 1;             //!< Nombre d'ensemble d'attributs uniques de l'entitée autre que l'identifiant.
-    //static constexpr std::array<const char*, NbrEnsUni> EnsUni {{"an=?"}}; //!< Tableau des chaines des ensembles d'attributs uniques de l'entitée.
-
-protected:
-    const QString m_unique; //!< Requete Sql sur l'existence d'ensemble d'attribus uniques.
-
 public:
     //! Construteur, transmettre en argument l'objet de requète utilisée par le manageur.
     AnneeLinkSql(QSqlQuery & requete)
-        : LinkSql(requete),
-        m_unique(writeStringUnique())
+        : LinkSqlUniqueSimple<Annee>(requete,writeStringUnique())
         {}
 
-    METHODE_UNIQUE(Annee)
-
     //! Transmet les valeurs des attributs à la requète SQL préparée.
-    void bindValues(const Annee & annee)
-    {
-        m_requete.bindValue(Annee::AnneePos,annee.annee());
-    }
+    void bindValues(const Annee & entity)
+        {m_requete.bindValue(Annee::AnneePos,entity.annee());}
 
     //! Crée la table en base de donnée et renvoie vrai si la création de la table s'est correctement déroulée.
     void creer();
 
     //! Hydrate l'entitée entity avec à partir de la requète.
-    void fromRequete(Annee & annee)
-    {
-        annee.setAnnee(m_requete.value(Annee::AnneePos).toInt());
-    }
+    void fromRequete(Annee & entity)
+        {entity.setAnnee(m_requete.value(Annee::AnneePos).toInt());}
 
     //! Crée dynamiquement une nouvelle entitée de type T, l'hydrate à partir de la requète SQL.
     //! Puis retourne un  pointeur vers cette nouvelle entitée.
@@ -60,10 +41,8 @@ public:
     
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
-    void bindValuesUnique(const Annee &annee)
-    {
-        m_requete.bindValue(0,annee.annee());
-    }
+    void bindValuesUnique(const Annee &entity)
+        {m_requete.bindValue(0,entity.annee());}
 
     //! Renvoie la chaine correspondant à la requète d'unicité d'une ligne.
     QString writeStringUnique() const;

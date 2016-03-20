@@ -12,18 +12,17 @@ CONFIG += staticlib
 CONFIG += c++11
 HEADERS += \
     Annee.h \
-    ArbreEntity.h \
     Attribut.h \
-    Bareme.h \
+#    Bareme.h \
     Classe.h \
     Commentaire.h \
-    Coefficient.h \
-    Controle.h \
+#    Coefficient.h \
+#    Controle.h \
     Donnee.h \
     Eleve.h \
 #    Eleve_groupe.h \
     Entity.h \
-    Exercice.h \
+#    Exercice.h \
     Groupe.h \
     ListEntities.h \
 #    Note.h \
@@ -39,23 +38,26 @@ HEADERS += \
     Etablissement.h \
     ClasseEleve.h \
     RelNum.h \
-    RelDateVal.h
+    RelDateVal.h \
+    Arbre.h \
+    AttributEntity.h \
+    AttributEntityAlias.h \
+    IdentifiantEntity.h
 
 
 SOURCES += \
     Annee.cpp \
-    ArbreEntity.cpp \
     Attribut.cpp \
-    Bareme.cpp \
+#    Bareme.cpp \
     Classe.cpp \
     Commentaire.cpp \
-    Coefficient.cpp \
-    Controle.cpp \
+#    Coefficient.cpp \
+#    Controle.cpp \
     Donnee.cpp \
     Eleve.cpp \
 #    Eleve_groupe.cpp \
     Entity.cpp \
-    Exercice.cpp \
+#    Exercice.cpp \
     Groupe.cpp \
     ListEntities.cpp \
 #    Note.cpp \
@@ -71,7 +73,11 @@ SOURCES += \
     Etablissement.cpp \
     ClasseEleve.cpp \
     RelNum.cpp \
-    RelDateVal.cpp
+    RelDateVal.cpp \
+    Arbre.cpp \
+    AttributEntity.cpp \
+    AttributEntityAlias.cpp \
+    IdentifiantEntity.cpp
 
 
 

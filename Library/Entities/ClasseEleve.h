@@ -11,65 +11,54 @@
  * \brief Représentation de l'entitée ClasseEleve.
  */
 
-class ClasseEleve : public Entity
+class ClasseEleve : public RelationEntity, public EntityTemp<IdentifiantEntity::ClasseEleveId,4,ClasseEleve>, public EntreeAttribut, public SortieAttribut
 {
-protected:
-    int m_idCl;         //!< Clé: Classe.
-    int m_idEl;         //!< Clé: Eléve.
-    QDate m_rentree;     //!< Attribut: date de rentrée dans la classe se elle est effectuée après le début du cursus.
-    QDate m_sortie;     //!< Attribut: date de sortie de la classe si elle est effectuée avant la fin du cursus.
-
 public:
-    NOM_POS_4_ATT(IdCl,IdEl,Rentree,Sortie)
-    INCLUCE_METHODE(ClasseEleve)
+    POS_4_ATT(IdCl,IdEl,Rentree,Sortie)
+
+    //! Constructeur par defaut.
+    ClasseEleve(int id = 0)
+        : RelationEntity(id)
+    {}
 
     //! Constructeur à partir des valeurs attributs.
-    ClasseEleve(int idCl, int idEl, const QDate & rentree, const QDate & sortie, int id = 0)
-        : Entity(id)
-    {
-        setIdCl(idCl);
-        setIdEl(idEl);
-        setRentree(rentree);
-        setSortie(sortie);
-    }
+    ClasseEleve(int idCl, int idEl, const QDate & entree = QDate(), const QDate & sortie = QDate(), int id = 0)
+        : RelationEntity(idCl, idEl, id),
+          EntreeAttribut(entree),
+          SortieAttribut(sortie)
+    {}
 
-    //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
-    ClasseEleve(int idCl, int idEl)
-    {
-        setIdCl(idCl);
-        setIdEl(idEl);
-    }
-
-    GET_SET_ID(Cl)
-    GET_SET_ID(El)
-    GET_SET_DATE(rentree,Rentree)
-    GET_SET_DATE(sortie,Sortie)
+    //! Constructeur de recopie.
+    ClasseEleve(const ClasseEleve & entity)
+        : RelationEntity(entity),
+          EntreeAttribut(entity.entree()),
+          SortieAttribut(entity.sortie())
+    {}
 
     //! Teste si l'entitée est valide.
     bool isValid() const
     {
-        return Entity::isValid() && (m_idCl > 0) && (m_idEl > 0);
+        return RelationEntity::isValid()
+                && EntreeAttribut::valide()
+                && SortieAttribut::valide();
     }
 
 protected:
-     //! Test d'égalité entre cette entitée et celle transmise en argument.
-     bool egal(const ClasseEleve & entity) const
-     {
-         return Entity::egal(entity)
-                 &&(m_idCl == entity.m_idCl)
-                 &&(m_idEl == entity.m_idEl)
-                 &&(m_rentree == entity.m_rentree)
-                 &&(m_sortie == entity.m_sortie);
-     }
+    //! Test d'égalité entre cette entitée et celle transmise en argument.
+    bool egal(const ClasseEleve & entity) const
+    {
+        return RelationEntity::egal(entity)
+                &&(entree() == entity.entree())
+                &&(sortie() == entity.sortie());
+    }
 
-     //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
-     void set(const ClasseEleve & entity)
-     {
-         setIdCl(entity.idCl());
-         setIdEl(entity.idEl());
-         setRentree(entity.rentree());
-         setSortie(entity.sortie());
-     }
+    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+    void set(const ClasseEleve & entity)
+    {
+        RelationEntity::set(entity);
+        setEntree(entity.entree());
+        setSortie(entity.sortie());
+    }
 };
 
 #endif // CLASSEELEVE_H

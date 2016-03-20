@@ -5,7 +5,13 @@ Bdd::Bdd(const QString & dbtype, const QString &fileName) : FileInterface(fileNa
 {
     m_bdd.setDatabaseName(fileName);
 
-    m_managers[Entity::AnneeId] = &m_anneeManager;
+    m_managers[Entity::AttributArbreId] = &m_attributArbreManager(m_requete);
+    m_managers[Entity::CoursArbreId] = &m_coursArbreManager(m_requete);
+    m_managers[Entity::DonneeArbreId] = &m_donneeArbreManager(m_requete);
+    m_managers[Entity::EnonceArbreId] = &m_enonceArbreManager(m_requete);
+    m_managers[Entity::AnneeId] = &m_anneeManager(m_requete);
+
+    /*
     m_managers[Entity::AppreciationId] = &m_appreciationManager;
     m_managers[Entity::AttributId] = &m_attributManager;
     m_managers[Entity::Attribut_baremeId] = &m_attribut_baremeManager;
@@ -28,6 +34,7 @@ Bdd::Bdd(const QString & dbtype, const QString &fileName) : FileInterface(fileNa
     m_managers[Entity::TypeControleId] = &m_typeControleManager;
     m_managers[Entity::TypeGroupeId] = &m_typeGroupeManager;
     m_managers[Entity::TypeNiveauId] = &m_typeNiveauManager;
+    */
 }
 
 Bdd::~Bdd()

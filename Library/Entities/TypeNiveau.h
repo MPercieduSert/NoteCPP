@@ -11,7 +11,7 @@
  * \brief Représentation de l'entitée TypeNiveau.
  */
 
-class TypeNiveau : public Entity
+class TypeNiveau : public NomEntity, public EntityTemp<IdentifiantEntity::TypeNiveauId,2,TypeNiveau>
 {
 public:
     //! Numéro des types de niveaux.
@@ -19,39 +19,28 @@ public:
               College = 2,
               Lycee = 3,
               Prepa = 4,
-              Licence =5};
+              Licence = 5};
 
-protected:
-    QString m_nom;
+    POS_1_ATT(Nom)
 
-public:
-    NOM_POS_1_ATT(Nom)
-    INCLUCE_METHODE(TypeNiveau)
+    //! Constructeur par defaut.
+    TypeNiveau(int id = 0)
+        : NomEntity(id)
+    {}
 
-    //! Constructeur à partir des valeurs attributs.
+    //! Constructeur à partir des valeurs TypeNiveaus.
     TypeNiveau(const QString & nom, int id = 0)
-        : Entity(id)
-        {setNom(nom);}
+        : NomEntity(nom,id)
+    {}
 
-    GET_SET_TEXTE_NOT_NULL(nom,Nom)
+    //! Constructeur de recopie.
+    TypeNiveau(const TypeNiveau & entity)
+        : NomEntity(entity)
+    {}
 
-    //! Teste si l'entitée est valide.
-    bool isValid() const
-        {return Entity::isValid() && (!m_nom.isEmpty());}
-
-protected:
-    //! Test d'égalité entre cette entitée et celle transmise en argument.
-    bool egal(const TypeNiveau & entity) const
-    {
-        return Entity::egal(entity)
-                && (m_nom == entity.m_nom);
-    }
-
-    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
-    void set(const TypeNiveau & entity)
-    {
-        setNom(entity.nom());
-    }
+    //! Destructeur.
+    ~TypeNiveau()
+    {}
 };
 
 #endif // TYPE_NIVEAU_H

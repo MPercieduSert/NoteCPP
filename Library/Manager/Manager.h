@@ -63,15 +63,15 @@ public:
     //! Destructeur.
     ~Manager() {}
 
+    //! Crée dans la base de donnée la table associée l'entitée du manageur.
+    virtual void creer() = 0;
+
     //! Supprime de la table en base de donnée l'entitée entity.
     virtual void del(Entity & entity)
     {
         del(entity.id());
         entity.setId(0);
     }
-
-    //! Crée dans la base de donnée la table associée l'entitée du manageur.
-    virtual void creer() =0;
 
     //! Supprime de la table en base de donnée l'entitée entity.
     virtual void del(const Entity & entity)
