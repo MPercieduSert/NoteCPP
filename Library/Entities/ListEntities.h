@@ -10,17 +10,17 @@
 #include "Entity.h"
 
 /*! \ingroup groupeEntity
- * \brief Classe patron des listes d'entitées utilisées par les méthodes de type GetList des manageurs.
+ * \brief Classe patron des listes d'entités utilisées par les méthodes de type GetList des manageurs.
  *
- * Classe patron des listes d'entitées utilisées par les méthodes de type GetList des manageurs.
- * Ces listes contiennent les pointeurs vers des entitées créée dynamiquement par les méthodes GetList des manageurs
+ * Classe patron des listes d'entités utilisées par les méthodes de type GetList des manageurs.
+ * Ces listes contiennent les pointeurs vers des entités créée dynamiquement par les méthodes GetList des manageurs
  * qu'il faut penser à supprimer après utilisation grâce à la méthode clear().
  */
 
 template<class T> class ListEntities
 {
 protected:
-    QList<T*> * m_ptr_list;     //! Pointeur sur la liste des pointeurs d'entitées.
+    QList<T*> * m_ptr_list;     //! Pointeur sur la liste des pointeurs d'entités.
     mutable typename QList<T*>::const_iterator m_iterator; //! Itérateur permettant de parcourir les éléments.
 
 public:
@@ -38,7 +38,7 @@ public:
     void append(T* entity)
         {m_ptr_list->append(entity);}
 
-    //! Retourne une référence constante sur la n-ième entitée de la listes.
+    //! Retourne une référence constante sur la n-ième entité de la listes.
     const T & at(int n) const
         {return *((*m_ptr_list).at(n));}
 
@@ -46,7 +46,7 @@ public:
     void begin() const
         {m_iterator = m_ptr_list->cbegin();}
 
-    //! Supprime toutes les entitées pointées par les pointeurs de la liste.
+    //! Supprime toutes les entités pointées par les pointeurs de la liste.
     void clear()
     {
         for(typename QList<T*>::const_iterator i = m_ptr_list->cbegin(); i != m_ptr_list->cend(); ++i) delete *i;
@@ -69,7 +69,7 @@ public:
     bool isNotEnd() const
         {return m_iterator != m_ptr_list->cend();}
 
-    //! Renvoie le nombre d'entitées de la liste.
+    //! Renvoie le nombre d'entités de la liste.
     int size() const
         {return m_ptr_list->size();}
 
@@ -81,7 +81,7 @@ public:
     ListEntities & operator ++()
         {++m_iterator; return *this;}
 
-    //! Ajoute un pointeur sur une entitée à la liste (ce pointeur doit être créer dynamiquement).
+    //! Ajoute un pointeur sur une entité à la liste (ce pointeur doit être créer dynamiquement).
     ListEntities & operator << (T * entity)
         {append(entity); return *this;}
 
@@ -98,10 +98,10 @@ public:
         return *this;
     }
 
-    //! Hydrate l'entitée entity avec les valeur de l'élément courant, puis place l'élément courant sur l'élément suivant de la liste.
+    //! Hydrate l'entité entity avec les valeur de l'élément courant, puis place l'élément courant sur l'élément suivant de la liste.
     ListEntities & operator >> (T & entity)         {entity<<**m_iterator; ++m_iterator;return *this;}
 
-    //! Renvoie un vecteur contenant une copie des entitées de la liste puis supprime les éléments de la liste et la liste.
+    //! Renvoie un vecteur contenant une copie des entités de la liste puis supprime les éléments de la liste et la liste.
     static QVector<T> vector(ListEntities<Entity> liste)
     {
         QVector<T> vector(liste.size());
@@ -115,7 +115,7 @@ public:
         return vector;
     }
 
-    //! Remplit le vecteur vecto avec une copie des entitées de la liste puis supprime les éléments de la liste et la liste.
+    //! Remplit le vecteur vecto avec une copie des entités de la liste puis supprime les éléments de la liste et la liste.
     static void vector(QVector<T> & vector, ListEntities<Entity> liste)
     {
         vector.resize(liste.size());

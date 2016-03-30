@@ -1,6 +1,6 @@
 #include "NewClasseDialog.h"
 
-NewClasseDialog::NewClasseDialog(QVector<Niveau> niveaux, const Annee & annee, QVector<Classe> classe, Niveau::affiche_alpha alpha, QWidget *parent) : QDialog(parent), m_annee(annee), m_classe(classe)
+NewClasseDialog::NewClasseDialog(QVector<Niveau> niveaux, const Annee & annee, QVector<Classe> classe, Classe::affichage alpha, QWidget *parent) : QDialog(parent), m_annee(annee), m_classe(classe)
 {
     m_anneeLabel = new QLabel("Creer une classe dans l'année "+m_annee.affiche());
     m_nbrEleveLabel = new QLabel("Nombre d'éléve de la classe :");
@@ -30,7 +30,7 @@ NewClasseDialog::NewClasseDialog(QVector<Niveau> niveaux, const Annee & annee, Q
 
     for(QVector<Classe>::const_iterator i = m_classe.cbegin(); i != m_classe.cend(); ++i)
     {
-        if((*i).niveau() == niv)
+        if((*i).idNiv() == niv)
         {
             liste.append((*i).num());
         }
@@ -77,7 +77,7 @@ void NewClasseDialog::niveauChangeNum(int)
     int niv = m_niveauComboBox->currentData().toInt();
     for(QVector<Classe>::const_iterator i = m_classe.cbegin(); i != m_classe.cend(); ++i)
     {
-        if((*i).niveau() == niv)
+        if((*i).idNiv() == niv)
         {
             liste.append((*i).num());
         }

@@ -1,23 +1,31 @@
 /*Auteur: PERCIE DU SERT Maxime
  *Date: 05/03/2016
  */
-
 #ifndef GROUPE_H
 #define GROUPE_H
 
-#include "Entity.h"
+#include "AttributEntityAlias.h"
+#include "EntityNom.h"
+#include "InfoEntity.h"
+
+/*! \ingroup groupeInfoEntity
+ * \brief Information sur l'entité Groupe.
+ */
+struct GroupeInfo
+{
+    static const int ID = InfoEntity::GroupeId;
+    static constexpr char Name[] {"Groupe"};
+    ATTRIBUT_5(IdAn,IdCl,Alpha,Nom,Type)
+};
 
 /*! \ingroup groupeEntity
- * \brief Représentation de l'entitée Groupe.
+ * \brief Représentation de l'entité Groupe.
  */
-
-class Groupe : public TypeNomEntity, public EntityTemp<IdentifiantEntity::GroupeId,6,Groupe>, public IdAnNullAttribut, public IdClNullAttribut, public AlphaAttribut
+class Groupe : public TypeNomEntity<Groupe,GroupeInfo>, public IdAnNullAttribut, public IdClNullAttribut, public AlphaAttribut
 {
 public:
     enum grPour {GrAnnee = 0,
                  GrClasse =1};
-
-    POS_5_ATT(IdAn,IdCl,Alpha,Nom,Type)
 
     //! Constructeur par defaut.
     Groupe(int id = 0)
@@ -42,7 +50,7 @@ public:
             {setIdAn(cle);}
     }
 
-    //! Teste si l'entitée est valide.
+    //! Teste si l'entité est valide.
     bool isValid() const
     {return TypeNomEntity::isValid()
                 && IdAnNullAttribut::valide()
@@ -51,7 +59,7 @@ public:
                 && ((idAn() > 0 && idCl() == 0) || (idAn() == 0 && idCl() > 0));}
 
 protected:
-    //! Test d'égalité entre cette entitée et celle transmise en argument.
+    //! Test d'égalité entre cette entité et celle transmise en argument.
     bool egal(const Groupe & entity) const
     {
         return TypeNomEntity::egal(entity)
@@ -60,7 +68,7 @@ protected:
                 && (alpha() == entity.alpha());
     }
 
-    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
     void set(const Groupe & entity)
     {
         TypeNomEntity::set(entity);

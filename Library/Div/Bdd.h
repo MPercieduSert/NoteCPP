@@ -21,48 +21,59 @@
 #include "../Entities/Annee.h"
 #include "../Entities/Entity.h"
 #include "../Manager/AnneeManager.h"
-#include "../Manager/ArbreManager.h"
+#include "../Manager/ArbresManager.h"
+#include "../Manager/AttributManager.h"
+#include "../Manager/ClasseEleveManager.h"
+#include "../Manager/ClasseManager.h"
+#include "../Manager/CommentaireManager.h"
+#include "../Manager/DonneeManager.h"
+#include "../Manager/EleveManager.h"
+#include "../Manager/EtablissementManager.h"
+#include "../Manager/GroupeManager.h"
+#include "../Manager/NiveauManager.h"
+#include "../Manager/RelationsManager.h"
+#include "../Manager/SourceManager.h"
+#include "../Manager/TypeNiveauManager.h"
 
 class Bdd : public FileInterface
 {
 public:
-    static const int m_nbrEntity = 6;//! Nombre de type d'entity à gérer
+    static const int NbrEntity = InfoEntity::NbrEntity;//! Nombre de type d'entity à gérer
 
 protected:
     QSqlDatabase m_bdd;                 //! Connexion à la base de donnée.
     QSqlQuery m_requete;                //! Requéte commune aux manageurs.
-    Manager * m_managers[m_nbrEntity];  //! Tableau des manageurs.
+    Manager * m_managers[NbrEntity];    //! Tableau des manageurs.
 
-    AnneeManager m_anneeManager;
     AttributArbreManager m_attributArbreManager;
     CoursArbreManager m_coursArbreManager;
     DonneeArbreManager m_donneeArbreManager;
     EnonceArbreManager m_enonceArbreManager;
     ExerciceArbreManager m_exerciceArbreManager;
-
-    /*
-    AppreciationManager m_appreciationManager;
+    AnneeManager m_anneeManager;
     AttributManager m_attributManager;
-    Attribut_baremeManager m_attribut_baremeManager;
-    Attribut_exerciceManager m_attribut_exerciceManager;
-    BaremeManager m_baremeManager;
+    AttributCommentaireManager m_attributCommentaireManager;
     ClasseManager m_classeManager;
-    CoefficientManager m_coefficientManager;
+    ClasseEleveManager m_classeEleveManager;
     CommentaireManager m_commentaireManager;
-    ControleManager m_controleManager;
-    Controle_exerciceManager m_controle_exerciceManager;
+    CommentaireClasseManager m_commentaireClasseManager;
+    CommentaireEleveManager m_commentaireEleveManager;
+    CommentaireGroupeManager m_commentaireGroupeManager;
+    DonneeManager m_donneeManager;
+    DonneeClasseManager m_donneeClasseManager;
+    DonneeEleveManager m_donneeEleveManager;
+    DonneeEtablissementManager m_donneeEtablissementManager;
+    DonneeNiveauManager m_donneeNiveauManager;
+    DonneeSourceManager m_donneeSourceManager;
     EleveManager m_eleveManager;
-    Eleve_groupeManager m_eleve_groupeManager;
-    ExerciceManager m_exerciceManager;
+    EtablissementManager m_etablissementManager;
+    EtablissementNiveauManager m_etablissementNiveauManager;
     GroupeManager m_groupeManager;
-    NoteManager m_noteManager;
-    NumControleManager m_numControleManager;
+    GroupeEleveManager m_groupeEleveManager;
     NiveauManager m_niveauManager;
-    PointManager m_pointManager;
+    NiveauPrecedentManager m_niveauPrecedentManager;
     SourceManager m_sourceManager;
-    TypeControleManager m_typeControleManager;
-    TypeGroupeManager m_typeGroupeManager;
-    TypeNiveauManager m_typeNiveauManager;*/
+    TypeNiveauManager m_typeNiveauManager;
 
 public:
     //! Constructeur. Donner en argument le type ainsi que le chemin de la base de donnée.
@@ -75,10 +86,10 @@ public:
     void affError(const QSqlQuery & query) const;
 
     //! Retourne le nom de la classe.
-    QString afficheClasse(const Classe & classe);//, Niveau::affiche_alpha alpha = Niveau::Numeric);
+    QString afficheClasse(const Classe & classe, Classe::affichage alpha = Classe::Numeric);
 
-    //! Retourne le nom de la classe d'identifiant idClasse.
-    QString afficheClasse(int idClasse);//, Niveau::affiche_alpha alpha = Niveau::Numeric);
+    /*//! Retourne le nom de la classe d'identifiant idClasse.
+    QString afficheClasse(int idClasse);//, Niveau::affiche_alpha alpha = Niveau::Numeric);*/
 
     //! Vérifie si le fichier de chemin name existe et est un fichier de base de donnée valide, si c'est le cas,
     //! le fichier de la base de donnée est remplacé par une copie du fichier de chemin name.
@@ -88,14 +99,14 @@ public:
     bool creer();
 
     //! Renvoie une réfrence sur la base de donnée.
-    QSqlDatabase &db() const
+    QSqlDatabase &db()
         {return m_bdd;}
 
     //! Teste si le fichier de base de donnée existe.
     bool exists() const
         {return QFile::exists(m_fileName);}
 
-    //! Teste s'il existe une entitée de même identifiant que entity en base de donnée.
+    //! Teste s'il existe une entité de même identifiant que entity en base de donnée.
     bool exists(const Entity & entity)
     {
         if(entity.isNew())
@@ -108,41 +119,41 @@ public:
         }
     }
 
-    //! Teste s'il existe une entitée ayant les mêmes valeurs d'attributs uniques que entity en base de donnée.
+    //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que entity en base de donnée.
     bool existsUnique(Entity & entity)
         {return getManager(entity.idEntity())->existsUnique(entity);}
 
-    //! Hydrate l'entitée entity avec les valeurs des attributs de l'entitée enregistrées en base de donnée
+    //! Hydrate l'entité entity avec les valeurs des attributs de l'entité enregistrées en base de donnée
     //! ayant le même identifiant que entity.
     //! Retourne True si l'opération s'est correctement déroulée.
     bool get(Entity & entity)
         {return getManager(entity.idEntity())->get(entity);}
 
-    //! Renvoie la liste des entitées de la table d'identifiant idEntity ordonnée suivant la colonne d'identifiant ordre.
-    ListEntities<Entity> getList(Entity::entityId idEntity, int ordre = Entity::position::IdPos)
+    //! Renvoie la liste des entités de la table d'identifiant idEntity ordonnée suivant la colonne d'identifiant ordre.
+    ListEntities<Entity> getList(int idEntity, int ordre)
         {return getManager(idEntity)->getList(ordre);}
 
-    //! Renvoie la liste des entitées de la table d'identifiant idEntity vérifiant la condition,
+    //! Renvoie la liste des entités de la table d'identifiant idEntity vérifiant la condition,
     //! valeur de la colonne d'identifiant cle = value, ordonnée suivant la colonne d'identifiant ordre.
-    ListEntities<Entity> getList(Entity::entityId idEntity, int cle, const QVariant & value, int order = Entity::position::IdPos)
+    ListEntities<Entity> getList(int idEntity, int cle, const QVariant & value, int order)
         {return getManager(idEntity)->getList(cle, value, order);}
 
-    //! Renvoie la liste des entitées de la table d'identifiant idEntity vérifiant la condition,
+    //! Renvoie la liste des entités de la table d'identifiant idEntity vérifiant la condition,
     //! valeur de la colonne d'identifiant cle = value, ordonnée suivant les colonnes d'identifiant ordre1 puis ordre2.
-    ListEntities<Entity> getList(Entity::entityId idEntity, int cle, const QVariant & value, int order1, int order2)
+    ListEntities<Entity> getList(int idEntity, int cle, const QVariant & value, int order1, int order2)
         {return getManager(idEntity)->getList(cle, value, order1, order2);}
 
-    //! Renvoie la liste des entitées de la table d'identifiant idEntity vérifiant les deux conditions,
+    //! Renvoie la liste des entités de la table d'identifiant idEntity vérifiant les deux conditions,
     //! valeur de la colonne d'identifiant cle1 = value1 et valeur de la colonne d'identifiant cle2 = value2,
     //! ordonnée suivant la colonne d'identifiant ordre.
-    ListEntities<Entity> getList(Entity::entityId idEntity, int cle1, int cle2, const QVariant & value1, const QVariant & value2, int order = Entity::position::IdPos)
+    ListEntities<Entity> getList(int idEntity, int cle1, int cle2, const QVariant & value1, const QVariant & value2, int order)
         {return getManager(idEntity)->getList(cle1, cle2, value1, value2, order);}
 
     //! Renvoie un pointeur sur le manager d'identifiant idEntity.
-    Manager * getManager(Entity::entityId idEntity)
+    Manager * getManager(int idEntity)
         {return m_managers[idEntity];}
 
-    //! Hydrate l'entitée entity avec les valeurs des attributs de l'entitée enregistrées en base de donnée
+    //! Hydrate l'entité entity avec les valeurs des attributs de l'entité enregistrées en base de donnée
     //! ayant les mêmes valeurs uniques.
     //! Retourne True si l'opération s'est correctement déroulée.
     bool getUnique(Entity & entity)
@@ -163,11 +174,11 @@ public:
     }
 
     //! Enregistre l'entity dans la base de donnée.
-    bool save(Entity & entity)
+    void save(Entity & entity)
         {return getManager(entity.idEntity())->save(entity);}
 
     //! Enregistre l'entity dans la base de donnée.
-    bool save(const Entity & entity)
+    void save(const Entity & entity)
         {return getManager(entity.idEntity())->save(entity);}
 
     //! Transmet la connexion à la base de donnée aux managers.

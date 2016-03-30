@@ -1,34 +1,78 @@
 #include "Bdd.h"
 
 Bdd::Bdd(const QString & dbtype, const QString &fileName) : FileInterface(fileName,"Data Base files (*.db)"),
-    m_bdd(QSqlDatabase::addDatabase(dbtype))
+   m_bdd(QSqlDatabase::addDatabase(dbtype)),
+   m_attributArbreManager(m_requete),
+   m_coursArbreManager(m_requete),
+   m_donneeArbreManager(m_requete),
+   m_enonceArbreManager(m_requete),
+   m_exerciceArbreManager(m_requete),
+   m_anneeManager(m_requete),
+   m_attributManager(m_requete),
+   m_attributCommentaireManager(m_requete),
+   m_classeManager(m_requete),
+   m_classeEleveManager(m_requete),
+   m_commentaireManager(m_requete),
+   m_commentaireClasseManager(m_requete),
+   m_commentaireEleveManager(m_requete),
+   m_commentaireGroupeManager(m_requete),
+   m_donneeManager(m_requete),
+   m_donneeClasseManager(m_requete),
+   m_donneeEleveManager(m_requete),
+   m_donneeEtablissementManager(m_requete),
+   m_donneeNiveauManager(m_requete),
+   m_donneeSourceManager(m_requete),
+   m_eleveManager(m_requete),
+   m_etablissementManager(m_requete),
+   m_etablissementNiveauManager(m_requete),
+   m_groupeManager(m_requete),
+   m_groupeEleveManager(m_requete),
+   m_niveauManager(m_requete),
+   m_niveauPrecedentManager(m_requete),
+   m_sourceManager(m_requete),
+   m_typeNiveauManager(m_requete)
 {
     m_bdd.setDatabaseName(fileName);
 
-    m_managers[Entity::AttributArbreId] = &m_attributArbreManager(m_requete);
-    m_managers[Entity::CoursArbreId] = &m_coursArbreManager(m_requete);
-    m_managers[Entity::DonneeArbreId] = &m_donneeArbreManager(m_requete);
-    m_managers[Entity::EnonceArbreId] = &m_enonceArbreManager(m_requete);
-    m_managers[Entity::AnneeId] = &m_anneeManager(m_requete);
+    m_managers[InfoEntity::AttributArbreId] = &m_attributArbreManager;
+    m_managers[InfoEntity::CoursArbreId] = &m_coursArbreManager;
+    m_managers[InfoEntity::DonneeArbreId] = &m_donneeArbreManager;
+    m_managers[InfoEntity::EnonceArbreId] = &m_enonceArbreManager;
+    m_managers[InfoEntity::AnneeId] = &m_anneeManager;
+    m_managers[InfoEntity::AttributId] = &m_attributManager;
+    m_managers[InfoEntity::AttributCommentaireId] = &m_attributCommentaireManager;
+    m_managers[InfoEntity::ClasseId] = &m_classeManager;
+    m_managers[InfoEntity::ClasseEleveId] = &m_classeEleveManager;
+    m_managers[InfoEntity::CommentaireId] = &m_commentaireManager;
+    m_managers[InfoEntity::CommentaireClasseId] = &m_commentaireClasseManager;
+    m_managers[InfoEntity::CommentaireEleveId] = &m_commentaireEleveManager;
+    m_managers[InfoEntity::CommentaireGroupeId] = &m_commentaireGroupeManager;
+    m_managers[InfoEntity::DonneeId] = &m_donneeManager;
+    m_managers[InfoEntity::DonneeClasseId] = &m_donneeClasseManager;
+    m_managers[InfoEntity::DonneeEleveId] = &m_donneeEleveManager;
+    m_managers[InfoEntity::DonneeEtablissementId] = &m_donneeEtablissementManager;
+    m_managers[InfoEntity::DonneeSourceId] = &m_donneeSourceManager;
+    m_managers[InfoEntity::EleveId] = &m_eleveManager;
+    m_managers[InfoEntity::EtablissementId] = &m_etablissementManager;
+    m_managers[InfoEntity::EtablissementNiveauId] = &m_etablissementNiveauManager;
+    m_managers[InfoEntity::GroupeId] = &m_groupeManager;
+    m_managers[InfoEntity::GroupeEleveId] = &m_groupeEleveManager;
+    m_managers[InfoEntity::NiveauId] = &m_niveauManager;
+    m_managers[InfoEntity::NiveauPrecedentId] = &m_niveauPrecedentManager;
+    m_managers[InfoEntity::SourceId] = &m_sourceManager;
+    m_managers[InfoEntity::TypeNiveauId] = &m_typeNiveauManager;
 
     /*
     m_managers[Entity::AppreciationId] = &m_appreciationManager;
-    m_managers[Entity::AttributId] = &m_attributManager;
     m_managers[Entity::Attribut_baremeId] = &m_attribut_baremeManager;
     m_managers[Entity::Attribut_exerciceId] = &m_attribut_exerciceManager;
     m_managers[Entity::BaremeId] = &m_baremeManager;
-    m_managers[Entity::ClasseId] = &m_classeManager;
     m_managers[Entity::CoefficientId] = &m_coefficientManager;
-    m_managers[Entity::CommentaireId] = &m_commentaireManager;
     m_managers[Entity::ControleId] = &m_controleManager;
     m_managers[Entity::Controle_exerciceId] = &m_controle_exerciceManager;
-    m_managers[Entity::EleveId] = &m_eleveManager;
-    m_managers[Entity::Eleve_groupeId] = &m_eleve_groupeManager;
     m_managers[Entity::ExerciceId] = &m_exerciceManager;
-    m_managers[Entity::GroupeId] = &m_groupeManager;
     m_managers[Entity::NoteId] = &m_noteManager;
     m_managers[Entity::NumControleId] = &m_numControleManager;
-    m_managers[Entity::NiveauId] = &m_niveauManager;
     m_managers[Entity::PointId] = &m_pointManager;
     m_managers[Entity::SourceId] = &m_sourceManager;
     m_managers[Entity::TypeControleId] = &m_typeControleManager;
@@ -55,27 +99,27 @@ void Bdd::affError(const QSqlQuery & query) const
     }
 }
 
-QString Bdd::afficheClasse(const Classe & classe);//, Niveau::affiche_alpha alpha)
+QString Bdd::afficheClasse(const Classe & classe, Classe::affichage alpha)
 {
-    Niveau niveau(classe.niveau());
+    Niveau niveau(classe.idNiv());
     get(niveau);
     QString string(niveau.nom());
     if(classe.num() != 0)
     {
         switch (alpha)
         {
-        case Niveau::Sans:
+        case Classe::Sans:
             break;
-        case Niveau::Numeric:
+        case Classe::Numeric:
             string.append(QString::number(classe.num()));
             break;
-        case Niveau::AlphabeticMaj:
+        case Classe::AlphabeticMaj:
             if(0 < classe.num() && classe.num() < 27)
             {
                 string.append(QString("ABCDEFGHIJKLMOPQRSTUVWXYZ").at(classe.num()-1));
             }
             break;
-        case Niveau::AlphabeticMin:
+        case Classe::AlphabeticMin:
             if(0 < classe.num() && classe.num() < 27)
             {
                 string.append(QString("abcdefghijklmopqrstuvwxyz").at(classe.num()-1));
@@ -86,7 +130,7 @@ QString Bdd::afficheClasse(const Classe & classe);//, Niveau::affiche_alpha alph
     return string;
 }
 
-QString Bdd::afficheClasse(int idClasse);//, Niveau::affiche_alpha alpha)
+/* QString Bdd::afficheClasse(int idClasse);//, Niveau::affiche_alpha alpha)
 {
     Classe classe(idClasse);
     if(get(classe))
@@ -94,14 +138,15 @@ QString Bdd::afficheClasse(int idClasse);//, Niveau::affiche_alpha alpha)
         return afficheClasse(classe,alpha);
     }
     return QString("classe invalide identifiant:")+QString::number(idClasse);
-}
+}*/
 
 bool Bdd::copy(const QString & name)
 {
-    Bdd file(name, m_bdd.driverName());
-    if(file.exists() && file.isValid())
+    Bdd bdd(name, m_bdd.driverName());
+    if(bdd.exists() && bdd.isValid())
     {
-        return file.m_fileName.copy(m_fileName);
+        QFile file(name);
+        return file.copy(m_fileName);
     }
     else
     {

@@ -6,23 +6,24 @@
 #define MANAGERSQL_H
 
 #include "Manager.h"
+#include "ReqSql.h"
 
-/*! \ingroup groupeManager
+
+/*! \ingroup groupeBaseManager
  * \brief Classe template permettant d'instancier les différents manageurs.
  *
  * Classe template permettant d'instancier les différents manageurs.
  * Cette classe implémente les méthodes virtuelles pures de sa classe mère.
- * La classe Ent est la classe d'entitée de programmation
- * et la classe Lbdd est le lien avec les entitées en base de donnée.
+ * La classe Ent est la classe d'entité de programmation
+ * et la classe Link est le lien avec les entités en base de donnée.
  */
-
-template<class Lbdd> class ManagerSql : public Manager
+template<class Link> class ManagerSql : public Manager, public ReqSql
 {
-    typedef typename Lbdd::Ent Ent;
+public:
+    typedef typename Link::Ent Ent;
 
 protected:
-    QSqlQuery & m_requete;        //!< Objet executant les requétes sql du manageur.
-    Lbdd m_linkBdd;             //!< Lien.
+    Link m_link;             //!< Lien.
     const QString m_sqlAdd;     //!< Requéte sql d'insertion d'une ligne.
     const QString m_sqlDelete;  //!< Requéte sql de suppression d'une ligne
     const QString m_sqlExists;  //!< Requéte sql d'existence d'une ligne d'identifiant donné.
@@ -42,19 +43,19 @@ public:
     //! Destructeur.
     ~ManagerSql()  {}
 
-    //! Crée dans la base de donnée la table associée l'entitée du manageur.
+    //! Crée dans la base de donnée la table associée l'entité du manageur.
     void creer();
 
-    //! Teste s'il existe une entitée de même identifiant que entity en base de donnée.
+    //! Teste s'il existe une entité de même identifiant que entity en base de donnée.
     bool exists(const Entity & entity)
     {
         if(Ent::verifEntity(entity))
         {
-            m_requete.prepare(m_sqlExists);
-            m_requete.bindValue(0,entity.id());
+            prepare(m_sqlExists);
+            m_link.setId(entity,0);
             exec();
-            bool bb = m_requete.next();
-            m_requete.finish();
+            bool bb = next();
+            finish();
             return bb;
         }
         else
@@ -63,78 +64,78 @@ public:
         }
     }
 
-    //! Teste s'il existe une entitée ayant les mêmes valeurs d'attributs uniques que l'entitée entity en base de donnée.
-    //! Si le test est positif, l'identitfiant de l'entitée entity est remplacé par celui l'entitée en base de donnée
+    //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée.
+    //! Si le test est positif, l'identitfiant de l'entité entity est remplacé par celui l'entité en base de donnée
     //! ayant les mêmes valeurs d'attributs uniques.
     Manager::ExisteUni existsUnique(Entity & entity)
     {
-        return m_linkBdd.existsUnique(Ent::convert(entity));
+        return m_link.existsUnique(Ent::convert(entity));
     }
 
-    //! Teste s'il existe une entitée ayant les mêmes valeurs d'attributs uniques que entity en base de donnée.
+    //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que entity en base de donnée.
     Manager::ExisteUni existsUnique(const Entity & entity)
     {
-        return m_linkBdd.existsUnique(Ent::convert(entity));
+        return m_link.existsUnique(Ent::convert(entity));
     }
 
-    //! Hydrate l'entitée entity avec les valeurs des attributs de l'entitée enregistrée en base de donnée
+    //! Hydrate l'entité entity avec les valeurs des attributs de l'entité enregistrée en base de donnée
     //! ayant le même identifiant que entity.
     //! Retourne True si l'opération s'est correctement déroulée.
     bool get(Entity & entity)
     {
-        m_requete.prepare(m_sqlGet);
-        m_requete.bindValue(0,entity.id());
+        prepare(m_sqlGet);
+        m_link.setId(entity,0);
         exec();
-        if(m_requete.next())
+        if(next())
         {
-            m_linkBdd.fromRequete(Ent::convert(entity));
-            m_requete.finish();
+            m_link.fromRequete(Ent::convert(entity));
+            finish();
             return true;
         }
         else
         {
-            m_requete.finish();
+            finish();
             return false;
         }
     }
 
-    //! Renvoie la liste des entitées de la table ordonnée suivant la colonne d'identifiant ordre.
+    //! Renvoie la liste des entités de la table ordonnée suivant la colonne d'identifiant ordre.
     ListEntities<Entity> getList(int ordre)
     {
-        m_requete.prepare(m_sqlGetList.arg(Lbdd::Att[ordre]));
+        prepare(m_sqlGetList.arg(Link::attribut(ordre)));
         return listFormRequete();
     }
 
-    //! Renvoie la liste des entitées de la table vérifiant la condition,
+    //! Renvoie la liste des entités de la table vérifiant la condition,
     //! valeur de la colonne d'identifiant cle = value, ordonnée suivant la colonne d'identifiant ordre.
     ListEntities<Entity> getList(int cle, const QVariant & value, int ordre)
     {
-        m_requete.prepare(m_sqlGetList1Where1.arg(Lbdd::Att[cle], Lbdd::Att[ordre]));
-        m_requete.bindValue(0,value);
+        prepare(m_sqlGetList1Where1.arg(Link::attribut(cle), Link::attribut(ordre)));
+        bindValue(0,value);
         return listFormRequete();
     }
 
-    //! Renvoie la liste des entitées de la table vérifiant la condition,
+    //! Renvoie la liste des entités de la table vérifiant la condition,
     //! valeur de la colonne d'identifiant cle = value, ordonnée suivant les colonnes d'identifiant ordre1 puis ordre2.
     ListEntities<Entity> getList(int cle, const QVariant & value, int ordre1, int ordre2)
     {
-        m_requete.prepare(m_sqlGetList1Where2.arg(Lbdd::Att[cle], Lbdd::Att[ordre1], Lbdd::Att[ordre2]));
-        m_requete.bindValue(0,value);
+        prepare(m_sqlGetList1Where2.arg(Link::attribut(cle), Link::attribut(ordre1), Link::attribut(ordre2)));
+        bindValue(0,value);
         return listFormRequete();
     }
 
-    //! Renvoie la liste des entitées de la table vérifiant les deux conditions,
+    //! Renvoie la liste des entités de la table vérifiant les deux conditions,
     //! valeur de la colonne d'identifiant cle1 = value1 et valeur de la colonne d'identifiant cle2 = value2,
     //! ordonnée suivant la colonne d'identifiant ordre.
     ListEntities<Entity> getList(int cle1, int cle2, const QVariant & value1, const QVariant & value2, int ordre)
     {
-        m_requete.prepare(m_sqlGetList2Where1.arg(Lbdd::Att[cle1], Lbdd::Att[cle2], Lbdd::Att[ordre]));
-        m_requete.bindValue(0,value1);
-        m_requete.bindValue(1,value2);
+        prepare(m_sqlGetList2Where1.arg(Link::attribut(cle1), Link::attribut(cle2), Link::attribut(ordre)));
+        bindValue(0,value1);
+        bindValue(1,value2);
         return listFormRequete();
     }
 
-    //! Teste s'il y a dans la base de donnée une entitée ayant exactement les mêmes attributs (identifiant compris).
+    //! Teste s'il y a dans la base de donnée une entité ayant exactement les mêmes attributs (identifiant compris).
     bool sameInBdd(const Entity &entity)
     {
         Ent entityT(entity.id());
@@ -149,84 +150,60 @@ public:
     }
 
 protected:
-    //! Insert la nouvelle entitée entity dans la base de donnée
-    //! et assigne l'identifiant de l'entitée insérée en base de donnée à entity.
+    //! Insert la nouvelle entité entity dans la base de donnée
+    //! et assigne l'identifiant de l'entité insérée en base de donnée à entity.
     void add(Entity & entity)
     {
-        m_requete.prepare(m_sqlAdd);
-        m_linkBdd.bindValues(Ent::convert(entity));
+        prepare(m_sqlAdd);
+        m_link.bindValues(Ent::convert(entity));
         exec();
         exec(m_sqllastId);
-        entity.setId(m_requete.value(0).toInt());
-        m_requete.finish();
+        entity.setId(toInt());
+        finish();
     }
 
-    //! Insert la nouvelle entitée entity dans la base de donnée.
+    //! Insert la nouvelle entité entity dans la base de donnée.
     void add(const Entity & entity)
     {
-        m_requete.prepare(m_sqlAdd);
-        m_linkBdd.bindValues(Ent::convert(entity));
-        exec();
-        m_requete.finish();
+        prepare(m_sqlAdd);
+        m_link.bindValues(Ent::convert(entity));
+        execFinish();
     }
 
-    //! Lance une execption contenant le message d'erreur de la derniere requète SQL exéctuter.
-    void affError() const;
-
-    //! Supprime de la table en base de donnée l'entitée d'identifiant id.
+    //! Supprime de la table en base de donnée l'entité d'identifiant id.
     void del(int id)
     {
-        m_requete.prepare(m_sqlDelete);
-        m_requete.bindValue(0,id);
-        exec();
-        m_requete.finish();
+        prepare(m_sqlDelete);
+        bindValue(0,id);
+        execFinish();
     }
 
-    //! Exécute la dernière requète préparée et lance une execption si celle-ci n'est pas valide.
-    void exec()
-    {
-        if(m_requete.exec())
-        {
-            affError();
-        }
-    }
-
-    //! Exécute la requéte SQL donnée en argument et lance une execption si celle-ci n'est pas valide.
-    void exec(const QString & requete)
-    {
-        if(m_requete.exec(requete))
-        {
-            affError();
-        }
-    }
-
-    //! Construit la liste des entitées correspondant une requète de type sqlGetList.
+    //! Construit la liste des entités correspondant une requète de type sqlGetList.
     ListEntities<Entity> listFormRequete()
     {
         exec();
         ListEntities<Entity> liste;
-        while(m_requete.next())
+        while(next())
         {
-            liste.append(m_linkBdd.newFromRequete());
+            liste.append(m_link.newFromRequete());
         }
-        m_requete.finish();
+        finish();
         return liste;
     }
 
-    //! Message d'erreurs si l'entitée entity n'est pas valide.
+    //! Message d'erreurs si l'entité entity n'est pas valide.
     QString messageErreurs(const Entity & entity) const;
 
-    //! Message d'erreurs s'il existe déjà en base de donnée une entitée ayant les mêmes valeurs d'attributs uniques que entity.
+    //! Message d'erreurs s'il existe déjà en base de donnée une entité ayant les mêmes valeurs d'attributs uniques que entity.
     QString messageErreursUnique(const Entity & entity) const;
 
-    //! Met à jour l'entitée entity en base de donnée.
+    //! Met à jour l'entité entity en base de donnée.
     void modify(const Entity & entity)
     {
-        m_requete.prepare(m_sqlModify);
-        m_linkBdd.bindValues(Ent::convert(entity));
-        m_requete.bindValue(Ent::IdPos,entity.id());
-        exec();
-        m_requete.finish();
+        prepare(m_sqlModify);
+        m_link.bindValues(Ent::convert(entity));
+        m_link.setId(entity);
+        execFinish();
     }
 
     //! Renvoie la chaine des noms des attributs séparés par une virgule sans l'identifiant.
@@ -264,9 +241,9 @@ protected:
     const QString writeStringModifyQuery() const;
 };
 
-template<class Lbdd> ManagerSql<Lbdd>::ManagerSql(QSqlQuery & req)
-: m_requete(req),
-  m_linkBdd(m_requete),
+template<class Link> ManagerSql<Link>::ManagerSql(QSqlQuery & req)
+: ReqSql(req),
+  m_link(req),
   m_sqlAdd(writeStringAddQuery()),
   m_sqlExists(writeStringExistsQuery()),
   m_sqlGet(writeStringGetQuery()),
@@ -280,136 +257,136 @@ template<class Lbdd> ManagerSql<Lbdd>::ManagerSql(QSqlQuery & req)
     m_requete.setForwardOnly(true);
 }
 
-template<class Lbdd> void ManagerSql<Lbdd>::affError() const
+template<class Link> void ManagerSql<Link>::creer()
 {
-    QSqlError err(m_requete.lastError());
-    throw std::invalid_argument(err.text().append("\n"+err.nativeErrorCode()+"\n"+m_requete.lastQuery()).toStdString());
+    QString sql(Link::SqlCreate);
+    sql = sql.arg(Link::Table);
+    for(int i = 0; i != Link::NbrAtt; ++i)
+        sql = sql.arg(Link::attribut(i));
+    for(int i = 0; i != Link::NbrCleExt; ++i)
+        sql = sql.arg(Link::CleExt[i]);
+    execFinish(sql);
 }
 
-template<class Lbdd> void ManagerSql<Lbdd>::creer()
+template<class Link> QString ManagerSql<Link>::messageErreurs(const Entity & /*entity*/) const
 {
-    m_linkBdd.creer();
-}
-
-template<class Lbdd> QString ManagerSql<Lbdd>::messageErreurs(const Entity & entity) const
-{
-    QString message("Entitée invalide:");
-    message.append(Ent::Name).append(" d'identifiant:").append(QString::number(entity.idEntity())).append("\n");
+    QString message("Entité invalide:");
+    /*message.append(Ent::Name).append(" d'identifiant:").append(QString::number(entity.idEntity())).append("\n");
     if(!entity.erreurs().isEmpty())
     {
         message.append("\n Erreurs :\n");
         QPair<int,int> erreur;
         foreach (erreur, entity.erreurs())
         {
-            message.append(QString::number(erreur.second)+" :"+Ent::Att.at(erreur.second)+"\n");
+            message.append(QString::number(erreur.second)+" :"+Ent::attribut.at(erreur.second)+"\n");
         }
     }
     else
     {
         message.append("/n pas d'erreurs");
-    }
+    }*/
     return message;
 }
 
-template<class Lbdd> QString ManagerSql<Lbdd>::messageErreursUnique(const Entity & entity) const
+template<class Link> QString ManagerSql<Link>::messageErreursUnique(const Entity & entity) const
 {
-    QString message("Entitée ayant les même valeurs d'attributs unique déjà présente dans la base de donnée.\n");
-    message.append(Ent::Name).append(" d'identifiant:").append(QString::number(entity.idEntity())).append("\n");
+    QString message("Entité ayant les même valeurs d'attributs unique déjà présente dans la base de donnée.\n");
+    message.append(Ent::name()).append(" d'identifiant:").append(QString::number(entity.idEntity())).append("\n");
     //message.append("Valeurs Uniques:\n");
     //for(int i = 0; i != Ent::NbrAttUn; ++i)
-    //    message.append(Ent::Att[Ent::AttUn[i]]).append("\n");
+    //    message.append(Ent::attribut[Ent::attributUn[i]]).append("\n");
     return message;
 }
 
-template<class Lbdd> const QString ManagerSql<Lbdd>::writeColonne() const
+template<class Link> const QString ManagerSql<Link>::writeColonne() const
 {
     QString colonnes;
-    for(int i = 1; i != Lbdd::NbrAtt-1; ++i) colonnes.append(Lbdd::Att[i]).append(",");
+    for(int i = 1; i != Link::NbrAtt; ++i) colonnes.append(Link::attribut(i)).append(",");
     colonnes.chop(1);
     return colonnes;
 }
 
-template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringAddQuery() const
+template<class Link> const QString ManagerSql<Link>::writeStringAddQuery() const
 {
     QString sql("INSERT INTO ");
-    sql.append(Lbdd::Table).append(" (").append(writeColonne()).append(") VALUES (");
-    for(int i = 0; i != Lbdd::NbrAtt; ++i) sql.append("?,");
+    sql.append(Link::Table).append(" (").append(writeColonne()).append(") VALUES (");
+    for(int i = 1; i != Link::NbrAtt; ++i) sql.append("?,");
     sql.chop(1);
     sql.append(")");
     sql.squeeze();
     return sql;
 }
 
-template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringDeleteQuery() const
+template<class Link> const QString ManagerSql<Link>::writeStringDeleteQuery() const
 {
     QString sql("DELETE FROM ");
-    sql.append(Lbdd::Table).append(" WHERE ID=?");
+    sql.append(Link::Table).append(" WHERE ID=?");
     sql.squeeze();
     return sql;
 }
 
 
-template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringExistsQuery() const
+template<class Link> const QString ManagerSql<Link>::writeStringExistsQuery() const
 {
     QString sql("SELECT 1 FROM ");
-    sql.append(Lbdd::Table).append(" WHERE ID=? LIMIT 1");
+    sql.append(Link::Table).append(" WHERE ID=? LIMIT 1");
     sql.squeeze();
     return sql;
 }
 
-template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetQuery() const
+template<class Link> const QString ManagerSql<Link>::writeStringGetQuery() const
 {
     QString sql("SELECT ");
-    sql.append(writeColonne()).append(" FROM ").append(Lbdd::Table).append(" WHERE ID=?");
+    sql.append(writeColonne()).append(",ID FROM ").append(Link::Table).append(" WHERE ID=?");
     sql.squeeze();
     return sql;
 }
 
-template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetListQuery() const
+template<class Link> const QString ManagerSql<Link>::writeStringGetListQuery() const
 {
     QString sql("SELECT ");
-    sql.append(writeColonne()).append(",ID FROM ").append(Lbdd::Table).append(" ORDER BY %1");
+    sql.append(writeColonne()).append(",ID FROM ").append(Link::Table).append(" ORDER BY %1");
     sql.squeeze();
     return sql;
 }
 
-template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetList1Where1Query() const
+template<class Link> const QString ManagerSql<Link>::writeStringGetList1Where1Query() const
 {
     QString sql("SELECT ");
-    sql.append(writeColonne()).append(",ID FROM ").append(Lbdd::Table).append(" WHERE %1=? ORDER BY %2");
+    sql.append(writeColonne()).append(",ID FROM ").append(Link::Table).append(" WHERE %1=? ORDER BY %2");
     sql.squeeze();
     return sql;
 }
 
-template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetList1Where2Query() const
+template<class Link> const QString ManagerSql<Link>::writeStringGetList1Where2Query() const
 {
     QString sql("SELECT ");
-    sql.append(writeColonne()).append(",ID FROM ").append(Lbdd::Table).append(" WHERE %1=? ORDER BY %2,%3");
+    sql.append(writeColonne()).append(",ID FROM ").append(Link::Table).append(" WHERE %1=? ORDER BY %2,%3");
     sql.squeeze();
     return sql;
 }
 
-template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringGetList2Where1Query() const
+template<class Link> const QString ManagerSql<Link>::writeStringGetList2Where1Query() const
 {
     QString sql("SELECT ");
-    sql.append(writeColonne()).append(",ID FROM ").append(Lbdd::Table).append(" WHERE %1=?,%2=? ORDER BY %3");
+    sql.append(writeColonne()).append(" FROM ").append(Link::Table).append(",ID WHERE %1=?,%2=? ORDER BY %3");
     sql.squeeze();
     return sql;
 }
 
-template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringLastIdQuery() const
+template<class Link> const QString ManagerSql<Link>::writeStringLastIdQuery() const
 {
     QString sql("SELECT last_insert_rowid() FROM ");
-    sql.append(Lbdd::Table);
+    sql.append(Link::Table);
     sql.squeeze();
     return sql;
 }
 
-template<class Lbdd> const QString ManagerSql<Lbdd>::writeStringModifyQuery() const
+template<class Link> const QString ManagerSql<Link>::writeStringModifyQuery() const
 {
     QString sql("UPDATE ");
-    sql.append(Lbdd::Table).append(" SET ");
-    for(int i = 0; i != Lbdd::NbrAtt; ++i) sql.append(Lbdd::Att[i]).append("=?,");
+    sql.append(Link::Table).append(" SET ");
+    for(int i = 0; i != Link::NbrAtt-1; ++i) sql.append(Link::attribut(i)).append("=?,");
     sql.chop(1);
     sql.append("WHERE ID=?");
     sql.squeeze();

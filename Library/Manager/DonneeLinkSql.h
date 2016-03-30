@@ -5,64 +5,45 @@
 #ifndef DONNEELINKSQL_H
 #define DONNEELINKSQL_H
 
-#include "LinkSql.h"
-#include "ArbreLinkSql.h"
-#include "../Entities/Donnee.h"
+#include "AttributsLinkSql.h"
+#include "LinkSqlNom.h"
+#include "LinkSqlUnique.h"
+#include "DonneeInfoSql.h"
 
 /*! \ingroup groupeLinkSql
- * \brief Lien entre l'entitée Donnee de programation et sa représentation en base de donnée.
+ * \brief Lien entre l'entité Donnee de programation et sa représentation en base de donnée.
  */
-
-class DonneeLinkSql : public LinkSql<Donnee>
+class DonneeLinkSql : public LinkSqlNoUnique<TypeNomLinkSql<Donnee,DonneeInfoSql> >, public CardAttributSql<Donnee>, public SurAttributSql<Donnee>, public TpValAttributSql<Donnee>
 {
-    USING_LINKSQL(Donnee)
 public:
     //! Construteur, transmettre en argument l'objet de requète utilisée par le manageur.
     DonneeLinkSql(QSqlQuery & requete)
-        : LinkSql<Donnee>(requete)
+        : ReqSql(requete)
         {}
 
     //! Transmet les valeurs des attributs à la requète SQL préparée.
-    void bindValues(const Donnee & donnee)
+    void bindValues(const Donnee & entity)
     {
-        m_requete.bindValue(Donnee::CardPos,donnee.card());
-        m_requete.bindValue(Donnee::NomPos,donnee.nom());
-        m_requete.bindValue(Donnee::SurPos,donnee.sur());
-        m_requete.bindValue(Donnee::TypePos,donnee.type());
-        m_requete.bindValue(Donnee::TpValPos,donnee.tpVal());
+        LinkSqlNoUnique::bindValues(entity);
+        setCard(entity);
+        setSur(entity);
+        setTpVal(entity);
     }
 
-    //! Crée la table en base de donnée et renvoie vrai si la création de la table s'est correctement déroulée.
-    void creer();
-
-    //! Renvoie Aucun, car il n'y a pas de condition d'unicité.
-    Manager::ExisteUni existsUnique(const Donnee & /*entity*/)
-        {return Manager::Aucun;}
-
-    //! Renvoie Aucun, car il n'y a pas de condition d'unicité.
-    Manager::ExisteUni existsUnique(Donnee & /*entity*/)
-        {return Manager::Aucun;}
-
-    //! Hydrate l'entitée entity avec à partir de la requète.
-    void fromRequete(Donnee & donnee)
+    //! Hydrate l'entité entity avec à partir de la requète.
+    void fromRequete(Donnee & entity) const
     {
-        donnee.setCard(m_requete.value(Donnee::CardPos).toInt());
-        donnee.setNom(m_requete.value(Donnee::NomPos).toString());
-        donnee.setSur(m_requete.value(Donnee::SurPos).toInt());
-        donnee.setType(m_requete.value(Donnee::TypePos).toInt());
-        donnee.setTpVal(m_requete.value(Donnee::TpValPos).toInt());
+        LinkSqlNoUnique::fromRequete(entity);
+        entity.setCard(card());
+        entity.setSur(sur());
+        entity.setTpVal(tpVal());
     }
 
-    //! Crée dynamiquement une nouvelle entitée de type T, l'hydrate à partir de la requète SQL.
-    //! Puis retourne un  pointeur vers cette nouvelle entitée.
-    Donnee * newFromRequete()
+    //! Crée dynamiquement une nouvelle entité de type T, l'hydrate à partir de la requète SQL.
+    //! Puis retourne un  pointeur vers cette nouvelle entité.
+    Donnee * newFromRequete() const
     {
-        return new Donnee(m_requete.value(Donnee::CardPos).toInt(),
-                         m_requete.value(Donnee::NomPos).toString(),
-                         m_requete.value(Donnee::SurPos).toInt(),
-                         m_requete.value(Donnee::TypePos).toInt(),
-                         m_requete.value(Donnee::TpValPos).toInt(),
-                         m_requete.value(Donnee::IdPos).toInt());
+        return new Donnee(card(),nom(),sur(),type(),tpVal(),id());
     }
 };
 

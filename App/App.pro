@@ -14,7 +14,6 @@ QT  += core gui sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 SOURCES += main.cpp \
-    ../Library/Delegate/Delegate.cpp \
     ../Library/Delegate/ListeEleveDelegate.cpp \
     ../Library/Dialog/NewAnneeDialog.cpp \
     ../Library/Dialog/NewClasseDialog.cpp \
@@ -24,32 +23,29 @@ SOURCES += main.cpp \
     ../Library/Div/FileInterface.cpp \
     ../Library/Div/Tree.cpp \
     ../Library/Div/TreeItem.cpp \
-#    ../Library/Entities/Annee.cpp \
-#    ../Library/Entities/Appreciation.cpp \
-#    ../Library/Entities/Attribut.cpp \
-#    ../Library/Entities/Attribut_bareme.cpp \
-#    ../Library/Entities/Attribut_exercice.cpp \
+    ../Library/Entities/Annee.cpp \
+    ../Library/Entities/Attribut.cpp \
 #    ../Library/Entities/Bareme.cpp \
-#    ../Library/Entities/Classe.cpp \
+    ../Library/Entities/Classe.cpp \
+    ../Library/Entities/ClasseEleve.cpp \
 #    ../Library/Entities/Coefficient.cpp \
-#    ../Library/Entities/Commentaire.cpp \
+    ../Library/Entities/Commentaire.cpp \
 #    ../Library/Entities/Controle.cpp \
-#    ../Library/Entities/Controle_exercice.cpp \
-#    ../Library/Entities/Eleve.cpp \
-#    ../Library/Entities/Eleve_groupe.cpp \
+    ../Library/Entities/Donnee.cpp \
+    ../Library/Entities/Eleve.cpp \
+    ../Library/Entities/Etablissement.cpp \
     ../Library/Entities/Entity.cpp \
-#    ../Library/Entities/EntityAnnee.cpp \
 #    ../Library/Entities/Exercice.cpp \
-#    ../Library/Entities/Groupe.cpp \
-#    ../Library/Entities/ListEntities.cpp \
-#    ../Library/Entities/Niveau.cpp \
+    ../Library/Entities/Groupe.cpp \
+    ../Library/Entities/ListEntities.cpp \
+    ../Library/Entities/Niveau.cpp \
 #    ../Library/Entities/Note.cpp \
 #    ../Library/Entities/NumControle.cpp \
 #    ../Library/Entities/Point.cpp \
-#    ../Library/Entities/Source.cpp \
+    ../Library/Entities/Source.cpp \
 #    ../Library/Entities/TypeControle.cpp \
 #    ../Library/Entities/TypeGroupe.cpp \
-#    ../Library/Entities/TypeNiveau.cpp \
+    ../Library/Entities/TypeNiveau.cpp \
     ../Library/Fen/Fen.cpp \
     ../Library/Fen/FenExo.cpp \
     ../Library/Fen/FenFoundFile.cpp \
@@ -100,7 +96,6 @@ SOURCES += main.cpp \
     ../Library/Xml/XmlWriter.cpp
 
 HEADERS += \
-    ../Library/Delegate/Delegate.h \
     ../Library/Delegate/ListeEleveDelegate.h \
     ../Library/Dialog/NewAnneeDialog.h \
     ../Library/Dialog/NewClasseDialog.h \
@@ -110,32 +105,39 @@ HEADERS += \
     ../Library/Div/FileInterface.h \
     ../Library/Div/Tree.h \
     ../Library/Div/TreeItem.h \
-#    ../Library/Entities/Annee.h \
-#    ../Library/Entities/Appreciation.h \
-#    ../Library/Entities/Attribut.h \
-#    ../Library/Entities/Attribut_bareme.h \
-#    ../Library/Entities/Attribut_exercice.h \
+    ../Library/Entities/Annee.h \
+    ../Library/Entities/Arbre.h \
+    ../Library/Entities/Arbres.h \
+    ../Library/Entities/Attribut.h \
+    ../Library/Entities/AttributEntity.h \
+    ../Library/Entities/AttributEntityAlias.h \
+    ../Library/Entities/AttributEntityMacroAlias.h \
 #    ../Library/Entities/Bareme.h \
-#    ../Library/Entities/Classe.h \
+    ../Library/Entities/Classe.h \
+    ../Library/Entities/ClasseEleve.h \
 #    ../Library/Entities/Coefficient.h \
-#    ../Library/Entities/Commentaire.h \
+    ../Library/Entities/Commentaire.h \
 #    ../Library/Entities/Controle.h \
-#    ../Library/Entities/Controle_exercice.h \
-#    ../Library/Entities/Eleve.h \
-#    ../Library/Entities/Eleve_groupe.h \
+    ../Library/Entities/Donnee.h \
+    ../Library/Entities/Eleve.h \
     ../Library/Entities/Entity.h \
-#    ../Library/Entities/EntityAnnee.h \
+    ../Library/Entities/EntityDivers.h \
+    ../Library/Entities/EntityNom.h \
+    ../Library/Entities/EntityRelation.h \
+    ../Library/Entities/Etablissement.h \
 #    ../Library/Entities/Exercice.h \
-#    ../Library/Entities/Groupe.h \
-#    ../Library/Entities/ListEntities.h \
-#    ../Library/Entities/Niveau.h \
+    ../Library/Entities/Groupe.h \
+    ../Library/Entities/ListEntities.h \
+    ../Library/Entities/Niveau.h \
 #    ../Library/Entities/Note.h \
 #    ../Library/Entities/NumControle.h \
 #    ../Library/Entities/Point.h \
-#    ../Library/Entities/Source.h \
+    ../Library/Entities/Relation.h \
+    ../Library/Entities/Relations.h \
+    ../Library/Entities/Source.h \
 #    ../Library/Entities/TypeControle.h \
 #    ../Library/Entities/TypeGroupe.h \
-#    ../Library/Entities/TypeNiveau.h \
+    ../Library/Entities/TypeNiveau.h \
     ../Library/Fen/Fen.h \
     ../Library/Fen/FenExo.h \
     ../Library/Fen/FenFoundFile.h \

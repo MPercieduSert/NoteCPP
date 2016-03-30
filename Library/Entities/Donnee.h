@@ -1,17 +1,27 @@
 /*Auteur: PERCIE DU SERT Maxime
  *Date: 26/02/2016
  */
-
 #ifndef DONNEE_H
 #define DONNEE_H
 
-#include "Entity.h"
+#include "AttributEntityAlias.h"
+#include "EntityNom.h"
+#include "InfoEntity.h"
+
+/*! \ingroup groupeInfoEntity
+ * \brief Information sur l'entité Donnée.
+ */
+struct DonneeInfo
+{
+    static const int ID = InfoEntity::DonneeId;
+    static constexpr char Name[] {"Donnee"};
+    ATTRIBUT_5(Card,Nom,Sur,Type,TpVal)
+};
 
 /*! \ingroup groupeEntity
- * \brief Représentation de l'entitée Donnee.
+ * \brief Représentation de l'entité Donnee.
  */
-
-class Donnee : public TypeNomEntity, public EntityTemp<IdentifiantEntity::DonneeId,6,Donnee>, public CardAttribut, public SurAttribut, public TpValAttribut
+class Donnee : public TypeNomEntity<Donnee,DonneeInfo>, public CardAttribut, public SurAttribut, public TpValAttribut
 {
 public:
     //! Différent type d'affichage.
@@ -30,8 +40,6 @@ public:
                 Date = 4};
 
 public:
-    POS_5_ATT(Card,Nom,Sur,Type,TpVal)
-
     //! Constructeur par defaut.
     Donnee(int id = 0)
         :TypeNomEntity(id)
@@ -49,7 +57,7 @@ public:
     ~Donnee()
         {}
 
-    //! Teste si l'entitée est valide.
+    //! Teste si l'entité est valide.
     bool isValid() const
     {
         return TypeNomEntity::isValid()
@@ -59,7 +67,7 @@ public:
     }
 
 protected:
-    //! Test d'égalité entre cette entitée et celle transmise en argument.
+    //! Test d'égalité entre cette entité et celle transmise en argument.
     bool egal(const Donnee & entity) const
     {
         return TypeNomEntity::egal(entity)
@@ -68,7 +76,7 @@ protected:
                 && (tpVal() == entity.tpVal());
     }
 
-    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
     void set(const Donnee & entity)
     {
         TypeNomEntity::set(entity);

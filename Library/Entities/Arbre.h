@@ -1,28 +1,46 @@
 /*Auteur: PERCIE DU SERT Maxime
  *Date: 22/02/2016
  */
-
 #ifndef ARBRE_H
 #define ARBRE_H
 
-#include "Entity.h"
+#include "AttributEntityAlias.h"
+#include "AttributEntityMacroAlias.h"
+#include "EntityDivers.h"
 
-/*! \ingroup groupeEntity
- * \brief Classe mère des entitées de type arbre.
+/*! \ingroup groupeBaseEntity
+ * \brief Information sur les entités de type Arbre.
  */
-template<IdentifiantEntity::entityId ID> class Arbre : public NumEntity, public EntityTemp<ID,4,Arbre<ID> >, public FeuilleAttribut, public NiveauAttribut, public ParentAttribut
+struct ArbreInfo
 {
+    ATTRIBUT_4(Feuille,Niveau,Num,Parent)
+};
+
+// Définitions des attributs des arbres.
+ALIAS_BOOL(Feuille,feuille)
+ALIAS_INT_SUP(Niveau,niveau,0,0)
+ALIAS_INT_SUP(Parent,parent,0,0)
+
+/*! \ingroup groupeBaseEntity
+ * \brief Classe mère des entités de type arbre.
+ */
+template<class Info> class Arbre : public NumEntity<Arbre<Info>,Info>,
+                  public FeuilleAttribut,
+                  public NiveauAttribut,
+                  public ParentAttribut
+{                                             
 public:
-    POS_4_ATT(Feuille,Niveau,Num,Parent)
+    using NumAttribut::num;
+    using NumAttribut::setNum;
 
     //! Constructeur par defaut.
     Arbre(int id = 0)
-        : NumEntity(id)
+        : NumEntity<Arbre<Info>,Info>(id)
         {}
 
     //! Constructeur à partir des valeurs attributs.
     Arbre(bool feuille, int niveau, int num, int parent, int id = 0)
-        : NumEntity(num,id),
+        : NumEntity<Arbre<Info>,Info>(num,id),
           FeuilleAttribut(feuille),
           NiveauAttribut(niveau),
           ParentAttribut(parent)
@@ -35,7 +53,7 @@ public:
 
     //! Constructeur de recopie.
     Arbre(const Arbre & entity)
-        : NumEntity(entity),
+        : NumEntity<Arbre<Info>,Info>(entity),
           FeuilleAttribut(entity.feuille()),
           NiveauAttribut(entity.niveau()),
           ParentAttribut(entity.parent())
@@ -45,40 +63,32 @@ public:
     ~Arbre()
         {}
 
-    //! Teste si l'entitée est valide.
+    //! Teste si l'entité est valide.
     bool isValid() const
     {
-        return NumEntity::isValid()
+        return NumEntity<Arbre<Info>,Info>::isValid()
                 && FeuilleAttribut::valide()
                 && NiveauAttribut::valide()
                 && ParentAttribut::valide();
     }
 
 protected:
-    //! Test d'égalité entre cette entitée et celle transmise en argument.
-    bool egal(const Arbre<ID> & entity) const
+    //! Test d'égalité entre cette entité et celle transmise en argument.
+    bool egal(const Arbre<Info> & entity) const
     {
-        return NumEntity::egal(entity)
+        return NumEntity<Arbre<Info>,Info>::egal(entity)
                 && (feuille() == entity.feuille())
                 && (niveau() == entity.niveau())
                 && (parent() == entity.parent());
     }
 
-    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
-    void set(const Arbre<ID> & entity)
+    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
+    void set(const Arbre<Info> & entity)
     {
-        NumEntity::set(entity);
+        NumEntity<Arbre<Info>,Info>::set(entity);
         setFeuille(entity.feuille());
         setNiveau(entity.niveau());
         setParent(entity.parent());
     }
 };
-
-typedef Arbre<IdentifiantEntity::AttributArbreId> AttributArbre;
-typedef Arbre<IdentifiantEntity::CoursArbreId> CoursArbre;
-typedef Arbre<IdentifiantEntity::DonneeArbreId> DonneeArbre;
-typedef Arbre<IdentifiantEntity::EnonceArbreId> EnonceArbre;
-typedef Arbre<IdentifiantEntity::ExerciceArbreId> ExerciceArbre;
-
-
 #endif // ARBREENTITY_H

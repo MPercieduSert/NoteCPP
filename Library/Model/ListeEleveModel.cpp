@@ -29,7 +29,7 @@ bool ListeEleveModel::canDropMimeData(const QMimeData *data, Qt::DropAction acti
 }
 int ListeEleveModel::columnCount(const QModelIndex &parent) const
 {
-    return Eleve::NbrValue;
+    return Eleve::NbrAtt;
 }
 QVariant ListeEleveModel::data(const QModelIndex &index, int role) const
 {

@@ -1,38 +1,30 @@
+/*Auteur: PERCIE DU SERT Maxime
+ *Date: 26/03/2016
+ */
 #ifndef SOURCEMANAGER_H
 #define SOURCEMANAGER_H
 
+#include "LinkSqlNom.h"
+#include "LinkSqlUnique.h"
 #include "ManagerSql.h"
+#include "SourceInfoSql.h"
 #include "../Entities/Source.h"
 
-class SourceManager : public ManagerSql<Source>
+/*! \ingroup groupeLinkSql
+ * \brief Lien entre l'entité Commentaire de programation et sa représentation en base de donnée.
+ */
+typedef NomLinkSqlUnique<NomTypeOnlyLinkSql<Source,SourceInfoSql> > SourceLinkSql;
+
+/*! \ingroup groupeManager
+ * \brief Manager de l'entité Source.
+ */
+class SourceManager : public ManagerSql<SourceLinkSql>
 {
 public:
-    SourceManager();
-    SourceManager(QSqlDatabase & bdd);
-     ~SourceManager()    {}
-
-protected:
-     void bindValues(const Source & source)
-    {
-        m_requete.bindValue(0,source.nom());
-        m_requete.bindValue(1,source.type());
-    }
-     void bindValuesUnique(const Source &source)
-    {
-        m_requete.bindValue(0,source.nom());
-        m_requete.bindValue(1,source.type());
-    }
-     void fromRequete(Source & source)
-    {
-        source.setNom(m_requete.value(0).toString());
-        source.setType(m_requete.value(1).toInt());
-    }
-     Source * newFromRequete()
-    {
-        return new Source(m_requete.value(1).toString(),
-                          m_requete.value(2).toInt(),
-                          m_requete.value(0).toInt());
-    }
+    //! Constructeur, transmettre en argument une référence sur une objet de requete.
+    SourceManager(QSqlQuery & req)
+        : ManagerSql(req)
+    {}
 };
 
 #endif // SOURCEMANAGER_H

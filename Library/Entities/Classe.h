@@ -1,19 +1,37 @@
 /*Auteur: PERCIE DU SERT Maxime
  *Date: 05/03/2016
  */
-
 #ifndef CLASSE_H
 #define CLASSE_H
 
-#include "Entity.h"
+#include "AttributEntityAlias.h"
+#include "EntityRelation.h"
+#include "InfoEntity.h"
+
+/*! \ingroup groupeInfoEntity
+ * \brief Information sur l'entité Classe.
+ */
+struct ClasseInfo
+{
+    static const int ID = InfoEntity::ClasseId;
+    static constexpr char Name[] {"Classe"};
+    ATTRIBUT_4(IdAn,IdEtab,IdNiv,Num)
+};
 
 /*! \ingroup groupeEntity
- * \brief Représentation de l'entitée Bareme.
+ * \brief Représentation de l'entité Bareme.
  */
-class Classe : public NumRelationEntity, public EntityTemp<IdentifiantEntity::ClasseId,5,Classe>,  public IdNivAttribut
+class Classe : public NumRelationEntity<Classe,ClasseInfo>, public IdNivAttribut
 {
 public:
-    POS_4_ATT(IdAn,IdEtab,IdNiv,Num)
+    RELATION_ALIAS_2_CLE(An,Etab)
+
+    //! Type d'affichage.
+    enum affichage {Sans,
+                   Numeric,
+                   AlphabeticMaj,
+                   AlphabeticMin};
+
 
     //! Constructeur par defaut.
     Classe(int id = 0)
@@ -36,10 +54,7 @@ public:
     ~Classe()
         {}
 
-    ALIAS_CLE(An,1)
-    ALIAS_CLE(Etab,2)
-
-    //! Teste si l'entitée est valide.
+    //! Teste si l'entité est valide.
     bool isValid() const
     {
         return NumRelationEntity::isValid()
@@ -47,14 +62,14 @@ public:
     }
 
 protected:
-    //! Test d'égalité entre cette entitée et celle transmise en argument.
+    //! Test d'égalité entre cette entité et celle transmise en argument.
     bool egal(const Classe & entity) const
     {
         return NumRelationEntity::egal(entity)
                 &&(idNiv() == entity.idNiv());
     }
 
-    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
     void set(const Classe & entity)
     {
         NumRelationEntity::set(entity);

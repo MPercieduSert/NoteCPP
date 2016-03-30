@@ -1,20 +1,29 @@
 /*Auteur: PERCIE DU SERT Maxime
  *Date: 05/03/2016
  */
-
 #ifndef NIVEAU_H
 #define NIVEAU_H
 
-#include "Entity.h"
+#include "AttributEntityAlias.h"
+#include "EntityNom.h"
+#include "InfoEntity.h"
+
+/*! \ingroup groupeInfoEntity
+ * \brief Information sur l'entité Niveau.
+ */
+struct NiveauInfo
+{
+    static const int ID = InfoEntity::NiveauId;
+    static constexpr char Name[] {"Niveau"};
+    ATTRIBUT_3(IdTp,Nc,Nom)
+};
 
 /*! \ingroup groupeEntity
- * \brief Représentation de l'entitée Niveau.
+ * \brief Représentation de l'entité Niveau.
  */
-class Niveau : public NcNomEntity, public EntityTemp<IdentifiantEntity::NiveauId,4,Niveau>, public IdTpAttribut
+class Niveau : public NcNomEntity<Niveau,NiveauInfo>, public IdTpAttribut
 {
 public:
-    POS_3_ATT(IdTp,Nc,Nom)
-
     //! Constructeur par defaut.
     Niveau(int id = 0)
         :NcNomEntity(id)
@@ -41,20 +50,20 @@ public:
     ~Niveau()
     {}
 
-    //! Teste si l'entitée est valide.
+    //! Teste si l'entité est valide.
     bool isValid() const
         {return NcNomEntity::isValid()
                 && IdTpAttribut::valide();}
 
 protected:
-    //! Test d'égalité entre cette entitée et celle transmise en argument.
+    //! Test d'égalité entre cette entité et celle transmise en argument.
     bool egal(const Niveau & entity) const
     {
         return NcNomEntity::egal(entity)
                 && (idTp() == entity.idTp());
     }
 
-    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
     void set(const Niveau & entity)
     {
         NcNomEntity::set(entity);

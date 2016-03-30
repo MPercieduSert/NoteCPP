@@ -12,74 +12,64 @@ CONFIG += staticlib
 CONFIG += c++11
 HEADERS += \
     Annee.h \
+    Arbre.h \
+    Arbres.h \
     Attribut.h \
+    AttributEntity.h \
+    AttributEntityAlias.h \
+    AttributEntityMacroAlias.h \
 #    Bareme.h \
     Classe.h \
-    Commentaire.h \
+    ClasseEleve.h \
 #    Coefficient.h \
+    Commentaire.h \
 #    Controle.h \
     Donnee.h \
     Eleve.h \
-#    Eleve_groupe.h \
     Entity.h \
+    EntityDivers.h \
+    EntityNom.h \
+    EntityRelation.h \
+    Etablissement.h \
 #    Exercice.h \
     Groupe.h \
+    InfoEntity.h \
     ListEntities.h \
+    Niveau.h \
 #    Note.h \
 #    NumControle.h \
-    Niveau.h \
 #    Point.h \
+    Relation.h \
+    Relations.h \
     Source.h \
-    RelSimple.h \
 #    TypeControle.h \
 #    TypeGroupe.h \
-    TypeNiveau.h \
-    RelDate.h \
-    Etablissement.h \
-    ClasseEleve.h \
-    RelNum.h \
-    RelDateVal.h \
-    Arbre.h \
-    AttributEntity.h \
-    AttributEntityAlias.h \
-    IdentifiantEntity.h
-
+    TypeNiveau.h
 
 SOURCES += \
     Annee.cpp \
     Attribut.cpp \
 #    Bareme.cpp \
     Classe.cpp \
-    Commentaire.cpp \
+    ClasseEleve.cpp \
 #    Coefficient.cpp \
+    Commentaire.cpp \
 #    Controle.cpp \
     Donnee.cpp \
     Eleve.cpp \
-#    Eleve_groupe.cpp \
+    Etablissement.cpp \
     Entity.cpp \
 #    Exercice.cpp \
     Groupe.cpp \
     ListEntities.cpp \
+    Niveau.cpp \
 #    Note.cpp \
 #    NumControle.cpp \
-    Niveau.cpp \
 #    Point.cpp \
     Source.cpp \
-    RelSimple.cpp \
 #    TypeControle.cpp \
 #    TypeGroupe.cpp \
-    TypeNiveau.cpp \
-    RelDate.cpp \
-    Etablissement.cpp \
-    ClasseEleve.cpp \
-    RelNum.cpp \
-    RelDateVal.cpp \
-    Arbre.cpp \
-    AttributEntity.cpp \
-    AttributEntityAlias.cpp \
-    IdentifiantEntity.cpp
-
-
+    TypeNiveau.cpp
 
 unix {
     target.path = /usr/lib

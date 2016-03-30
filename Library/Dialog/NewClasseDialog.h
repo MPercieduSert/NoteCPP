@@ -55,7 +55,7 @@ protected:
     QVBoxLayout *m_vLayout;
 
 public:
-    explicit NewClasseDialog(QVector<Niveau> niveaux, const Annee &annee, QVector<Classe> classe, Niveau::affiche_alpha alpha, QWidget *parent = 0);
+    explicit NewClasseDialog(QVector<Niveau> niveaux, const Annee &annee, QVector<Classe> classe, Classe::affichage alpha, QWidget *parent = 0);
     ~NewClasseDialog()  {}
     dialogResult value() const;
 signals:

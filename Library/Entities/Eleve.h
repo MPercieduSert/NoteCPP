@@ -1,21 +1,29 @@
 /*Auteur: PERCIE DU SERT Maxime
  *Date: 28/02/2016
  */
-
 #ifndef ELEVE_H
 #define ELEVE_H
 
-#include "Entity.h"
+#include "AttributEntityAlias.h"
+#include "EntityNom.h"
+#include "InfoEntity.h"
 
+/*! \ingroup groupeInfoEntity
+ * \brief Information sur l'entité Eleve.
+ */
+struct EleveInfo
+{
+    static const int ID = InfoEntity::EleveId;
+    static constexpr char Name[] {"Eleve"};
+    ATTRIBUT_4(Fille,Naissance,Nom,Prenom)
+};
 
 /*! \ingroup groupeEntity
- * \brief Représentation de l'entitée Eleve.
+ * \brief Représentation de l'entité Eleve.
  */
-class Eleve : public NomEntity, public EntityTemp<IdentifiantEntity::EleveId,5,Eleve>, public FilleAttribut, public NaissanceAttribut, public PrenomAttribut
+class Eleve : public NomEntity<Eleve,EleveInfo>, public FilleAttribut, public NaissanceAttribut, public PrenomAttribut
 {
 public:
-    POS_4_ATT(Fille,Naissance,Nom,Prenom)
-
     //! Constructeur par defaut.
     Eleve(int id = 0)
         : NomEntity(id)
@@ -39,7 +47,7 @@ public:
     //! Renvoie F si l'éléve est une fille et M sinon.
     QChar afficheFille() const                      {return fille() ? QChar('F'): QChar('M');}
 
-    //! Teste si l'entitée est valide.
+    //! Teste si l'entité est valide.
     bool isValid() const
     {
         return NomEntity::isValid()
@@ -53,7 +61,7 @@ public:
     {}
 
 protected:
-    //! Test d'égalité entre cette entitée et celle transmise en argument.
+    //! Test d'égalité entre cette entité et celle transmise en argument.
     bool egal(const Eleve & entity) const
     {
         return NomEntity::egal(entity)
@@ -62,7 +70,7 @@ protected:
                 &&(prenom() == entity.prenom());
     }
 
-    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
     void set(const Eleve & entity)
     {
         NomEntity::set(entity);

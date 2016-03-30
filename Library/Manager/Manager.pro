@@ -94,41 +94,64 @@ HEADERS += \
 #    BaremeManager.h \
     ClasseManager.h \
 #    CoefficientManager.h \
-#    CommentaireManager.h \
+    CommentaireManager.h \
 #    ControleManager.h \
 #    Controle_exerciceManager.h \
 #    Eleve_groupeManager.h \
-#    GroupeManager.h \
-#    NiveauManager.h \
+    GroupeManager.h \
+    NiveauManager.h \
 #    NoteManager.h \
 #    NumControleManager.h \
     Manager.h \
     ManagerSql.h \
     LinkSql.h \
-    ArbreLinkSql.h \
-    AnneeLinkSql.h \
     EleveLinkSql.h \
-    ExerciceLinkSql.h \
+#    ExerciceLinkSql.h \
     DonneeLinkSql.h \
     DonneeManager.h \
     EleveManager.h \
-    ExerciceManager.h \
+#    ExerciceManager.h \
 #    ManagerAnnee.h \
 #    PointManager.h \
 #    SourceManager.h \
 #    TypeControleManager.h \
 #    TypeGroupeManager.h \
     TypeNiveauManager.h \
-    LinkSqlUniqueSimple.h \
-    Managers.h \
     AnneeManager.h \
     ArbreManager.h \
     ClasseLinkSql.h \
-    EtablissementLinkSql.h \
-    NomLinkSql.h \
-    NiveauLinkSql.h
-
-
+    NiveauLinkSql.h \
+    ReqSql.h \
+    ArbresManager.h \
+    AnneeInfoSql.h \
+    NiveauInfoSql.h \
+    ClasseInfoSql.h \
+    DonneeInfoSql.h \
+    EtablissementInfoSql.h \
+    EtablissementManager.h \
+    EleveInfoSql.h \
+    ClasseEleveInfoSql.h \
+    ClasseEleveLinkSql.h \
+    ClasseEleveManager.h \
+    GroupeInfoSql.h \
+    GroupeLinkSql.h \
+    SourceManager.h \
+    AttributsMacroLinkSql.h \
+    AttributsLinkSql.h \
+    LinkSqlUnique.h \
+    AnneeLinkSql.h \
+    AttributInfoSql.h \
+    AttributLinkSql.h \
+    AttributManager.h \
+    RelationsInfoSql.h \
+    InfoSql.h \
+    LinkSqlNom.h \
+    LinkSqlRelation.h \
+    LinkSqlDivers.h \
+    TypeNiveauInfoSql.h \
+    CommentaireInfoSql.h \
+    SourceInfoSql.h \
+    RelationsManager.h
 
 SOURCES += \
 #    AppreciationManager.cpp \
@@ -138,39 +161,30 @@ SOURCES += \
 #    BaremeManager.cpp \
     ClasseManager.cpp \
 #    CoefficientManager.cpp \
-#    CommentaireManager.cpp \
+    CommentaireManager.cpp \
 #    ControleManager.cpp \
 #    Controle_exerciceManager.cpp \
 #    Eleve_groupeManager.cpp \
-#    GroupeManager.cpp \
-#    NiveauManager.cpp \
+    GroupeManager.cpp \
+    NiveauManager.cpp \
 #    NoteManager.cpp \
 #    NumControleManager.cpp \
-    Manager.cpp \
-    ManagerSql.cpp \
-    AnneeLinkBdd.cpp \
-    LinkSql.cpp \
-    ArbreLinkSql.cpp \
-    EleveLinkSql.cpp \
-    ExerciceLinkSql.cpp \
-    DonneeLinkSql.cpp \
     DonneeManager.cpp \
     EleveManager.cpp \
-    ExerciceManager.cpp \
+#    ExerciceManager.cpp \
 #    ManagerAnnee.cpp \
 #    PointManager.cpp \
 #    SourceManager.cpp \
 #    TypeControleManager.cpp \
 #    TypeGroupeManager.cpp \
     TypeNiveauManager.cpp \
-    LinkSqlUniqueSimple.cpp \
     AnneeManager.cpp \
     ArbreManager.cpp \
-    ClasseLinkSql.cpp \
-    EtablissementLinkSql.cpp \
-    NomLinkSql.cpp \
-    NiveauLinkSql.cpp
-
+    ReqSql.cpp \
+    EtablissementManager.cpp \
+    ClasseEleveManager.cpp \
+    SourceManager.cpp \
+    AttributManager.cpp
 
 unix {
     target.path = /usr/lib

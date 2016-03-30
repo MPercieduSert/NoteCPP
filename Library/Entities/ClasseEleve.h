@@ -1,20 +1,31 @@
 /*Auteur: PERCIE DU SERT Maxime
  *Date: 07/03/2016
  */
-
 #ifndef CLASSEELEVE_H
 #define CLASSEELEVE_H
 
-#include "Entity.h"
+#include "AttributEntityAlias.h"
+#include "EntityRelation.h"
+#include "InfoEntity.h"
+
+/*! \ingroup groupeInfoEntity
+ * \brief Information sur l'entité ClasseEleve.
+ */
+struct ClasseEleveInfo
+{
+    static const int ID = InfoEntity::ClasseEleveId;
+    static constexpr char Name[] {"Classe-Eleve"};
+    ATTRIBUT_4(IdCl,IdEl,Entree,Sortie)
+};
 
 /*! \ingroup groupeEntity
- * \brief Représentation de l'entitée ClasseEleve.
+ * \brief Représentation de l'entité ClasseEleve.
  */
 
-class ClasseEleve : public RelationEntity, public EntityTemp<IdentifiantEntity::ClasseEleveId,4,ClasseEleve>, public EntreeAttribut, public SortieAttribut
+class ClasseEleve : public RelationEntity<ClasseEleve,ClasseEleveInfo>, public EntreeAttribut, public SortieAttribut
 {
 public:
-    POS_4_ATT(IdCl,IdEl,Rentree,Sortie)
+    RELATION_ALIAS_2_CLE(Cl,El)
 
     //! Constructeur par defaut.
     ClasseEleve(int id = 0)
@@ -35,7 +46,7 @@ public:
           SortieAttribut(entity.sortie())
     {}
 
-    //! Teste si l'entitée est valide.
+    //! Teste si l'entité est valide.
     bool isValid() const
     {
         return RelationEntity::isValid()
@@ -44,7 +55,7 @@ public:
     }
 
 protected:
-    //! Test d'égalité entre cette entitée et celle transmise en argument.
+    //! Test d'égalité entre cette entité et celle transmise en argument.
     bool egal(const ClasseEleve & entity) const
     {
         return RelationEntity::egal(entity)
@@ -52,7 +63,7 @@ protected:
                 &&(sortie() == entity.sortie());
     }
 
-    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
     void set(const ClasseEleve & entity)
     {
         RelationEntity::set(entity);

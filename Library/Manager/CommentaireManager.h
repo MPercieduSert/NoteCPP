@@ -1,37 +1,30 @@
+/*Auteur: PERCIE DU SERT Maxime
+ *Date: 25/03/2016
+ */
 #ifndef COMMENTAIREMANAGER_H
 #define COMMENTAIREMANAGER_H
 
-#include "ManagerAnnee.h"
+#include "LinkSqlDivers.h"
+#include "LinkSqlUnique.h"
+#include "ManagerSql.h"
+#include "CommentaireInfoSql.h"
 #include "../Entities/Commentaire.h"
 
-class CommentaireManager : public ManagerAnnee<Commentaire>
+/*! \ingroup groupeLinkSql
+ * \brief Lien entre l'entité Commentaire de programation et sa représentation en base de donnée.
+ */
+typedef TexteLinkSqlUnique<TexteOnlyLinkSql<Commentaire,CommentaireInfoSql> > CommentaireLinkSql;
+
+/*! \ingroup groupeManager
+ * \brief Manager de l'entité Commentaire.
+ */
+class CommentaireManager : public ManagerSql<CommentaireLinkSql>
 {
 public:
-    CommentaireManager(const Annee & annee);
-    CommentaireManager(QSqlDatabase & bdd, const Annee & annee);
-     ~CommentaireManager()    {}
-
-protected:
-     void bindValues(const Commentaire & commentaire)
-    {
-        m_requete.bindValue(0,commentaire.texte());
-        m_requete.bindValue(1,commentaire.type());
-    }
-     void bindValuesUnique(const Commentaire &commentaire)
-    {
-        m_requete.bindValue(0,commentaire.texte());
-    }
-     void fromRequete(Commentaire & commentaire)
-    {
-        commentaire.setTexte(m_requete.value(0).toString());
-        commentaire.setType(m_requete.value(1).toInt());
-    }
-     Commentaire * newFromRequete()
-    {
-        return new Commentaire(m_requete.value(1).toString(),
-                               m_requete.value(2).toInt(),
-                               m_requete.value(0).toInt());
-    }
+    //! Constructeur, transmettre en argument une référence sur une objet de requete.
+    CommentaireManager(QSqlQuery & req)
+        : ManagerSql(req)
+    {}
 };
 
 #endif // COMMENTAIREMANAGER_H

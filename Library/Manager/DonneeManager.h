@@ -10,14 +10,15 @@
 
 
 /*! \ingroup groupeManager
- * \brief Manager de l'entitée Donnee.
+ * \brief Manager de l'entité Donnee.
  */
-
 class DonneeManager : public ManagerSql<DonneeLinkSql>
 {
 public:
     //! Constructeur, transmettre en argument une référence sur une objet de requete.
-    DonneeManager(QSqlQuery & req);
+    DonneeManager(QSqlQuery & req)
+        : ManagerSql(req)
+    {}
 };
 
 #endif // DONNEEMANAGER_H

@@ -1,20 +1,35 @@
 /*Auteur: PERCIE DU SERT Maxime
  *Date: 04/03/2016
  */
-
 #ifndef ATTRIBUT_H
 #define ATTRIBUT_H
 
-#include "Entity.h"
+#include "AttributEntityAlias.h"
+#include "EntityNom.h"
+#include "InfoEntity.h"
+
+/*! \ingroup groupeInfoEntity
+ * \brief Information sur l'entité Attribut.
+ */
+struct AttributInfo
+{
+    static const int ID = InfoEntity::AttributId;
+    static constexpr char Name[] {"Attribut"};
+    ATTRIBUT_7(Nom,PrBareme,PrCommentaire,PrCorrection,PrCours,PrExercice,Nc)
+};
 
 /*! \ingroup groupeEntity
- * \brief Représentation de l'entitée Attribut.
+ * \brief Représentation de l'entité Attribut.
  */
-class Attribut : public NomEntity, public EntityTemp<IdentifiantEntity::AttributId,7,Attribut>, public PrBaremeAttribut, public PrCommentaireAttribut, public PrCorrectionAttribut, public PrCoursAttribut, public PrExerciceAttribut, public NcNullAttribut
+class Attribut : public NomEntity<Attribut,AttributInfo>,
+        public PrBaremeAttribut,
+        public PrCommentaireAttribut,
+        public PrCorrectionAttribut,
+        public PrCoursAttribut,
+        public PrExerciceAttribut,
+        public NcNullAttribut
 {
 public:
-    POS_7_ATT(Nom,PrBareme,PrCommentaire,PrCorrection,PrCours,PrExercice,Nc)
-
     //! Constructeur par defaut.
     Attribut(int id = 0)
         : NomEntity(id)
@@ -46,7 +61,7 @@ public:
     ~Attribut()
     {}
 
-    //! Teste si l'entitée est valide.
+    //! Teste si l'entité est valide.
     bool isValid() const
     {return NomEntity::isValid()
                 && PrBaremeAttribut::valide()
@@ -57,7 +72,7 @@ public:
                 && NcNullAttribut::valide();}
 
 protected:
-    //! Test d'égalité entre cette entitée et celle transmise en argument.
+    //! Test d'égalité entre cette entité et celle transmise en argument.
     bool egal(const Attribut & entity) const
     {
         return NomEntity::egal(entity)
@@ -69,7 +84,7 @@ protected:
                 &&(nc() == entity.nc());
     }
 
-    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
     void set(const Attribut & entity)
     {
         NomEntity::set(entity);

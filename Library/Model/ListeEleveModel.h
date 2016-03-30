@@ -16,7 +16,7 @@ class ListeEleveModel : public MAbstractTableModel
 {
     Q_OBJECT
 public:
-    enum indexColum { nomIndex = 0,
+    enum indexColum {nomIndex = 0,
                     prenomIndex = 1,
                     sexeIndex = 2,
                     naissanceIndex = 3,

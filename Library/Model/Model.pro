@@ -34,6 +34,7 @@ SOURCES += \
 HEADERS += \
     ListeEleveModel.h \
     MAbstractTableModel.h
+
 unix {
     target.path = /usr/lib
     INSTALLS += target
