@@ -6,22 +6,11 @@
 
 #include "AttributEntityAlias.h"
 #include "Entity.h"
-#include "InfoEntity.h"
-
-/*! \ingroup groupeInfoEntity
- * \brief Information sur l'entité Annee.
- */
-struct AnneeInfo
-{
-    static const int ID = InfoEntity::AnneeId;
-    static constexpr char Name[] {"Annee"};
-    ATTRIBUT_1(An)
-};
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Annee.
  */
-class Annee : public EntityTemp<Annee,AnneeInfo>,
+class Annee : public EntityTemp<Annee>,
         public AnAttribut
 {
 public:
@@ -63,14 +52,14 @@ protected:
     //! Test d'égalité entre cette entité et celle transmise en argument.
     bool egal(const Annee & entity) const
     {
-        return EntityTemp::egal(entity)
+        return Entity::egal(entity)
                 && (an() == entity.an());
     }
 
     //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
     void set(const Annee & entity)
     {
-        EntityTemp::set(entity);
+        Entity::set(entity);
         setAn(entity.an());
     }
 };

@@ -19,7 +19,7 @@ TabClasse::TabClasse(int idClasse, Bdd *bdd, TabModule *parent) : TabAbstractCla
 
 void TabClasse::becomeCurrent() const
 {
-    m_parent->parent()->setEnabledCopierColler(m_classeIsValid);
+    //m_parent->parent()->setEnabledCopierColler(m_classeIsValid);
 }
 
 // %%%%%%%%%%%  public slots %%%%%%%%%%

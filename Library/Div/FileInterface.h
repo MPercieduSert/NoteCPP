@@ -20,6 +20,7 @@
 #define FILEINTERFACE_H
 
 #include <QFile>
+#include <QMessageBox>
 #include <QString>
 
 class FileInterface

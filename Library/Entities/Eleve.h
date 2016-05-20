@@ -6,22 +6,11 @@
 
 #include "AttributEntityAlias.h"
 #include "EntityNom.h"
-#include "InfoEntity.h"
-
-/*! \ingroup groupeInfoEntity
- * \brief Information sur l'entité Eleve.
- */
-struct EleveInfo
-{
-    static const int ID = InfoEntity::EleveId;
-    static constexpr char Name[] {"Eleve"};
-    ATTRIBUT_4(Fille,Naissance,Nom,Prenom)
-};
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Eleve.
  */
-class Eleve : public NomEntity<Eleve,EleveInfo>, public FilleAttribut, public NaissanceAttribut, public PrenomAttribut
+class Eleve : public NomEntity<Eleve>, public FilleAttribut, public NaissanceAttribut, public PrenomAttribut
 {
 public:
     //! Constructeur par defaut.

@@ -167,6 +167,8 @@ public:
 // Id1 et Id2
 ALIAS_ID(1)
 ALIAS_ID(2)
+ALIAS_ID_NULL(1)
+ALIAS_ID_NULL(2)
 
 /*! \ingroup groupeAttributAlias
  * \brief Classe de l'attribut nc.

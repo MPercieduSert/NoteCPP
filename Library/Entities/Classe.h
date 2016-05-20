@@ -6,32 +6,20 @@
 
 #include "AttributEntityAlias.h"
 #include "EntityRelation.h"
-#include "InfoEntity.h"
-
-/*! \ingroup groupeInfoEntity
- * \brief Information sur l'entité Classe.
- */
-struct ClasseInfo
-{
-    static const int ID = InfoEntity::ClasseId;
-    static constexpr char Name[] {"Classe"};
-    ATTRIBUT_4(IdAn,IdEtab,IdNiv,Num)
-};
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Bareme.
  */
-class Classe : public NumRelationEntity<Classe,ClasseInfo>, public IdNivAttribut
+class Classe : public NumRelationEntity<Classe>, public IdNivAttribut
 {
 public:
-    RELATION_ALIAS_2_CLE(An,Etab)
+    RELATION_ALIAS_2_CLE(An,Etab,Classe)
 
     //! Type d'affichage.
     enum affichage {Sans,
                    Numeric,
                    AlphabeticMaj,
                    AlphabeticMin};
-
 
     //! Constructeur par defaut.
     Classe(int id = 0)

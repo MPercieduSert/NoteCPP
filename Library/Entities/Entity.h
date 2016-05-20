@@ -10,12 +10,14 @@
 #include <QList>
 #include <QPair>
 #include <QString>
+#include <QStringList>
 #include <QVariant>
 #include <QVector>
 #include <string>
 #include <stdexcept>
 
 #include "AttributEntityMacroAlias.h"
+#include "InfoEntity.h"
 
 /*! \defgroup groupeEntity Entités
  * \brief Ensemble de classes représentant les entités de la base de donnée.
@@ -32,93 +34,6 @@
  * \ingroup groupeEntity
  * \brief Ensemble des Macros des entités.
  */
-
-//Enumeration des positions et les variables statiques de EntityTemp
-
-/*! \defgroup groupeNomPosEntity Enumeration des positions et les variables statiques de EntityTemp.
- * \ingroup groupeMacroEntity
- * \brief Ensemble de macrosdéfinissant l'numeration des positions et les variables statiques de EntityTemp.
- */
-
-//! \ingroup groupeNomPosEntity
-//! Macro définisant la position d'un attribut.
-#define ATTRIBUT_1(ATT1) \
-    /*! \brief Nombre d'attribut de l'entité.*/ \
-    static const int NbrAtt = 2; \
-    /*! \brief Tableau des noms des attributs de l'entité.*/ \
-    static constexpr std::array<const char *, NbrAtt> Att{{#ATT1,"ID"}}; \
-    /*! \brief Position des attributs dans l'entité, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
-    enum position {ATT1 ## Pos = 0, IdPos = 1};
-
-//! \ingroup groupeNomPosEntity
-//! Macro définisant la position de deux attributs.
-#define ATTRIBUT_2(ATT1,ATT2) \
-    /*! \brief Nombre d'attribut de l'entité.*/ \
-    static const int NbrAtt = 3; \
-    /*! \brief Tableau des noms des attributs de l'entité.*/ \
-    static constexpr std::array<const char *, NbrAtt> Att{{#ATT1,#ATT2,"ID"}}; \
-    /*! \brief Position des attributs dans l'entité, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
-    enum position {ATT1 ## Pos = 0, ATT2 ## Pos = 1, IdPos = 2};
-
-//! \ingroup groupeNomPosEntity
-//! Macro définisant la position de trois attributs.
-#define ATTRIBUT_3(ATT1,ATT2,ATT3) \
-    /*! \brief Nombre d'attribut de l'entité.*/ \
-    static const int NbrAtt = 4; \
-    /*! \brief Tableau des noms des attributs de l'entité.*/ \
-    static constexpr std::array<const char *, NbrAtt> Att{{#ATT1,#ATT2,#ATT3,"ID"}}; \
-    /*! \brief Position des attributs dans l'entité, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
-    enum position {ATT1 ## Pos = 0, ATT2 ## Pos = 1, ATT3 ## Pos = 2, IdPos = 3};
-
-//! \ingroup groupeNomPosEntity
-//! Macro définisant la position de quatre attributs.
-#define ATTRIBUT_4(ATT1,ATT2,ATT3,ATT4) \
-    /*! \brief Nombre d'attribut de l'entité.*/ \
-    static const int NbrAtt = 5; \
-    /*! \brief Tableau des noms des attributs de l'entité.*/ \
-    static constexpr std::array<const char *, NbrAtt> Att{{#ATT1,#ATT2,#ATT3,#ATT4,"ID"}}; \
-    /*! \brief Position des attributs dans l'entité, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
-    enum position {ATT1 ## Pos = 0, ATT2 ## Pos = 1, ATT3 ## Pos = 2, ATT4 ## Pos = 3, IdPos = 4};
-
-//! \ingroup groupeNomPosEntity
-//! Macro définisant la position de cinq attributs.
-#define ATTRIBUT_5(ATT1,ATT2,ATT3,ATT4,ATT5) \
-    /*! \brief Nombre d'attribut de l'entité.*/ \
-    static const int NbrAtt = 6; \
-    /*! \brief Tableau des noms des attributs de l'entité.*/ \
-    static constexpr std::array<const char *, NbrAtt> Att{{#ATT1,#ATT2,#ATT3,#ATT4,#ATT5,"ID"}}; \
-    /*! \brief Position des attributs dans l'entité, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
-    enum position {ATT1 ## Pos = 0, ATT2 ## Pos = 1, ATT3 ## Pos = 2, ATT4 ## Pos = 3, ATT5 ## Pos = 4, IdPos = 5};
-
-//! \ingroup groupeNomPosEntity
-//! Macro définisant la position de six attributs.
-#define ATTRIBUT_6(ATT1,ATT2,ATT3,ATT4,ATT5,ATT6) \
-    /*! \brief Nombre d'attribut de l'entité.*/ \
-    static const int NbrAtt = 7; \
-    /*! \brief Tableau des noms des attributs de l'entité.*/ \
-    static constexpr std::array<const char *, NbrAtt> Att{{#ATT1,#ATT2,#ATT3,#ATT4,#ATT5,#ATT6,"ID"}}; \
-    /*! \brief Position des attributs dans l'entité, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
-    enum position {ATT1 ## Pos = 0, ATT2 ## Pos = 1, ATT3 ## Pos = 2, ATT4 ## Pos = 3, ATT5 ## Pos = 4, ATT6 ## Pos = 5, IdPos = 6};
-
-//! \ingroup groupeNomPosEntity
-//! Macro définisant la position de sept attributs.
-#define ATTRIBUT_7(ATT1,ATT2,ATT3,ATT4,ATT5,ATT6,ATT7) \
-    /*! \brief Nombre d'attribut de l'entité.*/ \
-    static const int NbrAtt = 8; \
-    /*! \brief Tableau des noms des attributs de l'entité.*/ \
-    static constexpr std::array<const char *, NbrAtt> Att{{#ATT1,#ATT2,#ATT3,#ATT4,#ATT5,#ATT6,#ATT7,"ID"}}; \
-    /*! \brief Position des attributs dans l'entité, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
-    enum position {ATT1 ## Pos = 0, ATT2 ## Pos = 1, ATT3 ## Pos = 2, ATT4 ## Pos = 3, ATT5 ## Pos = 4, ATT6 ## Pos = 5, ATT7 ## Pos = 6, IdPos = 7};
-
-//! \ingroup groupeNomPosEntity
-//! Macro définisant la position de huit attributs.
-#define ATTRIBUT_8(ATT1,ATT2,ATT3,ATT4,ATT5,ATT6,ATT7,ATT8) \
-    /*! \brief Nombre d'attribut de l'entité.*/ \
-    static const int NbrAtt = 9; \
-    /*! \brief Tableau des noms des attributs de l'entité.*/ \
-    static constexpr std::array<const char *, NbrAtt> Att{{#ATT1,#ATT2,#ATT3,#ATT4,#ATT5,#ATT6,#ATT7,#ATT8,"ID"}}; \
-    /*! \brief Position des attributs dans l'entité, suit notamment l'ordre des colonnes dans la base de donnée.*/ \
-    enum position {ATT1 ## Pos = 0, ATT2 ## Pos = 1, ATT3 ## Pos = 2, ATT4 ## Pos = 3, ATT5 ## Pos = 4, ATT6 ## Pos = 5, ATT7 ## Pos = 6, ATT7 ## Pos = 7, IdPos = 8};
 
 /*! \ingroup groupeBaseEntity
  * \brief Classe abstraite de base des entités.
@@ -151,6 +66,9 @@ public:
     virtual bool isValid() const
     {return IdAttributEntity::valide();}
 
+    //! Renvoie le nom de l'entité.
+    virtual QString name() const = 0;
+
     //! Modifient les valeurs des attributs de l'entité avec celles des attributs de entity.
     virtual void operator << (const Entity & entity) = 0;
 
@@ -170,7 +88,7 @@ protected:
 /*! \ingroup groupeBaseEntity
  * \brief Classe Patron abstraite implémentant une partie des méthodes virtuels des entités.
  */
-template<class Ent, class Info> class EntityTemp : public Entity, public Info
+template<class Ent> class EntityTemp : public Entity
 {
 public:
     //! Constructeur.
@@ -179,8 +97,12 @@ public:
     {}
 
     //! Constructeur de recopie.
-    EntityTemp(const EntityTemp<Ent,Info> & entity)
+    EntityTemp(const EntityTemp<Ent> & entity)
         : Entity(entity)
+    {}
+
+    //! Destructeur.
+    ~EntityTemp()
     {}
 
     //! Convertit la référence entity en une référence de type ENTITY, aprés vérification.
@@ -224,19 +146,19 @@ public:
 
     //! Renvoie l'identifiant du type de l'entité.
     int idEntity() const
-        {return Info::ID;}
+        {return Info<Ent>::ID;}
 
     //! Renvoie le nom de l'entité.
-    static QString name()
-        {return Info::Name;}
+    QString name() const
+        {return Info<Ent>::Name;}
 
     //! Test si le pointeur entity est aussi un pointeur de ce type d'entité.
     static bool verifEntity(Entity * entity)
-    {return Info::ID == entity->idEntity();}
+    {return Info<Ent>::ID == entity->idEntity();}
 
     //! Test si la référence entity est aussi une référence de ce type d'entité.
     static bool verifEntity(const Entity & entity)
-    {return Info::ID == entity.idEntity();}
+    {return Info<Ent>::ID == entity.idEntity();}
 
     //! Test d'égalité entre deux entités de même type, c'est-à-dire l'égalité de tous les attributs.
     bool operator == (const Ent & entity) const

@@ -10,7 +10,7 @@ FenMenu::FenMenu(FenPrincipale *parent) : Fen(parent)
     lt->addWidget(buttonNote,0,0);
     lt->addWidget(buttonExo,0,1);
 
-    connect(buttonNote,&QPushButton::clicked,parent,&FenPrincipale::execNote);
-    connect(buttonExo,&QPushButton::clicked,parent,&FenPrincipale::execExo);
+    //connect(buttonNote,&QPushButton::clicked,parent,&FenPrincipale::execNote);
+    //connect(buttonExo,&QPushButton::clicked,parent,&FenPrincipale::execExo);
 }
 

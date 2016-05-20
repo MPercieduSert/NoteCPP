@@ -6,22 +6,11 @@
 
 #include "AttributEntityAlias.h"
 #include "EntityNom.h"
-#include "InfoEntity.h"
-
-/*! \ingroup groupeInfoEntity
- * \brief Information sur l'entité Attribut.
- */
-struct AttributInfo
-{
-    static const int ID = InfoEntity::AttributId;
-    static constexpr char Name[] {"Attribut"};
-    ATTRIBUT_7(Nom,PrBareme,PrCommentaire,PrCorrection,PrCours,PrExercice,Nc)
-};
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Attribut.
  */
-class Attribut : public NomEntity<Attribut,AttributInfo>,
+class Attribut : public NomEntity<Attribut>,
         public PrBaremeAttribut,
         public PrCommentaireAttribut,
         public PrCorrectionAttribut,

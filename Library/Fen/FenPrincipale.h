@@ -34,11 +34,11 @@
 #include "../Dialog/SelectAnneeDialog.h"
 #include "../Div/Bdd.h"
 #include "../Div/Config.h"
-#include "FenExo.h"
+//#include "FenExo.h"
 #include "FenFoundFile.h"
-#include "FenMenu.h"
-#include "FenNote.h"
-#include "TabModule.h"
+//#include "FenMenu.h"
+//#include "FenNote.h"
+//#include "TabModule.h"
 
 class FenPrincipale : public QMainWindow
 {
@@ -59,7 +59,7 @@ protected:
     QAction *m_actionSauvegarder;
     QAction *m_actionSelectDefaultAnnee;
 
-    TabModule *m_tabModule;//!< Zone centrale.
+    //TabModule *m_tabModule;//!< Zone centrale.
 
     Bdd m_bdd;//!< Gestionnaire de la Base de donnée.
     Config m_config;//!< Gestionnaire de la configuration.
@@ -80,7 +80,7 @@ public:
      *
      * Le constructeur contient les étapes suivantes:
      */
-    explicit FenPrincipale(QString path,QWidget *parent = 0);
+    explicit FenPrincipale(QString path, QWidget *parent = 0);
 
     //! Destructeur.
     ~FenPrincipale()
@@ -94,9 +94,9 @@ public:
     Bdd * bdd()
         {return &m_bdd;}
 
-    void setEnabledCopierColler(bool bb);
+    //void setEnabledCopierColler(bool bb);
 protected:
-    void changeAnnee(int anneeId);
+    //void changeAnnee(int anneeId);
 
     //! Crée les différente action des menus et toolbars de la fenêtre principale.
     void createAction();
@@ -108,10 +108,10 @@ protected:
     void createToolBar();
 
 signals:
-    void anneeChanged();
+    //void anneeChanged();
 
 public slots:
-    void coller();
+    /*void coller();
     void copier();
     void couper();
     void creerAnnee();
@@ -122,7 +122,7 @@ public slots:
     void execNote();
     void sauvegarder()     {m_tabModule->sauvegarder();}
 protected slots:
-    void selectDefaultAnnee();
+    void selectDefaultAnnee();*/
 
 };
 #endif // FENPRINCIPALE_H

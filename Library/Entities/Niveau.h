@@ -6,22 +6,11 @@
 
 #include "AttributEntityAlias.h"
 #include "EntityNom.h"
-#include "InfoEntity.h"
-
-/*! \ingroup groupeInfoEntity
- * \brief Information sur l'entité Niveau.
- */
-struct NiveauInfo
-{
-    static const int ID = InfoEntity::NiveauId;
-    static constexpr char Name[] {"Niveau"};
-    ATTRIBUT_3(IdTp,Nc,Nom)
-};
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Niveau.
  */
-class Niveau : public NcNomEntity<Niveau,NiveauInfo>, public IdTpAttribut
+class Niveau : public NcNomEntity<Niveau>, public IdTpAttribut
 {
 public:
     //! Constructeur par defaut.

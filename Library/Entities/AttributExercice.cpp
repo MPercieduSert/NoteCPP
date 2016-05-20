@@ -1,1 +1,0 @@
-#include "AttributExercice.h"

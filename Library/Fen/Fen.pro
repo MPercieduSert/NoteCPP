@@ -8,43 +8,43 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 
 
-#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Div/release/ -lDiv
-#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Div/debug/ -lDiv
-#else:unix: LIBS += -L$$OUT_PWD/../Div/ -lDiv
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Div/release/ -lDiv
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Div/debug/ -lDiv
+else:unix: LIBS += -L$$OUT_PWD/../Div/ -lDiv
 
-#INCLUDEPATH += $$PWD/../Div
-#DEPENDPATH += $$PWD/../Div
+INCLUDEPATH += $$PWD/../Div
+DEPENDPATH += $$PWD/../Div
 
-#win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Div/release/libDiv.a
-#else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Div/debug/libDiv.a
-#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Div/release/Div.lib
-#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Div/debug/Div.lib
-#else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Div/libDiv.a
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Div/release/libDiv.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Div/debug/libDiv.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Div/release/Div.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Div/debug/Div.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Div/libDiv.a
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Model/release/ -lModel
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Model/debug/ -lModel
-else:unix: LIBS += -L$$OUT_PWD/../Model/ -lModel
+#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Model/release/ -lModel
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Model/debug/ -lModel
+#else:unix: LIBS += -L$$OUT_PWD/../Model/ -lModel
 
-INCLUDEPATH += $$PWD/../Model
-DEPENDPATH += $$PWD/../Model
+#INCLUDEPATH += $$PWD/../Model
+#DEPENDPATH += $$PWD/../Model
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Model/release/libModel.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Model/debug/libModel.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Model/release/Model.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Model/debug/Model.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Model/libModel.a
+#win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Model/release/libModel.a
+#else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Model/debug/libModel.a
+#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Model/release/Model.lib
+#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Model/debug/Model.lib
+#else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Model/libModel.a
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Delegate/release/ -lDelegate
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Delegate/debug/ -lDelegate
-else:unix: LIBS += -L$$OUT_PWD/../Delegate/ -lDelegate
+#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Delegate/release/ -lDelegate
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Delegate/debug/ -lDelegate
+#else:unix: LIBS += -L$$OUT_PWD/../Delegate/ -lDelegate
 
-INCLUDEPATH += $$PWD/../Delegate
-DEPENDPATH += $$PWD/../Delegate
+#INCLUDEPATH += $$PWD/../Delegate
+#DEPENDPATH += $$PWD/../Delegate
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Delegate/release/libDelegate.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Delegate/debug/libDelegate.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Delegate/release/Delegate.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Delegate/debug/Delegate.lib
+#win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Delegate/release/libDelegate.a
+#else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Delegate/debug/libDelegate.a
+#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Delegate/release/Delegate.lib
+#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Delegate/debug/Delegate.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Delegate/libDelegate.a
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Widget/release/ -lWidget
@@ -74,36 +74,36 @@ else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Dialog/libDialog.a
 
 HEADERS += \
-    FenPrincipale.h \
     Fen.h \
-    FenMenu.h \
+#    FenExo.h \
     FenFoundFile.h \
-    FenNote.h \
-    FenExo.h \
-    TabModule.h \
-    TabMenu.h \
-    TabAbstractModule.h \
-    TabClasse.h \
-    TabListeEleve.h \
-    TabListeGroupe.h \
-    TabAbstractTableau.h \
-    TabAbstractClasse.h
+#    FenMenu.h \
+#    FenNote.h \
+    FenPrincipale.h \
+#    TabAbstractClasse.h \
+#    TabAbstractModule.h \
+#    TabAbstractTableau.h \
+#    TabClasse.h \
+#    TabListeEleve.h \
+#    TabListeGroupe.h \
+#    TabMenu.h \
+#    TabModule.h
 
 SOURCES += \
-    FenPrincipale.cpp \
     Fen.cpp \
-    FenMenu.cpp \
+#    FenExo.cpp \
     FenFoundFile.cpp \
-    FenNote.cpp \
-    FenExo.cpp \
-    TabModule.cpp \
-    TabMenu.cpp \
-    TabAbstractModule.cpp \
-    TabClasse.cpp \
-    TabListeEleve.cpp \
-    TabListeGroupe.cpp \
-    TabAbstractTableau.cpp \
-    TabAbstractClasse.cpp
+#    FenMenu.cpp \
+#    FenNote.cpp \
+    FenPrincipale.cpp \
+#    TabAbstractClasse.cpp \
+#    TabAbstractModule.cpp \
+#    TabAbstractTableau.cpp \
+#    TabClasse.cpp \
+#    TabListeEleve.cpp \
+#    TabListeGroupe.cpp \
+#    TabMenu.cpp \
+#    TabModule.cpp
 
 unix {
     target.path = /usr/lib

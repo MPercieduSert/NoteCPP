@@ -32,134 +32,29 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PW
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Manager/debug/Manager.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Manager/libManager.a
 
-
-#HEADERS += \
-#    ../Entities/Annee.h \
-#    ../Entities/Appreciation.h \
-#    ../Entities/Attribut.h \
-#    ../Entities/Attribut_bareme.h \
-#    ../Entities/Attribut_exercice.h \
-#    ../Entities/Bareme.h \
-#    ../Entities/Classe.h \
-#    ../Entities/Commentaire.h \
-#    ../Entities/Coefficient.h \
-#    ../Entities/Controle.h \
-#    ../Entities/Controle_exercice.h \
-#    ../Entities/Eleve.h \
-#    ../Entities/Eleve_groupe.h \
-#    ../Entities/Entity.h \
-#    ../Entities/EntityAnnee.h \
-#    ../Entities/Exercice.h \
-#    ../Entities/Groupe.h \
-#    ../Entities/ListEntities.h \
-#    ../Entities/Note.h \
-#    ../Entities/NumControle.h \
-#    ../Entities/Niveau.h \
-#    ../Entities/Point.h \
-#    ../Entities/Source.h \
-#    ../Entities/TypeControle.h \
-#    ../Entities/TypeGroupe.h \
-#    ../Entities/TypeNiveau.h \
-#    ../Manager/AnneeManager.h \
-#    ../Manager/AppreciationManager.h \
-#    ../Manager/AttributManager.h \
-#    ../Manager/Attribut_baremeManager.h \
-#    ../Manager/Attribut_exerciceManager.h \
-#    ../Manager/BaremeManager.h \
-#    ../Manager/ClasseManager.h \
-#    ../Manager/CommentaireManager.h \
-#    ../Manager/CoefficientManager.h \
-#    ../Manager/ControleManager.h \
-#    ../Manager/Controle_exerciceManager.h \
-#    ../Manager/EleveManager.h \
-#    ../Manager/Eleve_groupeManager.h \
-#    ../Manager/ExerciceManager.h \
-#    ../Manager/GroupeManager.h \
-#    ../Manager/NoteManager.h \
-#    ../Manager/NumControleManager.h \
-#    ../Manager/NiveauManager.h \
-#    ../Manager/Manager.h \
-#    ../Manager/ManagerAnnee.h \
-#    ../Manager/PointManager.h \
-#    ../Manager/SourceManager.h \
-#    ../Manager/TypeControleManager.h \
-#    ../Manager/TypeGroupeManager.h \
-#    ../Manager/TypeNiveauManager.h \
-    #../Xml/XmlDoc.h \
-    #../Xml/XmlElement.h \
-    #../Xml/XmlReader.h \
-    #../Xml/XmlWriter.h
-
-#SOURCES += \
-#    ../Entities/Annee.cpp \
-#    ../Entities/Appreciation.cpp \
-#    ../Entities/Attribut.cpp \
-#    ../Entities/Attribut_bareme.cpp \
-#    ../Entities/Attribut_exercice.cpp \
-#    ../Entities/Bareme.cpp \
-#    ../Entities/Classe.cpp \
-#    ../Entities/Commentaire.cpp \
-#    ../Entities/Coefficient.cpp \
-#    ../Entities/Controle.cpp \
-#    ../Entities/Controle_exercice.cpp \
-#    ../Entities/Eleve.cpp \
-#    ../Entities/Eleve_groupe.cpp \
-#    ../Entities/Entity.cpp \
-#    ../Entities/EntityAnnee.cpp \
-#    ../Entities/Exercice.cpp \
-#    ../Entities/Groupe.cpp \
-#    ../Entities/ListEntities.cpp \
-#    ../Entities/Note.cpp \
-#    ../Entities/NumControle.cpp \
-#    ../Entities/Niveau.cpp \
-#    ../Entities/Point.cpp \
-#    ../Entities/Source.cpp \
-#    ../Entities/TypeControle.cpp \
-#    ../Entities/TypeGroupe.cpp \
-#    ../Entities/TypeNiveau.cpp \
-#    ../Manager/AnneeManager.cpp \
-#    ../Manager/AppreciationManager.cpp \
-#    ../Manager/AttributManager.cpp \
-#    ../Manager/Attribut_baremeManager.cpp \
-#    ../Manager/Attribut_exerciceManager.cpp \
-#    ../Manager/BaremeManager.cpp \
-#    ../Manager/ClasseManager.cpp \
-#    ../Manager/CommentaireManager.cpp \
-#    ../Manager/CoefficientManager.cpp \
-#    ../Manager/ControleManager.cpp \
-#    ../Manager/Controle_exerciceManager.cpp \
-#    ../Manager/EleveManager.cpp \
-#    ../Manager/Eleve_groupeManager.cpp \
-#    ../Manager/ExerciceManager.cpp \
-#    ../Manager/GroupeManager.cpp \
-#    ../Manager/NoteManager.cpp \
-#    ../Manager/NumControleManager.cpp \
-#    ../Manager/NiveauManager.cpp \
-#    ../Manager/Manager.cpp \
-#    ../Manager/ManagerAnnee.cpp \
-#    ../Manager/PointManager.cpp \
-#    ../Manager/SourceManager.cpp \
-#    ../Manager/TypeControleManager.cpp \
-#    ../Manager/TypeGroupeManager.cpp \
-#    ../Manager/TypeNiveauManager.cpp \
-    #../Xml/XmlDoc.cpp \
-    #../Xml/XmlElement.cpp \
-    #../Xml/XmlReader.cpp \
-    #../Xml/XmlWriter.cpp
-
 HEADERS += \
+    AbstractBdd.h \
+    AbstractManagers.h \
     Bdd.h \
     Config.h \
     FileInterface.h \
+    Managers.h \
     Tree.h \
     TreeItem.h
 
+
 SOURCES += \
+    AbstractBdd.cpp \
+    AbstractManagers.cpp \
     Bdd.cpp \
     Config.cpp \
     FileInterface.cpp \
+    Managers.cpp \
     Tree.cpp \
     TreeItem.cpp
+
+
+
 
 unix {
     target.path = /usr/lib

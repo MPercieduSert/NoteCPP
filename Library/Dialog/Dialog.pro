@@ -26,14 +26,14 @@ else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Widget/libWidget.a
 
 SOURCES += \
-    SelectAnneeDialog.cpp \
     NewAnneeDialog.cpp \
-    NewClasseDialog.cpp
+    NewClasseDialog.cpp \
+    SelectAnneeDialog.cpp \
 
-HEADERS += \
-    SelectAnneeDialog.h \
+HEADERS += \ 
     NewAnneeDialog.h \
-    NewClasseDialog.h
+    NewClasseDialog.h \
+    SelectAnneeDialog.h
 
 unix {
     target.path = /usr/lib

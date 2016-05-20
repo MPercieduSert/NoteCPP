@@ -5,12 +5,12 @@
 #define LINKSQLDIVERS
 
 #include "AttributsMacroLinkSql.h"
-#include "LinkSql.h"
+#include "AbstractLinkSql.h"
 
-/*! \ingroup groupeBaseLinkSql
+/*! \ingroup groupeLinkSqlBase
  * \brief Classe mère des liens entre les entités numérotés.
  */
-template<class Ent, class Info> class NumLinkSql : public IdLinkSql<Ent,Info>, public NumAttributSql<Ent>
+template<class Ent> class NumLinkSql : public IdLinkSql<Ent>, public NumAttributSql<Ent>
 {
 protected:
     using NumAttributSql<Ent>::num;
@@ -18,11 +18,7 @@ protected:
 
 public:
     //! Constructeur.
-    NumLinkSql()
-    {}
-
-    //! Constructeur.
-    NumLinkSql(QSqlQuery & req)
+    NumLinkSql(QSqlQuery * req)
         : ReqSql(req)
     {}
 
@@ -33,23 +29,28 @@ public:
     //! Transmet les valeurs des attributs à la requète SQL préparée.
     void bindValues(const Ent & entity)
     {
-        IdLinkSql<Ent,Info>::bindValues(entity);
+        IdLinkSql<Ent>::bindValues(entity);
         setNum(entity);
     }
 
     //! Hydrate l'entité entity avec à partir de la requète.
     void fromRequete(Ent & entity) const
     {
-        IdLinkSql<Ent,Info>::fromRequete(entity);
+        IdLinkSql<Ent>::fromRequete(entity);
         entity.setNum(num());
     }
+
+protected:
+    //! Constructeur protégé.
+    NumLinkSql()
+    {}
 };
 
 
-/*! \ingroup groupeBaseLinkSql
+/*! \ingroup groupeLinkSqlBase
  * \brief Classe mère des liens entre les entités ayant un attribut texte.
  */
-template<class Ent, class Info> class TexteLinkSql : public IdLinkSql<Ent,Info>, public TexteAttributSql<Ent>
+template<class Ent> class TexteLinkSql : public IdLinkSql<Ent>, public TexteAttributSql<Ent>
 {
 protected:
     using TexteAttributSql<Ent>::texte;
@@ -57,11 +58,7 @@ protected:
 
 public:
     //! Constructeur.
-    TexteLinkSql()
-    {}
-
-    //! Constructeur.
-    TexteLinkSql(QSqlQuery & req)
+    TexteLinkSql(QSqlQuery * req)
         : ReqSql(req)
     {}
 
@@ -72,22 +69,27 @@ public:
     //! Transmet les valeurs des attributs à la requète SQL préparée.
     void bindValues(const Ent & entity)
     {
-        IdLinkSql<Ent,Info>::bindValues(entity);
+        IdLinkSql<Ent>::bindValues(entity);
         setTexte(entity);
     }
 
     //! Hydrate l'entité entity avec à partir de la requète.
     void fromRequete(Ent & entity) const
     {
-        IdLinkSql<Ent,Info>::fromRequete(entity);
+        IdLinkSql<Ent>::fromRequete(entity);
         entity.setTexte(texte());
     }
+
+protected:
+    //! Constructeur protégé.
+    TexteLinkSql()
+    {}
 };
 
-/*! \ingroup groupeBaseLinkSql
+/*! \ingroup groupeLinkSqlBase
  * \brief Classe mère des liens entre une entité ayant seulement l'attribut num.
  */
-template<class Ent,class Info> class NumOnlyLinkSql : public NumLinkSql<Ent,Info>
+template<class Ent> class NumOnlyLinkSql : public NumLinkSql<Ent>
 {
 protected:
     using IdAttributSql<Ent>::id;
@@ -95,9 +97,13 @@ protected:
 
 public:
     //! Construteur, transmettre en argument l'objet de requète utilisée par le manageur.
-    NumOnlyLinkSql(QSqlQuery & requete)
-        : NumLinkSql<Ent,Info>(requete)
+    NumOnlyLinkSql(QSqlQuery * requete)
+        : NumLinkSql<Ent>(requete)
         {}
+
+    //!Destructeur.
+    ~NumOnlyLinkSql()
+    {}
 
     //! Crée dynamiquement une nouvelle entité de type T, l'hydrate à partir de la requète SQL.
     //! Puis retourne un  pointeur vers cette nouvelle entité.
@@ -107,10 +113,10 @@ public:
     }
 };
 
-/*! \ingroup groupeBaseLinkSql
+/*! \ingroup groupeLinkSqlBase
  * \brief Classe mère des liens entre une entité ayant seulement l'attribut texte.
  */
-template<class Ent,class Info> class TexteOnlyLinkSql : public TexteLinkSql<Ent,Info>
+template<class Ent> class TexteOnlyLinkSql : public TexteLinkSql<Ent>
 {
 protected:
     using IdAttributSql<Ent>::id;
@@ -118,9 +124,13 @@ protected:
 
 public:
     //! Construteur, transmettre en argument l'objet de requète utilisée par le manageur.
-    TexteOnlyLinkSql(QSqlQuery & requete)
-        : TexteLinkSql<Ent,Info>(requete)
+    TexteOnlyLinkSql(QSqlQuery * requete)
+        : TexteLinkSql<Ent>(requete)
         {}
+
+    //!Destructeur.
+    ~TexteOnlyLinkSql()
+    {}
 
     //! Crée dynamiquement une nouvelle entité de type T, l'hydrate à partir de la requète SQL.
     //! Puis retourne un  pointeur vers cette nouvelle entité.

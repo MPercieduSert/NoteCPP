@@ -6,22 +6,11 @@
 
 #include "AttributEntityAlias.h"
 #include "EntityNom.h"
-#include "InfoEntity.h"
-
-/*! \ingroup groupeInfoEntity
- * \brief Information sur l'entité Donnée.
- */
-struct DonneeInfo
-{
-    static const int ID = InfoEntity::DonneeId;
-    static constexpr char Name[] {"Donnee"};
-    ATTRIBUT_5(Card,Nom,Sur,Type,TpVal)
-};
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Donnee.
  */
-class Donnee : public TypeNomEntity<Donnee,DonneeInfo>, public CardAttribut, public SurAttribut, public TpValAttribut
+class Donnee : public TypeNomEntity<Donnee>, public CardAttribut, public SurAttribut, public TpValAttribut
 {
 public:
     //! Différent type d'affichage.

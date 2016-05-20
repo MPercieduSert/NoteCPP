@@ -1,1 +1,0 @@
-#include "NumControle.h"

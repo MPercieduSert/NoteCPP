@@ -6,26 +6,15 @@
 
 #include "AttributEntityAlias.h"
 #include "EntityRelation.h"
-#include "InfoEntity.h"
-
-/*! \ingroup groupeInfoEntity
- * \brief Information sur l'entité ClasseEleve.
- */
-struct ClasseEleveInfo
-{
-    static const int ID = InfoEntity::ClasseEleveId;
-    static constexpr char Name[] {"Classe-Eleve"};
-    ATTRIBUT_4(IdCl,IdEl,Entree,Sortie)
-};
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité ClasseEleve.
  */
 
-class ClasseEleve : public RelationEntity<ClasseEleve,ClasseEleveInfo>, public EntreeAttribut, public SortieAttribut
+class ClasseEleve : public RelationEntity<ClasseEleve>, public EntreeAttribut, public SortieAttribut
 {
 public:
-    RELATION_ALIAS_2_CLE(Cl,El)
+    RELATION_ALIAS_2_CLE(Cl,El,ClasseEleve)
 
     //! Constructeur par defaut.
     ClasseEleve(int id = 0)

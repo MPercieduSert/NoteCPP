@@ -43,18 +43,10 @@ public:
     //! Par défaut une copie du fichier est effectuée, mettre copy=false pour ne pas copier le fichier.
     QString isValid(bool copy = true);
 
-    //! Ouvre un fichier à partir d'un chemin XML dans le fichier de configuration. Pour plus de détail voir la méthode suivante.
-    void openInConf(const QString & path, const QString & attName, const QString & attValue, bool save = true)
-    {
-        QMap<QString,QString> atts;
-        atts.insert(attName,attValue);
-        return openInConf(path,atts,save);
-    }
-
     /*!
      * \brief Ouvre un fichier à partir d'un chemin XML dans le fichier de configuration.
      */
-    void openInConf(const QString & path, const QMap<QString,QString> & atts = QMap<QString,QString>(), bool save = true);
+    void openInConf(const QString & path, bool save = true);
 
 
 protected:
@@ -77,8 +69,9 @@ protected:
      */
     QString foundFileMessage(const QString & text, const QString &fileName, const QString &fileExtension, const QString & accept = "Créer", const QString & reject = "Trouver", const QString & openText = "Indiquez le nom d'un fichier");
 
-    //! Formate une QString associant le chemin du fichier path et les attributs atts pour un message d'erreur.
+    /*//! Formate une QString associant le chemin du fichier path et les attributs atts pour un message d'erreur.
     QString inputToQString(const QString & path, const QMap<QString,QString> & atts);
+    */
 
     //! Affiche une QMessageBox modale de texte text avec des bouttons de texte accept et de texte reject.
     //! Retourne true si le bouton de texte accept est cliqué et false sinon.

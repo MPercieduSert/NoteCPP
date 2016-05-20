@@ -10,8 +10,8 @@ SUBDIRS += \
     Widget \
     Dialog \
     Div \
-    Model \
-    Delegate \
+#    Model \
+#    Delegate \
     Fen \
 
 

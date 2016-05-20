@@ -22,25 +22,6 @@
 #include "../Entities/Entity.h"
 #include "../Entities/ListEntities.h"
 
-// Macro pour manageur..
-
-//! \ingroup groupeBaseManager
-//! Coprs des deux methodes save.
-#define SAVE if(entity.isValid()) \
-{if(entity.isNew()) \
-    {if(existsUnique(entity) == Aucun) \
-        {add(entity);} \
-     else \
-        {throw std::invalid_argument(messageErreursUnique(entity).toStdString());}} \
-else \
-    {if(!sameInBdd(entity)) \
-        {if(existsUnique(entity) <= Meme) \
-            {modify(entity);} \
-        else \
-            {throw std::invalid_argument(messageErreursUnique(entity).toStdString());}}}} \
-else \
-    {throw std::invalid_argument(messageErreurs(entity).toStdString());}
-
 /*! \ingroup groupeBaseManager
  * \brief Classe abstraite de base des manageurs.
  *
@@ -97,7 +78,7 @@ public:
     //! Retourne True si l'opération s'est correctement déroulée.
     virtual bool get(Entity & entity) = 0;
 
-    //! Renvoie la liste des entités de la table ordonnée suivant la colonne d'identifiant ordre.
+    /*//! Renvoie la liste des entités de la table ordonnée suivant la colonne d'identifiant ordre.
     virtual ListEntities<Entity> getList(int ordre) = 0;
 
     //! Renvoie la liste des entités de la table vérifiant la condition,
@@ -111,13 +92,13 @@ public:
     //! Renvoie la liste des entités de la table vérifiant les deux conditions,
     //! valeur de la colonne d'identifiant cle1 = value1 et valeur de la colonne d'identifiant cle2 = value2,
     //! ordonnée suivant la colonne d'identifiant ordre.
-    virtual ListEntities<Entity> getList(int cle1, int cle2, const QVariant & value1, const QVariant & value2, int ordre) = 0;
+    virtual ListEntities<Entity> getList(int cle1, int cle2, const QVariant & value1, const QVariant & value2, int ordre) = 0;*/
 
     //! Hydrate l'entité entity avec les valeurs des attributs de l'entité enregistrée en base de donnée
     //! ayant les mêmes valeurs pour les attributs uniques.
     //! Retourne True si l'opération s'est correctement déroulée.
-    bool getUnique(Entity & entity)
-    {
+    virtual bool getUnique(Entity & entity) = 0;
+    /*{
         if(existsUnique(entity) == Manager::Tous)
         {
             return get(entity);
@@ -126,30 +107,24 @@ public:
         {
             return false;
         }
-    }
+    }*/
 
     //! Teste s'il y a dans la base de donnée une entité ayant exactement les mêmes valeurs d'attributs (identifiant compris).
     virtual bool sameInBdd(const Entity & entity) = 0;
 
     //! Enregistre l'entité entity en base de donnée et assigne l'identifiant de l'entité insérée en base de donnée à entity.
-    virtual void save(Entity & entity)
-    {
-        SAVE
-    }
+    virtual void save(Entity & entity) = 0;
 
     //! Enregistre l'entité entity en base de donnée.
-    virtual void save(const Entity & entity)
-    {
-        SAVE
-    }
+    virtual void save(const Entity & entity) = 0;
 
 protected:
-    //! Insert la nouvelle entité entity dans la base de donnée
+    /*//! Insert la nouvelle entité entity dans la base de donnée
     //! et assigne l'identifiant de l'entité insérée en base de donnée à entity.
     virtual void add(Entity & entity) = 0;
 
     //! Insert la nouvelle entité entity dans la base de donnée.
-    virtual void add(const Entity & entity) = 0;
+    virtual void add(const Entity & entity) = 0;*/
 
     //! Supprime de la table en base de donnée l'entité d'identifiant id.
     virtual void del(int id) = 0;
@@ -160,8 +135,8 @@ protected:
     //! Message d'erreurs s'il existe déjà en base de donnée une entité ayant les mêmes valeurs d'attributs uniques que entity.
     virtual QString messageErreursUnique(const Entity & entity) const = 0;
 
-    //! Met à jour l'entité entity en base de donnée.
-    virtual void modify(const Entity & entity) = 0;
+    /*//! Met à jour l'entité entity en base de donnée.
+    virtual void modify(const Entity & entity) = 0;*/
 };
 
 #endif // MANAGER_H

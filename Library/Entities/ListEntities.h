@@ -7,6 +7,7 @@
 
 #include <QList>
 #include <QVector>
+
 #include "Entity.h"
 
 /*! \ingroup groupeEntity

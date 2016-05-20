@@ -6,6 +6,8 @@ FenPrincipale::FenPrincipale(QString path, QWidget *parent) :
     m_config(path+"/confFile.xml")
 
 {
+
+
     //! + Création des Menus.
     // et toolbar.
     createAction();
@@ -31,8 +33,8 @@ FenPrincipale::FenPrincipale(QString path, QWidget *parent) :
     //! + Selection de l'année courante
     if(m_config.varExists("conf/parametre/initialisation/anneeDefaut"))
     {
-        m_anneeDefaut.setAnnee(m_config.getVars("conf/parametre/initialisation/anneeDefaut").toInt());
-        if(m_anneeDefaut.annee() != 0)
+        m_anneeDefaut.setAn(m_config.getVars("conf/parametre/initialisation/anneeDefaut").toInt());
+        if(m_anneeDefaut.an() != 0)
             if(!m_bdd.get(m_anneeDefaut))
             {
 
@@ -60,59 +62,58 @@ FenPrincipale::FenPrincipale(QString path, QWidget *parent) :
     }*/
 }
 
-void FenPrincipale::setEnabledCopierColler(bool bb)
+/*void FenPrincipale::setEnabledCopierColler(bool bb)
 {
     m_actionEditColler->setEnabled(bb);
     m_actionEditCopier->setEnabled(bb);
     m_actionEditCouper->setEnabled(bb);
     m_actionEditEffacer->setEnabled(bb);
-}
+}*/
 
 // %%%%%%%%%% protected %%%%%%%%%%%%%
-void FenPrincipale::changeAnnee(int anneeId)
+/*void FenPrincipale::changeAnnee(int anneeId)
 {
     Annee annee(anneeId);
     if(m_bdd.get(annee))
     {
-        annee.setEncours(true);
-        m_bdd.save(annee);
         m_bdd.setAnnee(annee);
+        m_anneeDefaut << annee;
         emit anneeChanged();
     }
 
-}
+}*/
 
 void FenPrincipale::createAction()
 {
     m_actionEditColler = new QAction(tr("Coller"),this);
     m_actionEditColler->setShortcut(QKeySequence::Paste);
     m_actionEditColler->setEnabled(false);
-    connect(m_actionEditColler,&QAction::triggered,this,&FenPrincipale::coller);
+    //connect(m_actionEditColler,&QAction::triggered,this,&FenPrincipale::coller);
 
     m_actionEditCopier = new QAction(tr("Copier"),this);
     m_actionEditCopier->setShortcut(QKeySequence::Copy);
     m_actionEditCopier->setEnabled(false);
-    connect(m_actionEditCopier,&QAction::triggered,this,&FenPrincipale::copier);
+    //connect(m_actionEditCopier,&QAction::triggered,this,&FenPrincipale::copier);
 
     m_actionEditCouper = new QAction(tr("Couper"),this);
     m_actionEditCouper->setShortcut(QKeySequence::Cut);
     m_actionEditCouper->setEnabled(false);
-    connect(m_actionEditCouper,&QAction::triggered,this,&FenPrincipale::couper);
+    //connect(m_actionEditCouper,&QAction::triggered,this,&FenPrincipale::couper);
 
     m_actionEditEffacer = new QAction(tr("Effacer"),this);
     m_actionEditEffacer->setShortcut(QKeySequence::Delete);
     m_actionEditEffacer->setEnabled(false);
-    connect(m_actionEditEffacer,&QAction::triggered,this,&FenPrincipale::effacer);
+    //connect(m_actionEditEffacer,&QAction::triggered,this,&FenPrincipale::effacer);
 
     m_actionModuleExercice = new QAction(tr("Exercice"),this);
-    connect(m_actionModuleExercice,&QAction::triggered,this,&FenPrincipale::execExo);
+    //connect(m_actionModuleExercice,&QAction::triggered,this,&FenPrincipale::execExo);
 
     m_actionModuleNote = new QAction(tr("Note"),this);
-    connect(m_actionModuleNote,&QAction::triggered,this,&FenPrincipale::execNote);
+    //connect(m_actionModuleNote,&QAction::triggered,this,&FenPrincipale::execNote);
     m_actionModuleNote->setEnabled(false);
 
     m_actionNewAnnee = new QAction(tr("Année"),this);
-    connect(m_actionNewAnnee,&QAction::triggered,this,&FenPrincipale::creerAnnee);
+    //connect(m_actionNewAnnee,&QAction::triggered,this,&FenPrincipale::creerAnnee);
 
     m_actionNewAttribut = new QAction(tr("Attribut"),this);
     m_actionNewBareme = new QAction(tr("Barème"),this);
@@ -123,10 +124,10 @@ void FenPrincipale::createAction()
     m_actionSauvegarder = new QAction(tr("Sauvegarder"),this);
     m_actionSauvegarder->setShortcut(QKeySequence::Save);
     m_actionSauvegarder->setEnabled(false);
-    connect(m_actionSauvegarder,&QAction::triggered,this,&FenPrincipale::sauvegarder);
+    //connect(m_actionSauvegarder,&QAction::triggered,this,&FenPrincipale::sauvegarder);
 
     m_actionSelectDefaultAnnee = new QAction(tr("Choisir l'année de travail"),this);
-    connect(m_actionSelectDefaultAnnee,&QAction::triggered,this,&FenPrincipale::selectDefaultAnnee);
+    //connect(m_actionSelectDefaultAnnee,&QAction::triggered,this,&FenPrincipale::selectDefaultAnnee);
 }
 
 void FenPrincipale::createMenu()
@@ -161,7 +162,7 @@ void FenPrincipale::createToolBar()
 
 // Public slots
 
-void FenPrincipale::coller()
+/*void FenPrincipale::coller()
 {
     m_tabModule->coller();
 }
@@ -207,10 +208,10 @@ void FenPrincipale::creerAnnee()
 void FenPrincipale::creerClasse()
 {
     QVector<Niveau> listeNiveau;
-    ListEntities<Niveau>::vector(listeNiveau, m_bdd.getList(Entity::NiveauId));
+    ListEntities<Niveau>::vector(listeNiveau, m_bdd.getList(InfoEntity::NiveauId));
     QVector<Classe> listeClasse;
-    ListEntities<Classe>::vector(listeClasse, m_bdd.getList(Entity::ClasseId,Classe::AnneePos,QVariant(m_bdd.annee().id())));
-    NewClasseDialog dial(listeNiveau,m_bdd.annee(),listeClasse,Niveau::Numeric,this);
+    ListEntities<Classe>::vector(listeClasse, m_bdd.getList(InfoEntity::ClasseId,Classe::IdAnPos,QVariant(m_bdd.annee().id())));
+    NewClasseDialog dial(listeNiveau,m_bdd.annee(),listeClasse,Classe::Numeric,this);
     if(dial.exec() == QDialog::Accepted)
     {
         Classe classe(dial.value().classe);
@@ -225,7 +226,7 @@ void FenPrincipale::creerClasse()
             m_bdd.save(eleve);
         }
     }
-}
+}*/
 
 /*void FenPrincipale::execMenu()
 {
@@ -233,6 +234,7 @@ void FenPrincipale::creerClasse()
     setCentralWidget(fen);
 }*/
 
+/*
 void FenPrincipale::execNote()
 {
     m_actionModuleExercice->setEnabled(true);
@@ -247,8 +249,9 @@ void FenPrincipale::execExo()
     m_actionModuleNote->setEnabled(true);
     FenExo * fen = new FenExo(this);
     setCentralWidget(fen);
-}
+}*/
 
+/*
 void FenPrincipale::selectDefaultAnnee()
 {
     QVector<Annee> listeAnnee;
@@ -264,4 +267,4 @@ void FenPrincipale::selectDefaultAnnee()
     default:
         break;
     };
-}
+}*/

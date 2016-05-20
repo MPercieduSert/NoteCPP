@@ -9,22 +9,22 @@
 /*! \ingroup groupeBaseEntity
  * \brief Classe de base des entités ayant un attribut num.
  */
-template<class Ent, class Info> class NumEntity : public EntityTemp<Ent,Info>, public NumAttribut
+template<class Ent> class NumEntity : public EntityTemp<Ent>, public NumAttribut
 {
 public:
     //! Constructeur par défaut fixant l'identifiant de l'entité.
     NumEntity(int id = 0)
-        : EntityTemp<Ent,Info>(id)
+        : EntityTemp<Ent>(id)
     {}
 
     //! Constructeur à partir des valeurs attributs.
     NumEntity(int num, int id)
-        : EntityTemp<Ent,Info>(id), NumAttribut(num)
+        : EntityTemp<Ent>(id), NumAttribut(num)
     {}
 
     //! Constructeur de recopie.
-    NumEntity(const NumEntity<Ent,Info> & entity)
-        : EntityTemp<Ent,Info>(entity), NumAttribut(entity.num())
+    NumEntity(const NumEntity<Ent> & entity)
+        : EntityTemp<Ent>(entity), NumAttribut(entity.num())
     {}
 
     //! Destructeur.
@@ -34,7 +34,7 @@ public:
     //! Teste si l'entité est valide.
     bool isValid() const
     {
-        return EntityTemp<Ent,Info>::isValid()
+        return EntityTemp<Ent>::isValid()
                 && NumAttribut::valide();
     }
 
@@ -57,22 +57,22 @@ protected:
 /*! \ingroup groupeBaseEntity
  * \brief Classe de base des entités ayant un attribut texte.
  */
-template<class Ent, class Info> class TexteEntity : public EntityTemp<Ent,Info>, public TexteAttribut
+template<class Ent> class TexteEntity : public EntityTemp<Ent>, public TexteAttribut
 {
 public:
     //! Constructeur par défaut fixant l'identifiant de l'entité.
     TexteEntity(int id = 0)
-        : EntityTemp<Ent,Info>(id)
+        : EntityTemp<Ent>(id)
     {}
 
     //! Constructeur à partir des valeurs attributs.
     TexteEntity(const QString & txt, int id = 0)
-        : EntityTemp<Ent,Info>(id), TexteAttribut(txt)
+        : EntityTemp<Ent>(id), TexteAttribut(txt)
     {}
 
     //! Constructeur de recopie.
-    TexteEntity(const TexteEntity<Ent,Info> & entity)
-        : EntityTemp<Ent,Info>(entity), TexteAttribut(entity.texte())
+    TexteEntity(const TexteEntity<Ent> & entity)
+        : EntityTemp<Ent>(entity), TexteAttribut(entity.texte())
     {}
 
     //! Destructeur.
@@ -82,7 +82,7 @@ public:
     //! Teste si l'entité est valide.
     bool isValid() const
     {
-        return EntityTemp<Ent,Info>::isValid()
+        return EntityTemp<Ent>::isValid()
                 && TexteAttribut::valide();
     }
 
@@ -105,22 +105,22 @@ protected:
 /*! \ingroup groupeBaseEntity
  * \brief Classe de base des entités ayant seulement un attribut texte.
  */
-template<class Info> class TexteOnlyEntity : public TexteEntity<TexteOnlyEntity<Info>,Info>
+template<int N = 0> class TexteOnlyEntity : public TexteEntity<TexteOnlyEntity<N> >
 {
 public:
     //! Constructeur par défaut fixant l'identifiant de l'entité.
     TexteOnlyEntity(int id = 0)
-        : TexteEntity<TexteOnlyEntity<Info>,Info>(id)
+        : TexteEntity<TexteOnlyEntity<N> >(id)
     {}
 
     //! Constructeur à partir des valeurs attributs.
     TexteOnlyEntity(const QString & txt, int id = 0)
-        : TexteEntity<TexteOnlyEntity<Info>,Info>(txt,id)
+        : TexteEntity<TexteOnlyEntity<N> >(txt,id)
     {}
 
     //! Constructeur de recopie.
-    TexteOnlyEntity(const TexteOnlyEntity<Info> & entity)
-        : TexteEntity<TexteOnlyEntity<Info>,Info>(entity)
+    TexteOnlyEntity(const TexteOnlyEntity<N> & entity)
+        : TexteEntity<TexteOnlyEntity<N> >(entity)
     {}
 
     //! Destructeur.

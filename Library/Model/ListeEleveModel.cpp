@@ -2,7 +2,7 @@
 
 ListeEleveModel::ListeEleveModel(Bdd & bdd, const Classe &classe, QObject *parent): MAbstractTableModel(parent), m_bdd(bdd), m_classe(classe)
 {
-    ListEntities<Eleve>::vector(m_data,m_bdd.getList(Entity::EleveId,Eleve::ClassePos,QVariant(m_classe.id())));
+    ListEntities<Eleve>::vector(m_data,m_bdd.getList(InfoEntity::EleveId,Eleve::IdClPos,QVariant(m_classe.id())));
     m_header<<tr("Nom")<<tr("Prenom")<<tr("Fille/Garçon")<<tr("Date de naissance")<<tr("Départ")<<tr("Date de départ");
 }
 ListeEleveModel::~ListeEleveModel()

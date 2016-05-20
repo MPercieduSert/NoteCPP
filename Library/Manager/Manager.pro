@@ -25,166 +25,43 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PW
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Entities/debug/Entities.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Entities/libEntities.a
 
-
-#HEADERS += \
-#    ../Entities/Annee.h \
-#    ../Entities/Appreciation.h \
-#    ../Entities/Attribut.h \
-#    ../Entities/Attribut_bareme.h \
-#    ../Entities/Attribut_exercice.h \
-#    ../Entities/Bareme.h \
-#    ../Entities/Classe.h \
-#    ../Entities/Commentaire.h \
-#    ../Entities/Coefficient.h \
-#    ../Entities/Controle.h \
-#    ../Entities/Controle_exercice.h \
-#    ../Entities/Eleve.h \
-#    ../Entities/Eleve_groupe.h \
-#    ../Entities/Entity.h \
-#    ../Entities/EntityAnnee.h \
-#    ../Entities/Exercice.h \
-#    ../Entities/Groupe.h \
-#    ../Entities/ListEntities.h \
-#    ../Entities/Note.h \
-#    ../Entities/NumControle.h \
-#    ../Entities/Niveau.h \
-#    ../Entities/Point.h \
-#    ../Entities/Source.h \
-#    ../Entities/TypeControle.h \
-#    ../Entities/TypeGroupe.h \
-#    ../Entities/TypeNiveau.h \
-
-
-
-#SOURCES += \
-#    ../Entities/Annee.cpp \
-#    ../Entities/Appreciation.cpp \
-#    ../Entities/Attribut.cpp \
-#    ../Entities/Attribut_bareme.cpp \
-#    ../Entities/Attribut_exercice.cpp \
-#    ../Entities/Bareme.cpp \
-#    ../Entities/Classe.cpp \
-#    ../Entities/Commentaire.cpp \
-#    ../Entities/Coefficient.cpp \
-#    ../Entities/Controle.cpp \
-#    ../Entities/Controle_exercice.cpp \
-#    ../Entities/Eleve.cpp \
-#    ../Entities/Eleve_groupe.cpp \
-#    ../Entities/Entity.cpp \
-#    ../Entities/EntityAnnee.cpp \
-#    ../Entities/Exercice.cpp \
-#    ../Entities/Groupe.cpp \
-#    ../Entities/ListEntities.cpp \
-#    ../Entities/Note.cpp \
-#    ../Entities/NumControle.cpp \
-#    ../Entities/Niveau.cpp \
-#    ../Entities/Point.cpp \
-#    ../Entities/Source.cpp \
-#    ../Entities/TypeControle.cpp \
-#    ../Entities/TypeGroupe.cpp \
-#    ../Entities/TypeNiveau.cpp \
-
-
-
 HEADERS += \
-#    AppreciationManager.h \
-#    AttributManager.h \
-#    Attribut_baremeManager.h \
-#    Attribut_exerciceManager.h \
-#    BaremeManager.h \
-    ClasseManager.h \
-#    CoefficientManager.h \
-    CommentaireManager.h \
-#    ControleManager.h \
-#    Controle_exerciceManager.h \
-#    Eleve_groupeManager.h \
-    GroupeManager.h \
-    NiveauManager.h \
-#    NoteManager.h \
-#    NumControleManager.h \
-    Manager.h \
-    ManagerSql.h \
-    LinkSql.h \
-    EleveLinkSql.h \
-#    ExerciceLinkSql.h \
-    DonneeLinkSql.h \
-    DonneeManager.h \
-    EleveManager.h \
-#    ExerciceManager.h \
-#    ManagerAnnee.h \
-#    PointManager.h \
-#    SourceManager.h \
-#    TypeControleManager.h \
-#    TypeGroupeManager.h \
-    TypeNiveauManager.h \
-    AnneeManager.h \
+    AbstractLinkSql.h \
+    AbstractUniqueSql.h \
     ArbreManager.h \
-    ClasseLinkSql.h \
-    NiveauLinkSql.h \
-    ReqSql.h \
-    ArbresManager.h \
-    AnneeInfoSql.h \
-    NiveauInfoSql.h \
-    ClasseInfoSql.h \
-    DonneeInfoSql.h \
-    EtablissementInfoSql.h \
-    EtablissementManager.h \
-    EleveInfoSql.h \
-    ClasseEleveInfoSql.h \
-    ClasseEleveLinkSql.h \
-    ClasseEleveManager.h \
-    GroupeInfoSql.h \
-    GroupeLinkSql.h \
-    SourceManager.h \
-    AttributsMacroLinkSql.h \
     AttributsLinkSql.h \
-    LinkSqlUnique.h \
-    AnneeLinkSql.h \
-    AttributInfoSql.h \
-    AttributLinkSql.h \
-    AttributManager.h \
-    RelationsInfoSql.h \
+    AttributsMacroLinkSql.h \
+    BaseInfoSql.h \
     InfoSql.h \
+    LinkSql.h \
+    LinkSqlArbre.h \
+    LinkSqlDivers.h \
     LinkSqlNom.h \
     LinkSqlRelation.h \
-    LinkSqlDivers.h \
-    TypeNiveauInfoSql.h \
-    CommentaireInfoSql.h \
-    SourceInfoSql.h \
-    RelationsManager.h
+    Manager.h \
+    ManagerOf.h \
+    ManagerSql.h \
+    ReqSql.h \
+    UniqueSql.h
 
 SOURCES += \
-#    AppreciationManager.cpp \
-#    AttributManager.cpp \
-#    Attribut_baremeManager.cpp \
-#    Attribut_exerciceManager.cpp \
-#    BaremeManager.cpp \
-    ClasseManager.cpp \
-#    CoefficientManager.cpp \
-    CommentaireManager.cpp \
-#    ControleManager.cpp \
-#    Controle_exerciceManager.cpp \
-#    Eleve_groupeManager.cpp \
-    GroupeManager.cpp \
-    NiveauManager.cpp \
-#    NoteManager.cpp \
-#    NumControleManager.cpp \
-    DonneeManager.cpp \
-    EleveManager.cpp \
-#    ExerciceManager.cpp \
-#    ManagerAnnee.cpp \
-#    PointManager.cpp \
-#    SourceManager.cpp \
-#    TypeControleManager.cpp \
-#    TypeGroupeManager.cpp \
-    TypeNiveauManager.cpp \
-    AnneeManager.cpp \
+    AbstractLinkSql.cpp \
+    AbstractUniqueSql.cpp \
     ArbreManager.cpp \
+    AttributsLinkSql.cpp \
+    AttributsMacroLinkSql.cpp \
+    BaseInfoSql.cpp \
+    InfoSql.cpp \
+    LinkSql.cpp \
+    LinkSqlArbre.cpp \
+    LinkSqlDivers.cpp \
+    LinkSqlNom.cpp \
+    LinkSqlRelation.cpp \
+    Manager.cpp \
+    ManagerOf.cpp \
+    ManagerSql.cpp \
     ReqSql.cpp \
-    EtablissementManager.cpp \
-    ClasseEleveManager.cpp \
-    SourceManager.cpp \
-    AttributManager.cpp
+    UniqueSql.cpp
 
 unix {
     target.path = /usr/lib

@@ -5,23 +5,15 @@
 #define GROUPE_H
 
 #include "AttributEntityAlias.h"
-#include "EntityNom.h"
-#include "InfoEntity.h"
-
-/*! \ingroup groupeInfoEntity
- * \brief Information sur l'entité Groupe.
- */
-struct GroupeInfo
-{
-    static const int ID = InfoEntity::GroupeId;
-    static constexpr char Name[] {"Groupe"};
-    ATTRIBUT_5(IdAn,IdCl,Alpha,Nom,Type)
-};
+#include "EntityRelation.h"
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Groupe.
  */
-class Groupe : public TypeNomEntity<Groupe,GroupeInfo>, public IdAnNullAttribut, public IdClNullAttribut, public AlphaAttribut
+class Groupe : public RelationExactOneNotNullEntity<Groupe>,
+                    public AlphaAttribut,
+                    public NomAttribut,
+                    public TypeAttribut
 {
 public:
     enum grPour {GrAnnee = 0,
@@ -29,20 +21,20 @@ public:
 
     //! Constructeur par defaut.
     Groupe(int id = 0)
-        :TypeNomEntity(id)
+        :RelationExactOneNotNullEntity(id)
     {}
 
     //! Constructeur à partir des valeurs attributs.
     Groupe(int idAn, int idCl, int alpha, const QString & nom, int type, int id = 0)
-        : TypeNomEntity(nom,type,id),
-          IdAnNullAttribut(idAn),
-          IdClNullAttribut(idCl),
-          AlphaAttribut(alpha)
+        : RelationExactOneNotNullEntity(idAn,idCl,id),
+          AlphaAttribut(alpha),
+          NomAttribut(nom),
+          TypeAttribut(type)
     {}
 
     //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
     Groupe(int cle, const QString & nom, grPour pr)
-        : TypeNomEntity(nom)
+        : NomAttribut(nom)
     {
         if(pr == GrClasse)
             {setIdCl(cle);}
@@ -50,31 +42,33 @@ public:
             {setIdAn(cle);}
     }
 
+    RELATION_ALIAS_2_CLE(An,Cl,Groupe)
+
     //! Teste si l'entité est valide.
     bool isValid() const
-    {return TypeNomEntity::isValid()
-                && IdAnNullAttribut::valide()
-                && IdClNullAttribut::valide()
+    {return RelationExactOneNotNullEntity::isValid()
                 && AlphaAttribut::valide()
-                && ((idAn() > 0 && idCl() == 0) || (idAn() == 0 && idCl() > 0));}
+                && NomAttribut::valide()
+                && TypeAttribut::valide();
+    }
 
 protected:
     //! Test d'égalité entre cette entité et celle transmise en argument.
     bool egal(const Groupe & entity) const
     {
-        return TypeNomEntity::egal(entity)
-                && (idAn() == entity.idAn())
-                && (idCl() == entity.idCl())
-                && (alpha() == entity.alpha());
+        return RelationExactOneNotNullEntity::egal(entity)
+                && (alpha() == entity.alpha())
+                && (nom() == entity.nom())
+                && (type() == entity.type());
     }
 
     //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
     void set(const Groupe & entity)
     {
-        TypeNomEntity::set(entity);
-        setIdAn(entity.idAn());
-        setIdCl(entity.idCl());
+        RelationExactOneNotNullEntity::set(entity);
         setAlpha(entity.alpha());
+        setNom(entity.nom());
+        setType(entity.type());
     }
 };
 

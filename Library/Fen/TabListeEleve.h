@@ -6,8 +6,8 @@
 #include "FenPrincipale.h"
 #include "TabAbstractClasse.h"
 #include "TabAbstractTableau.h"
-#include "../Model/ListeEleveModel.h"
-#include "../Delegate/ListeEleveDelegate.h"
+//#include "../Model/ListeEleveModel.h"
+//#include "../Delegate/ListeEleveDelegate.h"
 
 class TabListeEleve : public TabAbstractClasse
 {

@@ -82,22 +82,22 @@ QString FenFoundFile::isValid(bool copy)
     }
 }
 
-void FenFoundFile::openInConf(const QString & path, const QMap<QString,QString> & atts, bool save)
+void FenFoundFile::openInConf(const QString & path, bool save)
 {
-    //! Cherche l'entrée path d'attributs atts dans le fichier de configuration
+    //! Cherche l'entrée path dans le fichier de configuration
     //! et affiche une fenêtre de demande d'ouverture de fichier si l'entrée n'est pas présente.
     QString pathFile;
-    bool exist = m_parent->config()->varExists(path, atts);
+    bool exist = m_parent->config()->varExists(path);
     if(exist)
     {
-        pathFile = m_parent->config()->getVars(path, atts).first();
+        pathFile = m_parent->config()->getVars(path);
     }
     else
     {
-        pathFile = foundFileMessage("L'entrée suivante n'existe pas dans le fichier de configuration,\n"
-                                    + inputToQString(path,atts) +
-                                    "Pour que cette entrée soit créée dans le fichier de configuration,"
-                                    " souhaitez-vous indiquer un fichier coorespondant ou que celui-ci soit créé?\n",
+        pathFile = foundFileMessage(QString("L'entrée suivante n'existe pas dans le fichier de configuration,\n")
+                                    .append(path)
+                                    .append("Pour que cette entrée soit créée dans le fichier de configuration,"
+                                    " souhaitez-vous indiquer un fichier coorespondant ou que celui-ci soit créé?\n"),
                                     m_ptr_file->fileName(),
                                     m_ptr_file->fileExtension());
     }
@@ -113,10 +113,10 @@ void FenFoundFile::openInConf(const QString & path, const QMap<QString,QString> 
             bool modif = false;
             while(!pathFile.isNull() && !(m_ptr_file->exists() && m_ptr_file->isValid() && m_ptr_file->open()))
             {
-                pathFile = foundFileMessage("L'entrée suivante dans le fichier de configuration est invalide,\n"
-                                            + inputToQString(path,atts) +
-                                            "Pour que cette entrée soit corrigé dans le fichier de configuration,"
-                                            " souhaitez-vous indiquer un fichier coorespondant valide ou que celui-ci soit créé à nouveau?\n",
+                pathFile = foundFileMessage(QString("L'entrée suivante dans le fichier de configuration est invalide,\n")
+                                            .append(path)
+                                            .append("Pour que cette entrée soit corrigé dans le fichier de configuration,"
+                                            " souhaitez-vous indiquer un fichier coorespondant valide ou que celui-ci soit créé à nouveau?\n"),
                                             m_ptr_file->fileName(),
                                             m_ptr_file->fileExtension());
                 if(!pathFile.isNull())
@@ -127,7 +127,7 @@ void FenFoundFile::openInConf(const QString & path, const QMap<QString,QString> 
             }
             if(modif && save)
             {
-                m_parent->config()->modify(path,pathFile,atts);
+                m_parent->config()->modify(path,pathFile);
             }
         }
         else
@@ -144,7 +144,7 @@ void FenFoundFile::openInConf(const QString & path, const QMap<QString,QString> 
             }
             if(save && !pathFile.isNull())
             {
-                m_parent->config()->add(path,pathFile,atts);
+                m_parent->config()->add(path,pathFile);
             }
         }
     }
@@ -155,13 +155,13 @@ void FenFoundFile::openInConf(const QString & path, const QMap<QString,QString> 
         while(pathFile.isNull())
         {
             pathFile = QFileDialog::getSaveFileName(this,"Sous quel nom et à quel emplacement souhaitez-vous crée le fichier?",
-                                                     m_parent->config()->getVars("conf/directories/default").first(),
+                                                     m_parent->config()->getVars("conf/directories/default"),
                                                     m_ptr_file->fileExtension());
         }
         m_ptr_file->setFileName(pathFile);
         if(m_ptr_file->creer() && save)
         {
-            m_parent->config()->add(path,pathFile,atts);
+            m_parent->config()->add(path,pathFile);
         }
         else
         {
@@ -190,7 +190,7 @@ QString FenFoundFile::foundFileMessage(const QString & text, const QString & fil
     return QString();
 }
 
-QString FenFoundFile::inputToQString(const QString & path, const QMap<QString,QString> & atts)
+/*QString FenFoundFile::inputToQString(const QString & path, const QMap<QString,QString> & atts)
 {
     QString confInput(path);
     if(!atts.isEmpty())
@@ -201,7 +201,7 @@ QString FenFoundFile::inputToQString(const QString & path, const QMap<QString,QS
     }
     confInput += ".\n";
     return confInput;
-}
+}*/
 
 bool FenFoundFile::message(const QString &text, const QString &accept, const QString &reject)
 {

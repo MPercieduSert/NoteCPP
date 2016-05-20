@@ -22,47 +22,47 @@
 //! Macro définisant les attributs des liens de type diféérent de QVariant.
 #define ATTRIBUT_LINK(NOM,nom,TYPE,type) /*! \ingroup groupeAttributSql */ \
     /*! \brief Classe de la l'attribut NOM ## . */ \
-    template<class T> class NOM ## AttributSql : protected virtual ReqSql \
+    template<class T> class NOM ## AttributSql : public virtual ReqSql \
     {protected: \
     /*! \brief Constructeur. */ \
     NOM ## AttributSql() {} \
     /*! \brief Alias de l'accesseur. */ \
-    type nom (int pos = T::NOM ## Pos) const {return to ## TYPE(pos);} \
+    type nom (int pos = Info<T>::NOM ## Pos) const {return to ## TYPE(pos);} \
     /*! \brief Alias du mutateurs. */ \
-    void set ## NOM (const T & entity,int pos = T::NOM ## Pos) {m_requete.bindValue(pos,entity.nom());}};
+    void set ## NOM (const T & entity,int pos = Info<T>::NOM ## Pos) {m_requete->bindValue(pos,entity.nom());}};
 
 //! \ingroup groupeMacroAttributSql
 //! Macro définisant les attributs des liens de type diféérent de QVariant.
 #define ATTRIBUT_LINK_NULL_TO_ZERO(NOM,nom,TYPE,type) /*! \ingroup groupeAttributSql */ \
     /*! \brief Classe de la l'attribut NOM ## . */ \
-    template<class T> class NOM ## AttributSqlNullToZero : protected virtual ReqSql \
+    template<class T> class NOM ## AttributSqlNullToZero : public virtual ReqSql \
     {protected: \
     /*! \brief Constructeur. */ \
     NOM ## AttributSqlNullToZero() {} \
     /*! \brief Alias de l'accesseur. */ \
-    type nom (int pos = T::NOM ## Pos) const {return to ## TYPE(pos);} \
+    type nom (int pos = Info<T>::NOM ## Pos) const {return to ## TYPE(pos);} \
     /*! \brief Alias du mutateurs. */ \
-    void set ## NOM (const T & entity,int pos = T::NOM ## Pos) {m_requete.bindValue(pos,zeroToNull(entity.nom()));}};
+    void set ## NOM (const T & entity,int pos = Info<T>::NOM ## Pos) {m_requete->bindValue(pos,zeroToNull(entity.nom()));}};
 
 //Variant
 //! \ingroup groupeMacroAttributSql
 //! Macro définisant les attributs des liens de type QVariant.
 #define ATTRIBUT_QVARIANT_LINK(NOM,nom) /*! \ingroup groupeAttributSql */ \
     /*! \brief Classe de la l'attribut NOM ## . */ \
-    template<class T> class NOM ## AttributSql : protected virtual ReqSql \
+    template<class T> class NOM ## AttributSql : public virtual ReqSql \
     {protected: \
     /*! \brief Constructeur. */ \
     NOM ## AttributSql() {} \
     /*! \brief Alias de l'accesseur. */ \
-    QVariant nom (int pos = T::NOM ## Pos) const {return m_requete.value(pos);} \
+    QVariant nom (int pos = Info<T>::NOM ## Pos) const {return m_requete->value(pos);} \
     /*! \brief Alias du mutateurs. */ \
-    void set ## NOM (const T & entity,int pos = T::NOM ## Pos) {m_requete.bindValue(pos,entity.nom());}};
+    void set ## NOM (const T & entity,int pos = Info<T>::NOM ## Pos) {m_requete->bindValue(pos,entity.nom());}};
 
 // Définition de l'attribut SQL Id.
 /*! \ingroup groupeAttributSql
  * \brief Classe de la l'attribut id.
  */
-template<class T> class IdAttributSql : protected virtual ReqSql
+template<class T> class IdAttributSql : public virtual ReqSql
 {
 protected:
     //! Constructeur.
@@ -70,13 +70,13 @@ protected:
     {}
 
     //! Alias de l'accesseur.
-    int id(int pos = T::IdPos) const
+    int id(int pos = Info<T>::IdPos) const
         {return toInt(pos);}
 
 public:
     //! Alias du mutateurs.
-    void setId(const Entity & entity,int pos = T::IdPos)
-        {m_requete.bindValue(pos,entity.id());}
+    void setId(const Entity & entity,int pos = Info<T>::IdPos)
+        {m_requete->bindValue(pos,entity.id());}
 };
 
 // Définition des attributs classiques

@@ -1,6 +1,10 @@
 /*Auteur: PERCIE DU SERT Maxime
  *Date: 07/02/2016
  */
+#ifndef Tree_H
+#define Tree_H
+
+#include "TreeItem.h"
 
 /*! \ingroup groupeTree
  *  \brief Cette classe represente un arbre dont les noeuds sont constitués par des TreeItem<T> et d'un noeud courant (curseur).
@@ -8,11 +12,6 @@
  * Cette classe represente un arbre. Elle est constituée de la racine d'un arbre dont les noeuds sont constitués par des TreeItem<T>
  * et d'un itérateur sur cet arbre jouant le role d'un curseur, ce qui munit l'arbre d'un noeud courant.
  */
-
-#ifndef Tree_H
-#define Tree_H
-
-#include "TreeItem.h"
 
 template<class T> class Tree
 {

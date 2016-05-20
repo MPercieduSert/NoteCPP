@@ -6,7 +6,6 @@
 
 #include "AttributEntityAlias.h"
 #include "Relation.h"
-#include "InfoEntity.h"
 
 // Relation daté.
 REL_DATE(CommentaireClasse,Cm,Cl)

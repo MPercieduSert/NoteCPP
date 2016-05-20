@@ -1,241 +1,308 @@
 /*Auteur: PERCIE DU SERT Maxime
- *Date: 27/03/2016
+ *Date: 30/04/2016
  */
 #ifndef INFOSQL
 #define INFOSQL
 
-#include <array>
+#include "BaseInfoSql.h"
 
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL mère sur les entités ayant une seule condition d'unicité sur un attribut.
- */
-template<int Pos = 0> struct InfoSqlUnique1
-{
-    static constexpr char SqlUnique[] {"SELECT ID FROM %1 WHERE %2=? LIMIT 1"};
-    static const int NbrAttUnique = 1;
-    static constexpr std::array<const int, NbrAttUnique> AttUnique{{Pos}};
-};
+#include "../Entities/InfoEntity.h"
+#include "../Entities/Annee.h"
+#include "../Entities/Arbre.h"
+#include "../Entities/Attribut.h"
+#include "../Entities/Classe.h"
+#include "../Entities/ClasseEleve.h"
+#include "../Entities/Donnee.h"
+#include "../Entities/Eleve.h"
+#include "../Entities/Groupe.h"
+#include "../Entities/Niveau.h"
+#include "../Entities/Relations.h"
 
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL mère sur les entités ayant une seule condition d'unicité sur un couple d'attributs.
+/*! \ingroup groupeInfoSqlBase
+ * \brief Trait contenant les informations sur les entités et leur représentation en base de donnée.
  */
-template<int Pos1 = 0, int Pos2 = 1> struct InfoSqlUnique2
+template<class T> struct InfoSql
 {
-    static constexpr char SqlUnique[] {"SELECT ID FROM %1 WHERE %2=? AND %3=? LIMIT 1"};
-    static const int NbrAttUnique = 2;
-    static constexpr std::array<const int, NbrAttUnique> AttUnique{{Pos1,Pos2}};
-};
-
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL mère sur les entités ayant une seule condition d'unicité sur un triplet d'attributs.
- */
-template<int Pos1 = 0, int Pos2 = 1, int Pos3 = 2> struct InfoSqlUnique3
-{
-    static constexpr char SqlUnique[] {"SELECT ID FROM %1 WHERE %2=? AND %3=? AND %4=? LIMIT 1"};
-    static const int NbrAttUnique = 3;
-    static constexpr std::array<const int, NbrAttUnique> AttUnique{{Pos1,Pos2,Pos3}};
-};
-
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL mère sur les entités ayant une seule condition d'unicité sur 4-upplet d'attributs.
- */
-template<int Pos1 = 0, int Pos2 = 1, int Pos3 = 2, int Pos4 = 3> struct InfoSqlUnique4
-{
-    static constexpr char SqlUnique[] {"SELECT ID FROM %1 WHERE %2=? AND %3=? AND %4=? AND %5=? LIMIT 1"};
-    static const int NbrAttUnique = 4;
-    static constexpr std::array<const int, NbrAttUnique> AttUnique{{Pos1,Pos2,Pos3,Pos4}};
-};
-
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL mère sur les entités possédant une seule condition d'unicité sur l'attribut nom.
- */
-template<int Pos = 0> struct InfoSqlUniqueNom : InfoSqlUnique1<Pos>
-{
-    enum unique {NomUnique = 0};
-};
-
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL mère sur les entités possédant une seule condition d'unicité sur les couples de clés (id1,id2).
- */
-template<int Pos1 = 0, int Pos2 = 1> struct InfoSqlUniqueRealtion : InfoSqlUnique2<Pos1,Pos2>
-{
-    enum unique {Id1Unique = 0, Id2Unique = 1};
-};
-
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL mère sur les entités possédant une seule condition d'unicité sur l'attribut texte.
- */
-template<int Pos = 0> struct InfoSqlUniqueTexte : InfoSqlUnique1<Pos>
-{
-    enum unique {TexteUnique = 0};
-};
-
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL mère sur les entité n'ayant pas de clé étrangère.
- */
-struct InfoSqlZeroCleExt
-{
+    static const char Table[];
+    static const char SqlCreate[];
+    static const int NbrAtt = Info<T>::NbrAtt;
+    static const std::array<const char *,NbrAtt> Att;
     static const int NbrCleExt = 0;
     static constexpr std::array<const char *, NbrCleExt> CleExt {};
+    static const caracteristiqueSQL::uniqueCondition UniCond;
 };
 
-/*! \ingroup groupeBaseLinkSql
- * \brief Information SQL sur les entités de type Arbre.
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité Annee.
  */
-struct InfoSqlArbre : InfoSqlZeroCleExt, InfoSqlUnique2<2,3>
+template<> struct InfoSql<Annee> : InfoSqlZeroCleExt, InfoSqlUniqueSimple<1>
 {
-    static constexpr char SqlCreate[] {"create table %1"
-                                       " (ID integer primary key,"
-                                       "%2 integer not null,"
-                                       "%3 integer not null,"
-                                       "%4 integer not null,"
-                                       "%5 integer,"
-                                       "constraint UN%1 unique (%4, %5),"
-                                       "foreign key (%5) references %1"};
-    static const int NbrAtt = 5;
-    static constexpr std::array<const char *, NbrAtt> Att{{"fl","nv","nm","pt","ID"}};
-    enum unique {NumUnique = 0, ParentUnique = 1};
+    static const char Table[];
+    static const char SqlCreate[];
+    static const int NbrAtt = Info<Annee>::NbrAtt;
+    static const std::array<const char *, NbrAtt> Att;
+    static const std::array<int, NbrAttUnique> AttUnique;
+    enum unique {AnUnique = 0};
 };
 
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL sur les entités de type nom unique.
+//Arbre
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité AttributArbre. */
+template<> struct InfoSql<AttributArbre> : InfoSqlArbre  {static const char Table[];};
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité CoursArbre. */
+template<> struct InfoSql<CoursArbre> : InfoSqlArbre  {static const char Table[];};
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité DonneeArbre. */
+template<> struct InfoSql<DonneeArbre> : InfoSqlArbre  {static const char Table[];};
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité EnonceArbre. */
+template<> struct InfoSql<EnonceArbre> : InfoSqlArbre  {static const char Table[];};
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité ExerciceArbre. */
+template<> struct InfoSql<ExerciceArbre> : InfoSqlArbre  {static const char Table[];};
+
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité Attribut.
  */
-struct NomInfoSql : InfoSqlUniqueNom<0>, InfoSqlZeroCleExt
+template<> struct InfoSql<Attribut> : InfoSqlNoUnique
 {
-    static const int NbrAtt = 2;
-    static constexpr std::array<const char *, NbrAtt> Att{{"nm","ID"}};
-    static constexpr char SqlCreate[] {"create table %1 "
-                                       " (ID integer primary key,"
-                                       "%2 text not null,"
-                                       "constraint UN%1 unique (%2))"}; 
+    static const char Table[];
+    static const int NbrCleExt = 1;
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const char SqlCreate[];
+    static const int NbrAtt = Info<Attribut>::NbrAtt;
+    static const std::array<const char *, NbrAtt> Att;
+    static const caracteristiqueSQL::uniqueCondition UniCond = caracteristiqueSQL::NoCondition;
 };
 
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL sur les entités de type nom et type avec nom unique.
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité Classe.
  */
-struct NomTypeInfoSql : InfoSqlUniqueNom<0>, InfoSqlZeroCleExt
+template<> struct InfoSql<Classe> : InfoSqlUniqueSimple<4>
 {
-    static const int NbrAtt = NomInfoSql::NbrAtt + 1;
-    static constexpr std::array<const char *, NbrAtt> Att{{"nm","tp","ID"}};
-    static constexpr char SqlCreate[] {"create table %1 "
-                                       " (ID integer primary key,"
-                                       "%2 text not null,"
-                                       "%3 integer not null,"
-                                       "constraint UN%1 unique (%2))"};
+    static const char Table[];
+    static const int NbrCleExt = 3;
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const char SqlCreate[];
+    static const int NbrAtt = Info<Classe>::NbrAtt;
+    static const std::array<const char *, NbrAtt> Att;
+    static const std::array<int, NbrAttUnique> AttUnique;
+    enum unique {IdAnUnique = 0, IdEtabUnique = 1, IdNivUnique = 2, NumUnique = 3, Id1Unique = IdAnUnique, Id2Unique = IdEtabUnique};
 };
 
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL sur les entités de type nc et nom avec nom unique.
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité ClasseEleve.
  */
-struct NcNomInfoSql : InfoSqlUniqueNom<1>, InfoSqlZeroCleExt
+template<> struct InfoSql<ClasseEleve> : InfoSqlUniqueRelation
 {
-    static const int NbrAtt = NomInfoSql::NbrAtt + 1;
-    static constexpr std::array<const char *, NbrAtt> Att{{"nc","nm","ID"}};
-    static constexpr char SqlCreate[] {"create table %1 "
-                                       " (ID integer primary key,"
-                                       "%2 text not null,"
-                                       "%3 text not null,"
-                                       "constraint UN%1 unique (%3))"};
-};
-
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL sur les entités de type nc, nom et type avec nom unique.
- */
-struct NcNomTypeInfoSql : InfoSqlUniqueNom<1>, InfoSqlZeroCleExt
-{
-    static const int NbrAtt = NcNomInfoSql::NbrAtt + 1;
-    static constexpr std::array<const char *, NbrAtt> Att{{"nc","nm","tp","ID"}};
-    static constexpr char SqlCreate[] {"create table %1 "
-                                       " (ID integer primary key,"
-                                       "%2 text not null,"
-                                       "%3 text not null,"
-                                       "%4 integer not null,"
-                                       "constraint UN%1 unique (%3))"};
-};
-
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL mère sur les entités possédant une seule condition d'unicité sur les couples de clés (id1,id2).
- */
-template<int Pos1 = 0, int Pos2 = 1> struct InfoSqlRealtion2cle : InfoSqlUniqueRealtion<Pos1,Pos2>
-{
+    static const char Table[];
     static const int NbrCleExt = 2;
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const char SqlCreate[];
+    static const int NbrAtt = Info<ClasseEleve>::NbrAtt;
+    static const std::array<const char *, NbrAtt> Att;
 };
 
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL sur les entités de type relation simple.
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité Commentaire. */
+template<> struct InfoSql<Commentaire> : TexteInfoSql  {static const char Table[];};
+
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité Donnee.
  */
-struct RelationSimpleInfoSql : InfoSqlRealtion2cle<0,1>
+template<> struct InfoSql<Donnee> : InfoSqlNoUnique
 {
-    static const int NbrAtt = 3;
-    static constexpr char SqlCreate[] {"create table %1 "
-                                       " (ID integer primary key,"
-                                       "%2 integer not null,"
-                                       "%3 integer not null,"
-                                       "constraint UN%1 unique (%2, %3),"
-                                       "foreign key (%2) references %4,"
-                                       "foreign key (%3) references %5)"};
+    static const char Table[];
+    static const int NbrCleExt = 1;
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const char SqlCreate[];
+    static const int NbrAtt = Info<Donnee>::NbrAtt;
+    static const std::array<const char *, NbrAtt> Att;
+    static const caracteristiqueSQL::uniqueCondition UniCond = caracteristiqueSQL::NoCondition;
 };
 
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL sur les entités de type relation daté.
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité Eleve.
  */
-struct DateRelationInfoSql : InfoSqlRealtion2cle<0,1>
+template<> struct InfoSql<Eleve> : InfoSqlZeroCleExt, InfoSqlUniqueSimple<3>
 {
-    static constexpr int NbrAtt = RelationSimpleInfoSql::NbrAtt + 1;
-    static constexpr char SqlCreate[] {"create table %1 "
-                                       " (ID integer primary key,"
-                                       "%2 integer not null,"
-                                       "%3 integer not null,"
-                                       "%4 text not null,"
-                                       "constraint UN%1 unique (%2, %3),"
-                                       "foreign key (%2) references %5,"
-                                       "foreign key (%3) references %6)"};
+    static const char Table[];
+    static const char SqlCreate[];
+    static const int NbrAtt = Info<Eleve>::NbrAtt;
+    static const std::array<const char *, NbrAtt> Att;
+    static const std::array<int, NbrAttUnique> AttUnique;
+    enum unique {NaissanceUnique = 0, NomUnique = 1, PrenomUnique = 2};
 };
 
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL sur les entités de type relation daté et valué.
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité Etablissement. */
+template<> struct InfoSql<Etablissement> : NcNomTypeInfoSql  {static const char Table[];};
+
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité Groupe.
  */
-struct ValeurDateRelationInfoSql : InfoSqlRealtion2cle<0,1>
+template<> struct InfoSql<Groupe> : InfoSqlUniqueDouble<2,2>
 {
-    static constexpr int NbrAtt = DateRelationInfoSql::NbrAtt + 1;
-    static constexpr char SqlCreate[] {"create table %1 "
-                                       " (ID integer primary key,"
-                                       "%2 integer not null,"
-                                       "%3 integer not null,"
-                                       "%4 text not null,"
-                                       "%5 blob,"
-                                       "constraint UN%1 unique (%2, %3),"
-                                       "foreign key (%2) references %6,"
-                                       "foreign key (%3) references %7)"};
+    static const char Table[];
+    static const int NbrCleExt = 2;
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const char SqlCreate[];
+    static const int NbrAtt = Info<Groupe>::NbrAtt;
+    static const std::array<const char *, NbrAtt> Att;
+    static const caracteristiqueSQL::uniqueCondition UniCond = caracteristiqueSQL::DoubleConditionNull;
+    static const int NbrAttUnique1 = 2;
+    static const std::array<const int, NbrAttUnique1> AttUnique1;
+    static const int NbrAttUnique2 = 2;
+    static const std::array<const int, NbrAttUnique2> AttUnique2;
+    static const std::array<int, NbrAttUnique> AttUnique;
+    enum unique {Id1Unique = 0, Id2Unique =0, NomUnique = 1};
 };
 
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL sur les entités de type relation numéroté.
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité Niveau.
  */
-struct NumRelationInfoSql : InfoSqlRealtion2cle<0,1>
+template<> struct InfoSql<Niveau> : InfoSqlUniqueNom
 {
-    static constexpr int NbrAtt = RelationSimpleInfoSql::NbrAtt + 1;
-    static constexpr char SqlCreate[] {"create table %1 "
-                                       " (ID integer primary key,"
-                                       "%2 integer not null,"
-                                       "%3 integer not null,"
-                                       "%4 integer not null,"
-                                       "constraint UN%1 unique (%2, %3),"
-                                       "foreign key (%2) references %5,"
-                                       "foreign key (%3) references %6)"};
+    static const char Table[];
+    static const int NbrCleExt = 1;
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const char SqlCreate[];
+    static const int NbrAtt = Info<Eleve>::NbrAtt;
+    static const std::array<const char *, NbrAtt> Att;
+    static const std::array<int, NbrAttUnique> AttUnique;
 };
 
-/*! \ingroup groupeInfoLinkSql
- * \brief Information SQL sur les entités de type texte unique.
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité Source. */
+template<> struct InfoSql<Source> : NomTypeInfoSql  {static const char Table[];};
+
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité TypeNiveau. */
+template<> struct InfoSql<TypeNiveau> : NomTypeInfoSql  {static const char Table[];};
+
+// DateRelation
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité CommentaireClasse.
  */
-struct TexteInfoSql : InfoSqlUniqueTexte<0>, InfoSqlZeroCleExt
+template<> struct InfoSql<CommentaireClasse> : DateRelationInfoSql
 {
-    static const int NbrAtt = 2;
-    static constexpr std::array<const char *, NbrAtt> Att{{"txt","ID"}};
-    static constexpr char SqlCreate[] {"create table %1 "
-                                       " (ID integer primary key,"
-                                       "%2 text not null,"
-                                       "constraint UN%1 unique (%2))"};
+    static const char Table[];
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const std::array<const char *, NbrAtt> Att;
 };
+
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité CommentaireEleve.
+ */
+template<> struct InfoSql<CommentaireEleve> : DateRelationInfoSql
+{
+    static const char Table[];
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const std::array<const char *, NbrAtt> Att;
+};
+
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité CommentaireGroupe.
+ */
+template<> struct InfoSql<CommentaireGroupe> : DateRelationInfoSql
+{
+    static const char Table[];
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const std::array<const char *, NbrAtt> Att;
+};
+
+// ValeurDateRelation
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité DonneeClasse.
+ */
+template<> struct InfoSql<DonneeClasse> : ValeurDateRelationInfoSql
+{
+    static const char Table[];
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const std::array<const char *, NbrAtt> Att;
+};
+
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité DonneeEleve.
+ */
+template<> struct InfoSql<DonneeEleve> : ValeurDateRelationInfoSql
+{
+    static const char Table[];
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const std::array<const char *, NbrAtt> Att;
+};
+
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité DonneeEtablissement.
+ */
+template<> struct InfoSql<DonneeEtablissement> : ValeurDateRelationInfoSql
+{
+    static const char Table[];
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const std::array<const char *, NbrAtt> Att;
+};
+
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité DonneeNiveau.
+ */
+template<> struct InfoSql<DonneeNiveau> : ValeurDateRelationInfoSql
+{
+    static const char Table[];
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const std::array<const char *, NbrAtt> Att;
+};
+
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité DonneeSource.
+ */
+template<> struct InfoSql<DonneeSource> : ValeurDateRelationInfoSql
+{
+    static const char Table[];
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const std::array<const char *, NbrAtt> Att;
+};
+
+// NumRelation
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité GroupeEleve.
+ */
+template<> struct InfoSql<GroupeEleve> : NumRelationInfoSql
+{
+    static const char Table[];
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const std::array<const char *, NbrAtt> Att;
+};
+
+// RelationSimple
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité AttributCommentaire.
+ */
+template<> struct InfoSql<AttributCommentaire> : RelationSimpleInfoSql
+{
+    static const char Table[];
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const std::array<const char *, NbrAtt> Att;
+};
+
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité NiveauPrécédent.
+ */
+template<> struct InfoSql<NiveauPrecedent> : RelationSimpleInfoSql
+{
+    static const char Table[];
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const std::array<const char *, NbrAtt> Att;
+};
+
+/*! \ingroup groupeInfoSqlSpe
+ * \brief Information SQL sur l'entité EtablissementNiveau.
+ */
+template<> struct InfoSql<EtablissementNiveau> : RelationSimpleInfoSql
+{
+    static const char Table[] ;
+    static const std::array<const char *, NbrCleExt> CleExt;
+    static const std::array<const char *, NbrAtt> Att;
+};
+
 #endif // INFOSQL
-
