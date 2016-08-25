@@ -230,7 +230,8 @@ public:
         bool isNull()
             {return m_ptr == 0;}
 
-        //! Positionne l'itérateur sur le noeud précédent dans le parcours de type suivant-précédent: les noeuds sont parcours deux fois, à la descente et à la remonté.
+        //! Positionne l'itérateur sur le noeud précédent dans le parcours de type suivant-précédent:
+        //! les noeuds sont parcours deux fois, à la descente et à la remonté.
         iterator & precedent();
 
         //! Place l'itérateur à la racine de l'arbre. L'itérateur doit être préalablement positionné sur un noeud non nul de l'arbre.

@@ -1,9 +1,9 @@
 #include "SelectAnneeDialog.h"
 
-SelectAnneeDialog::SelectAnneeDialog(QVector<Annee> listeAnnee, QWidget *parent, bool creerAnnee) : QDialog(parent)
+SelectAnneeDialog::SelectAnneeDialog(const VectorEntities<Annee> &listeAnnee, QWidget *parent, int idDefault, bool AnnuleButton, bool creerAnnee) : QDialog(parent)
 {
     m_label = new QLabel();
-    m_creerBouton = new QPushButton(tr("Créer une nouvelle anneé"));
+    m_creerBouton = new QPushButton(tr("Créer une nouvelle année"));
     m_cancelBouton = new QPushButton(tr("Annuler"));
     m_hLayout = new QHBoxLayout();
     m_vLayout = new QVBoxLayout(this);
@@ -14,10 +14,9 @@ SelectAnneeDialog::SelectAnneeDialog(QVector<Annee> listeAnnee, QWidget *parent,
     {
         m_label->setText(tr("Aucune Annee disponible"));
         if(creerAnnee)
-        {
-            m_hLayout->addWidget(m_creerBouton);
-        }
-        m_hLayout->addWidget(m_cancelBouton);
+            {m_hLayout->addWidget(m_creerBouton);}
+        if(AnnuleButton)
+            {m_hLayout->addWidget(m_cancelBouton);}
         m_vLayout->addLayout(m_hLayout);
     }
     else
@@ -26,35 +25,49 @@ SelectAnneeDialog::SelectAnneeDialog(QVector<Annee> listeAnnee, QWidget *parent,
         m_okBouton = new QPushButton(tr("OK"));
         m_vLayout->addWidget(m_listBox);
         m_label->setText(tr("Choisir une anneé:"));
-        for(QVector<Annee>::const_iterator i = listeAnnee.cbegin(); i != listeAnnee.cend(); ++i)
+
+        int index = 0;
+        int indexDefault = -1;
+        for(VectorEntities<Annee>::iterator i = listeAnnee.cbegin(); i != listeAnnee.cend(); ++i, ++index)
         {
-            m_listBox->addItem((*i).affiche(),QVariant((*i).id()));;
+            m_listBox->addItem((*i).affiche(),QVariant((*i).id()));
+            if((*i).id() == idDefault)
+                {indexDefault = index;}
         }
-        m_listBox->setCurrentIndex(m_listBox->count()-1);
+        if(indexDefault < 0)
+            {m_listBox->setCurrentIndex(m_listBox->count()-1);}
+        else
+            {m_listBox->setCurrentIndex(indexDefault);}
+
         m_hLayout->addWidget(m_okBouton);
         if(creerAnnee)
-        {
-            m_hLayout->addWidget(m_creerBouton);
-
-        }
-        m_hLayout->addWidget(m_cancelBouton);
+            {m_hLayout->addWidget(m_creerBouton);}
+        if(AnnuleButton)
+            {m_hLayout->addWidget(m_cancelBouton);}
         m_vLayout->addLayout(m_hLayout);
         connect(m_okBouton,&QPushButton::clicked,this,&QDialog::accept);
     }
     if(creerAnnee)
-    {
-        connect(m_creerBouton,&QPushButton::clicked,this,&SelectAnneeDialog::creerAnnee);
-    }
-    connect(m_cancelBouton,&QPushButton::clicked,this,&QDialog::reject);
+        {connect(m_creerBouton,&QPushButton::clicked,this,&SelectAnneeDialog::creerClick);}
+    if(AnnuleButton)
+        {connect(m_cancelBouton,&QPushButton::clicked,this,&SelectAnneeDialog::reject);}
 }
 
-int SelectAnneeDialog::value() const
+void SelectAnneeDialog::accept()
 {
-    return m_listBox->currentData().toInt();
+    QDialog::accept();
+    setResult(m_listBox->currentData().toInt());
+
 }
 
-void SelectAnneeDialog::creerAnnee()
+void SelectAnneeDialog::creerClick()
 {
-    reject();
+    QDialog::reject();
     setResult(Creer);
+}
+
+void SelectAnneeDialog::reject()
+{
+    QDialog::reject();
+    setResult(Annuler);
 }

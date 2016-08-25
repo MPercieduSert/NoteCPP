@@ -6,4 +6,4 @@ CONFIG += ordered
 
 SUBDIRS += \
     Library \
-    App
+    App \

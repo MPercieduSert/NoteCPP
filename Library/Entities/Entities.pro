@@ -7,6 +7,8 @@
 QT       += core
 
 TARGET = Entities
+QT       += gui
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += c++11
@@ -15,8 +17,6 @@ HEADERS += \
     Arbre.h \
     Attribut.h \
     AttributEntity.h \
-    AttributEntityAlias.h \
-    AttributEntityMacroAlias.h \
     Classe.h \
     ClasseEleve.h \
     Donnee.h \
@@ -24,26 +24,23 @@ HEADERS += \
     Entity.h \
     EntityDivers.h \
     EntityNom.h \
+    EntityOfDefaultType.h \
     EntityRelation.h \
     Groupe.h \
     InfoEntity.h \
+    InfoEntityBase.h \
     ListEntities.h \
     Niveau.h \
-    Relations.h
-
-
-unix {
-    target.path = /usr/lib
-    INSTALLS += target
-}
+    TypeEtablissement.h \
+    TypeNiveau.h \
+    VectorEntities.h \
+    VersionBdd.h
 
 SOURCES += \
     Annee.cpp \
     Arbre.cpp \
     Attribut.cpp \
     AttributEntity.cpp \
-    AttributEntityAlias.cpp \
-    AttributEntityMacroAlias.cpp \
     Classe.cpp \
     ClasseEleve.cpp \
     Donnee.cpp \
@@ -51,9 +48,19 @@ SOURCES += \
     Entity.cpp \
     EntityDivers.cpp \
     EntityNom.cpp \
+    EntityOfDefaultType.cpp \
     EntityRelation.cpp \
     Groupe.cpp \
     InfoEntity.cpp \
+    InfoEntityBase.cpp \
     ListEntities.cpp \
     Niveau.cpp \
-    Relations.cpp
+    TypeEtablissement.cpp \
+    TypeNiveau.cpp \
+    VectorEntities.cpp \
+    VersionBdd.cpp
+
+unix {
+    target.path = /usr/lib
+    INSTALLS += target
+}

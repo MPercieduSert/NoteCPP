@@ -1,3 +1,6 @@
+/*Auteur: PERCIE DU SERT Maxime
+ *Date: 20/05/2016
+ */
 #ifndef SELECTANNEEDIALOG_H
 #define SELECTANNEEDIALOG_H
 
@@ -9,32 +12,44 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include "../Entities/Annee.h"
-#include "../Entities/ListEntities.h"
+#include "../Entities/VectorEntities.h"
 
+/*! \defgroup groupeDialog Dialogues
+ * \brief Ensemble de fenètre de dialogues.
+ */
 
+/*! \ingroup groupeDialogue
+ * \brief Fenêtre de dialogue de selection d'une année.
+ */
 class SelectAnneeDialog : public QDialog
 {
     Q_OBJECT
 public:
-    enum DialogCode {Creer = -1};
+    enum DialogCode {Creer = -1,
+                     Annuler = -2};
 
 protected:
-    QLabel *m_label;
-    QPushButton *m_okBouton;
-    QPushButton *m_creerBouton;
-    QPushButton *m_cancelBouton;
-    QComboBox *m_listBox;
-    QVBoxLayout *m_vLayout;
-    QHBoxLayout *m_hLayout;
+    QLabel *m_label;                //! Texte
+    QPushButton *m_okBouton;        //! Bouton de confirmation de selection
+    QPushButton *m_creerBouton;     //! Bouton de création
+    QPushButton *m_cancelBouton;    //! Bouton d'annulation
+    QComboBox *m_listBox;           //! Liste déroulante des différants choix
+    QVBoxLayout *m_vLayout;         //! Layout principal
+    QHBoxLayout *m_hLayout;         //! Layout secondaire      
 
 public:
-    SelectAnneeDialog(QVector<Annee> listeAnnee, QWidget *parent=0, bool creerAnnee = false);
-    int value() const;
+    //! Constructeur.
+    SelectAnneeDialog(const VectorEntities<Annee> & listeAnnee, QWidget *parent=0, int idDefault = -1, bool AnnuleButton = true, bool creerAnnee = false);
+
 public slots:
-    void creerAnnee();
+    //! Ferme la fenêtre et donne la valeur de l'identifiant de l'éléement courant de m_listBox à result.
+    void accept();
 
+    //! Ferme la fenêtre et donne la valeur Creer à result.
+    void creerClick();
 
-
+    //! Ferme la fenêtre et donne la valeur Annuler à result.
+    void reject();
 };
 
 #endif // SELECTANNEEDIALOG_H

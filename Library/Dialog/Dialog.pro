@@ -28,12 +28,16 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Widget/libWidget.a
 SOURCES += \
     NewAnneeDialog.cpp \
     NewClasseDialog.cpp \
-    SelectAnneeDialog.cpp \
+    NewEtablissementDialog.cpp \
+    SelectAnneeDialog.cpp
+
 
 HEADERS += \ 
     NewAnneeDialog.h \
+    NewEtablissementDialog.h \
     NewClasseDialog.h \
     SelectAnneeDialog.h
+
 
 unix {
     target.path = /usr/lib

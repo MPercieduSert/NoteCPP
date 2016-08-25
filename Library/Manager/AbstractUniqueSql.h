@@ -21,117 +21,127 @@
 
 #include "Manager.h"
 #include "ReqSql.h"
-#include "InfoSql.h"
+#include "../Entities/EntityRelation.h"
 
 // Définition des conditions d'unicité des entités de type prédéfini.
 //! \ingroup groupeUniqueSqlBase
-//! Macro définisant les conditions d'unicité prédéfinies.
-#define UNIQUE_SQL(ENTITY,TYPE) /*! \ingroup groupeUniqueSqlSpe */ \
+//! Macro définisant les constructeurs et destructeurs des conditions d'unicité.
+#define CONSTR_DESTR_UNIQUE_SQL(ENTITY,TYPE) /*! \ingroup groupeUniqueSqlSpe */ \
     /*! \brief Conditions d'unicité de l'entité ENTITY. */ \
-    template<> class UniqueSql<ENTITY> : public TYPE ## UniqueSql<ENTITY>\
+    class ENTITY ## UniqueSql: public TYPE<ENTITY>\
     {public:\
         /*! Construteur, transmettre en argument l'objet de requète utilisée par le manageur. */\
-        UniqueSql<ENTITY>(QSqlQuery * requete) : TYPE ## UniqueSql<ENTITY>(requete){}\
+        ENTITY ## UniqueSql(const QString & table, const QVector<QMap<int,QString>> & att) : TYPE(table,att){}\
         /*! Destructeur.*/\
-        ~UniqueSql<ENTITY>() {}};
+        ~ENTITY ## UniqueSql() {}
 
 /*! \ingroup groupeUniqueSqlBase
  * \brief Interface mère des classes conditions d'unicité.
  */
-template<class Ent> class AbstractUniqueSql : public ReqSql
+class AbstractUniqueSql : public ReqSql
 {
 public:
+    enum {idUnique = 0};
     //! Constructeur.
-    AbstractUniqueSql(QSqlQuery * requete)
-        : ReqSql(requete)
+    AbstractUniqueSql()
         {}
 
+    //! Construit la chaine coorespondant à la requête sql d'unicité
+    QString uniqueString(const QString & table, const QMap<int,QString> & att) const;
+
+    //! Construit la chaine sql de créations des conditions d'unicités.
+    virtual QString creer(const QString & table, const QVector<QMap<int,QString>> & atts) const = 0;
+
+    /*
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée.
     //! Si le test est positif, l'identitfiant de l'entité entity est remplacé par celui l'entité en base de donnée
     //! ayant les mêmes valeurs d'attributs uniques.
-    virtual Manager::ExisteUni existsUnique(Ent & entity) = 0;
+    virtual bdd::ExisteUni existsUnique(Ent & entity) = 0;
 
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée.
-    virtual Manager::ExisteUni existsUnique(const Ent & entity) = 0;
+    virtual bdd::ExisteUni existsUnique(const Ent & entity) = 0;
+    */
+protected:
+    //! Accesseur de l'identifiant.
+    int id(int pos = idUnique) const
+        {return value<int>(pos);}
 };
 
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe conditions d'unicité pour les entité ne possédant pas de condition d'unicité.
  */
-template<class Ent> class NoUniqueSql : public AbstractUniqueSql<Ent>
+class NoUniqueSql : public AbstractUniqueSql
 {
 public:
     //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    NoUniqueSql(QSqlQuery * requete)
-        : AbstractUniqueSql<Ent>(requete)
+    NoUniqueSql(const QString & /*table*/, const QVector<QMap<int,QString>> & /*atts*/)
         {}
 
     //! Destructeur.
     ~NoUniqueSql()
-    {}
+        {}
+
+    //! Construit la chaine sql de créations des conditions d'unicités.
+    QString creer(const QString & /*table*/, const QVector<QMap<int,QString>> & /*atts*/) const
+        {return QString();}
 
     //! L'attribut ne possède pas d'ensemble de valeur unique.
-    Manager::ExisteUni existsUnique(Ent & /*entity*/)
-    {
-        return Manager::Aucun;
-    }
+    bdd::ExisteUni existsUnique(Entity & /*entity*/)
+        {return bdd::Aucun;}
 
     //! L'attribut ne possède pas d'ensemble de valeur unique.
-    Manager::ExisteUni existsUnique(const Ent & /*entity*/)
+    bdd::ExisteUni existsUnique(const Entity & /*entity*/)
     {
-        return Manager::Aucun;
+        return bdd::Aucun;
     }
 };
 
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe mère des classes condition d'unicité pour les entité possédant une condition d'unicité simple.
  */
-template<class Ent> class SimpleUniqueSql : public AbstractUniqueSql<Ent>
+template<class Ent> class SimpleUniqueSql : public AbstractUniqueSql
 {
 protected:
     const QString m_unique; //!< Requete Sql sur l'existence d'un ensemble d'attribus uniques.
-    using AbstractUniqueSql<Ent>::exec;
-    using AbstractUniqueSql<Ent>::finish;
-    using AbstractUniqueSql<Ent>::next;
-    using AbstractUniqueSql<Ent>::prepare;
-    using AbstractUniqueSql<Ent>::toInt;
 
 public:
     //! Construteur.
-    SimpleUniqueSql(QSqlQuery * requete)
-        : AbstractUniqueSql<Ent>(requete),
-          m_unique(writeStringUnique())
+    SimpleUniqueSql(const QString & table, const QVector<QMap<int,QString>> & att)
+        : m_unique(uniqueString(table,att.at(0)))
         {}
 
     //! Destructeur.
     ~SimpleUniqueSql()
     {}
 
+    //! Construit la chaine sql de créations des conditions d'unicités.
+    QString creer(const QString & table, const QVector<QMap<int,QString>> & atts) const;
+
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée,
     //! dans le cas particulier où il y a un seul ensemble de valeurs unique.
     //! Si le test est positif, l'identitfiant de l'entité entity est remplacé par celui l'entité en base de donnée
     //! ayant les mêmes valeurs d'attributs uniques.
-    virtual Manager::ExisteUni existsUnique(Ent & entity)
+    virtual bdd::ExisteUni existsUnique(Ent & entity)
     {
         prepare(m_unique);
         bindValuesUnique(entity);
         exec();
         if(next())
         {
-            entity.setId(toInt());
+            entity.setId(id());
             finish();
-            return Manager::Tous;
+            return bdd::Tous;
         }
         else
         {
             finish();
-            return Manager::Aucun;
+            return bdd::Aucun;
         }
     }
 
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée,
     //! dans le cas particulier où il y a un seul ensemble de valeurs unique.
-    virtual Manager::ExisteUni existsUnique(const Ent & entity)
+    virtual bdd::ExisteUni existsUnique(const Ent & entity)
     {
         prepare(m_unique);
         bindValuesUnique(entity);
@@ -139,78 +149,74 @@ public:
         if(next())
         {
             finish();
-            return Manager::Tous;
+            return bdd::Tous;
         }
         else
         {
             finish();
-            return Manager::Aucun;
+            return bdd::Aucun;
         }
     }
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
     virtual void bindValuesUnique(const Ent & entity) = 0;
-
-    //! Renvoie la chaine correspondant à la requète d'unicité d'une ligne.
-    QString writeStringUnique() const;
 };
 
-template<class Ent> QString SimpleUniqueSql<Ent>::writeStringUnique() const
+template<class Ent> QString SimpleUniqueSql<Ent>::creer(const QString & table,const QVector<QMap<int,QString>> & atts) const
 {
-    QString sql(InfoSql<Ent>::SqlUnique);
-    sql = sql.arg(InfoSql<Ent>::Table);
-    for(int i = 0; i != InfoSql<Ent>::NbrAttUnique; ++i)
-        sql = sql.arg(InfoSql<Ent>::Att[InfoSql<Ent>::AttUnique[i]]);
-    sql.squeeze();
+    using namespace bdd;
+    QString sql(",");
+    sql.append(createSqlString(createSql::constraint)).append(" UN").append(table).append(" ").append(createSqlString(createSql::unique)).append(" (");
+    for(QMap<int,QString>::const_iterator i = atts.at(0).cbegin(); i != atts.at(0).cend(); ++i)
+        sql.append(i.value()).append(",");
+    sql.chop(1);
+    sql.append(")");
     return sql;
 }
 
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe mère des classes conditions d'unicité pour les entité possédant deux conditions d'unicités.
  */
-template<class Ent> class DoubleUniqueSql : public AbstractUniqueSql<Ent>
+template<class Ent> class DoubleUniqueSql : public AbstractUniqueSql
 {
 protected:
     const QString m_unique_1; //!< Requete Sql sur l'existence de l'ensemble d'attribus uniques 1.
     const QString m_unique_2; //!< Requete Sql sur l'existence de l'ensemble d'attribus uniques 2.
-    using AbstractUniqueSql<Ent>::exec;
-    using AbstractUniqueSql<Ent>::finish;
-    using AbstractUniqueSql<Ent>::next;
-    using AbstractUniqueSql<Ent>::prepare;
-    using AbstractUniqueSql<Ent>::toInt;
 
 public:
     //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    DoubleUniqueSql(QSqlQuery * requete)
-        : AbstractUniqueSql<Ent>(requete),
-          m_unique_1(writeStringUnique_1()),
-          m_unique_2(writeStringUnique_2())
+    DoubleUniqueSql(const QString & table, const QVector<QMap<int,QString>> & atts)
+        : m_unique_1(uniqueString(table,atts.at(0))),
+          m_unique_2(uniqueString(table,atts.at(1)))
         {}
 
     //! Destructeur.
     ~DoubleUniqueSql()
     {}
 
+    //! Construit la chaine sql de créations des conditions d'unicités.
+    QString creer(const QString & table, const QVector<QMap<int,QString>> & atts) const;
+
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée,
     //! dans le cas particulier où il y a exactement deux ensembles de valeurs uniques.
     //! Si le test est positif, l'identitfiant de l'entité entity est remplacé par celui l'entité en base de donnée
     //! ayant les mêmes valeurs d'attributs uniques.
-    virtual Manager::ExisteUni existsUnique(Ent & entity)
+    virtual bdd::ExisteUni existsUnique(Ent & entity)
     {
         int idUni1 = 0;
         prepare(m_unique_1);
         bindValuesUnique_1(entity);
         exec();
         if(next())
-            idUni1 = toInt();
+            idUni1 = id();
 
         int idUni2 = 0;
         prepare(m_unique_2);
         bindValuesUnique_2(entity);
         exec();
         if(next())
-            idUni2 = toInt();
+            idUni2 = id();
         finish();
 
         if(idUni1 == idUni2)
@@ -218,62 +224,62 @@ public:
             if(idUni1 != 0)
             {
                 entity.setId(idUni1);
-                return Manager::Tous;
+                return bdd::Tous;
             }
             else
-                {return Manager::Aucun;}
+                {return bdd::Aucun;}
         }
         else
         {
             if(idUni1 == 0 || idUni2 == 0)
             {
                 if(entity.id() != 0 && (idUni1 == entity.id() || idUni2 == entity.id()))
-                    {return Manager::Meme;}
+                    {return bdd::Meme;}
                 else
-                    {return Manager::Autre;}
+                    {return bdd::Autre;}
             }
             else
-                {return Manager::Conflit;}
+                {return bdd::Conflit;}
         }
     }
 
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée,
     //! dans le cas particulier où il y a exactement deux ensembles de valeurs uniques.
-    virtual Manager::ExisteUni existsUnique(const Ent & entity)
+    virtual bdd::ExisteUni existsUnique(const Ent & entity)
     {
         int idUni1 = 0;
         prepare(m_unique_1);
         bindValuesUnique_1(entity);
         exec();
         if(next())
-            idUni1 = toInt();
+            idUni1 = id();
 
         int idUni2 = 0;
         prepare(m_unique_2);
         bindValuesUnique_2(entity);
         exec();
         if(next())
-            idUni2 = toInt();
+            idUni2 = id();
         finish();
 
         if(idUni1 == idUni2)
         {
             if(idUni1 == 0)
-                {return Manager::Tous;}
+                {return bdd::Tous;}
             else
-                {return Manager::Aucun;}
+                {return bdd::Aucun;}
         }
         else
         {
             if(idUni1 == 0 || idUni2 == 0)
             {
                 if(entity.id() != 0 && (idUni1 == entity.id() || idUni2 == entity.id()))
-                    {return Manager::Meme;}
+                    {return bdd::Meme;}
                 else
-                    {return Manager::Autre;}
+                    {return bdd::Autre;}
             }
             else
-                {return Manager::Conflit;}
+                {return bdd::Conflit;}
         }
     }
 
@@ -283,114 +289,28 @@ protected:
 
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée 2.
     virtual void bindValuesUnique_2(const Ent & entity) = 0;
-
-    //! Renvoie la chaine correspondant à la requète d'unicité d'une ligne 1.
-    QString writeStringUnique_1() const;
-
-    //! Renvoie la chaine correspondant à la requète d'unicité d'une ligne 2.
-    QString writeStringUnique_2() const;
 };
 
-template<class Ent> QString DoubleUniqueSql<Ent>::writeStringUnique_1() const
+template<class Ent> QString DoubleUniqueSql<Ent>::creer(const QString & table,const QVector<QMap<int,QString>> & atts) const
 {
-    QString sql(InfoSql<Ent>::SqlUnique1);
-    sql = sql.arg(InfoSql<Ent>::Table);
-    for(int i = 0; i != InfoSql<Ent>::NbrAttUnique1; ++i)
-        sql = sql.arg(InfoSql<Ent>::Att[InfoSql<Ent>::AttUnique1[i]]);
-    sql.squeeze();
+    using namespace bdd;
+    QString sql;
+    for(int n = 0; n != atts.size(); ++n)
+    {
+        sql.append(",");
+        sql.append(createSqlString(createSql::constraint)).append(" UN").append(QString::number(n)).append(table).append(" ").append(createSqlString(createSql::unique)).append(" (");
+        for(QMap<int,QString>::const_iterator i = atts.at(n).cbegin(); i != atts.at(n).cend(); ++i)
+            sql.append(i.value()).append(",");
+        sql.chop(1);
+        sql.append(")");
+    }
     return sql;
 }
-
-template<class Ent> QString DoubleUniqueSql<Ent>::writeStringUnique_2() const
-{
-    QString sql(InfoSql<Ent>::SqlUnique2);
-    sql = sql.arg(InfoSql<Ent>::Table);
-    for(int i = 0; i != InfoSql<Ent>::NbrAttUnique2; ++i)
-        sql = sql.arg(InfoSql<Ent>::Att[InfoSql<Ent>::AttUnique2[i]]);
-    sql.squeeze();
-    return sql;
-}
-
-/*! \ingroup groupeUniqueSqlBase
- * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le couple (num,parent).
- */
-template<class Ent> class NumParentUniqueSql : public SimpleUniqueSql<Ent>
-{    
-protected:
-    using SimpleUniqueSql<Ent>::bindValue;
-
-public:
-    NumParentUniqueSql(QSqlQuery * requete)
-        :SimpleUniqueSql<Ent>(requete)
-    {}
-
-protected:
-    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
-    void bindValuesUnique(const Ent & entity)
-    {
-        bindValue(InfoSql<Ent>::NumUnique,entity.num());
-        bindValue(InfoSql<Ent>::ParentUnique,entity.parent());
-    }
-};
-
-/*! \ingroup groupeUniqueSqlBase
- * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le couple de clé (id1,id2).
- */
-template<class Ent> class RelationUniqueSql : public SimpleUniqueSql<Ent>
-{
-protected:
-    using SimpleUniqueSql<Ent>::bindValue;
-
-public:
-    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    RelationUniqueSql(QSqlQuery * requete)
-        : SimpleUniqueSql<Ent>(requete)
-    {}
-
-    //! Destructeur.
-    ~RelationUniqueSql()
-    {}
-
-protected:
-    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
-    void bindValuesUnique(const Ent &entity)
-    {
-        bindValue(InfoSql<Ent>::Id1Unique,entity.id1());
-        bindValue(InfoSql<Ent>::Id2Unique,entity.id2());
-    }
-};
-
-/*! \ingroup groupeUniqueSqlBase
- * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le triplet (id1,id2,date).
- */
-template<class Ent> class DateRelationUniqueSql : public RelationUniqueSql<Ent>
-{
-protected:
-    using RelationUniqueSql<Ent>::bindValue;
-
-public:
-    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    DateRelationUniqueSql(QSqlQuery * requete)
-        : RelationUniqueSql<Ent>(requete)
-    {}
-
-    //! Destructeur.
-    ~DateRelationUniqueSql()
-    {}
-
-protected:
-    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
-    void bindValuesUnique(const Ent &entity)
-    {
-        RelationUniqueSql<Ent>::bindValuesUnique(entity);
-        bindValue(InfoSql<Ent>::DateUnique,entity.date());
-    }
-};
 
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe mère des classes conditions d'unicité pour les entité possédant deux clés avec exactement une non nulle et unique.
  */
-template<class Ent> class RelationExactOneNotNullUniqueSql : public DoubleUniqueSql<Ent>
+template<class Ent> class RelationExactOneNotNullUniqueSqlTemp : public DoubleUniqueSql<Ent>
 {
 protected:
     using DoubleUniqueSql<Ent>::m_unique_1;
@@ -398,25 +318,26 @@ protected:
     using DoubleUniqueSql<Ent>::bindValue;
     using DoubleUniqueSql<Ent>::exec;
     using DoubleUniqueSql<Ent>::finish;
+    using DoubleUniqueSql<Ent>::id;
     using DoubleUniqueSql<Ent>::next;
     using DoubleUniqueSql<Ent>::prepare;
-    using DoubleUniqueSql<Ent>::toInt;
 
 public:
+    enum {id1Unique = 0,NbrUnique1,id2Unique = 0,NbrUnique2};
     //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    RelationExactOneNotNullUniqueSql(QSqlQuery * requete)
-        : DoubleUniqueSql<Ent>(requete)
+    RelationExactOneNotNullUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
+        : DoubleUniqueSql<Ent>(table,atts)
     {}
 
     //! Destructeur.
-    ~RelationExactOneNotNullUniqueSql()
+    ~RelationExactOneNotNullUniqueSqlTemp()
     {}
 
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée,
     //! dans le cas particulier où il y a exactement deux ensembles de valeurs uniques.
     //! Si le test est positif, l'identitfiant de l'entité entity est remplacé par celui l'entité en base de donnée
     //! ayant les mêmes valeurs d'attributs uniques.
-    Manager::ExisteUni existsUnique(Ent & entity)
+    bdd::ExisteUni existsUnique(Ent & entity)
     {
         if(entity.id1() != 0 && entity.id2() == 0)
         {
@@ -425,14 +346,14 @@ public:
             exec();
             if(next())
             {
-                entity.setId(toInt());
+                entity.setId( id());
                 finish();
-                return Manager::Tous;
+                return bdd::Tous;
             }
             else
             {
                 finish();
-                return Manager::Aucun;
+                return bdd::Aucun;
             }
         }
 
@@ -443,23 +364,23 @@ public:
             exec();
             if(next())
             {
-                entity.setId(toInt());
+                entity.setId(id());
                 finish();
-                return Manager::Tous;
+                return bdd::Tous;
             }
             else
             {
                 finish();
-                return Manager::Aucun;
+                return bdd::Aucun;
             }
         }
 
-        return Manager::Conflit;
+        return bdd::Conflit;
     }
 
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée,
     //! dans le cas particulier où il y a exactement deux ensembles de valeurs uniques.
-    Manager::ExisteUni existsUnique(const Ent & entity)
+    bdd::ExisteUni existsUnique(const Ent & entity)
     {
         if(entity.id1() != 0 && entity.id2() == 0)
         {
@@ -469,12 +390,12 @@ public:
             if(next())
             {
                 finish();
-                return Manager::Tous;
+                return bdd::Tous;
             }
             else
             {
                 finish();
-                return Manager::Aucun;
+                return bdd::Aucun;
             }
         }
 
@@ -486,42 +407,44 @@ public:
             if(next())
             {
                 finish();
-                return Manager::Tous;
+                return bdd::Tous;
             }
             else
             {
                 finish();
-                return Manager::Aucun;
+                return bdd::Aucun;
             }
         }
 
-        return Manager::Conflit;
+        return bdd::Conflit;
     }
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée 1.
     void bindValuesUnique_1(const Ent &entity)
     {
-        bindValue(InfoSql<Ent>::Id1Unique,entity.id1());
+        bindValue(id1Unique,entity.id1());
     }
 
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée 2.
     void bindValuesUnique_2(const Ent &entity)
     {
-        bindValue(InfoSql<Ent>::Id2Unique,entity.id2());
+        bindValue(id2Unique,entity.id2());
     }
 };
 
+typedef RelationExactOneNotNullUniqueSqlTemp<RelationExactOneNotNullEntity> RelationExactOneNotNullUniqueSql;
+
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe mère des classes conditions d'unicité pour les entité possédant deux clés avec exactement une non nulle et une condition
- * d'unicité sur la clé non nulle et d'autre attributs commub aux deux clés.
+ * d'unicité sur la clé non nulle et d'autre attributs commums aux deux clés.
  */
-template<class Ent> class AttsRelationExactOneNotNullUniqueSql : public RelationExactOneNotNullUniqueSql<Ent>
+template<class Ent> class AttsRelationExactOneNotNullUniqueSql : public RelationExactOneNotNullUniqueSqlTemp<Ent>
 {
 public:
     //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    AttsRelationExactOneNotNullUniqueSql(QSqlQuery * requete)
-        : RelationExactOneNotNullUniqueSql<Ent>(requete)
+    AttsRelationExactOneNotNullUniqueSql(const QString & table, const QVector<QMap<int,QString>> & atts)
+        : RelationExactOneNotNullUniqueSqlTemp<Ent>(table,atts)
     {}
 
     //! Destructeur.
@@ -535,91 +458,16 @@ protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée 1.
     void bindValuesUnique_1(const Ent &entity)
     {
-        RelationExactOneNotNullUniqueSql<Ent>::bindValuesUnique_1(entity);
+        RelationExactOneNotNullUniqueSqlTemp<Ent>::bindValuesUnique_1(entity);
         bindValuesUnique(entity);
     }
 
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée 2.
     void bindValuesUnique_2(const Ent &entity)
     {
-        RelationExactOneNotNullUniqueSql<Ent>::bindValuesUnique_2(entity);
+        RelationExactOneNotNullUniqueSqlTemp<Ent>::bindValuesUnique_2(entity);
         bindValuesUnique(entity);
     }
-};
-
-/*! \ingroup groupeUniqueSqlBase
- * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le nom.
- */
-template<class Ent> class NomUniqueSql : public SimpleUniqueSql<Ent>
-{
-protected:
-    using SimpleUniqueSql<Ent>::bindValue;
-
-public:
-    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    NomUniqueSql(QSqlQuery * requete)
-        : SimpleUniqueSql<Ent>(requete)
-    {}
-
-    //! Destructeur.
-    ~NomUniqueSql()
-    {}
-
-protected:
-    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
-    void bindValuesUnique(const Ent &entity)
-        {bindValue(InfoSql<Ent>::NomUnique,entity.nom());}
-};
-
-/*! \ingroup groupeUniqueSqlBase
- * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le couple (nom, type).
- */
-template<class Ent> class NomTypeUniqueSql : public NomUniqueSql<Ent>
-{
-protected:
-    using NomUniqueSql<Ent>::bindValue;
-
-public:
-    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    NomTypeUniqueSql(QSqlQuery * requete)
-        : NomUniqueSql<Ent>(requete)
-    {}
-
-    //! Destructeur.
-    ~NomTypeUniqueSql()
-    {}
-
-protected:
-    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
-    void bindValuesUnique(const Ent &entity)
-    {
-        NomUniqueSql<Ent>::bindValuesUnique(entity);
-        bindValue(InfoSql<Ent>::TypeUnique,entity.type());
-    }
-};
-
-/*! \ingroup groupeUniqueSqlBase
- * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le texte.
- */
-template<class Ent> class TexteUniqueSql : public SimpleUniqueSql<Ent>
-{
-protected:
-    using SimpleUniqueSql<Ent>::bindValue;
-
-public:
-    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    TexteUniqueSql(QSqlQuery * requete)
-        : SimpleUniqueSql<Ent>(requete)
-    {}
-
-    //! Destructeur.
-    ~TexteUniqueSql()
-    {}
-
-protected:
-    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
-    void bindValuesUnique(const Ent &entity)
-        {bindValue(InfoSql<Ent>::TexteUnique,entity.texte());}
 };
 
 #endif // ABSTRACTUNIQUESQL_H

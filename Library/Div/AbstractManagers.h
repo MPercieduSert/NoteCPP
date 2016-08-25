@@ -7,18 +7,28 @@
 #include <QMessageBox>
 #include <QSqlQuery>
 #include <stdexcept>
+
 #include "../Entities/InfoEntity.h"
 #include "../Manager/ManagerOf.h"
+#include "../Manager/VersionBddManager.h"
+
+namespace bdd {
+    //! Version de création de la base de données.
+    enum creationBdd{
+        initiale
+    };
+}
+
 
 /*! \ingroup groupeFile
  * \brief Macro permettant de spécifier le membre get.
  */
-#define DEF_GET_MANAGER(ENTITY) template<> inline ManagerOf<ENTITY> Managers::get<ENTITY>() const {return m_ ## ENTITY ## Manager;}
+#define DEF_GET_MANAGER(ENTITY) template<> inline ManagerOf<ENTITY> & Managers::get<ENTITY>() {return m_ ## ENTITY ## Manager;}
 
 /*! \ingroup groupeFile
  * \brief Macro permettant de spécifier le membre get.
  */
-#define MANAGER_TAB(ENTITY) m_managers[Info<ENTITY>::ID]=&m_ ## ENTITY ## Manager;
+#define MANAGER_TAB(ENTITY) m_managers[ENTITY::ID]=&m_ ## ENTITY ## Manager;
 
 /*! \ingroup groupeFile
  *  \brief Classe mère de la classe contenant les managers des entités pour la base de donnée.
@@ -26,16 +36,21 @@
 class AbstractManagers
 {
 public:
-    static const int NbrEntity = CaracteristiqueEntity::NbrEntity; //! Nombre de type d'entity à gérer
+    static const int NbrEntity = InfoEntity::NbrEntity;  //! Nombre de type d'entity à gérer
 
 protected:
-    QSqlQuery m_requete;                //! Requéte commune aux manageurs.
+    QSqlQuery m_requete;                            //! Requéte commune aux manageurs.
     AbstractManagerSql * m_managers[NbrEntity];     //! Tableau des manageurs.
+    VersionBddManager m_managerVersion;         //! Manager de l'entité version de la base de bonnée.
 
 public:
+    //! Constructeur.
     AbstractManagers(const QSqlQuery & req = QSqlQuery())
         : m_requete(req)
         {}
+
+    //! Creé la table de l'entité VersionBdd
+    void creerVersion();
 
     //! Retourne le manager des entités de ID, id.
     Manager * get(int id)
@@ -49,6 +64,15 @@ public:
             throw std::invalid_argument("Identifiant d'entité invalide dans la fonction get.");
         }
     }
+
+    //! Returne la version courante de la base de donnée.
+    VersionBdd getVersion();
+
+    //! Returne le numero de version de la base de donnée.
+    int numVersion();
+
+    //! Enregistre le numéro de version de la base de donnée.
+    void saveVersion(int num);
 
     //! Modifie le pointeur vers l'objet requête.
     void setRequete(const QSqlQuery & req, bool force = false);

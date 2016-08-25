@@ -1,35 +1,57 @@
+/*Auteur: PERCIE DU SERT Maxime
+ *Date: 23/05/2016
+ */
 #ifndef TABMENU_H
 #define TABMENU_H
 
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QMap>
 #include <QPushButton>
 #include <QSignalMapper>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <stdexcept>
 #include "FenPrincipale.h"
 #include "TabAbstractModule.h"
 
+/*! \ingroup groupeFen
+ * \brief Fenêtre menu d'une annee
+ */
 class TabMenu : public TabAbstractModule
 {
     Q_OBJECT
 protected:
-    QGridLayout *m_classeLayout;
-    QPushButton *m_newClasseButton;
-    QSignalMapper *m_classeMapper;
-    QMap<int,QPushButton*> m_classeButtonMap;
+    enum position{classe,
+                  bouton};                          //! Ordre de position dans le layout principal
+
+    // Donnée
+    Annee m_annee;                                  //! Annee du menu
+    QList<QGroupBox *> m_listeGroupeEtab;
+    // QMap<int,QPushButton*> m_classeButtonMap;
+
+    // Widget
+    QPushButton *m_newClasseButton;                 //! Bouton pour créer une nouvelle classe
+    QSignalMapper *m_classeMapper;                  //! Lie les boutons des classes à leur actions
+
+    // Layout
+    QHBoxLayout *m_classeLayout;                    //! Layaut des classes
 
 public:
-    explicit TabMenu(Bdd * bdd, TabModule *parent = 0);
-    void becomeCurrent() const;
-    void refreshClasse();
+    //! Constructeur
+    explicit TabMenu(int idAn, TabModule *parent = 0);
 
 protected:
+    //! Crée ou rafraichit la zone des boutons de classes.
     void classeLayout();
 
 signals:
 
 public slots:
+    //! Action à effectuer lorsque l'onglet devient actif.
+    void becomeCurrent() const;
+
+    //! Ouvre la fenêtre de création d'une classe et rafraichit les boutons des classes.
     void creerClasse();
 };
 

@@ -38,10 +38,10 @@ HEADERS += \
     Bdd.h \
     Config.h \
     FileInterface.h \
+    Macro.h \
     Managers.h \
     Tree.h \
     TreeItem.h
-
 
 SOURCES += \
     AbstractBdd.cpp \
@@ -52,9 +52,6 @@ SOURCES += \
     Managers.cpp \
     Tree.cpp \
     TreeItem.cpp
-
-
-
 
 unix {
     target.path = /usr/lib

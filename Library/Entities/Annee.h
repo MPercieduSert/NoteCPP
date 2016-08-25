@@ -4,64 +4,32 @@
 #ifndef ANNEE_H
 #define ANNEE_H
 
-#include "AttributEntityAlias.h"
+#include "AttributEntity.h"
 #include "Entity.h"
+#include "InfoEntity.h"
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Annee.
  */
-class Annee : public EntityTemp<Annee>,
-        public AnAttribut
+class Annee : public Entity
 {
+    ATTRIBUT_ENTITY_INT_SUP(An,an,1)
 public:
-    //! Constructeur par defaut.
-    Annee(int id = 0)
-        : EntityTemp(id)
-        {}
+    using Entity::Entity;
+    BASE_ENTITY(Annee,InfoEntity::AnneeId)
 
     //! Constructeur à partir des valeurs attributs.
     Annee(int an, int id)
-        : EntityTemp(id),
-          AnAttribut(an)
-        {}
-
-    //! Constructeur de recopie.
-    Annee(const Annee & entity)
-        : EntityTemp(entity), AnAttribut(entity.an())
-        {}
-
-    //! Destructeur.
-    ~Annee()
-        {}
+        : Entity(id), m_an(an) {}
 
     //! Renvoie la chaine de caractère "annee-annee+1".
-    QString affiche() const
-    {return QString::number(an())+"-"+QString::number(an()+1);}
-
-    //! Teste si l'entité est valide.
-    bool isValid() const
-    {return EntityTemp::isValid() && AnAttribut::valide();}
+    QString affiche() const;
 
     //! Oprérateur d'ordre strictement croissant sur an.
     bool operator < (const Annee & annee) const
-    {
-        return an() < annee.an();
-    }
+        {return an() < annee.an();}
 
-protected:
-    //! Test d'égalité entre cette entité et celle transmise en argument.
-    bool egal(const Annee & entity) const
-    {
-        return Entity::egal(entity)
-                && (an() == entity.an());
-    }
-
-    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
-    void set(const Annee & entity)
-    {
-        Entity::set(entity);
-        setAn(entity.an());
-    }
+    MEMBRE_ATT_1(Annee,Entity,An,an)
 };
 
 #endif // ANNEE_H

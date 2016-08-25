@@ -113,7 +113,7 @@ public:
             break;
 
         case AppreciationPos:
-            setAppreciation(val.toBool());
+            setAppreciation(val.value<bool>());
             break;
 
         case ControlePos:

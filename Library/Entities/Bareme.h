@@ -8,7 +8,7 @@
 #include "Entity.h"
 
 /*! \ingroup groupeEntity
- * \brief Représentation de l'entitée Bareme.
+ * \brief Représentation de l'entité Bareme.
  */
 
 class Bareme : public Entity
@@ -48,14 +48,14 @@ public:
     GET_SET_INT_SUP(num,Num,0)
     GET_SET_INT_SUP(valeur,Valeur,0)
 
-    //! Teste si l'entitée est valide.
+    //! Teste si l'entité est valide.
     bool isValid() const
     {
         return Entity::isValid() && (m_idEx > 0) && (m_fraction > 0) && (!m_nom.isEmpty()) && (m_num >= 0) && (m_valeur >= 0);
     }
 
 protected:
-    //! Test d'égalité entre cette entitée et celle transmise en argument.
+    //! Test d'égalité entre cette entité et celle transmise en argument.
     bool egal(const Bareme & entity) const
     {
         return Entity::egal(entity)
@@ -66,7 +66,7 @@ protected:
                 &&(m_valeur == entity.m_valeur);
     }
 
-    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
     void set(const Bareme & entity)
     {
         setIdEx(entity.m_idEx);

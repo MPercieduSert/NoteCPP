@@ -6,15 +6,12 @@
  * \brief Ensemble des gestionnaires de fichier.
  */
 
-
-
 /*! \ingroup groupeFile
  * \brief Interface pour la gestion des fichiers.
  *
  * Interface pour la gestion des fichiers, cette interface est utilisée par la classe FenFoundFile
  * pour la vérifiaction des chemins des fichiers et leur création s'il sont introuvables.
  */
-
 
 #ifndef FILEINTERFACE_H
 #define FILEINTERFACE_H

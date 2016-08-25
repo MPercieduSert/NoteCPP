@@ -9,7 +9,7 @@
 #include "ExerciceLinkSql.h"
 
 /*! \ingroup groupeManager
- * \brief Manager de l'entitée Exercice.
+ * \brief Manager de l'entité Exercice.
  */
 
 class ExerciceManager : public ManagerSql<ExerciceLinkSql>

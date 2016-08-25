@@ -1,8 +1,8 @@
 #include "TabClasse.h"
 
-TabClasse::TabClasse(int idClasse, Bdd *bdd, TabModule *parent) : TabAbstractClasse(idClasse,bdd,parent)
+TabClasse::TabClasse(int idClasse, TabModule *parent) : TabAbstractClasse(idClasse,parent)
 {
-    if(m_classeIsValid)
+    if(m_classe.isValid())
     {
         m_listeEleveButton = new QPushButton(tr("Liste des éléves"));
         m_listeGroupeButton = new QPushButton(tr("Liste de groupes"));
@@ -30,5 +30,5 @@ void TabClasse::openListeEleve()
 
 void TabClasse::openListeGroupe()
 {
-    m_parent->openListeGroupe(m_classe.id());
+    //m_parent->openListeGroupe(m_classe.id());
 }

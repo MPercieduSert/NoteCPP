@@ -6,21 +6,14 @@
 #include "TabListeGroupe.h"
 #include "TabMenu.h"
 
-TabModule::TabModule(Bdd *bdd, FenPrincipale *parent): QTabWidget(parent), m_bdd(bdd), m_parent(parent)
+TabModule::TabModule(FenPrincipale *parent): QTabWidget(parent), m_parent(parent)
 {
-    //m_tabMenu = new TabMenu(bdd,this);
-    TabMenu * tabMenu = new TabMenu(bdd,this);
-    m_listeTab[MenuTab].insert(0,tabMenu);
-    addTab(tabMenu, "Menu");
-    connect(parent,&FenPrincipale::anneeChanged,this,&TabModule::changeAnnee);
+    TabMenu * tabMenu = new TabMenu(parent->annee().id(),this);
+    m_listeTab[MenuTab].insert(parent->annee().id(),tabMenu);
+    addTab(tabMenu, parent->annee().affiche());
     connect(this,&TabModule::currentChanged,this,&TabModule::currentIndexChanged);
 }
-
-void TabModule::changeAnnee()
-{
-    ((TabMenu*) m_listeTab[MenuTab].first())->refreshClasse();
-}
-
+/*
 void TabModule::coller()
 {
     static_cast<TabAbstractModule *>(currentWidget())->coller();
@@ -35,17 +28,17 @@ void TabModule::creerClasse()
 {
     m_parent->creerClasse();
 }
-
+*/
 void TabModule::currentIndexChanged()
 {
     static_cast<TabAbstractModule *>(currentWidget())->becomeCurrent();
 }
-
+/*
 void TabModule::effacer()
 {
     static_cast<TabAbstractModule *> (currentWidget())->effacer();
 }
-
+*/
 void TabModule::newOngletClasse(int idClasse)
 {
     if(m_listeTab[ClasseTab].contains(idClasse))
@@ -54,11 +47,12 @@ void TabModule::newOngletClasse(int idClasse)
     }
     else
     {
-        TabClasse * tabClasse = new TabClasse(idClasse,m_bdd,this);
+        TabClasse * tabClasse = new TabClasse(idClasse, this);
         m_listeTab[ClasseTab].insert(idClasse,tabClasse);
-        setCurrentIndex(addTab(tabClasse, m_bdd->afficheClasse(idClasse)));
+        setCurrentIndex(addTab(tabClasse, tabClasse->classe().nom()));
     }
 }
+
 
 void TabModule::openListeEleve(int idClasse)
 {
@@ -68,12 +62,19 @@ void TabModule::openListeEleve(int idClasse)
     }
     else
     {
-        TabListeEleve * tabListeEleve = new TabListeEleve(idClasse,m_bdd,this);
-        m_listeTab[ListeEleveTab].insert(idClasse,tabListeEleve);
-        setCurrentIndex(addTab(tabListeEleve, m_bdd->afficheClasse(idClasse)+" - Liste des éléves"));
+        TabListeEleve * tabListeEleve = new TabListeEleve(idClasse, this);
+        if(tabListeEleve->classe().isValid())
+        {
+            m_listeTab[ListeEleveTab].insert(idClasse,tabListeEleve);
+            setCurrentIndex(addTab(tabListeEleve, tabListeEleve->classe().nom()+" - Liste des éléves"));
+        }
+        else
+        {
+            delete tabListeEleve;
+        }
     }
 }
-
+/*
 void TabModule::openListeGroupe(int idClasse)
 {
     if(m_listeTab[GroupeTab].contains(idClasse))
@@ -82,12 +83,13 @@ void TabModule::openListeGroupe(int idClasse)
     }
     else
     {
-        TabListeGroupe * tabListeGroupe = new TabListeGroupe(idClasse,m_bdd,this);
+        TabListeGroupe * tabListeGroupe = new TabListeGroupe(idClasse, this);
         m_listeTab[GroupeTab].insert(idClasse, tabListeGroupe );
-        setCurrentIndex(addTab(tabListeGroupe , m_bdd->afficheClasse(idClasse)+" - Groupes"));
+        setCurrentIndex(addTab(tabListeGroupe , parent()->bdd()->afficheClasse(idClasse)+" - Groupes"));
     }
-}
+}*/
+/*
 void TabModule::sauvegarder() const
 {
     static_cast<TabAbstractModule *>(currentWidget())->sauvegarder();
-}
+}*/

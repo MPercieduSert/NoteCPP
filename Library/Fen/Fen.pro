@@ -80,14 +80,14 @@ HEADERS += \
 #    FenMenu.h \
 #    FenNote.h \
     FenPrincipale.h \
-#    TabAbstractClasse.h \
-#    TabAbstractModule.h \
-#    TabAbstractTableau.h \
-#    TabClasse.h \
-#    TabListeEleve.h \
+    TabAbstractClasse.h \
+    TabAbstractModule.h \
+    TabAbstractTableau.h \
+    TabClasse.h \
+    TabListeEleve.h \
 #    TabListeGroupe.h \
-#    TabMenu.h \
-#    TabModule.h
+    TabMenu.h \
+    TabModule.h
 
 SOURCES += \
     Fen.cpp \
@@ -96,14 +96,14 @@ SOURCES += \
 #    FenMenu.cpp \
 #    FenNote.cpp \
     FenPrincipale.cpp \
-#    TabAbstractClasse.cpp \
-#    TabAbstractModule.cpp \
-#    TabAbstractTableau.cpp \
-#    TabClasse.cpp \
-#    TabListeEleve.cpp \
+    TabAbstractClasse.cpp \
+    TabAbstractModule.cpp \
+    TabAbstractTableau.cpp \
+    TabClasse.cpp \
+    TabListeEleve.cpp \
 #    TabListeGroupe.cpp \
-#    TabMenu.cpp \
-#    TabModule.cpp
+    TabMenu.cpp \
+    TabModule.cpp
 
 unix {
     target.path = /usr/lib

@@ -10,7 +10,7 @@
 #include "../Entities/Exercice.h"
 
 /*! \ingroup groupeLinkSql
- * \brief Lien entre l'entitée Annee de programation et sa représentation en base de donnée.
+ * \brief Lien entre l'entité Annee de programation et sa représentation en base de donnée.
  */
 
 class ExerciceLinkSql : public LinkSqlUniqueSimple<Exercice>
@@ -38,7 +38,7 @@ public:
     //! Crée la table en base de donnée et renvoie vrai si la création de la table s'est correctement déroulée.
     void creer();
 
-    //! Hydrate l'entitée entity avec à partir de la requète.
+    //! Hydrate l'entité entity avec à partir de la requète.
     void fromRequete(Exercice & exo)
     {
         exo.setIdArbEx(m_requete.value(Exercice::IdArbExPos).toInt());
@@ -50,8 +50,8 @@ public:
         exo.setTitre(m_requete.value(Exercice::TitrePos).toString());
     }
 
-    //! Crée dynamiquement une nouvelle entitée de type T, l'hydrate à partir de la requète SQL.
-    //! Puis retourne un  pointeur vers cette nouvelle entitée.
+    //! Crée dynamiquement une nouvelle entité de type T, l'hydrate à partir de la requète SQL.
+    //! Puis retourne un  pointeur vers cette nouvelle entité.
     Exercice * newFromRequete()
     {
         return new Exercice(m_requete.value(Exercice::IdArbExPos).toInt(),

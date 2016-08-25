@@ -8,7 +8,7 @@
 #include "Entity.h"
 
 /*! \ingroup groupeEntity
- * \brief Représentation de l'entitée Coefficient.
+ * \brief Représentation de l'entité Coefficient.
  */
 
 class Coefficient : public Entity
@@ -42,11 +42,11 @@ public:
     GET_SET_INT_SUP(indice,Indice,0)
     GET_SET_DOUBLE(valeur,Valeur)
 
-    //! Teste si l'entitée est valide.
+    //! Teste si l'entité est valide.
     bool isValid() const        {return Entity::isValid() && (m_idCrt > 0) && (m_indice >= 0);}
 
 protected:
-    //! Test d'égalité entre cette entitée et celle transmise en argument.
+    //! Test d'égalité entre cette entité et celle transmise en argument.
     bool egal(const Coefficient & entity) const
     {
         return Entity::egal(entity)
@@ -55,7 +55,7 @@ protected:
                 &&(m_valeur == entity.m_valeur);
     }
 
-    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
     void set(const Coefficient & entity)
     {
         setIdCrt(entity.idCrt());

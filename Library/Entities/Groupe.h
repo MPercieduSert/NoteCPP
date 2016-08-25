@@ -4,20 +4,24 @@
 #ifndef GROUPE_H
 #define GROUPE_H
 
-#include "AttributEntityAlias.h"
+#include "AttributEntity.h"
 #include "EntityRelation.h"
+#include "InfoEntity.h"
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Groupe.
  */
-class Groupe : public RelationExactOneNotNullEntity<Groupe>,
-                    public AlphaAttribut,
-                    public NomAttribut,
-                    public TypeAttribut
+class Groupe : public RelationExactOneNotNullEntity
 {
+    ATTRIBUT_ENTITY_INT_SUP(Alpha,alpha,0)
+    ATTRIBUT_ENTITY_STR_NOT_EMPTY(Nom,nom)
+    ATTRIBUT_ENTITY_INT_SUP(Type,type,0)
 public:
     enum grPour {GrAnnee = 0,
                  GrClasse =1};
+
+    BASE_ENTITY(Groupe,InfoEntity::GroupeId)
+    RELATION_ALIAS_2_CLE(An,Cl,Groupe)
 
     //! Constructeur par defaut.
     Groupe(int id = 0)
@@ -27,14 +31,14 @@ public:
     //! Constructeur à partir des valeurs attributs.
     Groupe(int idAn, int idCl, int alpha, const QString & nom, int type, int id = 0)
         : RelationExactOneNotNullEntity(idAn,idCl,id),
-          AlphaAttribut(alpha),
-          NomAttribut(nom),
-          TypeAttribut(type)
+          m_alpha(alpha),
+          m_nom(nom),
+          m_type(type)
     {}
 
     //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
     Groupe(int cle, const QString & nom, grPour pr)
-        : NomAttribut(nom)
+        : m_nom(nom)
     {
         if(pr == GrClasse)
             {setIdCl(cle);}
@@ -42,34 +46,7 @@ public:
             {setIdAn(cle);}
     }
 
-    RELATION_ALIAS_2_CLE(An,Cl,Groupe)
-
-    //! Teste si l'entité est valide.
-    bool isValid() const
-    {return RelationExactOneNotNullEntity::isValid()
-                && AlphaAttribut::valide()
-                && NomAttribut::valide()
-                && TypeAttribut::valide();
-    }
-
-protected:
-    //! Test d'égalité entre cette entité et celle transmise en argument.
-    bool egal(const Groupe & entity) const
-    {
-        return RelationExactOneNotNullEntity::egal(entity)
-                && (alpha() == entity.alpha())
-                && (nom() == entity.nom())
-                && (type() == entity.type());
-    }
-
-    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
-    void set(const Groupe & entity)
-    {
-        RelationExactOneNotNullEntity::set(entity);
-        setAlpha(entity.alpha());
-        setNom(entity.nom());
-        setType(entity.type());
-    }
+    MEMBRE_ATT_3(Groupe,RelationExactOneNotNullEntity,Alpha,alpha,Nom,nom,Type,type)
 };
 
 #endif // GROUPE_H

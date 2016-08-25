@@ -96,7 +96,7 @@ void FenFoundFile::openInConf(const QString & path, bool save)
     {
         pathFile = foundFileMessage(QString("L'entrée suivante n'existe pas dans le fichier de configuration,\n")
                                     .append(path)
-                                    .append("Pour que cette entrée soit créée dans le fichier de configuration,"
+                                    .append("\n Pour que cette entrée soit créée dans le fichier de configuration,"
                                     " souhaitez-vous indiquer un fichier coorespondant ou que celui-ci soit créé?\n"),
                                     m_ptr_file->fileName(),
                                     m_ptr_file->fileExtension());
@@ -113,9 +113,9 @@ void FenFoundFile::openInConf(const QString & path, bool save)
             bool modif = false;
             while(!pathFile.isNull() && !(m_ptr_file->exists() && m_ptr_file->isValid() && m_ptr_file->open()))
             {
-                pathFile = foundFileMessage(QString("L'entrée suivante dans le fichier de configuration est invalide,\n")
+                pathFile = foundFileMessage(QString("L'entrée suivante dans le fichier de configuration est invalide,\n\"")
                                             .append(path)
-                                            .append("Pour que cette entrée soit corrigé dans le fichier de configuration,"
+                                            .append("\". Pour que cette entrée soit corrigé dans le fichier de configuration,"
                                             " souhaitez-vous indiquer un fichier coorespondant valide ou que celui-ci soit créé à nouveau?\n"),
                                             m_ptr_file->fileName(),
                                             m_ptr_file->fileExtension());

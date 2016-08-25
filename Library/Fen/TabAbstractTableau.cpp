@@ -1,6 +1,6 @@
 #include "TabAbstractTableau.h"
 
-TabAbstractTableau::TabAbstractTableau(Bdd *bdd, TabModule *parent) : TabAbstractModule(bdd,parent)
+TabAbstractTableau::TabAbstractTableau(int index, TabModule *parent): TabAbstractModule(index,parent)
 {
 
 }

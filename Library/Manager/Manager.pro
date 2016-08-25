@@ -29,39 +29,33 @@ HEADERS += \
     AbstractLinkSql.h \
     AbstractUniqueSql.h \
     ArbreManager.h \
-    AttributsLinkSql.h \
-    AttributsMacroLinkSql.h \
-    BaseInfoSql.h \
-    InfoSql.h \
+    InfoBdd.h \
+    InfoBddBase.h \
     LinkSql.h \
-    LinkSqlArbre.h \
-    LinkSqlDivers.h \
-    LinkSqlNom.h \
-    LinkSqlRelation.h \
+    LinkSqlBase.h \
     Manager.h \
     ManagerOf.h \
     ManagerSql.h \
     ReqSql.h \
-    UniqueSql.h
+    UniqueSql.h \
+    UniqueSqlBase.h \
+    VersionBddManager.h
 
 SOURCES += \
     AbstractLinkSql.cpp \
     AbstractUniqueSql.cpp \
     ArbreManager.cpp \
-    AttributsLinkSql.cpp \
-    AttributsMacroLinkSql.cpp \
-    BaseInfoSql.cpp \
-    InfoSql.cpp \
+    InfoBdd.cpp \
+    InfoBddBase.cpp \
     LinkSql.cpp \
-    LinkSqlArbre.cpp \
-    LinkSqlDivers.cpp \
-    LinkSqlNom.cpp \
-    LinkSqlRelation.cpp \
+    LinkSqlBase.cpp \
     Manager.cpp \
     ManagerOf.cpp \
     ManagerSql.cpp \
     ReqSql.cpp \
-    UniqueSql.cpp
+    UniqueSql.cpp \
+    UniqueSqlBase.cpp \
+    VersionBddManager.cpp
 
 unix {
     target.path = /usr/lib

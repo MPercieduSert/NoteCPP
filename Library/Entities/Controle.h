@@ -8,7 +8,7 @@
 #include "Entity.h"
 
 /*! \ingroup groupeEntity
- * \brief Représentation de l'entitée Controle.
+ * \brief Représentation de l'entité Controle.
  */
 
 class Controle : public Entity
@@ -50,7 +50,7 @@ public:
     GET_SET_BOOL(saisie,Saisie)
     GET_SET_INT_SUP(total,Total,1)
 
-    //! Teste si l'entitée est valide.
+    //! Teste si l'entité est valide.
     bool isValid() const
     {
         return Entity::isValid() && (m_idCl > 0) && (m_idTp > 0) && (m_date.isValid()) && (m_decimale > 0)
@@ -58,7 +58,7 @@ public:
     }
 
 protected:
-    //! Test d'égalité entre cette entitée et celle transmise en argument.
+    //! Test d'égalité entre cette entité et celle transmise en argument.
     bool egal(const Controle & entity) const
     {
         return Entity::egal(entity)
@@ -72,7 +72,7 @@ protected:
                 &&(m_total == entity.m_total);
     }
 
-    //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
     void set(const Controle & entity)
     {
         setIdCl(entity.idCl());

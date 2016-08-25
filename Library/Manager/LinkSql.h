@@ -5,51 +5,30 @@
 #define LINKSQL_H
 
 #include "AbstractLinkSql.h"
-#include "AttributsLinkSql.h"
-#include "InfoSql.h"
-#include "LinkSqlArbre.h"
-#include "LinkSqlDivers.h"
-#include "LinkSqlNom.h"
-#include "LinkSqlRelation.h"
+#include "LinkSqlBase.h"
+#include "../Entities/Annee.h"
+#include "../Entities/Attribut.h"
+#include "../Entities/Classe.h"
+#include "../Entities/ClasseEleve.h"
+#include "../Entities/Donnee.h"
+#include "../Entities/Eleve.h"
+#include "../Entities/Groupe.h"
+#include "../Entities/Niveau.h"
+#include "../Entities/TypeEtablissement.h"
+#include "../Entities/TypeNiveau.h"
 
-/*! \ingroup groupeLinkSqlBase
- * \brief Lien entre une entité de programation et sa représentation en base de donnée.
- */
-template<class Ent> class LinkSql
-{
-
-};
 
 /*! \ingroup groupeLinkSqlSpe
  * \brief Lien entre l'entité Annee de programation et sa représentation en base de donnée.
  */
-template<> class LinkSql<Annee> : public IdLinkSql<Annee>, public AnAttributSql<Annee>
+class AnneeLinkSql : public AbstractLinkSql
 {
+protected:
+    ATTRIBUT_LINK(Annee,An,an,int)
 public:
-    //! Construteur, transmettre en argument l'objet de requète utilisée par le manageur.
-    LinkSql<Annee>(QSqlQuery * requete)
-        : ReqSql(requete)
-        {}
+    MEMBRE_LINK_ATT_1(AbstractLinkSql,AnneeLinkSql,Annee,An,an)
 
-    //! Destructeur.
-    ~LinkSql<Annee>()
-    {}
-
-    //! Transmet les valeurs des attributs à la requète SQL préparée.
-    void bindValues(const Annee & entity)
-    {
-        IdLinkSql<Annee>::bindValues(entity);
-        setAn(entity);
-    }
-
-    //! Hydrate l'entité entity avec à partir de la requète.
-    void fromRequete(Annee & entity) const
-    {
-        IdLinkSql<Annee>::fromRequete(entity);
-        entity.setAn(an());
-    }
-
-    //! Crée dynamiquement une nouvelle entité de type T, l'hydrate à partir de la requète SQL.
+    //! Crée dynamiquement une nouvelle entité de type Annee, l'hydrate à partir de la requète SQL.
     //! Puis retourne un  pointeur vers cette nouvelle entité.
     Annee * newFromRequete() const
     {
@@ -57,53 +36,20 @@ public:
     }
 };
 
-LINK_SQL(AttributArbre,Arbre)
-LINK_SQL(CoursArbre,Arbre)
-LINK_SQL(DonneeArbre,Arbre)
-LINK_SQL(EnonceArbre,Arbre)
-LINK_SQL(ExerciceArbre,Arbre)
-
 /*! \ingroup groupeLinkSqlSpe
  * \brief Lien entre l'entité Attribut de programation et sa représentation en base de donnée.
  */
-template<> class LinkSql<Attribut> : public NcNomLinkSql<Attribut>,
-        public PrBaremeAttributSql<Attribut>,
-        public PrCommentaireAttributSql<Attribut>,
-        public PrCorrectionAttributSql<Attribut>,
-        public PrCoursAttributSql<Attribut>,
-        public PrExerciceAttributSql<Attribut>
+class AttributLinkSql : public NomLinkSql
 {
+protected:
+    ATTRIBUT_LINK(Attribut,Nc,nc,QString)
+    ATTRIBUT_LINK(Attribut,PrBareme,prBareme,bool)
+    ATTRIBUT_LINK(Attribut,PrCommentaire,prCommentaire,bool)
+    ATTRIBUT_LINK(Attribut,PrCorrection,prCorrection,bool)
+    ATTRIBUT_LINK(Attribut,PrCours,prCours,bool)
+    ATTRIBUT_LINK(Attribut,PrExercice,prExercice,bool)
 public:
-    //! Construteur, transmettre en argument l'objet de requète utilisée par le manageur.
-    LinkSql<Attribut>(QSqlQuery * requete)
-        : ReqSql(requete)
-        {}
-
-     //! Destructeur.
-     ~LinkSql<Attribut>()
-          {}
-
-    //! Transmet les valeurs des attributs à la requète SQL préparée.
-    void bindValues(const Attribut & entity)
-    {
-        NcNomLinkSql<Attribut>::bindValues(entity);
-        setPrBareme(entity);
-        setPrCommentaire(entity);
-        setPrCorrection(entity);
-        setPrCours(entity);
-        setPrExercice(entity);
-    }
-
-    //! Hydrate l'entité entity avec à partir de la requète.
-    void fromRequete(Attribut & entity) const
-    {
-        NcNomLinkSql<Attribut>::fromRequete(entity);
-        entity.setPrBareme(prBareme());
-        entity.setPrCommentaire(prCommentaire());
-        entity.setPrCorrection(prCorrection());
-        entity.setPrCours(prCours());
-        entity.setPrExercice(prExercice());
-    }
+    MEMBRE_LINK_ATT_6(NomLinkSql,AttributLinkSql,Attribut,PrBareme,prBareme,PrCommentaire,prCommentaire,PrCorrection,prCorrection,PrCours,prCours,PrExercice,prExercice,Nc,nc)
 
     //! Crée dynamiquement une nouvelle entité de type T, l'hydrate à partir de la requète SQL.
     //! Puis retourne un  pointeur vers cette nouvelle entité.
@@ -121,39 +67,36 @@ public:
 };
 
 /*! \ingroup groupeLinkSqlSpe
+ * \brief Lien entre l'entité Classe de programation et sa représentation en base de donnée.
+ */
+class ClasseLinkSql : public NomLinkSql
+{
+protected:
+    ATTRIBUT_LINK(Classe,IdAn,idAn,int)
+    ATTRIBUT_LINK(Classe,IdEtab,idEtab,int)
+    ATTRIBUT_LINK(Classe,IdNiv,idNiv,int)
+    ATTRIBUT_LINK(Classe,Num,num,int)
+public:
+    MEMBRE_LINK_ATT_4(NomLinkSql,ClasseLinkSql,Classe,IdAn,idAn,IdEtab,idEtab,IdNiv,idNiv,Num,num)
+    //! Crée dynamiquement une nouvelle entité de type Classe, l'hydrate à partir de la requète SQL.
+    //! Puis retourne un  pointeur vers cette nouvelle entité.
+    Classe * newFromRequete() const
+    {
+        return new Classe(idAn(),idEtab(),idNiv(),nom(),num(),id());
+    }
+};
+
+/*! \ingroup groupeLinkSqlSpe
  * \brief Lien entre l'entité ClasseEleve de programation et sa représentation en base de donnée.
  */
-template<> class LinkSql<ClasseEleve> : public RelationLinkSql<ClasseEleve>,
-        public EntreeAttributSql<ClasseEleve>,
-        public SortieAttributSql<ClasseEleve>
+class ClasseEleveLinkSql : public RelationLinkSql
 {
+protected:
+    ATTRIBUT_LINK(ClasseEleve,Entree,entree,QDate)
+    ATTRIBUT_LINK(ClasseEleve,Sortie,sortie,QDate)
 public:
-    //! Construteur, transmettre en argument l'objet de requète utilisée par le manageur.
-    LinkSql<ClasseEleve>(QSqlQuery * requete)
-        : ReqSql(requete)
-        {}
-
-    //! Destructeur.
-    ~LinkSql<ClasseEleve>()
-         {}
-
-    //! Transmet les valeurs des attributs à la requète SQL préparée.
-    void bindValues(const ClasseEleve & entity)
-    {
-        RelationLinkSql<ClasseEleve>::bindValues(entity);
-        setEntree(entity);
-        setSortie(entity);
-    }
-
-    //! Hydrate l'entité entity avec à partir de la requète.
-    void fromRequete(ClasseEleve & entity) const
-    {
-        RelationLinkSql<ClasseEleve>::fromRequete(entity);
-        entity.setEntree(entree());
-        entity.setSortie(sortie());
-    }
-
-    //! Crée dynamiquement une nouvelle entité de type T, l'hydrate à partir de la requète SQL.
+    MEMBRE_LINK_ATT_2(RelationLinkSql,ClasseEleveLinkSql,ClasseEleve,Entree,entree,Sortie,sortie)
+    //! Crée dynamiquement une nouvelle entité de type ClasseEleve, l'hydrate à partir de la requète SQL.
     //! Puis retourne un  pointeur vers cette nouvelle entité.
     ClasseEleve * newFromRequete() const
     {
@@ -162,81 +105,17 @@ public:
 };
 
 /*! \ingroup groupeLinkSqlSpe
- * \brief Lien entre l'entité Classe de programation et sa représentation en base de donnée.
- */
-template<> class LinkSql<Classe> : public NumRelationLinkSql<Classe>, public IdNivAttributSql<Classe>
-{
-public:
-    //! Construteur, transmettre en argument l'objet de requète utilisée par le manageur.
-    LinkSql<Classe>(QSqlQuery * requete)
-        : ReqSql(requete)
-    {}
-
-    //! Destructeur.
-    ~LinkSql<Classe>()
-         {}
-
-    //! Transmet les valeurs des attributs à la requète SQL préparée.
-    void bindValues(const Classe & entity)
-    {
-        NumRelationLinkSql<Classe>::bindValues(entity);
-        setIdNiv(entity);
-    }
-
-    //! Hydrate l'entité entity avec à partir de la requète.
-    void fromRequete(Classe & entity) const
-    {
-        NumRelationLinkSql<Classe>::fromRequete(entity);
-        entity.setIdNiv(idNiv());
-    }
-
-    //! Crée dynamiquement une nouvelle entité de type T, l'hydrate à partir de la requète SQL.
-    //! Puis retourne un  pointeur vers cette nouvelle entité.
-    Classe * newFromRequete() const
-    {
-        return new Classe(id1(),id2(),idNiv(),num(),id());
-    }
-};
-
-LINK_SQL(Commentaire,Texte)
-
-/*! \ingroup groupeLinkSqlSpe
  * \brief Lien entre l'entité Donnee de programation et sa représentation en base de donnée.
  */
-template<> class LinkSql<Donnee> : public TypeNomLinkSql<Donnee>,
-                                          public CardAttributSql<Donnee>,
-                                          public SurAttributSql<Donnee>,
-                                          public TpValAttributSql<Donnee>
+class DonneeLinkSql : public TypeNomLinkSql
 {
+protected:
+    ATTRIBUT_LINK(Donnee,Card,card,int)
+    ATTRIBUT_LINK(Donnee,Sur,sur,int)
+    ATTRIBUT_LINK(Donnee,TpVal,tpVal,int)
 public:
-    //! Construteur, transmettre en argument l'objet de requète utilisée par le manageur.
-    LinkSql<Donnee>(QSqlQuery * requete)
-        : ReqSql(requete)
-        {}
-
-    //! Destructeur.
-    ~LinkSql<Donnee>()
-        {}
-
-    //! Transmet les valeurs des attributs à la requète SQL préparée.
-    void bindValues(const Donnee & entity)
-    {
-        TypeNomLinkSql<Donnee>::bindValues(entity);
-        setCard(entity);
-        setSur(entity);
-        setTpVal(entity);
-    }
-
-    //! Hydrate l'entité entity avec à partir de la requète.
-    void fromRequete(Donnee & entity) const
-    {
-        TypeNomLinkSql<Donnee>::fromRequete(entity);
-        entity.setCard(card());
-        entity.setSur(sur());
-        entity.setTpVal(tpVal());
-    }
-
-    //! Crée dynamiquement une nouvelle entité de type T, l'hydrate à partir de la requète SQL.
+    MEMBRE_LINK_ATT_3(TypeNomLinkSql,DonneeLinkSql,Donnee,Card,card,Sur,sur,TpVal,tpVal)
+    //! Crée dynamiquement une nouvelle entité de type Donnee, l'hydrate à partir de la requète SQL.
     //! Puis retourne un  pointeur vers cette nouvelle entité.
     Donnee * newFromRequete() const
     {
@@ -247,41 +126,15 @@ public:
 /*! \ingroup groupeLinkSqlSpe
  * \brief Lien entre l'entité Eleve de programation et sa représentation en base de donnée.
  */
-template<> class LinkSql<Eleve> : public NomLinkSql<Eleve>,
-                                    public FilleAttributSql<Eleve>,
-                                    public NaissanceAttributSql<Eleve>,
-                                    public PrenomAttributSql<Eleve>
+class EleveLinkSql : public NomLinkSql
 {
+protected:
+    ATTRIBUT_LINK(Eleve,Fille,fille,bool)
+    ATTRIBUT_LINK(Eleve,Naissance,naissance,QDate)
+    ATTRIBUT_LINK(Eleve,Prenom,prenom,QString)
 public:
-    //! Construteur, transmettre en argument l'objet de requète utilisée par le manageur.
-    LinkSql<Eleve>(QSqlQuery * requete)
-        : ReqSql(requete)
-        {}
-
-    //! Destructeur.
-    ~LinkSql<Eleve>()
-         {}
-
-
-    //! Transmet les valeurs des attributs à la requète SQL préparée.
-    void bindValues(const Eleve & entity)
-    {
-        NomLinkSql<Eleve>::bindValues(entity);
-        setFille(entity);
-        setNaissance(entity);
-        setPrenom(entity);
-    }
-
-    //! Hydrate l'entité entity avec à partir de la requète.
-    void fromRequete(Eleve & entity) const
-    {
-        NomLinkSql<Eleve>::fromRequete(entity);
-        entity.setFille(fille());
-        entity.setNaissance(naissance());
-        entity.setPrenom(prenom());
-    }
-
-    //! Crée dynamiquement une nouvelle entité de type T, l'hydrate à partir de la requète SQL.
+    MEMBRE_LINK_ATT_3(NomLinkSql,EleveLinkSql,Eleve,Fille,fille,Naissance,naissance,Prenom,prenom)
+    //! Crée dynamiquement une nouvelle entité de type Eleve, l'hydrate à partir de la requète SQL.
     //! Puis retourne un  pointeur vers cette nouvelle entité.
     Eleve * newFromRequete() const
     {
@@ -289,45 +142,18 @@ public:
     }
 };
 
-LINK_SQL(Etablissement,NcNomType)
-
 /*! \ingroup groupeLinkSqlSpe
  * \brief Lien entre l'entité Groupe de programation et sa représentation en base de donnée.
  */
-template<> class LinkSql<Groupe> : public RelationLinkSql<Groupe>,
-                                          public AlphaAttributSql<Groupe>,
-                                          public NomAttributSql<Groupe>,
-                                          public TypeAttributSql<Groupe>
+class GroupeLinkSql : public RelationExactOneNotNullLinkSql
 {
+protected:
+    ATTRIBUT_LINK(Groupe,Alpha,alpha,int)
+    ATTRIBUT_LINK(Groupe,Nom,nom,QString)
+    ATTRIBUT_LINK(Groupe,Type,type,int)
 public:
-    //! Construteur, transmettre en argument l'objet de requète utilisée par le manageur.
-    LinkSql<Groupe>(QSqlQuery * requete)
-        : ReqSql(requete)
-        {}
-
-    //! Destructeur.
-    ~LinkSql<Groupe>()
-        {}
-
-    //! Transmet les valeurs des attributs à la requète SQL préparée.
-    void bindValues(const Groupe & entity)
-    {
-        RelationLinkSql<Groupe>::bindValues(entity);
-        setAlpha(entity);
-        setNom(entity);
-        setType(entity);
-    }
-
-    //! Hydrate l'entité entity avec à partir de la requète.
-    void fromRequete(Groupe & entity) const
-    {
-        RelationLinkSql::fromRequete(entity);
-        entity.setAlpha(alpha());
-        entity.setNom(nom());
-        entity.setType(type());
-    }
-
-    //! Crée dynamiquement une nouvelle entité de type T, l'hydrate à partir de la requète SQL.
+    MEMBRE_LINK_ATT_3(RelationExactOneNotNullLinkSql,GroupeLinkSql,Groupe,Alpha,alpha,Nom,nom,Type,type)
+    //! Crée dynamiquement une nouvelle entité de type Groupe, l'hydrate à partir de la requète SQL.
     //! Puis retourne un  pointeur vers cette nouvelle entité.
     Groupe * newFromRequete() const
     {
@@ -338,58 +164,54 @@ public:
 /*! \ingroup groupeLinkSqlSpe
  * \brief Lien entre l'entité Niveau de programation et sa représentation en base de donnée.
  */
-template<> class LinkSql<Niveau> : public NcNomLinkSql<Niveau>, public IdTpAttributSql<Niveau>
+class NiveauLinkSql : public NcNomLinkSql
 {
+protected:
+    ATTRIBUT_LINK(Niveau,IdTp,idTp,int)
+    ATTRIBUT_LINK(Niveau,IdTpEtab,idTpEtab,int)
 public:
-    //! Construteur, transmettre en argument l'objet de requète utilisée par le manageur.
-    LinkSql<Niveau>(QSqlQuery * requete)
-        : ReqSql(requete)
-    {}
-
-    //! Destructeur.
-    ~LinkSql<Niveau>()
-         {}
-
-    //! Transmet les valeurs des attributs à la requète SQL préparée.
-    void bindValues(const Niveau & entity)
-    {
-        NcNomLinkSql<Niveau>::bindValues(entity);
-        setIdTp(entity);
-    }
-
-    //! Hydrate l'entité entity avec à partir de la requète.
-    void fromRequete(Niveau & entity) const
-    {
-        NcNomLinkSql<Niveau>::fromRequete(entity);
-        entity.setIdTp(idTp());
-    }
-
-    //! Crée dynamiquement une nouvelle entité de type T, l'hydrate à partir de la requète SQL.
+    MEMBRE_LINK_ATT_2(NcNomLinkSql,NiveauLinkSql,Niveau,IdTp,idTp,IdTpEtab,idTpEtab)
+    //! Crée dynamiquement une nouvelle entité de type Niveau, l'hydrate à partir de la requète SQL.
     //! Puis retourne un  pointeur vers cette nouvelle entité.
     Niveau * newFromRequete() const
     {
-        return new Niveau(idTp(),nc(),nom(),id());
+        return new Niveau(idTp(),idTpEtab(),nc(),nom(),id());
     }
 };
 
-LINK_SQL(CommentaireClasse,DateRelation)
-LINK_SQL(CommentaireEleve,DateRelation)
-LINK_SQL(CommentaireGroupe,DateRelation)
+/*! \ingroup groupeLinkSqlSpe
+ * \brief Lien entre l'entité Niveau de programation et sa représentation en base de donnée.
+ */
+class TypeEtablissementLinkSql : public NomLinkSql
+{
+protected:
+    ATTRIBUT_LINK(TypeEtablissement,Max,max,int)
+    ATTRIBUT_LINK(TypeEtablissement,Min,min,int)
+public:
+    MEMBRE_LINK_ATT_2(NomLinkSql,TypeEtablissementLinkSql,TypeEtablissement,Max,max,Min,min)
+    //! Crée dynamiquement une nouvelle entité de type TypeEtablissement, l'hydrate à partir de la requète SQL.
+    //! Puis retourne un  pointeur vers cette nouvelle entité.
+    TypeEtablissement * newFromRequete() const
+    {
+        return new TypeEtablissement(max(),min(),nom(),id());
+    }
+};
 
-LINK_SQL(DonneeClasse,ValeurDateRelation)
-LINK_SQL(DonneeEleve,ValeurDateRelation)
-LINK_SQL(DonneeEtablissement,ValeurDateRelation)
-LINK_SQL(DonneeNiveau,ValeurDateRelation)
-LINK_SQL(DonneeSource,ValeurDateRelation)
-
-LINK_SQL(GroupeEleve,NumRelation)
-
-LINK_SQL(AttributCommentaire,Relation)
-LINK_SQL(NiveauPrecedent,Relation)
-LINK_SQL(EtablissementNiveau,Relation)
-
-LINK_SQL(Source,NomType)
-
-LINK_SQL(TypeNiveau,NomType)
+/*! \ingroup groupeLinkSqlSpe
+ * \brief Lien entre l'entité TypeNiveau de programation et sa représentation en base de donnée.
+ */
+class TypeNiveauLinkSql : public NomLinkSql
+{
+protected:
+    ATTRIBUT_LINK(TypeNiveau,AnBac,anBac,int)
+public:
+    MEMBRE_LINK_ATT_1(NomLinkSql,TypeNiveauLinkSql,TypeNiveau,AnBac,anBac)
+    //! Crée dynamiquement une nouvelle entité de type TypeNiveau, l'hydrate à partir de la requète SQL.
+    //! Puis retourne un  pointeur vers cette nouvelle entité.
+    TypeNiveau * newFromRequete() const
+    {
+        return new TypeNiveau(anBac(),nom(),id());
+    }
+};
 
 #endif // LINKSQL_H

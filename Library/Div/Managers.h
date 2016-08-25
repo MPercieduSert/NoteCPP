@@ -33,6 +33,7 @@ protected:
     ManagerOf<Eleve> m_EleveManager;
     ManagerOf<EnonceArbre> m_EnonceArbreManager;
     ManagerOf<Etablissement> m_EtablissementManager;
+    ManagerOf<EtablissementType> m_EtablissementTypeManager;
     ManagerOf<EtablissementNiveau> m_EtablissementNiveauManager;
     ManagerOf<ExerciceArbre> m_ExerciceArbreManager;
     ManagerOf<Groupe> m_GroupeManager;
@@ -40,14 +41,16 @@ protected:
     ManagerOf<Niveau> m_NiveauManager;
     ManagerOf<NiveauPrecedent> m_NiveauPrecedentManager;
     ManagerOf<Source> m_SourceManager;
+    ManagerOf<TypeEtablissement> m_TypeEtablissementManager;
     ManagerOf<TypeNiveau> m_TypeNiveauManager;
+
 
 public:
     using AbstractManagers::get;
 
     Managers(const QSqlQuery & req = QSqlQuery());
 
-    template<class Ent> ManagerOf<Ent> get() const;
+    template<class Ent> ManagerOf<Ent> & get();
 };
 
 DEF_GET_MANAGER(Annee)
@@ -72,12 +75,14 @@ DEF_GET_MANAGER(Eleve)
 DEF_GET_MANAGER(EnonceArbre)
 DEF_GET_MANAGER(Etablissement)
 DEF_GET_MANAGER(EtablissementNiveau)
+DEF_GET_MANAGER(EtablissementType)
 DEF_GET_MANAGER(ExerciceArbre)
 DEF_GET_MANAGER(Groupe)
 DEF_GET_MANAGER(GroupeEleve)
 DEF_GET_MANAGER(Niveau)
 DEF_GET_MANAGER(NiveauPrecedent)
 DEF_GET_MANAGER(Source)
+DEF_GET_MANAGER(TypeEtablissement)
 DEF_GET_MANAGER(TypeNiveau)
 
 #endif // MANAGERS_H

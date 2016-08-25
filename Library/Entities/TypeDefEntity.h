@@ -10,21 +10,21 @@
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Commentaire.
  */
-typedef TexteOnlyEntity<CaracteristiqueEntity::CommentaireId> Commentaire;
+typedef TexteOnlyEntity<InfoEntity::CommentaireId> Commentaire;
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Etablissement.
  */
-typedef NcNomTypeOnlyEntity<CaracteristiqueEntity::EtablissementId> Etablissement;
+typedef NcNomTypeOnlyEntity<InfoEntity::EtablissementId> Etablissement;
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Source.
  */
-typedef NomTypeOnlyEntity<CaracteristiqueEntity::SourceId> Source;
+typedef NomTypeOnlyEntity<InfoEntity::SourceId> Source;
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité TypeNiveau.
  */
-typedef NomTypeOnlyEntity<CaracteristiqueEntity::TypeNiveauId> TypeNiveau;
+typedef NomTypeOnlyEntity<InfoEntity::TypeNiveauId> TypeNiveau;
 #endif // ARBRES
 

@@ -1,10 +1,10 @@
 /*Auteur: PERCIE DU SERT Maxime
  *Date: 03/03/2016
  */
-
 #ifndef LISTENTITIES_H
 #define LISTENTITIES_H
 
+#include <utility>
 #include <QList>
 #include <QVector>
 
@@ -15,7 +15,7 @@
  *
  * Classe patron des listes d'entités utilisées par les méthodes de type GetList des manageurs.
  * Ces listes contiennent les pointeurs vers des entités créée dynamiquement par les méthodes GetList des manageurs
- * qu'il faut penser à supprimer après utilisation grâce à la méthode clear().
+ * qu'il faut penser à supprimer après utilisation grâce à la méthode clear(), s'il ne servent pas à remplir des VectorEntities.
  */
 
 template<class T> class ListEntities
@@ -32,12 +32,33 @@ public:
 
     //! Constructeur de recopie.
     ListEntities(const ListEntities<T> & liste)
+        : m_ptr_list(new QList<T*>())
+    {
+        for(typename QList<T*>::const_iterator i = liste.m_ptr_list->cbegin(); i != liste.m_ptr_list->cend(); ++i)
+            append(new T(*i));
+        begin();
+    }
+
+    //! Constructeur de déplacement.
+    ListEntities(ListEntities<T> && liste)
         : m_ptr_list(liste.m_ptr_list)
-        {}
+    {
+        liste.m_ptr_list = 0;
+        begin();
+    }
+
+    //! Destructeur.
+    ~ListEntities()
+    {
+        if(m_ptr_list != 0)
+        {
+            clear();
+        }
+    }
 
     //! Ajoute un pointeur à la fin de la liste.
-    void append(T* entity)
-        {m_ptr_list->append(entity);}
+    void append(T* ptr_entity)
+        {m_ptr_list->append(ptr_entity);}
 
     //! Retourne une référence constante sur la n-ième entité de la listes.
     const T & at(int n) const
@@ -52,11 +73,15 @@ public:
     {
         for(typename QList<T*>::const_iterator i = m_ptr_list->cbegin(); i != m_ptr_list->cend(); ++i) delete *i;
         delete m_ptr_list;
+        m_ptr_list = 0;
     }
 
-    //! Supprime la liste des pointeurs.
+    //! Supprime la liste des pointeurs, sans supprimer les entités pointés par les pointeurs composants cette liste.
     void clearList()
-        {delete m_ptr_list;}
+    {
+        delete m_ptr_list;
+        m_ptr_list = 0;
+    }
 
     //! Renvoie le pointeur sur l'élément courant de la liste.
     T * currentPtr() const
@@ -73,6 +98,26 @@ public:
     //! Renvoie le nombre d'entités de la liste.
     int size() const
         {return m_ptr_list->size();}
+
+    //! Affectation par copie
+    ListEntities<T> & operator = (const ListEntities<T> & liste)
+    {
+        clear();
+        m_ptr_list = new QList<T*>();
+        for(typename QList<T*>::const_iterator i = liste.m_ptr_list->cbegin(); i != liste.m_ptr_list->cend(); ++i)
+            append(new T(*i));
+        begin();
+        return *this;
+    }
+
+    //! Affectation par déplacement
+    ListEntities<T> & operator = (ListEntities<T> && liste)
+    {
+        m_ptr_list = liste.m_ptr_list;
+        liste.m_ptr_list = 0;
+        begin();
+        return *this;
+    }
 
     //! Renvoie une référence constante sur l'élément courant de la liste.
     const T & operator *() const
@@ -91,7 +136,6 @@ public:
     {
         if(!liste.isEmpty())
         {
-            //m_ptr_list->reserve(size()+liste.size());
             for(liste.begin(); liste.isNotEnd(); ++liste)
                 m_ptr_list->append(T::convert(liste.currentPtr()));
         }
@@ -101,6 +145,22 @@ public:
 
     //! Hydrate l'entité entity avec les valeur de l'élément courant, puis place l'élément courant sur l'élément suivant de la liste.
     ListEntities & operator >> (T & entity)         {entity<<**m_iterator; ++m_iterator;return *this;}
+};
+
+ /*
+    //! Renvoie un vecteur contenant une copie des entités de la liste puis supprime les éléments de la liste et la liste.
+    QVector<T> vector()
+    {
+        QVector<T> vector(m_ptr_list->size());
+        if(!m_ptr_list->isEmpty())
+        {
+            begin();
+            for(typename QVector<T>::iterator i = vector.begin(); isNotEnd(); ++m_iterator, ++i)
+                *i = **m_iterator;
+        }
+        clear();
+        return vector;
+    }
 
     //! Renvoie un vecteur contenant une copie des entités de la liste puis supprime les éléments de la liste et la liste.
     static QVector<T> vector(ListEntities<Entity> liste)
@@ -128,7 +188,7 @@ public:
         }
         liste.clear();
     }
-};
+*/
 
 /*
    bool next() const

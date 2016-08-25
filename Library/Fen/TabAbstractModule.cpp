@@ -1,7 +1,9 @@
 #include "TabAbstractModule.h"
 
-TabAbstractModule::TabAbstractModule(Bdd *bdd, TabModule *parent) : m_bdd(bdd), m_parent(parent)
-{
-    m_mainLayout = new QVBoxLayout(this);
-}
+TabAbstractModule::TabAbstractModule(int index, TabModule *parent)
+    : m_bdd(parent->parent()->bdd()),
+      m_index(index),    
+      m_mainLayout(new QVBoxLayout(this)),
+      m_parent(parent)
+    {}
 

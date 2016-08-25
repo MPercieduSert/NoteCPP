@@ -9,7 +9,7 @@
 #include "Entity.h"
 
 /*! \ingroup groupeEntity
- * \brief Représentation de l'entitée Exercice.
+ * \brief Représentation de l'entité Exercice.
  */
 
 class Exercice : public Entity
@@ -63,14 +63,14 @@ public:
     GET_SET_TEXTE_NULL(texte,Texte)
     GET_SET_TEXTE_NULL(titre,Titre)
 
-    //! Teste si l'entitée est valide.
+    //! Teste si l'entité est valide.
     bool isValid() const
     {
         return Entity::isValid() && (m_idArbEx > 0) && (!m_date.isValid()) && (m_version >= 0);
     }
 
 protected:
-     //! Test d'égalité entre cette entitée et celle transmise en argument.
+     //! Test d'égalité entre cette entité et celle transmise en argument.
      bool egal(const Exercice & exo) const
      {
          return Entity::egal(exo)
@@ -83,7 +83,7 @@ protected:
                  && (m_titre == exo.m_titre);
      }
 
-     //! Remplace les attributs de l'entitée par celle de l'entitée transmise, sauf l'identifiant.
+     //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
      void set(const Exercice & exo)
      {
          setIdArbEx(exo.idArbEx());

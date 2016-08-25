@@ -9,123 +9,52 @@
 /*! \ingroup groupeBaseEntity
  * \brief Classe de base des entités ayant un attribut num.
  */
-template<class Ent> class NumEntity : public EntityTemp<Ent>, public NumAttribut
+class NumEntity : public Entity
 {
+    ATTRIBUT_ENTITY_INT_SUP(Num,num,0)
 public:
-    //! Constructeur par défaut fixant l'identifiant de l'entité.
-    NumEntity(int id = 0)
-        : EntityTemp<Ent>(id)
-    {}
+    using Entity::Entity;
+    BASE_ENTITY_ABS(NumEntity)
 
     //! Constructeur à partir des valeurs attributs.
     NumEntity(int num, int id)
-        : EntityTemp<Ent>(id), NumAttribut(num)
-    {}
+        : Entity(id), m_num(num) {}
 
-    //! Constructeur de recopie.
-    NumEntity(const NumEntity<Ent> & entity)
-        : EntityTemp<Ent>(entity), NumAttribut(entity.num())
-    {}
+    MEMBRE_ATT_1(NumEntity,Entity,Num,num)
+};
 
-    //! Destructeur.
-    ~NumEntity()
-    {}
+/*! \ingroup groupeBaseEntity
+ * \brief Classe de base des entités ayant un attribut datetime et num.
+ */
+class DateTimeNumEntity : public NumEntity
+{
+    ATTRIBUT_ENTITY_DATETIME_VALIDE(Date,date)
+public:
+    using NumEntity::NumEntity;
+    BASE_ENTITY_ABS(DateTimeNumEntity)
 
-    //! Teste si l'entité est valide.
-    bool isValid() const
-    {
-        return EntityTemp<Ent>::isValid()
-                && NumAttribut::valide();
-    }
+    //! Constructeur à partir des valeurs attributs.
+    DateTimeNumEntity(const QDateTime & date, int num, int id = 0)
+        : NumEntity(num,id), m_date(date) {}
 
-protected:
-    //! Test d'égalité entre cette entité et celle transmise en argument.
-    bool egal(const Ent & entity) const
-    {
-        return Entity::egal(entity)
-                && (num() == entity.num());
-    }
-
-    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
-    void set(const Ent & entity)
-    {
-        Entity::set(entity);
-        setNum(entity.num());
-    }
+    MEMBRE_ATT_1(DateTimeNumEntity,NumEntity,Date,date)
 };
 
 /*! \ingroup groupeBaseEntity
  * \brief Classe de base des entités ayant un attribut texte.
  */
-template<class Ent> class TexteEntity : public EntityTemp<Ent>, public TexteAttribut
+class TexteEntity : public Entity
 {
+    ATTRIBUT_ENTITY_STR_NOT_EMPTY(Texte,texte)
 public:
-    //! Constructeur par défaut fixant l'identifiant de l'entité.
-    TexteEntity(int id = 0)
-        : EntityTemp<Ent>(id)
-    {}
+    using Entity::Entity;
+    BASE_ENTITY_ABS(TexteEntity)
 
     //! Constructeur à partir des valeurs attributs.
     TexteEntity(const QString & txt, int id = 0)
-        : EntityTemp<Ent>(id), TexteAttribut(txt)
-    {}
+        : Entity(id), m_texte(txt) {}
 
-    //! Constructeur de recopie.
-    TexteEntity(const TexteEntity<Ent> & entity)
-        : EntityTemp<Ent>(entity), TexteAttribut(entity.texte())
-    {}
-
-    //! Destructeur.
-    ~TexteEntity()
-    {}
-
-    //! Teste si l'entité est valide.
-    bool isValid() const
-    {
-        return EntityTemp<Ent>::isValid()
-                && TexteAttribut::valide();
-    }
-
-protected:
-    //! Test d'égalité entre cette entité et celle transmise en argument.
-    bool egal(const Ent & entity) const
-    {
-        return Entity::egal(entity)
-                && (texte() == entity.texte());
-    }
-
-    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
-    void set(const Ent & entity)
-    {
-        Entity::set(entity);
-        setTexte(entity.texte());
-    }
+    MEMBRE_ATT_1(TexteEntity,Entity,Texte,texte)
 };
 
-/*! \ingroup groupeBaseEntity
- * \brief Classe de base des entités ayant seulement un attribut texte.
- */
-template<int N = 0> class TexteOnlyEntity : public TexteEntity<TexteOnlyEntity<N> >
-{
-public:
-    //! Constructeur par défaut fixant l'identifiant de l'entité.
-    TexteOnlyEntity(int id = 0)
-        : TexteEntity<TexteOnlyEntity<N> >(id)
-    {}
-
-    //! Constructeur à partir des valeurs attributs.
-    TexteOnlyEntity(const QString & txt, int id = 0)
-        : TexteEntity<TexteOnlyEntity<N> >(txt,id)
-    {}
-
-    //! Constructeur de recopie.
-    TexteOnlyEntity(const TexteOnlyEntity<N> & entity)
-        : TexteEntity<TexteOnlyEntity<N> >(entity)
-    {}
-
-    //! Destructeur.
-    ~TexteOnlyEntity()
-    {}
-};
 #endif // ENTITYDIVERS
-

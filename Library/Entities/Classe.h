@@ -4,65 +4,41 @@
 #ifndef CLASSE_H
 #define CLASSE_H
 
-#include "AttributEntityAlias.h"
-#include "EntityRelation.h"
+#include "AttributEntity.h"
+#include "EntityNom.h"
+#include "InfoEntity.h"
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Bareme.
  */
-class Classe : public NumRelationEntity<Classe>, public IdNivAttribut
+class Classe : public NomEntity
 {
+    ATTRIBUT_ENTITY_ID(An)
+    ATTRIBUT_ENTITY_ID(Etab)
+    ATTRIBUT_ENTITY_ID(Niv)
+    ATTRIBUT_ENTITY_INT_SUP(Num,num,0)
 public:
-    RELATION_ALIAS_2_CLE(An,Etab,Classe)
-
-    //! Type d'affichage.
-    enum affichage {Sans,
-                   Numeric,
-                   AlphabeticMaj,
-                   AlphabeticMin};
-
-    //! Constructeur par defaut.
-    Classe(int id = 0)
-        : NumRelationEntity(id)
-        {}
+    using NomEntity::NomEntity;
+    BASE_ENTITY(Classe,InfoEntity::ClasseId)
 
     //! Constructeur à partir des valeurs attributs.
-    Classe(int idAn, int idEtab, int idNiv, int num, int id =0)
-        : NumRelationEntity(idAn, idEtab, num, id),
-          IdNivAttribut(idNiv)
+    Classe(int idAn, int idEtab, int idNiv, const QString & nom, int num, int id =0)
+        : NomEntity(nom,id),
+          m_idAn(idAn),
+          m_idEtab(idEtab),
+          m_idNiv(idNiv),
+          m_num(num)
     {}
 
-    //! Constructeur de recopie.
-    Classe(const Classe & entity)
-        : NumRelationEntity(entity),
-          IdNivAttribut(entity.idNiv())
-        {}
+    //! Constructeur à partir d'un jeux de valeurs attributs unique.
+    Classe(int idAn, int idEtab, int idNiv, int num)
+        : m_idAn(idAn),
+          m_idEtab(idEtab),
+          m_idNiv(idNiv),
+          m_num(num)
+    {}
 
-    //! Destructeur.
-    ~Classe()
-        {}
-
-    //! Teste si l'entité est valide.
-    bool isValid() const
-    {
-        return NumRelationEntity::isValid()
-                && (IdNivAttribut::valide());
-    }
-
-protected:
-    //! Test d'égalité entre cette entité et celle transmise en argument.
-    bool egal(const Classe & entity) const
-    {
-        return NumRelationEntity::egal(entity)
-                &&(idNiv() == entity.idNiv());
-    }
-
-    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
-    void set(const Classe & entity)
-    {
-        NumRelationEntity::set(entity);
-        setIdNiv(entity.idNiv());
-    }
+  MEMBRE_ATT_4(Classe,NomEntity,IdAn,idAn,IdEtab,idEtab,IdNiv,idNiv,Num,num)
 };
 
 #endif // CLASSE_H

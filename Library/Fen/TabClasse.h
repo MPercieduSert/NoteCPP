@@ -1,3 +1,6 @@
+/*Auteur: PERCIE DU SERT Maxime
+ *Date: 06/07/2016
+ */
 #ifndef TABCLASSE_H
 #define TABCLASSE_H
 
@@ -7,22 +10,35 @@
 #include "../Entities/Classe.h"
 #include "FenPrincipale.h"
 #include "TabAbstractClasse.h"
-#include "TabAbstractTableau.h"
 
+
+/*! \ingroup groupeFen
+ * \brief Onglet d'une classe
+ */
 class TabClasse : public TabAbstractClasse
 {
     Q_OBJECT
 protected:
-    QPushButton * m_listeEleveButton;
-    QPushButton * m_listeGroupeButton;
+    // Widget
+    QPushButton * m_listeEleveButton;           //! Bouton pour ouvrir la liste des éléves
+    QPushButton * m_listeGroupeButton;          //! Bouton pour ouvrir la liste des groupes
+
+    // Layout
     QHBoxLayout * m_bouttonTabLayout;
 
 public:
-    TabClasse(int idClasse, Bdd * bdd, TabModule *parent = 0);
+    //! Constructeur.
+    TabClasse(int idClasse, TabModule *parent = 0);
+
+    //! Destructeur.
     ~TabClasse() {}
-    void becomeCurrent() const;
+
 public slots:
+    //! Action à effectuer lorsque l'onglet devient actif.
+    void becomeCurrent() const;
+    //! Ouvre l'onglet de la liste des éléves.
     void openListeEleve();
+    //! Ouvre l'onglet de la liste des groupes.
     void openListeGroupe();
 };
 

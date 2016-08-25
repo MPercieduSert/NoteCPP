@@ -13,12 +13,14 @@ QT += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 SOURCES += \
+    SelectInListBox.cpp \
     SpinBoxAnnee.cpp \
     SpinBoxNumClasse.cpp
 
 HEADERS += \
+    SelectInListBox.h \
     SpinBoxAnnee.h \
-    SpinBoxNumClasse.h
+    SpinBoxNumClasse.h \
 
 unix {
     target.path = /usr/lib

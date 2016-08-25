@@ -4,24 +4,28 @@
 #ifndef DONNEE_H
 #define DONNEE_H
 
-#include "AttributEntityAlias.h"
+#include "AttributEntity.h"
 #include "EntityNom.h"
+#include "InfoEntity.h"
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Donnee.
  */
-class Donnee : public TypeNomEntity<Donnee>, public CardAttribut, public SurAttribut, public TpValAttribut
+class Donnee : public TypeNomEntity
 {
+    ATTRIBUT_ENTITY_INT_SUP(Card,card,-1)
+    ATTRIBUT_ENTITY_INT_SUP(Sur,sur,0)
+    ATTRIBUT_ENTITY_INT_SUP(TpVal,tpVal,0)
 public:
-    //! Différent type d'affichage.
+    //! Différents types d'affichage.
     enum affiche_alpha {Sans = 0,
                         Numeric = 1,
                         AlphabeticMaj = 2,
                         AlphabeticMin = 3};
 
-    //! Différent type de données.
+    //! Différents types de données.
     enum typeDn {Alpha = 0};
-
+    //! Différents types des données
     enum typeVal {Int = 0,
                 String = 1,
                 Bool = 2,
@@ -29,6 +33,7 @@ public:
                 Date = 4};
 
 public:
+    BASE_ENTITY(Donnee,InfoEntity::DonneeId)
     //! Constructeur par defaut.
     Donnee(int id = 0)
         :TypeNomEntity(id)
@@ -37,42 +42,12 @@ public:
     //! Constructeur à partir des valeurs attributs.
     Donnee(int card, const QString & nom, int sur, int type, int tpVal ,int id = 0)
         : TypeNomEntity(nom, type, id),
-          CardAttribut(card),
-          SurAttribut(sur),
-          TpValAttribut(tpVal)
+          m_card(card),
+          m_sur(sur),
+          m_tpVal(tpVal)
     {}
 
-    //! Destructeur.
-    ~Donnee()
-        {}
-
-    //! Teste si l'entité est valide.
-    bool isValid() const
-    {
-        return TypeNomEntity::isValid()
-                && CardAttribut::valide()
-                && SurAttribut::valide()
-                && TpValAttribut::valide();
-    }
-
-protected:
-    //! Test d'égalité entre cette entité et celle transmise en argument.
-    bool egal(const Donnee & entity) const
-    {
-        return TypeNomEntity::egal(entity)
-                && (card() == entity.card())
-                && (sur() == entity.sur())
-                && (tpVal() == entity.tpVal());
-    }
-
-    //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
-    void set(const Donnee & entity)
-    {
-        TypeNomEntity::set(entity);
-        setCard(entity.card());
-        setSur(entity.sur());
-        setTpVal(entity.tpVal());
-    }
+    MEMBRE_ATT_3(Donnee,TypeNomEntity,Card,card,Sur,sur,TpVal,tpVal)
 };
 
 #endif // DONNEE_H

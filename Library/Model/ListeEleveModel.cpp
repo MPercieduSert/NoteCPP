@@ -1,35 +1,38 @@
 #include "ListeEleveModel.h"
 
-ListeEleveModel::ListeEleveModel(Bdd & bdd, const Classe &classe, QObject *parent): MAbstractTableModel(parent), m_bdd(bdd), m_classe(classe)
+ListeEleveModel::ListeEleveModel(Bdd & bdd, const Classe &classe, QObject *parent)
+    : MAbstractTableModel(parent),
+      m_bdd(bdd),
+      m_classe(classe)
 {
-    ListEntities<Eleve>::vector(m_data,m_bdd.getList(InfoEntity::EleveId,Eleve::IdClPos,QVariant(m_classe.id())));
-    m_header<<tr("Nom")<<tr("Prenom")<<tr("Fille/Garçon")<<tr("Date de naissance")<<tr("Départ")<<tr("Date de départ");
+    QMap<int,QVariant> where;
+    where.insert(ClasseEleve::idClPos,classe.id());
+    QMap<int,bool> order;
+    order.insert(Eleve::nomPos,true);
+    order.insert(Eleve::prenomPos,true);
+    order.insert(Eleve::naissancePos,true);
+    m_data = m_bdd.getList<Eleve,ClasseEleve>(Eleve::idPos,
+                                               ClasseEleve::idElPos,
+                                               QMap<int,QVariant>(),
+                                               where,
+                                               order);
+
+
+
+    m_header<<tr("Nom")<<tr("Prenom")<<tr("Fille/Garçon")<<tr("Date de naissance");//<<tr("Départ")<<tr("Date de départ");
 }
 ListeEleveModel::~ListeEleveModel()
 {
-    QString string;
+    /*QString string;
     foreach (Eleve eleve, m_data) {
         string.append(eleve.nom()+" "+eleve.prenom()+" "+eleve.afficheFille()+" "+eleve.naissance().toString()+" "+eleve.abandon().toString()+"\n");
     }
-    QMessageBox::critical(0,"",string);
+    QMessageBox::critical(0,"",string);*/
 }
-bool ListeEleveModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+
+int ListeEleveModel::columnCount(const QModelIndex & /*parent*/) const
 {
-    Q_UNUSED(action);
-    Q_UNUSED(row);
-    Q_UNUSED(parent);
-
-    if (!data->hasFormat("application/vnd.text.list"))
-        return false;
-
-    if (column > 2)
-        return false;
-
-    return true;
-}
-int ListeEleveModel::columnCount(const QModelIndex &parent) const
-{
-    return Eleve::NbrAtt;
+    return 4;//m_data.count();
 }
 QVariant ListeEleveModel::data(const QModelIndex &index, int role) const
 {
@@ -48,44 +51,24 @@ QVariant ListeEleveModel::data(const QModelIndex &index, int role) const
         case naissanceIndex:
             return QVariant(m_data[index.row()].naissance());
             break;
-        case abandonIndex:
+        /*case abandonIndex:
             return m_data[index.row()].abandon().isValid() ? QVariant("Plus là") : QVariant("Présent");
             break;
         case abandonIndex + 1:
             return QVariant(m_data[index.row()].abandon());
-            break;
+            break;*/
         }
     }
+
     return QVariant();
 }
-bool ListeEleveModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
-{
-    if (!canDropMimeData(data, action, row, column, parent))
-        return false;
-    if (action == Qt::IgnoreAction)
-        return true;
-    QByteArray encodedData = data->data("application/vnd.text.list");
-    QDataStream stream(&encodedData, QIODevice::ReadOnly);
-    QStringList newItems;
 
-    while (!stream.atEnd()) {
-        QString text;
-        stream >> text;
-        newItems << text;
-    }
-    foreach (const QString &text, newItems) {
-        QModelIndex idx = index(row, column, QModelIndex());
-        setData(idx, text);
-        ++row;
-    }
-    return true;
-}
 Qt::ItemFlags ListeEleveModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return Qt::ItemIsEnabled;
 
-    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable | Qt::ItemIsDropEnabled;
+    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 QVariant ListeEleveModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -97,18 +80,18 @@ QVariant ListeEleveModel::headerData(int section, Qt::Orientation orientation, i
     else
         return section+1;
 }
-bool ListeEleveModel::insertRows(int position, int rows, const QModelIndex &parent)
+bool ListeEleveModel::insertRows(int position, int rows, const QModelIndex & /*parent*/)
 {
     beginInsertRows(QModelIndex(), position, position+rows-1);
 
     for (int row = 0; row < rows; ++row) {
-        m_data.insert(position, Eleve());
+        m_data.insert(position, new Eleve());
     }
 
     endInsertRows();
     return true;
 }
-bool ListeEleveModel::removeRows(int position, int rows, const QModelIndex &parent)
+bool ListeEleveModel::removeRows(int position, int rows, const QModelIndex & /*parent*/)
 {
     beginRemoveRows(QModelIndex(), position, position+rows-1);
 
@@ -119,9 +102,14 @@ bool ListeEleveModel::removeRows(int position, int rows, const QModelIndex &pare
     endRemoveRows();
     return true;
 }
-int ListeEleveModel::rowCount(const QModelIndex &parent) const
+int ListeEleveModel::rowCount(const QModelIndex & /*parent*/) const
 {
     return m_data.size();
+}
+
+void ListeEleveModel::save()
+{
+    m_bdd.save(m_data);
 }
 
 bool ListeEleveModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -140,7 +128,7 @@ bool ListeEleveModel::setData(const QModelIndex &index, const QVariant &value, i
         case naissanceIndex:
             m_data[index.row()].setNaissance(value.toDate());
             break;
-        case abandonIndex:
+        /*case abandonIndex:
             if(!value.toBool())
             {
                 QDate date;
@@ -161,15 +149,10 @@ bool ListeEleveModel::setData(const QModelIndex &index, const QVariant &value, i
             break;
         case abandonIndex + 1:
             m_data[index.row()].setAbandon(value.toDate());
-            break;
+            break;*/
         }
         emit dataChanged(index, index);
         return true;
     }
     return false;
-}
-
-Qt::DropActions ListeEleveModel::supportedDropActions() const
-{
-    return Qt::CopyAction | Qt::MoveAction;
 }

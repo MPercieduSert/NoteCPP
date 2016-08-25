@@ -4,13 +4,12 @@
 #ifndef ARBREMANAGER_H
 #define ARBREMANAGER_H
 
-#include "AttributsMacroLinkSql.h"
 #include "ManagerSql.h"
-
 
 /*! \ingroup groupeBaseManager
  * \brief Template des manageurs de type arbre.
  */
+/*
 template<class Ent> class ArbreManager : public ManagerSql<Ent>
 {
 public:
@@ -21,5 +20,5 @@ public:
     ~ArbreManager()
     {}
 };
-
+*/
 #endif // ARBREMANAGER_H

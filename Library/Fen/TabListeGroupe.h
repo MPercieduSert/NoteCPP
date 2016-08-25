@@ -12,10 +12,12 @@ protected:
 public:
     explicit TabListeGroupe(int idClasse, Bdd * bdd, TabModule *parent = 0);
     ~TabListeGroupe() {}
-    void becomeCurrent() const;
+
 signals:
 
 public slots:
+    //! Action à effectuer lorsque l'onglet devient actif.
+    void becomeCurrent() const;
 };
 
 #endif // TABLISTEGROUPE_H

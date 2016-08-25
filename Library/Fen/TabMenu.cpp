@@ -1,10 +1,30 @@
 #include "TabMenu.h"
 
-TabMenu::TabMenu(Bdd *bdd, TabModule *parent) : TabAbstractModule(bdd, parent)
+TabMenu::TabMenu(int idAn, TabModule *parent)
+    : TabAbstractModule(idAn, parent),
+      m_annee(idAn),
+      m_classeLayout(0)
 {
-    if(m_bdd->annee().id() != 0)
+    if(m_annee.id() == 0)
+    {
+        QLabel * label = new QLabel("Année sélectionnée invalide",this);
+        m_classeLayout = new QHBoxLayout();
+        m_classeLayout->addWidget(label);
+        m_mainLayout->addLayout(m_classeLayout);
+    }
+    else if(m_bdd->get(m_annee))
     {
         classeLayout();
+        m_newClasseButton = new QPushButton("Créer une classe");
+        m_mainLayout->addWidget(m_newClasseButton);
+        connect(m_newClasseButton,&QPushButton::clicked,this,&TabMenu::creerClasse);
+    }
+    else
+    {
+        throw std::invalid_argument(QString("L'année d'identifiant ")
+                                    .append(QString::number(idAn))
+                                    .append(" n'existe dans la base de donnée.")
+                                    .toStdString());
     }
 }
 
@@ -13,59 +33,79 @@ void TabMenu::becomeCurrent() const
     m_parent->parent()->setEnabledCopierColler(false);
 }
 
-void TabMenu::refreshClasse()
-{
-    delete m_classeMapper;
-    for(QMap<int,QPushButton*>::const_iterator i = m_classeButtonMap.cbegin(); i != m_classeButtonMap.cend(); ++i) delete i.value();
-    m_classeButtonMap.clear();
-    delete m_classeLayout;
-    delete m_newClasseButton;
-    classeLayout();
-}
-
 // %%%%% protected %%%%%%
 void TabMenu::classeLayout()
 {
-    m_classeLayout = new QGridLayout();
+    if(m_classeLayout != 0)
+    {
+        m_mainLayout->removeItem(m_classeLayout);
+        delete m_classeMapper;
+        delete m_classeLayout;
+        for(QList<QGroupBox *>::const_iterator i = m_listeGroupeEtab.cbegin(); i != m_listeGroupeEtab.cend(); ++i)
+            delete *i;
+        m_listeGroupeEtab.clear();
+    }
+
+    m_classeLayout = new QHBoxLayout();
     m_classeMapper = new QSignalMapper(this);
 
-    ListEntities<Classe> listeClasse;
-    listeClasse << m_bdd->getList(Entity::ClasseId,Classe::AnneePos,QVariant(m_bdd->annee().id()),Classe::NiveauPos,Classe::NumPos);
-    int i = 0;
-    int j = 0;
+    VectorEntities<Classe> listeClasse(m_bdd->getList<Classe>(Classe::idAnPos, QVariant(m_annee.id()),
+                                                              Classe::idEtabPos,
+                                                              Classe::idNivPos,
+                                                              Classe::numPos));
+
     if(!listeClasse.isEmpty())
-    {
-        listeClasse.begin();
-        int niveau = listeClasse.current().niveau();
-        while(listeClasse.next())
+    {   
+        VectorEntities<Classe>::iterator it = listeClasse.begin();
+
+        int idEtab = 0;
+        int idNiv;
+        int i;
+        int j;
+        QGridLayout *etabLayout = 0;
+        for(; it != listeClasse.cend(); ++it)
         {
-            QPushButton * classeButton = new QPushButton(m_bdd->afficheClasse(listeClasse.current()));
-            m_classeButtonMap.insert(listeClasse.current().id(),classeButton);
-            if(niveau != listeClasse.current().niveau())
+            if(idEtab != (*it).idEtab())
             {
-                niveau = listeClasse.current().niveau();
+                if(etabLayout != 0)
+                    etabLayout->setRowStretch(etabLayout->rowCount(),1);
+                etabLayout = new QGridLayout();
+                Etablissement etab((*it).idEtab());
+                m_bdd->get(etab);
+                QGroupBox *groupeBox = new QGroupBox(etab.nom());
+                m_listeGroupeEtab.append(groupeBox);
+                groupeBox->setLayout(etabLayout);
+                m_classeLayout->addWidget(groupeBox);
+
+                idEtab = (*it).idEtab();
+                idNiv = (*it).idNiv();
+                i = 0;
+                j = 0;
+            }
+
+            QPushButton * classeButton = new QPushButton((*it).nom());
+            //m_classeButtonMap.insert((*it).id(),classeButton);
+            if(idNiv != (*it).idNiv())
+            {
+                idNiv = (*it).idNiv();
                 i = 0;
                 ++j;
             }
-            m_classeLayout->addWidget(classeButton,i,j);
+            etabLayout->addWidget(classeButton,i,j);
             connect(classeButton,SIGNAL(clicked()),m_classeMapper,SLOT(map()));
-            m_classeMapper->setMapping(classeButton,listeClasse.current().id());
+            m_classeMapper->setMapping(classeButton,(*it).id());
             ++i;
         }
+        if(etabLayout != 0)
+            etabLayout->setRowStretch(etabLayout->rowCount(),1);
         connect(m_classeMapper,SIGNAL(mapped(int)),m_parent,SLOT(newOngletClasse(int)));
     }
-    listeClasse.clearAll();
-    m_newClasseButton = new QPushButton("Créer une classe");
-
-    m_classeLayout->addWidget(m_newClasseButton,0,j+1);
-
-    m_mainLayout->addLayout(m_classeLayout);
-    connect(m_newClasseButton,&QPushButton::clicked,this,&TabMenu::creerClasse);
+    m_mainLayout->insertLayout(position::classe,m_classeLayout);
 }
 
 //public slots:
 void TabMenu::creerClasse()
 {
-    m_parent->creerClasse();
-    refreshClasse();
+    m_parent->parent()->creerClasse();
+    classeLayout();
 }

@@ -1,6 +1,6 @@
 #include "SpinBoxNumClasse.h"
 
-SpinBoxNumClasse::SpinBoxNumClasse(const QList<int> & liste, Classe::affichage alpha = Classe::Numeric, QWidget *parent) : QAbstractSpinBox(parent),m_alpha(alpha), m_liste(liste), m_value(-1)
+SpinBoxNumClasse::SpinBoxNumClasse(const QList<int> & liste, QWidget *parent) : QAbstractSpinBox(parent), m_liste(liste), m_value(-1)
 {
     setReadOnly(true);
     setAlignment(Qt::AlignHCenter);
@@ -16,7 +16,8 @@ void SpinBoxNumClasse::printValue()
     }
     else
     {
-        switch (m_alpha) {
+        lineEdit()->setText(QString::number(m_value));
+        /*switch (m_alpha) {
         case Classe::Numeric:
             lineEdit()->setText(QString::number(m_value));
             break;
@@ -26,7 +27,7 @@ void SpinBoxNumClasse::printValue()
         case Classe::AlphabeticMin:
             lineEdit()->setText(QString("abcdefghijklmnopqrstuvwxyz").at(m_value));
             break;
-        }
+        }*/
     }
 }
 
@@ -46,12 +47,13 @@ void SpinBoxNumClasse::stepBy(int steps)
         while(m_liste.contains(m_value))
         {
             ++m_value;
-            if(m_value >= 26 && (m_alpha == Classe::AlphabeticMaj || m_alpha == Classe::AlphabeticMin))
+            /*if(m_value >= 26 && (m_alpha == Classe::AlphabeticMaj || m_alpha == Classe::AlphabeticMin))
             {
                 m_value = 0;
-            }
+            }*/
         }
         printValue();
+        emit valueChanged(m_value);
     }
     else if(steps < 0)
     {
@@ -65,6 +67,7 @@ void SpinBoxNumClasse::stepBy(int steps)
         {
             m_value = value;
             printValue();
+            emit valueChanged(m_value);
         }
     }
 }

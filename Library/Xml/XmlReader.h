@@ -4,7 +4,6 @@
 /*! \ingroup groupeXML
  */
 
-
 #ifndef XMLREADER_H
 #define XMLREADER_H
 

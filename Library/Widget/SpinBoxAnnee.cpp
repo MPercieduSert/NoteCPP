@@ -14,8 +14,11 @@ void SpinBoxAnnee::printValue()
 
 void SpinBoxAnnee::stepBy(int steps)
 {
-    m_value += steps;
-    printValue();
+    if(m_value + steps > 0)
+    {
+        m_value += steps;
+        printValue();
+    }
 }
 
 QAbstractSpinBox::StepEnabled SpinBoxAnnee::stepEnabled() const
