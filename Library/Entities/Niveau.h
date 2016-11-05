@@ -16,6 +16,14 @@ class Niveau : public NcNomEntity
     ATTRIBUT_ENTITY_ID(Tp)
     ATTRIBUT_ENTITY_ID(TpEtab)
 public:
+    //! Positions des attributs.
+    enum Position {Id = NcNomEntity::Id,
+                   Nom = NcNomEntity::Nom,
+                   Nc = NcNomEntity::Nc,
+                   IdTp = NcNomEntity::NbrAtt,
+                   IdTpEtab,
+                   NbrAtt};
+
     using NcNomEntity::NcNomEntity;
     BASE_ENTITY(Niveau,InfoEntity::NiveauId)
 

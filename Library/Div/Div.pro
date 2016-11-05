@@ -41,7 +41,12 @@ HEADERS += \
     Macro.h \
     Managers.h \
     Tree.h \
-    TreeItem.h
+    TreeItem.h \
+    Noyau.h \
+    Info.h \
+    ListPtr.h \
+    VectorPtr.h \
+    TreeItemPtr.h
 
 SOURCES += \
     AbstractBdd.cpp \
@@ -51,7 +56,12 @@ SOURCES += \
     FileInterface.cpp \
     Managers.cpp \
     Tree.cpp \
-    TreeItem.cpp
+    TreeItem.cpp \
+    Noyau.cpp \
+    Info.cpp \
+    ListPtr.cpp \
+    VectorPtr.cpp \
+    TreeItemPtr.cpp
 
 unix {
     target.path = /usr/lib

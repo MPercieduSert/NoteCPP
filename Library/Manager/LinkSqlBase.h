@@ -5,7 +5,6 @@
 #define LINKSQLBASE_H
 
 #include "AbstractLinkSql.h"
-#include "InfoBddBase.h"
 #include "../Entities/Arbre.h"
 #include "../Entities/Entity.h"
 #include "../Entities/EntityDivers.h"
@@ -90,9 +89,9 @@ public:
 class DateTimeRelationLinkSql : public RelationLinkSql
 {
 protected:
-    ATTRIBUT_LINK(DateTimeRelationEntity,Date,date,QDateTime)
+    ATTRIBUT_LINK(DateTimeRelationEntity,DateTime,dateTime,QDateTime)
 public:
-    MEMBRE_LINK_ATT_1(RelationLinkSql,DateTimeRelationLinkSql,DateTimeRelationEntity,Date,date)
+    MEMBRE_LINK_ATT_1(RelationLinkSql,DateTimeRelationLinkSql,DateTimeRelationEntity,DateTime,dateTime)
 };
 
 /*! \ingroup groupeLinkSqlBase
@@ -136,9 +135,9 @@ public:
 class DateTimeNumLinkSql : public NumLinkSql
 {
 protected:
-    ATTRIBUT_LINK(DateTimeNumEntity,Date,date,QDateTime)
+    ATTRIBUT_LINK(DateTimeNumEntity,DateTime,dateTime,QDateTime)
 public:
-    MEMBRE_LINK_ATT_1(NumLinkSql,DateTimeNumLinkSql,DateTimeNumEntity,Date,date)
+    MEMBRE_LINK_ATT_1(NumLinkSql,DateTimeNumLinkSql,DateTimeNumEntity,DateTime,dateTime)
 };
 
 //     Link Arbre
@@ -150,10 +149,9 @@ class ArbreLinkSql : public NumLinkSql
 {
 protected:
     ATTRIBUT_LINK(Arbre,Feuille,feuille,bool)
-    ATTRIBUT_LINK(Arbre,Niveau,niveau,int)
     ATTRIBUT_LINK_NULL_TO_ZERO(Arbre,Parent,parent,int)
 public:
-    MEMBRE_LINK_ATT_3(NumLinkSql,ArbreLinkSql,Arbre,Feuille,feuille,Niveau,niveau,Parent,parent)
+    MEMBRE_LINK_ATT_2(NumLinkSql,ArbreLinkSql,Arbre,Feuille,feuille,Parent,parent)
 };
 
 /*! \ingroup groupeLinkSqlBase
@@ -169,7 +167,25 @@ public:
 
 //      OnlyLinkSql
 
-ONLY_LINK(ArbreLinkSql,ArbreOnlyLinkSql) {return new Ent(feuille(),niveau(),num(),parent(),id());}};
+/*! \ingroup groupeLinkSqlBase
+ * \brief Classe mère des liens de type arbre.
+ */
+class ArbreOnlyLinkSql : public ArbreLinkSql
+{
+public:
+    //! \brief Construteur.
+    ArbreOnlyLinkSql(const QString & table, const QMap<int,QString> & att)
+        : ArbreLinkSql (table,att)
+        {}
+
+    //! \brief Destructeur.
+    ~ArbreOnlyLinkSql()
+        {}
+
+    //! \brief Crée dynamiquement une nouvelle entité de type Ent, l'hydrate à partir de la requète SQL. Puis retourne un  pointeur vers cette nouvelle entité.
+    Arbre * newFromRequete() const
+        {return new Arbre(feuille(),num(),parent(),id());}
+};
 
 ONLY_LINK(NomLinkSql,NomOnlyLinkSql) {return new Ent(nom(),id());}};
 ONLY_LINK(NcNomLinkSql,NcNomOnlyLinkSql) {return new Ent(nc(),nom(),id());}};
@@ -178,12 +194,12 @@ ONLY_LINK(TypeNcNomLinkSql,TypeNcNomOnlyLinkSql) {return new Ent(nc(),nom(),type
 
 ONLY_LINK(RelationLinkSql,RelationOnlyLinkSql) {return new Ent(id1(),id2(),id());}};
 ONLY_LINK(RelationExactOneNotNullLinkSql,RelationExactOneNotNullOnlyLinkSql) {return new Ent(id1(),id2(),id());}};
-ONLY_LINK(DateTimeRelationLinkSql,DateTimeRelationOnlyLinkSql) {return new Ent(id1(),id2(),date(),id());}};
-ONLY_LINK(ValeurDateTimeRelationLinkSql,ValeurDateTimeRelationOnlyLinkSql) {return new Ent(id1(),id2(),date(),valeur(),id());}};
+ONLY_LINK(DateTimeRelationLinkSql,DateTimeRelationOnlyLinkSql) {return new Ent(id1(),id2(),dateTime(),id());}};
+ONLY_LINK(ValeurDateTimeRelationLinkSql,ValeurDateTimeRelationOnlyLinkSql) {return new Ent(id1(),id2(),dateTime(),valeur(),id());}};
 ONLY_LINK(NumRelationLinkSql,NumRelationOnlyLinkSql) {return new Ent(id1(),id2(),num(),id());}};
 
 ONLY_LINK(NumLinkSql,NumOnlyLinkSql) {return new Ent(num(),id());}};
-ONLY_LINK(DateTimeNumLinkSql,DateTimeNumOnlyLinkSql) {return new Ent(date(),num(),id());}};
+ONLY_LINK(DateTimeNumLinkSql,DateTimeNumOnlyLinkSql) {return new Ent(dateTime(),num(),id());}};
 ONLY_LINK(TexteLinkSql,TexteOnlyLinkSql) {return new Ent(texte(),id());}};
 
 

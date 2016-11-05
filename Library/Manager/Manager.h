@@ -20,20 +20,12 @@
 #include <QSqlQuery>
 #include <QString>
 #include "../Entities/Entity.h"
-#include "../Entities/ListEntities.h"
+#include "../Div/ListPtr.h"
 
 /*! \ingroup groupeBaseManager
  * \brief Espace de nom pour la base de donnée.
  */
 namespace bdd {
-    //! Les différents cas des résultats des tests d'existence d'unicité.
-    enum ExisteUni {Aucun = 0,  //!< Aucun des ensembles d'unicité n'existent en base de donnée.
-                Tous = 1,   //!< Tous les ensembles d'unicité existent en base de donnée et concordent.
-                Meme = 2,   //!< Certains des ensembles d'unicité existent en base de donnée dans la même entité avec le même identifiant.
-                Autre = 3,  //!< Certains des ensembles d'unicité existent en base de donnée dans la même entité avec un autre identifiant.
-                Conflit = 4 //!< Certains des ensembles d'unicité existent en base de donnée dans des entités différentes.
-                };
-
     //! Identifiant pour les fonctions d'agrega.
     enum Agrega {Max,
                 Min,
@@ -41,6 +33,22 @@ namespace bdd {
                 Nombre,
                 Somme,
                 NbrAgrega};
+
+    //! Les différents types de conditions
+    enum Condition {Egal,
+                   Inf,
+                   Sup,
+                   InfEgal,
+                   SupEgal,
+                   Different};
+
+    //! Les différents cas des résultats des tests d'existence d'unicité.
+    enum ExisteUni {Aucun = 0,  //!< Aucun des ensembles d'unicité n'existent en base de donnée.
+                Tous = 1,   //!< Tous les ensembles d'unicité existent en base de donnée et concordent.
+                Meme = 2,   //!< Certains des ensembles d'unicité existent en base de donnée dans la même entité avec le même identifiant.
+                Autre = 3,  //!< Certains des ensembles d'unicité existent en base de donnée dans la même entité avec un autre identifiant.
+                Conflit = 4 //!< Certains des ensembles d'unicité existent en base de donnée dans des entités différentes.
+                };
 };
 
 /*! \ingroup groupeBaseManager
@@ -91,20 +99,20 @@ public:
     virtual bool get(Entity & entity) = 0;
 
     /*//! Renvoie la liste des entités de la table ordonnée suivant la colonne d'identifiant ordre.
-    virtual ListEntities<Entity> getList(int ordre) = 0;
+    virtual ListPtr<Entity> getList(int ordre) = 0;
 
     //! Renvoie la liste des entités de la table vérifiant la condition,
     //! valeur de la colonne d'identifiant cle = value, ordonnée suivant la colonne d'identifiant ordre.
-    virtual ListEntities<Entity> getList(int cle, const QVariant & value, int ordre) = 0;
+    virtual ListPtr<Entity> getList(int cle, const QVariant & value, int ordre) = 0;
 
     //! Renvoie la liste des entités de la table vérifiant la condition,
     //! valeur de la colonne d'identifiant cle = value, ordonnée suivant les colonnes d'identifiant ordre1 puis ordre2.
-    virtual ListEntities<Entity> getList(int cle, const QVariant & value, int ordre1, int ordre2) = 0;
+    virtual ListPtr<Entity> getList(int cle, const QVariant & value, int ordre1, int ordre2) = 0;
 
     //! Renvoie la liste des entités de la table vérifiant les deux conditions,
     //! valeur de la colonne d'identifiant cle1 = value1 et valeur de la colonne d'identifiant cle2 = value2,
     //! ordonnée suivant la colonne d'identifiant ordre.
-    virtual ListEntities<Entity> getList(int cle1, int cle2, const QVariant & value1, const QVariant & value2, int ordre) = 0;*/
+    virtual ListPtr<Entity> getList(int cle1, int cle2, const QVariant & value1, const QVariant & value2, int ordre) = 0;*/
 
     //! Hydrate l'entité entity avec les valeurs des attributs de l'entité enregistrée en base de donnée
     //! ayant les mêmes valeurs pour les attributs uniques.

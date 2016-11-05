@@ -19,6 +19,7 @@ HEADERS += \
     AttributEntity.h \
     Classe.h \
     ClasseEleve.h \
+    DonneeCard.h \
     Donnee.h \
     Eleve.h \
     Entity.h \
@@ -29,11 +30,9 @@ HEADERS += \
     Groupe.h \
     InfoEntity.h \
     InfoEntityBase.h \
-    ListEntities.h \
     Niveau.h \
     TypeEtablissement.h \
     TypeNiveau.h \
-    VectorEntities.h \
     VersionBdd.h
 
 SOURCES += \
@@ -44,6 +43,7 @@ SOURCES += \
     Classe.cpp \
     ClasseEleve.cpp \
     Donnee.cpp \
+    DonneeCard.cpp \
     Eleve.cpp \
     Entity.cpp \
     EntityDivers.cpp \
@@ -53,11 +53,9 @@ SOURCES += \
     Groupe.cpp \
     InfoEntity.cpp \
     InfoEntityBase.cpp \
-    ListEntities.cpp \
     Niveau.cpp \
     TypeEtablissement.cpp \
     TypeNiveau.cpp \
-    VectorEntities.cpp \
     VersionBdd.cpp
 
 unix {

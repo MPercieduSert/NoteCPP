@@ -11,6 +11,7 @@
 #include "../Entities/Classe.h"
 #include "../Entities/ClasseEleve.h"
 #include "../Entities/Donnee.h"
+#include "../Entities/DonneeCard.h"
 #include "../Entities/Eleve.h"
 #include "../Entities/Groupe.h"
 #include "../Entities/Niveau.h"
@@ -110,16 +111,36 @@ public:
 class DonneeLinkSql : public TypeNomLinkSql
 {
 protected:
-    ATTRIBUT_LINK(Donnee,Card,card,int)
-    ATTRIBUT_LINK(Donnee,Sur,sur,int)
+    ATTRIBUT_LINK_NULL_TO_ZERO(Donnee,IdProg,idProg,int)
+    ATTRIBUT_LINK(Donnee,Modif,modif,bool)
     ATTRIBUT_LINK(Donnee,TpVal,tpVal,int)
 public:
-    MEMBRE_LINK_ATT_3(TypeNomLinkSql,DonneeLinkSql,Donnee,Card,card,Sur,sur,TpVal,tpVal)
+    MEMBRE_LINK_ATT_1(TypeNomLinkSql,DonneeLinkSql,Donnee,TpVal,tpVal)
     //! Crée dynamiquement une nouvelle entité de type Donnee, l'hydrate à partir de la requète SQL.
     //! Puis retourne un  pointeur vers cette nouvelle entité.
     Donnee * newFromRequete() const
     {
-        return new Donnee(card(),nom(),sur(),type(),tpVal(),id());
+        return new Donnee(modif(),nom(),type(),tpVal(),id(),idProg());
+    }
+};
+
+/*! \ingroup groupeLinkSqlSpe
+ * \brief Lien entre l'entité DonneeCard de programation et sa représentation en base de donnée.
+ */
+class DonneeCardLinkSql : public AbstractLinkSql
+{
+protected:
+    ATTRIBUT_LINK(DonneeCard,IdDonnee,idDonnee,int)
+    ATTRIBUT_LINK(DonneeCard,Card,card,int)
+    ATTRIBUT_LINK(DonneeCard,Sur,sur,int)
+
+public:
+    MEMBRE_LINK_ATT_3(AbstractLinkSql,DonneeCardLinkSql,DonneeCard,IdDonnee,idDonnee,Card,card,Sur,sur)
+    //! Crée dynamiquement une nouvelle entité de type Donnee, l'hydrate à partir de la requète SQL.
+    //! Puis retourne un  pointeur vers cette nouvelle entité.
+    DonneeCard * newFromRequete() const
+    {
+        return new DonneeCard(idDonnee(),card(),sur(),id());
     }
 };
 

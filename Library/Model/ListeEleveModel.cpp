@@ -1,18 +1,18 @@
 #include "ListeEleveModel.h"
 
-ListeEleveModel::ListeEleveModel(Bdd & bdd, const Classe &classe, QObject *parent)
+ListeEleveModel::ListeEleveModel(Bdd *bdd, const Classe &classe, QObject *parent)
     : MAbstractTableModel(parent),
       m_bdd(bdd),
       m_classe(classe)
 {
     QMap<int,QVariant> where;
-    where.insert(ClasseEleve::idClPos,classe.id());
+    where.insert(ClasseEleve::IdCl,classe.id());
     QMap<int,bool> order;
-    order.insert(Eleve::nomPos,true);
-    order.insert(Eleve::prenomPos,true);
-    order.insert(Eleve::naissancePos,true);
-    m_data = m_bdd.getList<Eleve,ClasseEleve>(Eleve::idPos,
-                                               ClasseEleve::idElPos,
+    order.insert(Eleve::Nom,true);
+    order.insert(Eleve::Prenom,true);
+    order.insert(Eleve::Naissance,true);
+    m_data = m_bdd->getList<Eleve,ClasseEleve>(Eleve::Id,
+                                               ClasseEleve::IdEl,
                                                QMap<int,QVariant>(),
                                                where,
                                                order);
@@ -34,6 +34,7 @@ int ListeEleveModel::columnCount(const QModelIndex & /*parent*/) const
 {
     return 4;//m_data.count();
 }
+
 QVariant ListeEleveModel::data(const QModelIndex &index, int role) const
 {
     if(index.isValid() && (role == Qt::DisplayRole || role == Qt::EditRole))
@@ -109,7 +110,7 @@ int ListeEleveModel::rowCount(const QModelIndex & /*parent*/) const
 
 void ListeEleveModel::save()
 {
-    m_bdd.save(m_data);
+    m_bdd->save(m_data);
 }
 
 bool ListeEleveModel::setData(const QModelIndex &index, const QVariant &value, int role)

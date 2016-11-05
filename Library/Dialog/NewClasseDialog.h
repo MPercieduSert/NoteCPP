@@ -20,7 +20,7 @@
 #include "../Entities/InfoEntity.h"
 #include "../Entities/Niveau.h"
 #include "../Entities/EntityOfDefaultType.h"
-#include "../Entities/VectorEntities.h"
+#include "../Div/VectorPtr.h"
 #include "../Widget/SpinBoxAnnee.h"
 #include "../Widget/SpinBoxNumClasse.h"
 
@@ -37,11 +37,11 @@ public:
 protected:
     // Donnée
     Annee m_annee;
-    VectorEntities<Classe> m_classes;
+    VectorPtr<Classe> m_classes;
     bool m_creerEtab;
-    VectorEntities<Etablissement> m_etabs;
-    VectorEntities<EtablissementNiveau> m_etabNiveaux;
-    VectorEntities<Niveau> m_niveaux;
+    VectorPtr<Etablissement> m_etabs;
+    VectorPtr<EtablissementNiveau> m_etabNiveaux;
+    VectorPtr<Niveau> m_niveaux;
 
     // Label
     QLabel *m_anneeLabel;
@@ -74,7 +74,7 @@ protected:
     QVBoxLayout *m_vLayout;
 
 public:
-    explicit NewClasseDialog(const Annee &annee, VectorEntities<Etablissement> etabs, VectorEntities<EtablissementNiveau> etabNiveaux, VectorEntities<Niveau> niveaux,  VectorEntities<Classe> classes, QWidget *parent = 0);
+    explicit NewClasseDialog(const Annee &annee, VectorPtr<Etablissement> etabs, VectorPtr<EtablissementNiveau> etabNiveaux, VectorPtr<Niveau> niveaux,  VectorPtr<Classe> classes, QWidget *parent = 0);
     ~NewClasseDialog()  {}
     dialogResult value() const;
 signals:

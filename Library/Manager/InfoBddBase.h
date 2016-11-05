@@ -42,7 +42,7 @@ public:
 
 // Arbre
 /*! \ingroup groupeInfoBdd
- * \brief Classe mère des InfoBdd pour les entités de type Arbre.
+ * \brief Classe mère des InfoBdd pour les Arbres.
  */
 class ArbreInfoBdd
 {
@@ -57,6 +57,17 @@ public:
 
     //! Retourne la liste des caractéristiques sql des attributs.
     static QMap<int, QPair<bdd::createSql, bool> > creerAttribut();
+};
+
+/*! \ingroup groupeInfoBdd
+ * \brief Classe mère des InfoBdd pour les entités de type noeuds d'arbre.
+ */
+class NodeInfoBdd
+{
+public:
+    //! Retourne la liste des nom sql des attributs.
+    static QMap<int,QString> attributArbre()
+        {return ArbreInfoBdd::attribut();}
 };
 
 // NumEntity

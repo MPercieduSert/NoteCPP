@@ -29,11 +29,17 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Div/libDiv.a
 
 SOURCES += \
     ListeEleveModel.cpp \
-    MAbstractTableModel.cpp
+    MAbstractTableModel.cpp \
+    MAbstractTreeModel.cpp \
+    TreeModelReadTemp.cpp \
+    TreeModelTemp.cpp
 
 HEADERS += \
     ListeEleveModel.h \
-    MAbstractTableModel.h
+    MAbstractTableModel.h \
+    MAbstractTreeModel.h \
+    TreeModelReadTemp.h \
+    TreeModelTemp.h
 
 unix {
     target.path = /usr/lib

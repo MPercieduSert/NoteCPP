@@ -20,54 +20,45 @@ protected:
     mutable typename TreeItem<T>::iterator m_i;//!< Itérateur sur l'arbre de racine pointée par m_root.
 
 public:
-    //! Constructeur, crée une racine sans donnée associée et initialise l'itérateur sur cette racine.
-    Tree()
+    //! Constructeur, prend le neud transmis pour racine (doit être dynamiquement et ne dois pas avoir de parent) et initialise l'itérateur sur cette racine.
+    Tree(TreeItem<T> * root = new TreeItem<T>())
+        : m_root(root),
+          m_i(m_root)
+        {}
+
+    //! Constructeur de recopie.
+    Tree(const Tree<T> & tree)
+        : Tree(new TreeItem<T>(*(tree.m_root)))
+        {}
+
+    //! Constructeur de déplacement.
+    Tree(Tree<T> && tree)
+        : Tree(tree.m_root)
     {
-        m_root = new TreeItem<T>;
-        m_i = m_root;
+        tree.m_root = nullptr;
+        tree.m_i = nullptr;
     }
 
     //! Constructeur, crée une racine de donnée associée data et initialise l'itérateur sur cette racine.
     Tree(const T & data)
-    {
-        m_root = new TreeItem<T>(data);
-        m_i = m_root;
-    }
-
-    //! Constructeur de recopie.
-    Tree(const Tree<T> & Tree)
-    {
-        m_root = new TreeItem<T>(*(Tree.m_root));
-        m_i = m_root;
-    }
+        : Tree(new TreeItem<T>(data))
+        {}
 
     //! Destructeur. Détruit tous les noeuds de l'arbre.
     ~Tree()
         {delete m_root;}
-
-    //! Opérateur d'affectation. Supprime le précédent arbre et recopie l'arbre Tree.
-    Tree<T> & operator = (const Tree<T> & Tree)
-    {
-        delete m_root;
-        m_root = new TreeItem<T>(*(Tree.m_root));
-        m_i = m_root;
-    }
-
-    //! Transmet une réfrence sur la donnée associé au neud courant.
-    T & operator * ()
-        {return (*m_i)->modifData();}
 
     //! Crée un nouveau descendant direct au noeud courant, ce nouveau noeud à pour donnée associée data (voir l'opérateur <<).
     void addChild(const T & data)
         {m_i = (*m_i)->addChild(data);}
 
     //! Réinitialise l'itérateur sur la racine.
-    void begin() const
-        {m_i = m_root;}
+    typename TreeItem<T>::iterator begin() const
+        {return m_i = m_root;}
 
     //! Renvoie la liste des descendants directs du noeud courant.
     const QList<TreeItem<T>*> & childs()
-        {return (*m_i)->m_childs;}
+        {return (*m_i)->childs();}
 
     //! Réinitialise l'itérateur sur la racine et détruit l'ensemble des descendants de la racine.
     void clear()
@@ -80,11 +71,15 @@ public:
     const T & data() const
         {return (*m_i)->data();}
 
+    //! Crée un itérateur initialisé sur le noeud virtuel nul. Cette fonction permet la compatibilité avec les algorithmes standards. Utiliser de préférence la méthode isNull directement sur le pointeur.
+    typename TreeItem<T>::iterator end() const
+        {return nullptr;}
+
     //! Replace l'itérateur sur le noeud suivant (méthode de parcours incrémentation-décrémentation) puis test si le nouveau noeud n'est pas la racine.
     bool next() const
     {
         ++m_i;
-        return m_i != m_root;
+        return !m_i.isNull();
     }
 
     //! Replace l'itérateur sur le noeud précédent (méthode de parcours suivant-précédent) puis test si le nouveau noeud n'est pas la racine.
@@ -98,8 +93,12 @@ public:
     bool previous() const
     {
         --m_i;
-        return m_i != m_root;
+        return !m_i.isNull();
     }
+
+    //! Renvoie un pointeur constant sur la racine de l'arbre.
+    TreeItem<T> * root() const
+        {return m_root;}
 
     /*! \brief Replace le noeud courant sur le noeud de chemin d'indices list.
      *
@@ -149,10 +148,33 @@ public:
      */
     const T & value(const QList<int> & list, bool root = true, bool newvalue = true);
 
-    //! Ajoute une copie de Tree et de ses descendant aux descendants directs du noeud courant.
-    Tree<T> & operator << (const Tree<T> & Tree)
+    //! Affectation par recopie.
+    Tree<T> & operator = (const Tree<T> & tree)
     {
-        m_i = &((**m_i)<<Tree);
+        delete m_root;
+        m_root = new TreeItem<T>(*tree.m_root);
+        m_i = tree.m_i;
+        return *this;
+    }
+
+    //! Affectation par deplacement.
+    Tree<T> & operator = (Tree<T> && tree)
+    {
+        delete m_root;
+        m_root = tree.m_root;
+        tree.m_root = nullptr;
+        m_i = tree.m_i;
+        return *this;
+    }
+
+    //! Transmet une réfrence sur la donnée associé au neud courant.
+    T & operator * ()
+        {return (*m_i)->modifData();}
+
+    //! Ajoute une copie de Tree et de ses descendant aux descendants directs du noeud courant.
+    Tree<T> & operator << (const Tree<T> & tree)
+    {
+        m_i = &((**m_i)<<tree);
         return *this;
     }
 

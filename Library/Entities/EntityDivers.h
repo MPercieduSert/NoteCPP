@@ -13,6 +13,11 @@ class NumEntity : public Entity
 {
     ATTRIBUT_ENTITY_INT_SUP(Num,num,0)
 public:
+    //! Positions des attributs.
+    enum Position {Id = Entity::Id,
+                   Num = Entity::NbrAtt,
+                   NbrAtt};
+
     using Entity::Entity;
     BASE_ENTITY_ABS(NumEntity)
 
@@ -28,16 +33,22 @@ public:
  */
 class DateTimeNumEntity : public NumEntity
 {
-    ATTRIBUT_ENTITY_DATETIME_VALIDE(Date,date)
+    ATTRIBUT_ENTITY_DATETIME_VALIDE(DateTime,dateTime)
 public:
+    //! Positions des attributs.
+    enum Position {Id = NumEntity::Id,
+                   Num = NumEntity::Num,
+                   DateTime = NumEntity::NbrAtt,
+                   NbrAtt};
+
     using NumEntity::NumEntity;
     BASE_ENTITY_ABS(DateTimeNumEntity)
 
     //! Constructeur à partir des valeurs attributs.
-    DateTimeNumEntity(const QDateTime & date, int num, int id = 0)
-        : NumEntity(num,id), m_date(date) {}
+    DateTimeNumEntity(const QDateTime & dateTime, int num, int id = 0)
+        : NumEntity(num,id), m_dateTime(dateTime) {}
 
-    MEMBRE_ATT_1(DateTimeNumEntity,NumEntity,Date,date)
+    MEMBRE_ATT_1(DateTimeNumEntity,NumEntity,DateTime,dateTime)
 };
 
 /*! \ingroup groupeBaseEntity
@@ -47,6 +58,11 @@ class TexteEntity : public Entity
 {
     ATTRIBUT_ENTITY_STR_NOT_EMPTY(Texte,texte)
 public:
+    //! Positions des attributs.
+    enum Position {Id = Entity::Id,
+                   Texte = Entity::NbrAtt,
+                   NbrAtt};
+
     using Entity::Entity;
     BASE_ENTITY_ABS(TexteEntity)
 

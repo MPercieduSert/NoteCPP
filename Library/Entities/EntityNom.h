@@ -13,6 +13,11 @@ class NomEntity : public Entity
 {
     ATTRIBUT_ENTITY_STR_NOT_EMPTY(Nom,nom)
 public:
+    //! Positions des attributs.
+    enum Position {Id = Entity::Id,
+                   Nom = Entity::NbrAtt,
+                   NbrAtt};
+
     using Entity::Entity;
     BASE_ENTITY_ABS(NomEntity)
 
@@ -30,6 +35,12 @@ class NcNomEntity : public NomEntity
 {
     ATTRIBUT_ENTITY_STR_NOT_EMPTY(Nc,nc)
 public:
+    //! Positions des attributs.
+    enum Position {Id = NomEntity::Id,
+                   Nom = NomEntity::Nom,
+                   Nc = NomEntity::NbrAtt,
+                   NbrAtt};
+
     using NomEntity::NomEntity;
     BASE_ENTITY_ABS(NcNomEntity)
 
@@ -47,8 +58,17 @@ class TypeNomEntity : public NomEntity
 {
     ATTRIBUT_ENTITY_INT_SUP(Type,type,0)
 public:
-    using NomEntity::NomEntity;
+    //! Positions des attributs.
+    enum Position {Id = NomEntity::Id,
+                   Nom = NomEntity::Nom,
+                   Type = NomEntity::NbrAtt,
+                   NbrAtt};
+
     BASE_ENTITY_ABS(TypeNomEntity)
+
+    //! Constructeur.
+    TypeNomEntity(int id)
+        : NomEntity(id) {}
 
     //! Constructeur à partir des valeurs attributs.
     TypeNomEntity(const QString & nom, int type, int id = 0)
@@ -65,6 +85,13 @@ class TypeNcNomEntity : public TypeNomEntity
 {
     ATTRIBUT_ENTITY_STR_NOT_EMPTY(Nc,nc)
 public:
+    //! Positions des attributs.
+    enum Position {Id = TypeNomEntity::Id,
+                   Nom = TypeNomEntity::Nom,
+                   Type = TypeNomEntity::Type,
+                   Nc = TypeNomEntity::NbrAtt,
+                   NbrAtt};
+
     using TypeNomEntity::TypeNomEntity;
     BASE_ENTITY_ABS(TypeNcNomEntity)
 

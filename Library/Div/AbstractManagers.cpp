@@ -8,14 +8,14 @@ void AbstractManagers::creerVersion()
 
 VersionBdd AbstractManagers::getVersion()
 {
-    int max = m_managerVersion.fonctionAgrega<int>(bdd::Max,VersionBdd::numPos);
+    int max = m_managerVersion.fonctionAgrega<int>(bdd::Max,VersionBdd::Num);
     VersionBdd ver(QDateTime(),max);
     m_managerVersion.getUnique(ver);
     return ver;
 }
 
 int AbstractManagers::numVersion()
-    {return m_managerVersion.fonctionAgrega<int>(bdd::Max,VersionBdd::numPos);}
+    {return m_managerVersion.fonctionAgrega<int>(bdd::Max,VersionBdd::Num);}
 
 void AbstractManagers::saveVersion(int num)
     {m_managerVersion.save(VersionBdd(QDateTime::currentDateTime(), num));}

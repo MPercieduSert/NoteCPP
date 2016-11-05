@@ -20,14 +20,18 @@ SOURCES += main.cpp \
     ../Library/Dialog/NewClasseDialog.cpp \
     ../Library/Dialog/NewEtablissementDialog.cpp \
     ../Library/Dialog/SelectAnneeDialog.cpp \
+    ../Library/Dialog/SelectDonneeDialog.cpp \
     ../Library/Div/AbstractBdd.cpp \
     ../Library/Div/AbstractManagers.cpp \
     ../Library/Div/Bdd.cpp \
     ../Library/Div/Config.cpp \
     ../Library/Div/FileInterface.cpp \
+    ../Library/Div/ListPtr.cpp \
+    ../Library/Div/Managers.cpp \
+    ../Library/Div/Noyau.cpp \
     ../Library/Div/Tree.cpp \
     ../Library/Div/TreeItem.cpp \
-    ../Library/Div/Managers.cpp \
+    ../Library/Div/vectorPtr.cpp \
     ../Library/Entities/Annee.cpp \
     ../Library/Entities/Arbre.cpp \
     ../Library/Entities/Attribut.cpp \
@@ -39,6 +43,7 @@ SOURCES += main.cpp \
 #    ../Library/Entities/Commentaire.cpp \
 #    ../Library/Entities/Controle.cpp \
     ../Library/Entities/Donnee.cpp \
+    ../Library/Entities/DonneeCard.cpp \
     ../Library/Entities/Eleve.cpp \
 #    ../Library/Entities/Etablissement.cpp \
     ../Library/Entities/Entity.cpp \
@@ -50,7 +55,6 @@ SOURCES += main.cpp \
     ../Library/Entities/Groupe.cpp \
     ../Library/Entities/InfoEntity.cpp \
     ../Library/Entities/InfoEntityBase.cpp \
-    ../Library/Entities/ListEntities.cpp \
     ../Library/Entities/Niveau.cpp \
 #    ../Library/Entities/Note.cpp \
 #    ../Library/Entities/NumControle.cpp \
@@ -60,7 +64,6 @@ SOURCES += main.cpp \
 #    ../Library/Entities/TypeGroupe.cpp \
     ../Library/Entities/TypeEtablissement.cpp \
     ../Library/Entities/TypeNiveau.cpp \
-    ../Library/Entities/VectorEntities.cpp \
     ../Library/Entities/VersionBdd.cpp \
     ../Library/Fen/Fen.cpp \
 #    ../Library/Fen/FenExo.cpp \
@@ -78,13 +81,14 @@ SOURCES += main.cpp \
     ../Library/Fen/TabModule.cpp \
     ../Library/Manager/AbstractLinkSql.cpp \
     ../Library/Manager/AbstractUniqueSql.cpp \
-    ../Library/Manager/ArbreManager.cpp \
     ../Library/Manager/InfoBdd.cpp \
     ../Library/Manager/InfoBddBase.cpp \
     ../Library/Manager/LinkSql.cpp \
     ../Library/Manager/LinkSqlBase.cpp \
     ../Library/Manager/Manager.cpp \
+    ../Library/Manager/ManagerArbre.cpp \
     ../Library/Manager/ManagerOf.cpp \
+    ../Library/Manager/ManagerOfArbre.cpp \
     ../Library/Manager/ManagerSql.cpp \
     ../Library/Manager/ReqSql.cpp \
     ../Library/Manager/UniqueSql.cpp \
@@ -92,6 +96,10 @@ SOURCES += main.cpp \
     ../Library/Manager/VersionBddManager.cpp \
     ../Library/Model/ListeEleveModel.cpp \
     ../Library/Model/MAbstractTableModel.cpp \
+    ../Library/Model/MAbstractTreeModel.cpp \
+    ../Library/Model/TreeModelReadTemp.cpp \
+    ../Library/Model/TreeModelTemp.cpp \
+    ../Library/Widget/ReadTreeWidget.cpp \
     ../Library/Widget/SelectInListBox.cpp \
     ../Library/Widget/SpinBoxAnnee.cpp \
     ../Library/Widget/SpinBoxNumClasse.cpp \
@@ -106,15 +114,19 @@ HEADERS += \
     ../Library/Dialog/NewClasseDialog.h \
     ../Library/Dialog/NewEtablissementDialog.h \
     ../Library/Dialog/SelectAnneeDialog.h \
+    ../Library/Dialog/SelectDonneeDialog.h \
     ../Library/Div/AbstractBdd.h \
     ../Library/Div/AbstractManagers.h \
     ../Library/Div/Bdd.h \
     ../Library/Div/Config.h \
     ../Library/Div/FileInterface.h \
+    ../Library/Div/ListPtr.h \
     ../Library/Div/Macro.h \
     ../Library/Div/Managers.h \
+    ../Library/Div/Noyau.h \
     ../Library/Div/Tree.h \
-    ../Library/Div/TreeItem.h \  
+    ../Library/Div/TreeItem.h \
+    ../Library\Div\VectorPtr.h \
     ../Library/Entities/Annee.h \
     ../Library/Entities/Arbre.h \
     ../Library/Entities/Attribut.h \
@@ -126,6 +138,7 @@ HEADERS += \
 #    ../Library/Entities/Commentaire.h \
 #    ../Library/Entities/Controle.h \
     ../Library/Entities/Donnee.h \
+    ../Library/Entities/DonneeCard.h \
     ../Library/Entities/Eleve.h \
 #    ../Library/Entities/Etablissement.h \
     ../Library/Entities/Entity.h \
@@ -137,7 +150,6 @@ HEADERS += \
     ../Library/Entities/Groupe.h \
     ../Library/Entities/InfoEntity.h \
     ../Library/Entities/InfoEntityBase.h \
-    ../Library/Entities/ListEntities.h \
     ../Library/Entities/Niveau.h \
 #    ../Library/Entities/Note.h \
 #    ../Library/Entities/NumControle.h \
@@ -147,7 +159,6 @@ HEADERS += \
 #    ../Library/Entities/TypeGroupe.h \
     ../Library/Entities/TypeEtablissement.h \
     ../Library/Entities/TypeNiveau.h \
-    ../Library/Entities/VectorEntities.h \
     ../Library/Entities/VersionBdd.h \
     ../Library/Fen/Fen.h \
 #    ../Library/Fen/FenExo.h \
@@ -165,13 +176,14 @@ HEADERS += \
     ../Library/Fen/TabModule.h \
     ../Library/Manager/AbstractLinkSql.h \
     ../Library/Manager/AbstractUniqueSql.h \
-    ../Library/Manager/ArbreManager.h \
     ../Library/Manager/InfoBdd.h \
     ../Library/Manager/InfoBddBase.h \
     ../Library/Manager/LinkSql.h \
     ../Library/Manager/LinkSqlBase.h \
     ../Library/Manager/Manager.h \
+    ../Library/Manager/ManagerArbre.h \
     ../Library/Manager/ManagerOf.h \
+    ../Library/Manager/ManagerOfArbre.h \
     ../Library/Manager/ManagerSql.h \
     ../Library/Manager/ReqSql.h \
     ../Library/Manager/UniqueSql.h \
@@ -179,6 +191,10 @@ HEADERS += \
     ../Library/Manager/VersionBddManager.h \
     ../Library/Model/ListeEleveModel.h \
     ../Library/Model/MAbstractTableModel.h \
+    ../Library/Model/MAbstractTreeModel.h \
+    ../Library/Model/TreeModelReadTemp.h \
+    ../Library/Model/TreeModelTemp.h \
+    ../Library/Widget/ReadTreeWidget.h \
     ../Library/Widget/SelectInListBox.h \
     ../Library/Widget/SpinBoxAnnee.h \
     ../Library/Widget/SpinBoxNumClasse.h \

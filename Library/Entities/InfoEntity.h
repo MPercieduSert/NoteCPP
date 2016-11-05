@@ -20,12 +20,7 @@
 namespace InfoEntity
 {
 //! Liste des identifiants des types d'entités.
-enum entityId  {AttributArbreId = 0,
-                CoursArbreId,
-                DonneeArbreId,
-                EnonceArbreId ,
-                ExerciceArbreId ,
-                AnneeId,
+enum entityId  {AnneeId,
                 AttributId,
                 AttributCommentaireId,
                 ClasseId,
@@ -35,6 +30,7 @@ enum entityId  {AttributArbreId = 0,
                 CommentaireEleveId,
                 CommentaireGroupeId,
                 DonneeId,
+                DonneeCardId,
                 DonneeClasseId,
                 DonneeEleveId,
                 DonneeEtablissementId,

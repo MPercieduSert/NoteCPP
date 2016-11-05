@@ -14,17 +14,17 @@
 #define SAVE if(entity.isValid()) \
     {if(entity.isNew()) \
         {if(existsUnique(entity) == bdd::Aucun) \
-            {add(entity);} \
+            add(entity); \
          else \
-            {throw std::invalid_argument(messageErreursUnique(entity).append("\n Erreur d'unicité : il existe déjà dans la base de donnée une entité ayant les mêmes valeurs d'attributs unique que cette nouvelle entité.").toStdString());}} \
+            throw std::invalid_argument(messageErreursUnique(entity).append("\n Erreur d'unicité : il existe déjà dans la base de donnée une entité ayant les mêmes valeurs d'attributs unique que cette nouvelle entité.").toStdString());} \
     else \
         {if(!sameInBdd(entity)) \
             {if(existsUnique(entity) <= bdd::Meme) \
-                {modify(entity);} \
+                modify(entity); \
             else \
-                {throw std::invalid_argument(messageErreursUnique(entity).append("\n Erreur d'unicité :  il existe déjà dans la base de donnée une entité ayant les mêmes valeurs d'attributs unique que l'entité modifiée.").toStdString());}}}} \
+                throw std::invalid_argument(messageErreursUnique(entity).append("\n Erreur d'unicité :  il existe déjà dans la base de donnée une entité ayant les mêmes valeurs d'attributs unique que l'entité modifiée.").toStdString());}}} \
 else \
-    {throw std::invalid_argument(messageErreurs(entity).append("\n Erreur de validité").toStdString());}
+    throw std::invalid_argument(messageErreurs(entity).append("\n Erreur de validité").toStdString());
 
 /*! \ingroup groupeBaseManager
  * \brief Classe template mère des différents manageurs de type SQL.
@@ -32,7 +32,9 @@ else \
 class AbstractManagerSql :  public Manager, public ReqSql
 {
 protected:
-    static const std::array<const char *, bdd::NbrAgrega> m_fonctionAgregaString;
+    static const QVector<QString> m_fonctionAgregaString;
+    static const QVector<QString> m_conditionString;
+    //static const std::array<const char *, bdd::Condition> m_fonctionConditionString;
 
 public:
     //! Contructeur, transmettre en argument la connexion ouverte à le base de donnée.
@@ -76,15 +78,18 @@ protected:
     QString m_sqlAdd;       //!< Requéte sql d'insertion d'une ligne.
     QString m_sqlDelete;    //!< Requéte sql de suppression d'une ligne
     QString m_sqlExists;    //!< Requéte sql d'existence d'une ligne d'identifiant donné.
+    QString m_sqlExistsWhere;    //!< Requéte sql d'existense d'une ligne vérifiant une condition.
     QString m_sqlFonctionAgrega;    //!< Requéte sql appliquant une fonction d'agrega à toutes les lignes de la table.
     QString m_sqlFonctionAgregaWhere1;      //!< Requéte sql appliquant une fonction d'agrega aux lignes de la table vérifiant une condition.
     QString m_sqlFonctionAgregaWhere2;      //!< Requéte sql appliquant une fonction d'agrega aux lignes de la table vérifiant deux conditions.
     QString m_sqlGet;       //!< Requéte sql de lecture d'une ligne d'identifiant donné.
     QString m_sqlGetList;   //!< Requéte sql de lecture de toutes les lignes de la table triées suivant une colonne.
+    QString m_sqlGetListWhere;      //!< Requéte sql de lecture des lignes de la table vérifiant une condition.
     QString m_sqlGetList1Where1;    //!< Requéte sql de lecture des lignes de la table vérifiant une condition triées suivant une colonne.
     QString m_sqlGetList1Where2;    //!< Requéte sql de lecture des lignes de la table vérifiant une condition triées suivant deux colonnes.
     QString m_sqlGetList1Where3;    //!< Requéte sql de lecture des lignes de la table vérifiant une condition triées suivant trois colonnes.
     QString m_sqlGetList2Where1;    //!< Requéte sql de lecture des lignes de la table vérifiant deux conditions triées suivant une colonne.
+    QString m_sqlGetList3Where1;    //!< Requéte sql de lecture des lignes de la table vérifiant deux conditions triées suivant une colonne.
     QString m_sqlGetListJoin;        //!< Requéte sql de lecture des lignes de la table vérifiant une condition avec une jointure triées jusqu'à trois colonnes.
     QString m_sqlGetListJoin1Where1;        //!< Requéte sql de lecture des lignes de la table vérifiant une condition avec une jointure triées suivant une colonne.
     QString m_sqllastId;    //!< Requéte sql de lecture de l'identifiant de la dernière ligne insérée dans la table.
@@ -100,8 +105,8 @@ public:
     ~ManagerSql()  {}
 
     //! Renvoie le nom en base de donnée du i-ème attribut.
-    const QString & attribut(int i) const
-        {return m_link.attribut(i);}
+    const QString & attribut(int pos) const
+        {return m_link.attribut(pos);}
 
     /*//! Renvoie le nom en base de donnée du i-ème attribut unique.
     const QString & attributUnique(int i) const
@@ -126,12 +131,23 @@ public:
     //! Teste s'il existe une entité de même identifiant que entity en base de donnée.
     bool exists(const Ent & entity)
     {
-            prepare(m_sqlExists);
-            m_link.setId(entity);
-            exec();
-            bool bb = next();
-            finish();
-            return bb;
+        prepare(m_sqlExists);
+        m_link.setId(entity);
+        exec();
+        bool bb = next();
+        finish();
+        return bb;
+    }
+
+    //! Teste s'il existe une entité vérifiant une condition.
+    bool exists(typename Ent::Position cle, const QVariant & value, bdd::Condition cond = bdd::Condition::Egal)
+    {
+        prepare(m_sqlExistsWhere.arg(QString(attribut(cle)).append(m_conditionString[cond]).append("?")));
+        bindValue(0,value);
+        exec();
+        bool bb = next();
+        finish();
+        return bb;
     }
 
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée.
@@ -153,7 +169,7 @@ public:
         {return existsUnique(Ent::convert(entity));}
 
     //! Fonction d'agrega de valeur de type T sur l'attribut att appliquée à toutes les entités de la table.
-    template<class T> T fonctionAgrega(bdd::Agrega fonc, int att)
+    template<class T> T fonctionAgrega(bdd::Agrega fonc, typename Ent::Position att)
     {
         exec(m_sqlFonctionAgrega.arg(m_fonctionAgregaString[fonc],
                                      attribut(att)));
@@ -163,11 +179,13 @@ public:
 
     //! Fonction d'agrega de valeur de type T sur l'attribut att appliquée à toutes les entités vérifiant la condition,
     //! valeur de la colonne d'identifiant cle = value.
-    template<class T> T fonctionAgrega(bdd::Agrega fonc, int att, int cle, const QVariant & value)
+    template<class T> T fonctionAgrega(bdd::Agrega fonc, typename Ent::Position att, typename Ent::Position cle, const QVariant & value,
+                                       bdd::Condition cond = bdd::Condition::Egal)
     {
         prepare(m_sqlFonctionAgregaWhere1.arg(m_fonctionAgregaString[fonc],
                                               attribut(att),
-                                              attribut(cle)));
+                                              attribut(cle),
+                                              m_conditionString[cond]));
         bindValue(0,value);
         exec();
         next();
@@ -176,14 +194,16 @@ public:
 
     //! Fonction d'agrega de valeur de type T sur l'attribut att appliquée à toutes les entités vérifiant les deux conditions,
     //! valeur de la colonne d'identifiant cle1 = value1 et valeur de la colonne d'identifiant cle2 = value2.
-    template<class T> T fonctionAgrega(bdd::Agrega fonc, int att, int cle1, int cle2, const QVariant & value1, const QVariant & value2)
+    template<class T> T fonctionAgrega(bdd::Agrega fonc, typename Ent::Position att, typename Ent::Position cle1, const QVariant & value1, typename Ent::Position cle2, const QVariant & value2, bdd::Condition cond1 = bdd::Condition::Egal, bdd::Condition cond2 = bdd::Condition::Egal)
     {
         prepare(m_sqlFonctionAgregaWhere2.arg(m_fonctionAgregaString[fonc],
                                               attribut(att),
                                               attribut(cle1),
-                                              attribut(cle2)));
+                                              m_conditionString[cond1],
+                                              attribut(cle2),
+                                              m_conditionString[cond2]));
         bindValue(0,value1);
-        bindValue(0,value2);
+        bindValue(1,value2);
         exec();
         next();
         return value<T>();
@@ -216,42 +236,51 @@ public:
         }
     }
 
-    //! Renvoie la liste des entités de la table ordonnée suivant la colonne d'identifiant ordre.
-    ListEntities<Ent> getList(int ordre, bool crois)
+    //! Renvoie la liste des entités de la table vérifiant la condition.
+    ListPtr<Ent> getList(const QString & condition)
     {
-        prepare(m_sqlGetList.arg(attribut(ordre) + croissant(crois)));
+        prepare(m_sqlGetListWhere.arg(condition));
+        return listFormRequete();
+    }
+
+    //! Renvoie la liste des entités de la table ordonnée suivant la colonne d'identifiant ordre.
+    ListPtr<Ent> getList(typename Ent::Position ordre = Ent::Id, bool crois = true)
+    {
+        prepare(m_sqlGetList.arg(attribut(ordre),croissant(crois)));
         return listFormRequete();
     }
 
     //! Renvoie la liste des entités de la table vérifiant la condition,
     //! valeur de la colonne d'identifiant cle = value, ordonnée suivant la colonne d'identifiant ordre.
-    ListEntities<Ent> getList(int cle, const QVariant & value, int ordre, bool crois)
+    ListPtr<Ent> getList(typename Ent::Position cle, const QVariant & value, typename Ent::Position ordre = Ent::Id, bdd::Condition cond = bdd::Condition::Egal, bool crois = true)
     {
-        prepare(m_sqlGetList1Where1.arg(attribut(cle),
-                                        attribut(ordre) + croissant(crois)));
+        prepare(m_sqlGetList1Where1.arg(attribut(cle), m_conditionString[cond],
+                                        attribut(ordre), croissant(crois)));
         bindValue(0,value);
         return listFormRequete();
     }
 
     //! Renvoie la liste des entités de la table vérifiant la condition,
     //! valeur de la colonne d'identifiant cle = value, ordonnée suivant les colonnes d'identifiant ordre1 puis ordre2.
-    ListEntities<Ent> getList(int cle, const QVariant & value, int ordre1, int ordre2, bool crois1, bool crois2)
+    ListPtr<Ent> getList(typename Ent::Position cle, const QVariant & value, typename Ent::Position ordre1, typename Ent::Position ordre2, bdd::Condition cond = bdd::Condition::Egal, bool crois1 = true, bool crois2 = true)
     {
-        prepare(m_sqlGetList1Where2.arg(attribut(cle),
-                                        attribut(ordre1) + croissant(crois1),
-                                        attribut(ordre2) + croissant(crois2)));
+        prepare(m_sqlGetList1Where2.arg(attribut(cle), m_conditionString[cond],
+                                        attribut(ordre1), croissant(crois1),
+                                        attribut(ordre2), croissant(crois2)));
         bindValue(0,value);
         return listFormRequete();
     }
 
     //! Renvoie la liste des entités de la table vérifiant la condition,
     //! valeur de la colonne d'identifiant cle = value, ordonnée suivant les colonnes d'identifiant ordre1, ordre2 puis ordre3.
-    ListEntities<Ent> getList(int cle, const QVariant & value, int ordre1, int ordre2, int ordre3, bool crois1, bool crois2, bool crois3)
+    ListPtr<Ent> getList(typename Ent::Position cle, const QVariant & value, typename Ent::Position ordre1, typename Ent::Position ordre2, typename Ent::Position ordre3,
+                         bdd::Condition cond = bdd::Condition::Egal,
+                         bool crois1 = true, bool crois2 = true, bool crois3 = true)
     {
-        prepare(m_sqlGetList1Where3.arg(attribut(cle),
-                                        attribut(ordre1) + croissant(crois1),
-                                        attribut(ordre2) + croissant(crois2),
-                                        attribut(ordre3) + croissant(crois3)));
+        prepare(m_sqlGetList1Where3.arg(attribut(cle), m_conditionString[cond],
+                                        attribut(ordre1), croissant(crois1),
+                                        attribut(ordre2), croissant(crois2),
+                                        attribut(ordre3), croissant(crois3)));
         bindValue(0,value);
         return listFormRequete();
     }
@@ -259,13 +288,36 @@ public:
     //! Renvoie la liste des entités de la table vérifiant les deux conditions,
     //! valeur de la colonne d'identifiant cle1 = value1 et valeur de la colonne d'identifiant cle2 = value2,
     //! ordonnée suivant la colonne d'identifiant ordre.
-    ListEntities<Ent> getList(int cle1, int cle2, const QVariant & value1, const QVariant & value2, int ordre, bool crois)
+    ListPtr<Ent> getList(typename Ent::Position cle1, const QVariant & value1, typename Ent::Position cle2,  const QVariant & value2,
+                         typename Ent::Position ordre = Ent::Id, bdd::Condition cond1 = bdd::Condition::Egal, bdd::Condition cond2 = bdd::Condition::Egal, bool crois = true)
     {
-        prepare(m_sqlGetList2Where1.arg(attribut(cle1),
-                                        attribut(cle2),
-                                        attribut(ordre) + croissant(crois)));
+        prepare(m_sqlGetList2Where1.arg(attribut(cle1), m_conditionString[cond1],
+                                        attribut(cle2), m_conditionString[cond2],
+                                        attribut(ordre), croissant(crois)));
         bindValue(0,value1);
         bindValue(1,value2);
+        return listFormRequete();
+    }
+
+    //! Renvoie la liste des entités de la table vérifiant les deux conditions,
+    //! valeur de la colonne d'identifiant cle1 = value1, valeur de la colonne d'identifiant cle2 = value2
+    //! et valeur de la colonne d'identifiant cle3 = value3,
+    //! ordonnée suivant la colonne d'identifiant ordre.
+    ListPtr<Ent> getList(typename Ent::Position cle1, const QVariant & value1,
+                         typename Ent::Position cle2, const QVariant & value2,
+                         typename Ent::Position cle3, const QVariant & value3,
+                         typename Ent::Position ordre = Ent::Id,
+                         bdd::Condition cond1 = bdd::Condition::Egal, bdd::Condition cond2 = bdd::Condition::Egal,
+                         bdd::Condition cond3 = bdd::Condition::Egal,
+                         bool crois = true)
+    {
+        prepare(m_sqlGetList3Where1.arg(attribut(cle1), m_conditionString[cond1],
+                                        attribut(cle2), m_conditionString[cond2],
+                                        attribut(cle3), m_conditionString[cond3],
+                                        attribut(ordre), croissant(crois)));
+        bindValue(0,value1);
+        bindValue(1,value2);
+        bindValue(1,value3);
         return listFormRequete();
     }
 
@@ -273,7 +325,7 @@ public:
     //! valeur des colonnes de la table Ent d'identifiant key = value de QMap whereMapTable,
     //! valeur des colonnes de la table Join key = value de QMap whereMapJoin,
     //! ordonnée suivant les colonnes de la table Ent d'identifiants key et d'ordre value de QMap orderMapTable (true -> croissant, false -> décroissant).
-    ListEntities<Ent> getListJoin(const QString & tableJoin, int colonneTable,
+    ListPtr<Ent> getListJoin(const QString & tableJoin, int colonneTable,
                                                    const QString & colonneJoin,
                                                    const QMap<int,QVariant> & whereMapTable,
                                                    const QMap<QString,QVariant> & whereMapJoin,
@@ -305,16 +357,16 @@ public:
     //! Renvoie la liste des entités de la table vérifiant une condition sur une jointure (table.ID = join.colonneJoin),
     //! valeur de la colonne de la jointure d'identifiant cleWhere = valueWhere,
     //! ordonnée suivant la colonne de l'entité d'identifiant ordre.
-    template<class Join> ListEntities<Ent> getListJoin(const QString & tableJoin,
+    template<class Join> ListPtr<Ent> getListJoin(const QString & tableJoin,
                                                        const QString & colonneJoin,
                                                        const QString & whereJoin,
                                                        const QVariant & valueWhere,
-                                                       int ordre, bool crois)
+                                                       typename Ent::Position ordre = Ent::Id, bdd::Condition cond = bdd::Condition::Egal, bool crois = true)
     {
         prepare(m_sqlGetListJoin1Where1.arg(tableJoin,
                                             colonneJoin,
-                                            whereJoin,
-                                            attribut(ordre) + croissant(crois)));
+                                            whereJoin, cond,
+                                            attribut(ordre), croissant(crois)));
         bindValue(0,valueWhere);
         return listFormRequete();
     }
@@ -349,13 +401,9 @@ public:
     {
         Ent entityT(entity.id());
         if(get(entityT))
-        {
             return entityT == entity;
-        }
         else
-        {
             return false;
-        }
     }
 
     //! Enregistre l'entité entity en base de donnée et assigne l'identifiant de l'entité insérée en base de donnée à entity.
@@ -368,15 +416,11 @@ public:
 
     //! Enregistre l'entité entity en base de donnée et assigne l'identifiant de l'entité insérée en base de donnée à entity.
     void save(Ent & entity)
-    {
-        SAVE
-    }
+        {SAVE}
 
     //! Enregistre l'entité entity en base de donnée.
     void save(const Ent & entity)
-    {
-        SAVE
-    }
+        {SAVE}
 
     //! Renvoie le nom de la table de l'entité dans la base de donnée.
     const QString & table() const
@@ -385,7 +429,7 @@ public:
 protected:
     //! Insert la nouvelle entité entity dans la base de donnée
     //! et assigne l'identifiant de l'entité insérée en base de donnée à entity.
-    void add(Ent & entity)
+    virtual void add(Ent & entity)
     {
         prepare(m_sqlAdd);
         m_link.bindValues(entity);
@@ -397,7 +441,7 @@ protected:
     }
 
     //! Insert la nouvelle entité entity dans la base de donnée.
-    void add(const Ent & entity)
+    virtual void add(const Ent & entity)
     {
         prepare(m_sqlAdd);
         m_link.bindValues(entity);
@@ -411,7 +455,7 @@ protected:
 
     //! Renvoit la chaine de caractères "ACS" ou "DESC"
     QString croissant(bool crois)
-        {return crois ? " ASC": " DESC";}
+        {return crois ? QString(): " DESC";}
 
     //! Supprime de la table en base de donnée l'entité d'identifiant id.
     void del(int id)
@@ -422,10 +466,10 @@ protected:
     }
 
     //! Construit la liste des entités correspondant une requète de type sqlGetList.
-    ListEntities<Ent> listFormRequete()
+    ListPtr<Ent> listFormRequete()
     {
         exec();
-        ListEntities<Ent> liste;
+        ListPtr<Ent> liste;
         while(next())
         {
             liste.append(m_link.newFromRequete());
@@ -441,7 +485,7 @@ protected:
     QString messageErreursUnique(const Entity & entity) const;
 
     //! Met à jour l'entité entity en base de donnée.
-    void modify(const Ent & entity)
+    virtual void modify(const Ent & entity)
     {
         prepare(m_sqlModify);
         m_link.bindValues(entity);
@@ -468,7 +512,6 @@ template<class Ent, class Link, class Unique> void ManagerSql<Ent,Link,Unique>::
     QString sql(m_link.creer(attCaract,foreignKey));
     sql.append(m_unique.creer(table(),uniqueInit(attUnique)));
     sql.append(")");
-    QMessageBox::critical(0,"",sql);
     exec(sql);
 }
 
@@ -509,39 +552,51 @@ template<class Ent, class Link, class Unique> void ManagerSql<Ent,Link,Unique>::
 {
     // Liste des colonnes.
     QString colonnesId;
-    for(int i = 0; i != m_link.nbrAtt(); ++i) colonnesId.append(attribut(i)).append(",");
+    for(int i = 0; i != m_link.nbrAtt(); ++i)
+        colonnesId.append(attribut(i)).append(",");
     colonnesId.chop(1);
 
     QString colonnes;
-    for(int i = 1; i != m_link.nbrAtt(); ++i) colonnes.append(attribut(i)).append(",");
+    for(int i = 1; i != m_link.nbrAtt(); ++i)
+        colonnes.append(attribut(i)).append(",");
     colonnes.chop(1);
 
+    QString idEgal(attribut(Ent::Id));
+    idEgal.append("=?");
+
     // Select where
-    QString selectWhere("SELECT ");
-    selectWhere.append(colonnesId).append(" FROM ").append(table()).append(" WHERE");
+    m_sqlGetListWhere.append("SELECT ");
+    m_sqlGetListWhere.append(colonnesId).append(" FROM ").append(table()).append(" WHERE %1");
+    m_sqlGetListWhere.squeeze();
 
     // Select Join
     QString selectJoin("SELECT ");
-    for(int i = 0; i != m_link.nbrAtt(); ++i)  selectJoin.append("T.").append(attribut(i)).append(",");
+    for(int i = 0; i != m_link.nbrAtt(); ++i)
+        selectJoin.append("T.").append(attribut(i)).append(",");
     selectJoin.chop(1);
     selectJoin.append(" FROM ").append(table()).append(" T JOIN %1 J ON ");
 
     // Add
     m_sqlAdd.append("INSERT INTO ");
     m_sqlAdd.append(table()).append("(").append(colonnes).append(") VALUES(");
-    for(int i = 1; i != m_link.nbrAtt(); ++i) m_sqlAdd.append("?,");
+    for(int i = 1; i != m_link.nbrAtt(); ++i)
+        m_sqlAdd.append("?,");
     m_sqlAdd.chop(1);
     m_sqlAdd.append(")");
     m_sqlAdd.squeeze();
 
     // Delete
     m_sqlDelete.append("DELETE FROM ");
-    m_sqlDelete.append(table()).append(" WHERE ID=?");
+    m_sqlDelete.append(table()).append(" WHERE ").append(idEgal);
     m_sqlDelete.squeeze();
 
+    // ExisteWhere
+    m_sqlExistsWhere.append("SELECT 1 FROM ");
+    m_sqlExistsWhere.append(table()).append(" WHERE %1 LIMIT 1");
+    m_sqlExists.squeeze();
+
     // Existe
-    m_sqlExists.append("SELECT 1 FROM ");
-    m_sqlExists.append(table()).append(" WHERE ID=? LIMIT 1");
+    m_sqlExists.append(m_sqlExistsWhere.arg(idEgal));
     m_sqlExists.squeeze();
 
     // Agrega
@@ -551,42 +606,43 @@ template<class Ent, class Link, class Unique> void ManagerSql<Ent,Link,Unique>::
 
     // Agrega where 1
     m_sqlFonctionAgregaWhere1.append(m_sqlFonctionAgrega);
-    m_sqlFonctionAgregaWhere1.append(" WHERE %3=?");
+    m_sqlFonctionAgregaWhere1.append(" WHERE %3%4?");
     m_sqlFonctionAgregaWhere1.squeeze();
 
     // Agrega where 2
     m_sqlFonctionAgregaWhere2.append(m_sqlFonctionAgregaWhere1);
-    m_sqlFonctionAgregaWhere2.append(" AND %4=?");
+    m_sqlFonctionAgregaWhere2.append(" AND %5%6?");
     m_sqlFonctionAgregaWhere2.squeeze();
 
     // Get
-    m_sqlGet.append(selectWhere);
-    m_sqlGet.append(" ID=?");
+    m_sqlGet.append(m_sqlGetListWhere.arg(idEgal));
     m_sqlGet.squeeze();
 
     // Get list
     m_sqlGetList.append("SELECT ");
-    m_sqlGetList.append(colonnesId).append(" FROM ").append(table()).append(" ORDER BY %1");
+    m_sqlGetList.append(colonnesId).append(" FROM ").append(table()).append(" ORDER BY %1%2");
     m_sqlGetList.squeeze();
 
     // Get list 1 where 1 ordre
-    m_sqlGetList1Where1.append(selectWhere);
-    m_sqlGetList1Where1.append(" %1=? ORDER BY %2");
+    m_sqlGetList1Where1.append(m_sqlGetListWhere.arg("%1%2? ORDER BY %3%4"));
     m_sqlGetList1Where1.squeeze();
 
     // Get list 1 where 2 ordre
     m_sqlGetList1Where2.append(m_sqlGetList1Where1);
-    m_sqlGetList1Where2.append(",%3");
+    m_sqlGetList1Where2.append(",%5%6");
     m_sqlGetList1Where2.squeeze();
 
     // Get list 1 where 3 ordre
     m_sqlGetList1Where3.append(m_sqlGetList1Where2);
-    m_sqlGetList1Where3.append(",%4");
+    m_sqlGetList1Where3.append(",%7%8");
     m_sqlGetList1Where3.squeeze();
 
     // Get list 2 where 1 ordre
-    m_sqlGetList2Where1.append(selectWhere);
-    m_sqlGetList2Where1.append(" %1=? AND %2=? ORDER BY %3");
+    m_sqlGetList2Where1.append(m_sqlGetListWhere.arg("%1%2? AND %3%4? ORDER BY %5%6"));
+    m_sqlGetList2Where1.squeeze();
+
+    // Get list 3 where 1 ordre
+    m_sqlGetList2Where1.append(m_sqlGetListWhere.arg("%1%2? AND %3%4? AND %5%6? ORDER BY %7%8"));
     m_sqlGetList2Where1.squeeze();
 
     // Get list join
@@ -596,7 +652,7 @@ template<class Ent, class Link, class Unique> void ManagerSql<Ent,Link,Unique>::
 
     // Get list join 1 where 1
     m_sqlGetListJoin1Where1.append(selectJoin);
-    m_sqlGetListJoin1Where1.append("T.ID=J.%2 WHERE %3=? ORDER BY %4");
+    m_sqlGetListJoin1Where1.append("T.ID=J.%2 WHERE %3%4? ORDER BY %5%6");
     m_sqlGetListJoin1Where1.squeeze();
 
     // Id last query
@@ -607,9 +663,10 @@ template<class Ent, class Link, class Unique> void ManagerSql<Ent,Link,Unique>::
     // Modify
     m_sqlModify.append("UPDATE ");
     m_sqlModify.append(table()).append(" SET ");
-    for(int i = 1; i != m_link.nbrAtt(); ++i) m_sqlModify.append(attribut(i)).append("=?,");
+    for(int i = 1; i != m_link.nbrAtt(); ++i)
+        m_sqlModify.append(attribut(i)).append("=?,");
     m_sqlModify.chop(1);
-    m_sqlModify.append("WHERE ID=?");
+    m_sqlModify.append("WHERE ").append(idEgal);
     m_sqlModify.squeeze();
 }
 

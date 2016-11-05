@@ -17,7 +17,7 @@
 #include "../Entities/EntityOfDefaultType.h"
 #include "../Entities/Niveau.h"
 #include "../Entities/TypeEtablissement.h"
-#include "../Entities/VectorEntities.h"
+#include "../Div/VectorPtr.h"
 #include "../Widget/SelectInListBox.h"
 
 
@@ -35,8 +35,8 @@ protected:
     const int NbrChoixLine = 4;
 
     // Donnée
-    VectorEntities<TypeEtablissement> m_vectTpEtab;     //! Liste des types d'établissements
-    VectorEntities<Niveau> m_vectNiveau;                //! Liste des Niveaux
+    VectorPtr<TypeEtablissement> m_vectTpEtab;     //! Liste des types d'établissements
+    VectorPtr<Niveau> m_vectNiveau;                //! Liste des Niveaux
 
     // Widget
 
@@ -60,7 +60,7 @@ protected:
 
 public:
     //! Constructeur.
-    explicit NewEtablissementDialog(const VectorEntities<TypeEtablissement> & vectTpEtab, const VectorEntities<Niveau> & vectNiveau, const QString & nc = QString(), const QString & nom = QString(), QWidget *parent = 0);
+    explicit NewEtablissementDialog(const VectorPtr<TypeEtablissement> & vectTpEtab, const VectorPtr<Niveau> & vectNiveau, const QString & nc = QString(), const QString & nom = QString(), QWidget *parent = 0);
 
     //! Reourne le resultat de la fenêtre de dialogue.
     dialogResult value() const;

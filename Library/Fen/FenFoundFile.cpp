@@ -1,7 +1,6 @@
 #include "FenFoundFile.h"
-#include "FenPrincipale.h"
 
-FenFoundFile::FenFoundFile(FileInterface  *file, FenPrincipale *parent) : Fen(parent), m_ptr_file(file)
+FenFoundFile::FenFoundFile(FileInterface  *file, QWidget *parent) : Fen(parent), m_ptr_file(file)
 {
 
 }
@@ -82,15 +81,15 @@ QString FenFoundFile::isValid(bool copy)
     }
 }
 
-void FenFoundFile::openInConf(const QString & path, bool save)
+void FenFoundFile::openInConf(Config * config,const QString & path, bool save)
 {
     //! Cherche l'entrée path dans le fichier de configuration
     //! et affiche une fenêtre de demande d'ouverture de fichier si l'entrée n'est pas présente.
     QString pathFile;
-    bool exist = m_parent->config()->varExists(path);
+    bool exist = config->varExists(path);
     if(exist)
     {
-        pathFile = m_parent->config()->getVars(path);
+        pathFile = config->getVars(path);
     }
     else
     {
@@ -127,7 +126,7 @@ void FenFoundFile::openInConf(const QString & path, bool save)
             }
             if(modif && save)
             {
-                m_parent->config()->modify(path,pathFile);
+                config->modify(path,pathFile);
             }
         }
         else
@@ -144,7 +143,7 @@ void FenFoundFile::openInConf(const QString & path, bool save)
             }
             if(save && !pathFile.isNull())
             {
-                m_parent->config()->add(path,pathFile);
+                config->add(path,pathFile);
             }
         }
     }
@@ -155,13 +154,13 @@ void FenFoundFile::openInConf(const QString & path, bool save)
         while(pathFile.isNull())
         {
             pathFile = QFileDialog::getSaveFileName(this,"Sous quel nom et à quel emplacement souhaitez-vous crée le fichier?",
-                                                     m_parent->config()->getVars("conf/directories/default"),
+                                                     config->getVars("conf/directories/default"),
                                                     m_ptr_file->fileExtension());
         }
         m_ptr_file->setFileName(pathFile);
         if(m_ptr_file->creer() && save)
         {
-            m_parent->config()->add(path,pathFile);
+            config->add(path,pathFile);
         }
         else
         {

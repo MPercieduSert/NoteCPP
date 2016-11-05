@@ -10,28 +10,26 @@ QMap<int,QString> NoKeyInfoBdd::foreignKey()
 QMap<int,QString> ArbreInfoBdd::attribut()
 {
     QMap<int,QString> att;
-    att.insert(Arbre::numPos,"nm");
-    att.insert(Arbre::feuillePos,"fl");
-    att.insert(Arbre::niveauPos,"nv");
-    att.insert(Arbre::parentPos,"pt");
+    att.insert(Arbre::Num,"nm");
+    att.insert(Arbre::Feuille,"fl");
+    att.insert(Arbre::Parent,"pt");
     return att;
 }
 
 QVector<QMap<int,int>> ArbreInfoBdd::attributUnique()
 {
     QVector<QMap<int,int>> att(1);
-    att[0].insert(ArbreUniqueSql::numUnique,Arbre::numPos);
-    att[0].insert(ArbreUniqueSql::parentUnique,Arbre::parentPos);
+    att[0].insert(ArbreUniqueSql::numUnique,Arbre::Num);
+    att[0].insert(ArbreUniqueSql::parentUnique,Arbre::Parent);
     return att;
 }
 
 QMap<int, QPair<bdd::createSql,bool>> ArbreInfoBdd::creerAttribut()
 {
     QMap<int,QPair<bdd::createSql,bool>> att;
-    att.insert(Arbre::numPos,QPair<bdd::createSql,bool>(createSql::integer,true));
-    att.insert(Arbre::feuillePos,QPair<bdd::createSql,bool>(createSql::integer,true));
-    att.insert(Arbre::niveauPos,QPair<bdd::createSql,bool>(createSql::integer,true));
-    att.insert(Arbre::parentPos,QPair<bdd::createSql,bool>(createSql::integer,false));
+    att.insert(Arbre::Num,QPair<bdd::createSql,bool>(createSql::integer,true));
+    att.insert(Arbre::Feuille,QPair<bdd::createSql,bool>(createSql::integer,true));
+    att.insert(Arbre::Parent,QPair<bdd::createSql,bool>(createSql::integer,false));
     return att;
 }
 
@@ -39,16 +37,16 @@ QMap<int, QPair<bdd::createSql,bool>> ArbreInfoBdd::creerAttribut()
 QMap<int,QString> DateTimeNumInfoBdd::attribut()
 {
     QMap<int,QString> att;
-    att.insert(DateTimeNumEntity::numPos,"nm");
-    att.insert(DateTimeNumEntity::datePos,"dt");
+    att.insert(DateTimeNumEntity::Num,"nm");
+    att.insert(DateTimeNumEntity::DateTime,"dt");
     return att;
 }
 
 QMap<int, QPair<bdd::createSql,bool>> DateTimeNumInfoBdd::creerAttribut()
 {
     QMap<int,QPair<bdd::createSql,bool>> att;
-    att.insert(DateTimeNumEntity::numPos,QPair<bdd::createSql,bool>(createSql::integer,true));
-    att.insert(DateTimeNumEntity::datePos,QPair<bdd::createSql,bool>(createSql::text,true));
+    att.insert(DateTimeNumEntity::Num,QPair<bdd::createSql,bool>(createSql::integer,true));
+    att.insert(DateTimeNumEntity::DateTime,QPair<bdd::createSql,bool>(createSql::text,true));
     return att;
 }
 
@@ -56,21 +54,21 @@ QMap<int, QPair<bdd::createSql,bool>> DateTimeNumInfoBdd::creerAttribut()
 QMap<int,QString> DateTimeRelationInfoBdd::attribut()
 {
     QMap<int,QString> att(RelationInfoBdd::attribut());
-    att.insert(DateTimeRelationEntity::datePos,"dt");
+    att.insert(DateTimeRelationEntity::DateTime,"dt");
     return att;
 }
 
 QVector<QMap<int,int>> DateTimeRelationInfoBdd::attributUnique()
 {
     QVector<QMap<int,int>> att(RelationInfoBdd::attributUnique());
-    att[0].insert(DateTimeRelationUniqueSql::dateUnique,DateTimeRelationEntity::datePos);
+    att[0].insert(DateTimeRelationUniqueSql::dateUnique,DateTimeRelationEntity::DateTime);
     return att;
 }
 
 QMap<int, QPair<bdd::createSql,bool>> DateTimeRelationInfoBdd::creerAttribut()
 {
     QMap<int,QPair<bdd::createSql,bool>> att(RelationInfoBdd::creerAttribut());
-    att.insert(DateTimeRelationEntity::datePos,QPair<bdd::createSql,bool>(createSql::text,true));
+    att.insert(DateTimeRelationEntity::DateTime,QPair<bdd::createSql,bool>(createSql::text,true));
     return att;
 }
 
@@ -78,21 +76,21 @@ QMap<int, QPair<bdd::createSql,bool>> DateTimeRelationInfoBdd::creerAttribut()
 QMap<int,QString> NcNomInfoBdd::attribut()
 {
     QMap<int,QString> att(NomInfoBdd::attribut());
-    att.insert(NcNomEntity::ncPos,"nc");
+    att.insert(NcNomEntity::Nc,"nc");
     return att;
 }
 
 QMap<int, QPair<bdd::createSql,bool>> NcNomInfoBdd::creerAttribut()
 {
     QMap<int,QPair<bdd::createSql,bool>> att(NomInfoBdd::creerAttribut());
-    att.insert(NcNomEntity::ncPos,QPair<bdd::createSql,bool>(createSql::text,true));
+    att.insert(NcNomEntity::Nc,QPair<bdd::createSql,bool>(createSql::text,true));
     return att;
 }
 
 QVector<QMap<int,int>> NcNomInfoBdd::attributUnique()
 {
     QVector<QMap<int,int>> att(NomInfoBdd::attributUnique());
-    att[0].insert(NcNomUniqueSql::ncUnique,NcNomEntity::ncPos);
+    att[0].insert(NcNomUniqueSql::ncUnique,NcNomEntity::Nc);
     return att;
 }
 
@@ -100,21 +98,21 @@ QVector<QMap<int,int>> NcNomInfoBdd::attributUnique()
 QMap<int,QString> NomInfoBdd::attribut()
 {
     QMap<int,QString> att;
-    att.insert(NomEntity::nomPos,"nm");
+    att.insert(NomEntity::Nom,"nm");
     return att;
 }
 
 QVector<QMap<int,int>> NomInfoBdd::attributUnique()
 {
     QVector<QMap<int,int>> att(1);
-    att[0].insert(NomUniqueSql::nomUnique,NomEntity::nomPos);
+    att[0].insert(NomUniqueSql::nomUnique,NomEntity::Nom);
     return att;
 }
 
 QMap<int, QPair<bdd::createSql,bool>> NomInfoBdd::creerAttribut()
 {
     QMap<int,QPair<bdd::createSql,bool>> att;
-    att.insert(NomEntity::nomPos,QPair<bdd::createSql,bool>(createSql::text,true));
+    att.insert(NomEntity::Nom,QPair<bdd::createSql,bool>(createSql::text,true));
     return att;
 }
 
@@ -122,21 +120,21 @@ QMap<int, QPair<bdd::createSql,bool>> NomInfoBdd::creerAttribut()
 QMap<int,QString> NumInfoBdd::attribut()
 {
     QMap<int,QString> att;
-    att.insert(NumEntity::numPos,"nm");
+    att.insert(NumEntity::Num,"nm");
     return att;
 }
 
 QVector<QMap<int,int>> NumInfoBdd::attributUnique()
 {
     QVector<QMap<int,int>> att(1);
-    att[0].insert(NumUniqueSql::numUnique,NumEntity::numPos);
+    att[0].insert(NumUniqueSql::numUnique,NumEntity::Num);
     return att;
 }
 
 QMap<int, QPair<bdd::createSql,bool>> NumInfoBdd::creerAttribut()
 {
     QMap<int,QPair<bdd::createSql,bool>> att;
-    att.insert(NumEntity::numPos,QPair<bdd::createSql,bool>(createSql::integer,true));
+    att.insert(NumEntity::Num,QPair<bdd::createSql,bool>(createSql::integer,true));
     return att;
 }
 
@@ -144,14 +142,14 @@ QMap<int, QPair<bdd::createSql,bool>> NumInfoBdd::creerAttribut()
 QMap<int,QString> NumRelationInfoBdd::attribut()
 {
     QMap<int,QString> att(RelationInfoBdd::attribut());
-    att.insert(NumRelationEntity::numPos,"nm");
+    att.insert(NumRelationEntity::Num,"nm");
     return att;
 }
 
 QMap<int, QPair<bdd::createSql,bool>> NumRelationInfoBdd::creerAttribut()
 {
     QMap<int,QPair<bdd::createSql,bool>> att(RelationInfoBdd::creerAttribut());
-    att.insert(NumRelationEntity::numPos,QPair<bdd::createSql,bool>(createSql::integer,true));
+    att.insert(NumRelationEntity::Num,QPair<bdd::createSql,bool>(createSql::integer,true));
     return att;
 }
 
@@ -159,24 +157,24 @@ QMap<int, QPair<bdd::createSql,bool>> NumRelationInfoBdd::creerAttribut()
 QMap<int,QString> RelationInfoBdd::attribut()
 {
     QMap<int,QString> att;
-    att.insert(RelationEntity::id1Pos,"id1");
-    att.insert(RelationEntity::id2Pos,"id2");
+    att.insert(RelationEntity::Id1,"id1");
+    att.insert(RelationEntity::Id2,"id2");
     return att;
 }
 
 QVector<QMap<int,int>> RelationInfoBdd::attributUnique()
 {
     QVector<QMap<int,int>> att(1);
-    att[0].insert(RelationUniqueSql::id1Unique,RelationEntity::id1Pos);
-    att[0].insert(RelationUniqueSql::id2Unique,RelationEntity::id2Pos);
+    att[0].insert(RelationUniqueSql::id1Unique,RelationEntity::Id1);
+    att[0].insert(RelationUniqueSql::id2Unique,RelationEntity::Id2);
     return att;
 }
 
 QMap<int, QPair<bdd::createSql,bool>> RelationInfoBdd::creerAttribut()
 {
     QMap<int,QPair<bdd::createSql,bool>> att;
-    att.insert(RelationEntity::id1Pos,QPair<bdd::createSql,bool>(createSql::integer,true));
-    att.insert(RelationEntity::id2Pos,QPair<bdd::createSql,bool>(createSql::integer,true));
+    att.insert(RelationEntity::Id1,QPair<bdd::createSql,bool>(createSql::integer,true));
+    att.insert(RelationEntity::Id2,QPair<bdd::createSql,bool>(createSql::integer,true));
     return att;
 }
 
@@ -184,24 +182,24 @@ QMap<int, QPair<bdd::createSql,bool>> RelationInfoBdd::creerAttribut()
 QMap<int,QString> RelationExactOneNotNullInfoBdd::attribut()
 {
     QMap<int,QString> att;
-    att.insert(RelationExactOneNotNullEntity::id1Pos,"id1");
-    att.insert(RelationExactOneNotNullEntity::id2Pos,"id2");
+    att.insert(RelationExactOneNotNullEntity::Id1,"id1");
+    att.insert(RelationExactOneNotNullEntity::Id2,"id2");
     return att;
 }
 
 QVector<QMap<int,int>> RelationExactOneNotNullInfoBdd::attributUnique()
 {
     QVector<QMap<int,int>> att(2);
-    att[0].insert(RelationExactOneNotNullUniqueSql::id1Unique,RelationExactOneNotNullEntity::id1Pos);
-    att[1].insert(RelationExactOneNotNullUniqueSql::id2Unique,RelationExactOneNotNullEntity::id2Pos);
+    att[0].insert(RelationExactOneNotNullUniqueSql::id1Unique,RelationExactOneNotNullEntity::Id1);
+    att[1].insert(RelationExactOneNotNullUniqueSql::id2Unique,RelationExactOneNotNullEntity::Id2);
     return att;
 }
 
 QMap<int, QPair<bdd::createSql,bool>> RelationExactOneNotNullInfoBdd::creerAttribut()
 {
     QMap<int,QPair<bdd::createSql,bool>> att;
-    att.insert(RelationExactOneNotNullEntity::id1Pos,QPair<bdd::createSql,bool>(createSql::integer,false));
-    att.insert(RelationExactOneNotNullEntity::id2Pos,QPair<bdd::createSql,bool>(createSql::integer,false));
+    att.insert(RelationExactOneNotNullEntity::Id1,QPair<bdd::createSql,bool>(createSql::integer,false));
+    att.insert(RelationExactOneNotNullEntity::Id2,QPair<bdd::createSql,bool>(createSql::integer,false));
     return att;
 }
 
@@ -209,21 +207,21 @@ QMap<int, QPair<bdd::createSql,bool>> RelationExactOneNotNullInfoBdd::creerAttri
 QMap<int,QString> TexteInfoBdd::attribut()
 {
     QMap<int,QString> att;
-    att.insert(TexteEntity::textePos,"txt");
+    att.insert(TexteEntity::Texte,"txt");
     return att;
 }
 
 QVector<QMap<int,int>> TexteInfoBdd::attributUnique()
 {
     QVector<QMap<int,int>> att(1);
-    att[0].insert(TexteUniqueSql::texteUnique,TexteEntity::textePos);
+    att[0].insert(TexteUniqueSql::texteUnique,TexteEntity::Texte);
     return att;
 }
 
 QMap<int, QPair<bdd::createSql,bool>> TexteInfoBdd::creerAttribut()
 {
     QMap<int,QPair<bdd::createSql,bool>> att;
-    att.insert(TexteEntity::textePos,QPair<bdd::createSql,bool>(createSql::text,true));
+    att.insert(TexteEntity::Texte,QPair<bdd::createSql,bool>(createSql::text,true));
     return att;
 }
 
@@ -231,14 +229,14 @@ QMap<int, QPair<bdd::createSql,bool>> TexteInfoBdd::creerAttribut()
 QMap<int,QString> TypeNcNomInfoBdd::attribut()
 {
     QMap<int,QString> att(TypeNomInfoBdd::attribut());
-    att.insert(TypeNcNomEntity::ncPos,"nc");
+    att.insert(TypeNcNomEntity::Nc,"nc");
     return att;
 }
 
 QMap<int, QPair<bdd::createSql,bool>> TypeNcNomInfoBdd::creerAttribut()
 {
     QMap<int,QPair<bdd::createSql,bool>> att(TypeNomInfoBdd::creerAttribut());
-    att.insert(TypeNcNomEntity::ncPos,QPair<bdd::createSql,bool>(createSql::text,true));
+    att.insert(TypeNcNomEntity::Nc,QPair<bdd::createSql,bool>(createSql::text,true));
     return att;
 }
 
@@ -246,21 +244,21 @@ QMap<int, QPair<bdd::createSql,bool>> TypeNcNomInfoBdd::creerAttribut()
 QMap<int,QString> TypeNomInfoBdd::attribut()
 {
     QMap<int,QString> att(NomInfoBdd::attribut());
-    att.insert(TypeNomEntity::typePos,"tp");
+    att.insert(TypeNomEntity::Type,"tp");
     return att;
 }
 
 QVector<QMap<int,int>> TypeNomInfoBdd::attributUnique()
 {
     QVector<QMap<int,int>> att(NomInfoBdd::attributUnique());
-    att[0].insert(TypeNomUniqueSql::typeUnique,TypeNomEntity::typePos);
+    att[0].insert(TypeNomUniqueSql::typeUnique,TypeNomEntity::Type);
     return att;
 }
 
 QMap<int, QPair<bdd::createSql,bool>> TypeNomInfoBdd::creerAttribut()
 {
     QMap<int,QPair<bdd::createSql,bool>> att(NomInfoBdd::creerAttribut());
-    att.insert(TypeNomEntity::typePos,QPair<bdd::createSql,bool>(createSql::integer,true));
+    att.insert(TypeNomEntity::Type,QPair<bdd::createSql,bool>(createSql::integer,true));
     return att;
 }
 
@@ -268,14 +266,14 @@ QMap<int, QPair<bdd::createSql,bool>> TypeNomInfoBdd::creerAttribut()
 QMap<int,QString> ValeurDateTimeRelationInfoBdd::attribut()
 {
     QMap<int,QString> att(DateTimeRelationInfoBdd::attribut());
-    att.insert(ValeurDateTimeRelationEntity::valeurPos,"vl");
+    att.insert(ValeurDateTimeRelationEntity::Valeur,"vl");
     return att;
 }
 
 QMap<int, QPair<bdd::createSql,bool>> ValeurDateTimeRelationInfoBdd::creerAttribut()
 {
     QMap<int,QPair<bdd::createSql,bool>> att(DateTimeRelationInfoBdd::creerAttribut());
-    att.insert(ValeurDateTimeRelationEntity::valeurPos,QPair<bdd::createSql,bool>(createSql::blob,false));
+    att.insert(ValeurDateTimeRelationEntity::Valeur,QPair<bdd::createSql,bool>(createSql::blob,false));
     return att;
 }
 /*
@@ -288,72 +286,72 @@ QMap<int,QString> InfoBddBase::attribut(InfoEntity::entityBaseId n)
         break;
 
     case InfoEntity::entityBaseId::ArbreId:
-        att.insert(Arbre::numPos,"nm");
-        att.insert(Arbre::feuillePos,"fl");
+        att.insert(Arbre::Num,"nm");
+        att.insert(Arbre::Feuille,"fl");
         att.insert(Arbre::niveauPos,"nv");
-        att.insert(Arbre::parentPos,"pt");
+        att.insert(Arbre::Parent,"pt");
         break;
 
     case InfoEntity::entityBaseId::DateTimeRelationEntityId:
-        att.insert(DateTimeRelationEntity::id1Pos,"id1");
-        att.insert(DateTimeRelationEntity::id2Pos,"id2");
-        att.insert(DateTimeRelationEntity::datePos,"dt");
+        att.insert(DateTimeRelationEntity::Id1,"id1");
+        att.insert(DateTimeRelationEntity::Id2,"id2");
+        att.insert(DateTimeRelationEntity::DateTime,"dt");
         break;
 
     case InfoEntity::entityBaseId::DateTimeNumEntityId:
-        att.insert(DateTimeNumEntity::numPos,"nm");
+        att.insert(DateTimeNumEntity::Num,"nm");
         att.insert(DateTimeNumEntity::dateTimePos,"dtt");
         break;
 
     case InfoEntity::entityBaseId::NcNomEntityId:
-        att.insert(NcNomEntity::nomPos,"nm");
-        att.insert(NcNomEntity::ncPos,"nc");
+        att.insert(NcNomEntity::Nom,"nm");
+        att.insert(NcNomEntity::Nc,"nc");
         break;
 
     case InfoEntity::entityBaseId::NomEntityId:
-        att.insert(NomEntity::nomPos,"nm");
+        att.insert(NomEntity::Nom,"nm");
         break;
 
     case InfoEntity::entityBaseId::NumEntityId:
-        att.insert(NumEntity::numPos,"nm");
+        att.insert(NumEntity::Num,"nm");
         break;
 
     case InfoEntity::entityBaseId::NumRelationEntityId:
-        att.insert(NumRelationEntity::id1Pos,"id1");
-        att.insert(NumRelationEntity::id2Pos,"id2");
-        att.insert(NumRelationEntity::numPos,"nm");
+        att.insert(NumRelationEntity::Id1,"id1");
+        att.insert(NumRelationEntity::Id2,"id2");
+        att.insert(NumRelationEntity::Num,"nm");
         break;
 
     case InfoEntity::entityBaseId::RelationEntityId:
-        att.insert(RelationEntity::id1Pos,"id1");
-        att.insert(RelationEntity::id2Pos,"id2");
+        att.insert(RelationEntity::Id1,"id1");
+        att.insert(RelationEntity::Id2,"id2");
         break;
 
     case InfoEntity::entityBaseId::RelationExactOneNotNullEntityId:
-        att.insert(RelationExactOneNotNullEntity::id1Pos,"id1");
-        att.insert(RelationExactOneNotNullEntity::id2Pos,"id2");
+        att.insert(RelationExactOneNotNullEntity::Id1,"id1");
+        att.insert(RelationExactOneNotNullEntity::Id2,"id2");
         break;
 
     case InfoEntity::entityBaseId::TexteEntityId:
-        att.insert(TexteEntity::textePos,"txt");
+        att.insert(TexteEntity::Texte,"txt");
         break;
 
     case InfoEntity::entityBaseId::TypeNcNomEntityId:
-        att.insert(TypeNcNomEntity::nomPos,"nm");
-        att.insert(TypeNcNomEntity::ncPos,"nc");
-        att.insert(TypeNcNomEntity::typePos,"tp");
+        att.insert(TypeNcNomEntity::Nom,"nm");
+        att.insert(TypeNcNomEntity::Nc,"nc");
+        att.insert(TypeNcNomEntity::Type,"tp");
         break;
 
     case InfoEntity::entityBaseId::TypeNomEntityId:
-        att.insert(TypeNomEntity::nomPos,"nm");
-        att.insert(TypeNomEntity::typePos,"tp");
+        att.insert(TypeNomEntity::Nom,"nm");
+        att.insert(TypeNomEntity::Type,"tp");
         break;
 
     case InfoEntity::entityBaseId::ValeurDateTimeRelationEntityId:
-        att.insert(ValeurDateTimeRelationEntity::id1Pos,"id1");
-        att.insert(ValeurDateTimeRelationEntity::id2Pos,"id2");
-        att.insert(ValeurDateTimeRelationEntity::datePos,"dt");
-        att.insert(ValeurDateTimeRelationEntity::valeurPos,"vl");
+        att.insert(ValeurDateTimeRelationEntity::Id1,"id1");
+        att.insert(ValeurDateTimeRelationEntity::Id2,"id2");
+        att.insert(ValeurDateTimeRelationEntity::DateTime,"dt");
+        att.insert(ValeurDateTimeRelationEntity::Valeur,"vl");
         break;
 
     default:
@@ -371,41 +369,41 @@ QMap<int,int> InfoBddBase::attributUnique(InfoEntity::entityBaseId n)
         break;
 
     case InfoEntity::entityBaseId::ArbreId:
-        att.insert(ArbreUniqueSql::numUnique,Arbre::numPos);
-        att.insert(ArbreUniqueSql::parentUnique,Arbre::parentPos);
+        att.insert(ArbreUniqueSql::numUnique,Arbre::Num);
+        att.insert(ArbreUniqueSql::parentUnique,Arbre::Parent);
         break;
 
     case InfoEntity::entityBaseId::DateTimeRelationEntityId:
-        att.insert(DateRelationUniqueSql::id1Unique,DateTimeRelationEntity::id1Pos);
-        att.insert(DateRelationUniqueSql::id2Unique,DateTimeRelationEntity::id2Pos);
-        att.insert(DateRelationUniqueSql::dateUnique,DateTimeRelationEntity::datePos);
+        att.insert(DateRelationUniqueSql::id1Unique,DateTimeRelationEntity::Id1);
+        att.insert(DateRelationUniqueSql::id2Unique,DateTimeRelationEntity::Id2);
+        att.insert(DateRelationUniqueSql::dateUnique,DateTimeRelationEntity::DateTime);
         break;
 
     case InfoEntity::entityBaseId::NomEntityId:
-        att.insert(NomUniqueSql::nomUnique,NomEntity::nomPos);
+        att.insert(NomUniqueSql::nomUnique,NomEntity::Nom);
         break;
 
     case InfoEntity::entityBaseId::NumEntityId:
-        att.insert(NumUniqueSql::numUnique,NumEntity::numPos);
+        att.insert(NumUniqueSql::numUnique,NumEntity::Num);
         break;
 
     case InfoEntity::entityBaseId::RelationEntityId:
-        att.insert(RelationUniqueSql::id1Unique,RelationEntity::id1Pos);
-        att.insert(RelationUniqueSql::id2Unique,RelationEntity::id2Pos);
+        att.insert(RelationUniqueSql::id1Unique,RelationEntity::Id1);
+        att.insert(RelationUniqueSql::id2Unique,RelationEntity::Id2);
         break;
 
     case InfoEntity::entityBaseId::RelationExactOneNotNullEntityId:
-        att.insert(RelationExactOneNotNullUniqueSql::id1Unique,RelationExactOneNotNullEntity::id1Pos);
-        att.insert(RelationExactOneNotNullUniqueSql::id2Unique,RelationExactOneNotNullEntity::id2Pos);
+        att.insert(RelationExactOneNotNullUniqueSql::id1Unique,RelationExactOneNotNullEntity::Id1);
+        att.insert(RelationExactOneNotNullUniqueSql::id2Unique,RelationExactOneNotNullEntity::Id2);
         break;
 
     case InfoEntity::entityBaseId::TexteEntityId:
-        att.insert(TexteUniqueSql::texteUnique,TexteEntity::textePos);
+        att.insert(TexteUniqueSql::texteUnique,TexteEntity::Texte);
         break;
 
     case InfoEntity::entityBaseId::TypeNomEntityId:
-        att.insert(TypeNomUniqueSql::nomUnique,TypeNomEntity::nomPos);
-        att.insert(TypeNomUniqueSql::typeUnique,TypeNomEntity::typePos);
+        att.insert(TypeNomUniqueSql::nomUnique,TypeNomEntity::Nom);
+        att.insert(TypeNomUniqueSql::typeUnique,TypeNomEntity::Type);
         break;  
 
     default:
@@ -425,72 +423,72 @@ QMap<int,QPair<bdd::createSql,bool>> InfoBddBase::creerAttribut(InfoEntity::enti
         break;
 
     case InfoEntity::entityBaseId::ArbreId:
-        att.insert(Arbre::numPos,QPair<int,bool>(createSql::integer,true));
-        att.insert(Arbre::feuillePos,QPair<int,bool>(createSql::integer,true));
+        att.insert(Arbre::Num,QPair<int,bool>(createSql::integer,true));
+        att.insert(Arbre::Feuille,QPair<int,bool>(createSql::integer,true));
         att.insert(Arbre::niveauPos,QPair<int,bool>(createSql::integer,true));
-        att.insert(Arbre::parentPos,QPair<int,bool>(createSql::integer,false));
+        att.insert(Arbre::Parent,QPair<int,bool>(createSql::integer,false));
         break;
 
     case InfoEntity::entityBaseId::DateTimeRelationEntityId:
-        att.insert(DateTimeRelationEntity::id1Pos,QPair<int,bool>(createSql::integer,true));
-        att.insert(DateTimeRelationEntity::id2Pos,QPair<int,bool>(createSql::integer,true));
-        att.insert(DateTimeRelationEntity::datePos,QPair<int,bool>(createSql::text,true));
+        att.insert(DateTimeRelationEntity::Id1,QPair<int,bool>(createSql::integer,true));
+        att.insert(DateTimeRelationEntity::Id2,QPair<int,bool>(createSql::integer,true));
+        att.insert(DateTimeRelationEntity::DateTime,QPair<int,bool>(createSql::text,true));
         break;
 
     case InfoEntity::entityBaseId::DateTimeNumEntityId:
-        att.insert(DateTimeNumEntity::numPos,QPair<int,bool>(createSql::integer,true));
+        att.insert(DateTimeNumEntity::Num,QPair<int,bool>(createSql::integer,true));
         att.insert(DateTimeNumEntity::dateTimePos,QPair<int,bool>(createSql::text,true));
         break;
 
     case InfoEntity::entityBaseId::NcNomEntityId:
-        att.insert(NcNomEntity::nomPos,QPair<int,bool>(createSql::text,true));
-        att.insert(NcNomEntity::ncPos,QPair<int,bool>(createSql::text,true));
+        att.insert(NcNomEntity::Nom,QPair<int,bool>(createSql::text,true));
+        att.insert(NcNomEntity::Nc,QPair<int,bool>(createSql::text,true));
         break;
 
     case InfoEntity::entityBaseId::NomEntityId:
-        att.insert(NomEntity::nomPos,QPair<int,bool>(createSql::text,true));
+        att.insert(NomEntity::Nom,QPair<int,bool>(createSql::text,true));
         break;
 
     case InfoEntity::entityBaseId::NumEntityId:
-        att.insert(NumEntity::numPos,QPair<int,bool>(createSql::integer,true));
+        att.insert(NumEntity::Num,QPair<int,bool>(createSql::integer,true));
         break;
 
     case InfoEntity::entityBaseId::NumRelationEntityId:
-        att.insert(NumRelationEntity::id1Pos,QPair<int,bool>(createSql::integer,true));
-        att.insert(NumRelationEntity::id2Pos,QPair<int,bool>(createSql::integer,true));
-        att.insert(NumRelationEntity::numPos,QPair<int,bool>(createSql::integer,true));
+        att.insert(NumRelationEntity::Id1,QPair<int,bool>(createSql::integer,true));
+        att.insert(NumRelationEntity::Id2,QPair<int,bool>(createSql::integer,true));
+        att.insert(NumRelationEntity::Num,QPair<int,bool>(createSql::integer,true));
         break;
 
     case InfoEntity::entityBaseId::RelationEntityId:
-        att.insert(RelationEntity::id1Pos,QPair<int,bool>(createSql::integer,true));
-        att.insert(RelationEntity::id2Pos,QPair<int,bool>(createSql::integer,true));
+        att.insert(RelationEntity::Id1,QPair<int,bool>(createSql::integer,true));
+        att.insert(RelationEntity::Id2,QPair<int,bool>(createSql::integer,true));
         break;
 
     case InfoEntity::entityBaseId::RelationExactOneNotNullEntityId:
-        att.insert(RelationExactOneNotNullEntity::id1Pos,QPair<int,bool>(createSql::integer,false));
-        att.insert(RelationExactOneNotNullEntity::id2Pos,QPair<int,bool>(createSql::integer,false));
+        att.insert(RelationExactOneNotNullEntity::Id1,QPair<int,bool>(createSql::integer,false));
+        att.insert(RelationExactOneNotNullEntity::Id2,QPair<int,bool>(createSql::integer,false));
         break;
 
     case InfoEntity::entityBaseId::TexteEntityId:
-        att.insert(TexteEntity::textePos,QPair<int,bool>(createSql::text,true));
+        att.insert(TexteEntity::Texte,QPair<int,bool>(createSql::text,true));
         break;
 
     case InfoEntity::entityBaseId::TypeNcNomEntityId:
-        att.insert(TypeNcNomEntity::nomPos,QPair<int,bool>(createSql::text,true));
-        att.insert(TypeNcNomEntity::ncPos,QPair<int,bool>(createSql::text,true));
-        att.insert(TypeNcNomEntity::typePos,QPair<int,bool>(createSql::integer,true));
+        att.insert(TypeNcNomEntity::Nom,QPair<int,bool>(createSql::text,true));
+        att.insert(TypeNcNomEntity::Nc,QPair<int,bool>(createSql::text,true));
+        att.insert(TypeNcNomEntity::Type,QPair<int,bool>(createSql::integer,true));
         break;
 
     case InfoEntity::entityBaseId::TypeNomEntityId:
-        att.insert(TypeNomEntity::nomPos,QPair<int,bool>(createSql::text,true));
-        att.insert(TypeNomEntity::typePos,QPair<int,bool>(createSql::integer,true));
+        att.insert(TypeNomEntity::Nom,QPair<int,bool>(createSql::text,true));
+        att.insert(TypeNomEntity::Type,QPair<int,bool>(createSql::integer,true));
         break;
 
     case InfoEntity::entityBaseId::ValeurDateTimeRelationEntityId:
-        att.insert(ValeurDateTimeRelationEntity::id1Pos,QPair<int,bool>(createSql::integer,true));
-        att.insert(ValeurDateTimeRelationEntity::id2Pos,QPair<int,bool>(createSql::integer,true));
-        att.insert(ValeurDateTimeRelationEntity::datePos,QPair<int,bool>(createSql::text,true));
-        att.insert(ValeurDateTimeRelationEntity::valeurPos,QPair<int,bool>(createSql::blob,false));
+        att.insert(ValeurDateTimeRelationEntity::Id1,QPair<int,bool>(createSql::integer,true));
+        att.insert(ValeurDateTimeRelationEntity::Id2,QPair<int,bool>(createSql::integer,true));
+        att.insert(ValeurDateTimeRelationEntity::DateTime,QPair<int,bool>(createSql::text,true));
+        att.insert(ValeurDateTimeRelationEntity::Valeur,QPair<int,bool>(createSql::blob,false));
         break;
 
     default:

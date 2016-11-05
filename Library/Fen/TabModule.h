@@ -6,14 +6,9 @@
 
 #include <QMap>
 #include <QTabWidget>
-#include "../Div/Bdd.h"
+#include "../Div/Noyau.h"
 
-class FenPrincipale;
 class TabAbstractModule;
-//class TabClasse;
-//class TabListeEleve;
-//class TabListeGroupe;
-class TabMenu;
 
 /*! \ingroup groupeFen
  * \brief Fenêtre à onglet
@@ -28,22 +23,25 @@ public:
                  GroupeTab = 3,
                  NbrTab = 4};
 protected:
-    FenPrincipale * m_parent;   //! Pointeur sur la fenêtre principale
+    Noyau* m_noyau;         //! Pointeur sur le noyau.
     QMap<int,TabAbstractModule *> m_listeTab[NbrTab];       //! Tableau par type des onglets ouverts
     //QList<TabAbstractModule *> m_tabList;
 public:
     //! Constructeur
-    TabModule(FenPrincipale * parent);
+    TabModule(QWidget *parent, Noyau * noyau);
 
-    //! Renvoie le pointeur du parent
-    FenPrincipale * parent() const
-        {return m_parent;}
+    //! Renvoie un pointeur sur la base de données.
+    Bdd * bdd()
+        {return m_noyau->bdd();}
+
+    //! Renvoie un pointeur sur le noyau.
+    Noyau * noyau()
+        {return m_noyau;}
+
 signals:
 
+
 public slots:
-    //void coller();
-    //void copier();
-    //void creerClasse();
     //! Action à effectuer si la fenêtre courante change.
     void currentIndexChanged();
     //void effacer();
@@ -53,7 +51,6 @@ public slots:
     void openListeEleve(int idClasse);
     //! Ouvre un ouglet liste des groupe
     //void openListeGroupe(int idClasse);
-    //void sauvegarder() const;
 };
 
 #endif // TABMODULE_H

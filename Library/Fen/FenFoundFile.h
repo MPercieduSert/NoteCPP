@@ -13,10 +13,8 @@
 #include <QString>
 #include <stdexcept>
 #include "Fen.h"
+#include "../Div/Config.h"
 #include "../Div/FileInterface.h"
-
-
-class FenPrincipale;
 
 /*! \ingroup groupeFen
  * \brief Cette classe est chargée de la vérifiaction des chemins des fichiers et de leur création s'il sont introuvables.
@@ -29,7 +27,7 @@ protected:
 
 public:
     //! Constructeur. Donner en argument un pointeur sur le gestonnaire de fichier que l'on souhaite ouvrir.
-    FenFoundFile(FileInterface *file, FenPrincipale *parent = 0);
+    FenFoundFile(FileInterface *file, QWidget *parent = 0);
 
     //! Test si le fichier existe, si oui le chemin du fichier est renvoyé sinon une fenêtre de dialogue est ouverte.
     //! Par défaut une copie du fichier est effectuée, mettre copy=false pour ne pas copier le fichier.
@@ -46,8 +44,7 @@ public:
     /*!
      * \brief Ouvre un fichier à partir d'un chemin XML dans le fichier de configuration.
      */
-    void openInConf(const QString & path, bool save = true);
-
+    void openInConf(Config *config, const QString & path, bool save = true);
 
 protected:
     /*!

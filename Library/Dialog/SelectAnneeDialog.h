@@ -12,7 +12,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include "../Entities/Annee.h"
-#include "../Entities/VectorEntities.h"
+#include "../Div/VectorPtr.h"
 
 /*! \defgroup groupeDialog Dialogues
  * \brief Ensemble de fenètre de dialogues.
@@ -30,16 +30,16 @@ public:
 
 protected:
     QLabel *m_label;                //! Texte
-    QPushButton *m_okBouton;        //! Bouton de confirmation de selection
-    QPushButton *m_creerBouton;     //! Bouton de création
     QPushButton *m_cancelBouton;    //! Bouton d'annulation
+    QPushButton *m_creerBouton;     //! Bouton de création
+    QPushButton *m_okBouton;        //! Bouton de confirmation de selection
     QComboBox *m_listBox;           //! Liste déroulante des différants choix
     QVBoxLayout *m_vLayout;         //! Layout principal
     QHBoxLayout *m_hLayout;         //! Layout secondaire      
 
 public:
     //! Constructeur.
-    SelectAnneeDialog(const VectorEntities<Annee> & listeAnnee, QWidget *parent=0, int idDefault = -1, bool AnnuleButton = true, bool creerAnnee = false);
+    SelectAnneeDialog(const VectorPtr<Annee> & listeAnnee, QWidget *parent=0, int idDefault = -1, bool AnnuleButton = true, bool creerAnnee = false);
 
 public slots:
     //! Ferme la fenêtre et donne la valeur de l'identifiant de l'éléement courant de m_listBox à result.

@@ -1,20 +1,19 @@
 /*Auteur: PERCIE DU SERT Maxime
- *Date: 23/05/2016
+ *Date: 09/09/2016
  */
-#ifndef VECTORENTITIES_H
-#define VECTORENTITIES_H
+#ifndef VECTORPTR_H
+#define VECTORPTR_H
 
 #include <QList>
 #include <QVector>
-#include <QMessageBox>
 
-#include "ListEntities.h"
+#include "ListPtr.h"
 
-/*! \ingroup groupeEntity
- * \brief Classe patron des vector d'entités.
+/*! \ingroup groupeDivers
+ * \brief Classe patron des vector de pointeurs.
  *
  */
-template<class T> class VectorEntities : public QVector<T*>
+template<class T> class VectorPtr : public QVector<T*>
 {
 public:
     class iterator
@@ -103,10 +102,10 @@ public:
 
 
     //! Constructeur par defaut.
-    VectorEntities() = default;
+    VectorPtr() = default;
 
     //! Constructeur de recopie.
-    VectorEntities(const VectorEntities<T> & vect)
+    VectorPtr(const VectorPtr<T> & vect)
         : QVector<T*>(vect.size())
     {
         typename QVector<T*>::iterator j = begin();
@@ -115,16 +114,16 @@ public:
     }
 
     //! Constructeur de déplacement
-    VectorEntities(VectorEntities<T> && vect) = default;
+    VectorPtr(VectorPtr<T> && vect) = default;
 
     //! Constructeur à partir d'une liste d'entités.
-    VectorEntities(const ListEntities<T> & liste);
+    VectorPtr(const ListPtr<T> & liste);
 
     //! Constructeur à partir d'une liste d'entités temporaire.
-    VectorEntities(ListEntities<T> && liste);
+    VectorPtr(ListPtr<T> && liste);
 
     //! Destructeur.
-    ~VectorEntities()
+    ~VectorPtr()
     {
         for(typename QVector<T*>::const_iterator i = cbegin(); i != cend(); ++i)
             delete *i;
@@ -138,22 +137,22 @@ public:
     iterator findId(int id);
 
     //! Affectation par copie d'une liste de type ListeEntities.
-    VectorEntities<T> &operator =(const ListEntities<T> & liste);
+    VectorPtr<T> &operator =(const ListPtr<T> & liste);
 
     //! Affectation par déplacement du liste (temporaire) de type ListeEntities.
-    VectorEntities<T> &operator =(ListEntities<T> && liste);
+    VectorPtr<T> &operator =(ListPtr<T> && liste);
 
     //! Affectation par recopie.
-    VectorEntities<T> &operator =(const VectorEntities<T> & vector);
+    VectorPtr<T> &operator =(const VectorPtr<T> & vector);
 
     //! Affectation par déplacement.
-    VectorEntities<T> &operator =(VectorEntities<T> && vector);
+    VectorPtr<T> &operator =(VectorPtr<T> && vector);
 
     //! Ajoute les éléments de liste à la suite de la liste.
-    VectorEntities<T> &operator <<(const ListEntities<T> & liste);
+    VectorPtr<T> &operator <<(const ListPtr<T> & liste);
 
     //! Ajoute les éléments de liste (temporaire) à la suite de la liste.
-    VectorEntities<T> &operator <<(ListEntities<T> && liste);
+    VectorPtr<T> &operator <<(ListPtr<T> && liste);
 
     T & operator[](int n)
         {return *(QVector<T*>::operator[](n));}
@@ -162,7 +161,7 @@ public:
         {return *(QVector<T*>::operator[](n));}
 };
 
-template<class T> typename VectorEntities<T>::iterator VectorEntities<T>::findId(int id)
+template<class T> typename VectorPtr<T>::iterator VectorPtr<T>::findId(int id)
 {
     iterator i = begin();
     while(i != end() && (*i).id() != id)
@@ -172,30 +171,30 @@ template<class T> typename VectorEntities<T>::iterator VectorEntities<T>::findId
     return i;
 }
 
-template<class T> VectorEntities<T>::VectorEntities(const ListEntities<T> & liste)
+template<class T> VectorPtr<T>::VectorPtr(const ListPtr<T> & liste)
     : QVector<T*>(liste.size())
 {
     if(!liste.isEmpty())
     {
         typename QVector<T*>::iterator i = begin();
-        for(liste.begin(); liste.isNotEnd(); ++liste, ++i)
-            *i = new T(*liste.currentPtr());
+        for(typename QList<T*>::const_iterator j = liste.cbeginPtr(); j != liste.cendPtr(); ++i, ++j)
+            *i = new T(**j);
     }
 }
 
-template<class T> VectorEntities<T>::VectorEntities(ListEntities<T> && liste)
+template<class T> VectorPtr<T>::VectorPtr(ListPtr<T> && liste)
     : QVector<T*>(liste.size())
 {
     if(!liste.isEmpty())
     {
         typename QVector<T*>::iterator i = begin();
-        for(liste.begin(); liste.isNotEnd(); ++liste, ++i)
-            *i = liste.currentPtr();
+        for(typename QList<T*>::const_iterator j = liste.cbeginPtr(); j != liste.cendPtr(); ++i, ++j)
+            *i = *j;
     }
     liste.clearList();
 }
 
-template<class T> VectorEntities<T> & VectorEntities<T>::operator =(const ListEntities<T> & liste)
+template<class T> VectorPtr<T> & VectorPtr<T>::operator =(const ListPtr<T> & liste)
 {
     for(typename QVector<T*>::const_iterator i = cbegin(); i != cend(); ++i)
         delete *i;
@@ -204,13 +203,13 @@ template<class T> VectorEntities<T> & VectorEntities<T>::operator =(const ListEn
     {
         resize(liste.size());
         typename QVector<T*>::iterator i = begin();
-        for(liste.begin(); liste.isNotEnd(); ++liste, ++i)
-            *i = new T(*liste.currentPtr());
+        for(typename QList<T*>::const_iterator j = liste.cbeginPtr(); j != liste.cendPtr(); ++i, ++j)
+            *i = new T(**j);
     }
     return *this;
 }
 
-template<class T> VectorEntities<T> & VectorEntities<T>::operator =(ListEntities<T> && liste)
+template<class T> VectorPtr<T> & VectorPtr<T>::operator =(ListPtr<T> && liste)
 {
     for(typename QVector<T*>::const_iterator i = cbegin(); i != cend(); ++i)
         delete *i;
@@ -219,14 +218,14 @@ template<class T> VectorEntities<T> & VectorEntities<T>::operator =(ListEntities
     {
         resize(liste.size());
         typename QVector<T*>::iterator i = begin();
-        for(liste.begin(); liste.isNotEnd(); ++liste, ++i)
-            *i = liste.currentPtr();
+        for(typename QList<T*>::const_iterator j = liste.cbeginPtr(); j != liste.cendPtr(); ++i, ++j)
+            *i = *j;
     }
     liste.clearList();
     return *this;
 }
 
-template<class T> VectorEntities<T> & VectorEntities<T>::operator =(const VectorEntities<T> & vector)
+template<class T> VectorPtr<T> & VectorPtr<T>::operator =(const VectorPtr<T> & vector)
 {
     for(typename QVector<T*>::const_iterator i = cbegin(); i != cend(); ++i)
         delete *i;
@@ -241,7 +240,7 @@ template<class T> VectorEntities<T> & VectorEntities<T>::operator =(const Vector
     return *this;
 }
 
-template<class T> VectorEntities<T> & VectorEntities<T>::operator =(VectorEntities<T> && vector)
+template<class T> VectorPtr<T> & VectorPtr<T>::operator =(VectorPtr<T> && vector)
 {
     for(typename QVector<T*>::const_iterator i = cbegin(); i != cend(); ++i)
         delete *i;
@@ -259,31 +258,30 @@ template<class T> VectorEntities<T> & VectorEntities<T>::operator =(VectorEntiti
     return *this;
 }
 
-template<class T> VectorEntities<T> & VectorEntities<T>::operator << (const ListEntities<T> & liste)
+template<class T> VectorPtr<T> & VectorPtr<T>::operator << (const ListPtr<T> & liste)
 {
     if(!liste.isEmpty())
     {
         int n = size();
         resize(n + liste.size());
         typename QVector<T*>::iterator i = begin() + n;
-        for(liste.begin(); liste.isNotEnd(); ++liste, ++i)
-            *i = new T(*liste.currentPtr());
+        for(typename QList<T*>::const_iterator j = liste.cbeginPtr(); j != liste.cendPtr(); ++i, ++j)
+            *i = new T(**j);
     }
     return *this;
 }
 
-template<class T> VectorEntities<T> &VectorEntities<T>::operator <<(ListEntities<T> && liste)
+template<class T> VectorPtr<T> &VectorPtr<T>::operator <<(ListPtr<T> && liste)
 {
     if(!liste.isEmpty())
     {
         int n = size();
         resize(n + liste.size());
         typename QVector<T*>::iterator i = begin() + n;
-        for(liste.begin(); liste.isNotEnd(); ++liste, ++i)
-            *i = liste.currentPtr();
+        for(typename QList<T*>::const_iterator j = liste.cbeginPtr(); j != liste.cendPtr(); ++i, ++j)
+            *i = *j;
     }
     liste.clearList();
     return *this;
 }
-
-#endif // VECTORENTITIES_H
+#endif // VECTORPTR_H

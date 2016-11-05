@@ -7,6 +7,8 @@
 #include "UniqueSqlBase.h"
 #include "../Entities/Annee.h"
 #include "../Entities/Classe.h"
+#include "../Entities/Donnee.h"
+#include "../Entities/DonneeCard.h"
 #include "../Entities/Eleve.h"
 #include "../Entities/Groupe.h"
 
@@ -37,6 +39,23 @@ protected:
         bindValue(nomUnique,entity.nom());
     }};
 
+CONSTR_DESTR_UNIQUE_SQL(Donnee,SimpleUniqueSql)
+    enum {idProgUnique};
+protected:
+    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+    void bindValuesUnique(const Donnee &entity)
+        {bindValue(idProgUnique,entity.idProg());}};
+
+CONSTR_DESTR_UNIQUE_SQL(DonneeCard,SimpleUniqueSql)
+    enum {idDonneeUnique,surUnique};
+protected:
+    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+    void bindValuesUnique(const DonneeCard &entity)
+    {
+        bindValue(idDonneeUnique,entity.idDonnee());
+        bindValue(surUnique,entity.sur());
+    }};
+
 CONSTR_DESTR_UNIQUE_SQL(Eleve,NomUniqueSqlTemp)
     enum{naissanceUnique = NomUniqueSql::NbrUnique, prenomUnique};
 protected:
@@ -56,32 +75,4 @@ protected:
     {
         bindValue(nomUnique,entity.nom());
     }};
-
-    /*
-    UNIQUE_SQL(ClasseEleve,Relation)
-    UNIQUE_SQL(Commentaire,Texte)
-    UNIQUE_SQL(CommentaireClasse,DateRelation)
-    UNIQUE_SQL(CommentaireEleve,DateRelation)
-    UNIQUE_SQL(CommentaireGroupe,DateRelation)
-    UNIQUE_SQL(CoursArbre,NumParent)
-    UNIQUE_SQL(Donnee,No)
-    UNIQUE_SQL(DonneeArbre,NumParent)
-    UNIQUE_SQL(DonneeClasse,DateRelation)
-    UNIQUE_SQL(DonneeEleve,DateRelation)
-    UNIQUE_SQL(DonneeEtablissement,DateRelation)
-    UNIQUE_SQL(DonneeNiveau,DateRelation)
-    UNIQUE_SQL(DonneeSource,DateRelation)
-    UNIQUE_SQL(EnonceArbre,NumParent)
-    UNIQUE_SQL(Etablissement,Nom)
-    UNIQUE_SQL(EtablissementNiveau,Relation)
-    UNIQUE_SQL(EtablissementType,Relation)
-    UNIQUE_SQL(ExerciceArbre,NumParent)
-    UNIQUE_SQL(GroupeEleve,Relation)
-    UNIQUE_SQL(Niveau,Nom)
-    UNIQUE_SQL(NiveauPrecedent,Relation)
-    UNIQUE_SQL(Source,Nom)
-    UNIQUE_SQL(TypeNiveau,Nom)
-    UNIQUE_SQL(TypeEtablissement,Nom)
-    UNIQUE_SQL(VersionBdd,Num)
-    */
 #endif // UNIQUESQL

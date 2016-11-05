@@ -17,6 +17,14 @@ class Eleve : public NomEntity
     ATTRIBUT_ENTITY_DATE_VALIDE(Naissance,naissance)
     ATTRIBUT_ENTITY_STR_NOT_EMPTY(Prenom,prenom)
 public:
+    //! Positions des attributs.
+    enum Position {Id = NomEntity::Id,
+                   Nom = NomEntity::Nom,
+                   Fille = NomEntity::NbrAtt,
+                   Naissance,
+                   Prenom,
+                   NbrAtt};
+
     BASE_ENTITY(Eleve,InfoEntity::EleveId)
 
     //! Constructeur par defaut.

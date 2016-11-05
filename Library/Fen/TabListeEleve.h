@@ -9,6 +9,7 @@
 #include "FenPrincipale.h"
 #include "TabAbstractClasse.h"
 #include "TabAbstractTableau.h"
+#include "../Dialog/SelectDonneeDialog.h"
 #include "../Model/ListeEleveModel.h"
 #include "../Delegate/ListeEleveDelegate.h"
 
@@ -31,6 +32,8 @@ signals:
 public slots:
     //! Action à effectuer lorsque l'onglet devient actif.
     void becomeCurrent() const;
+    //! Ouvre l'abre des données sur les éléves puis ajoute la colonne correspondand à la donnée séléctionnée.
+    void addColumn();
 };
 
 #endif // TABLISTEELEVE_H

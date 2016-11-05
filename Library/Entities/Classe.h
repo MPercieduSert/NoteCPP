@@ -18,6 +18,15 @@ class Classe : public NomEntity
     ATTRIBUT_ENTITY_ID(Niv)
     ATTRIBUT_ENTITY_INT_SUP(Num,num,0)
 public:
+    //! Positions des attributs.
+    enum Position {Id = NomEntity::Id,
+                   Nom = NomEntity::Nom,
+                   IdAn = NomEntity::NbrAtt,
+                   IdEtab,
+                   IdNiv,
+                   Num,
+                   NbrAtt};
+
     using NomEntity::NomEntity;
     BASE_ENTITY(Classe,InfoEntity::ClasseId)
 

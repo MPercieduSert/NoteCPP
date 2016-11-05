@@ -15,6 +15,11 @@ class Annee : public Entity
 {
     ATTRIBUT_ENTITY_INT_SUP(An,an,1)
 public:
+    //! Positions des attributs.
+    enum Position {Id = Entity::Id,
+                   An = Entity::NbrAtt,
+                   NbrAtt};
+
     using Entity::Entity;
     BASE_ENTITY(Annee,InfoEntity::AnneeId)
 

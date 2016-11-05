@@ -12,7 +12,7 @@ TabMenu::TabMenu(int idAn, TabModule *parent)
         m_classeLayout->addWidget(label);
         m_mainLayout->addLayout(m_classeLayout);
     }
-    else if(m_bdd->get(m_annee))
+    else if(bdd()->get(m_annee))
     {
         classeLayout();
         m_newClasseButton = new QPushButton("Créer une classe");
@@ -30,7 +30,10 @@ TabMenu::TabMenu(int idAn, TabModule *parent)
 
 void TabMenu::becomeCurrent() const
 {
-    m_parent->parent()->setEnabledCopierColler(false);
+    emit noyau()->collerPermis(false);
+    emit noyau()->copierPermis(false);
+    emit noyau()->couperPermis(false);
+    emit noyau()->savePermis(false);
 }
 
 // %%%%% protected %%%%%%
@@ -49,14 +52,14 @@ void TabMenu::classeLayout()
     m_classeLayout = new QHBoxLayout();
     m_classeMapper = new QSignalMapper(this);
 
-    VectorEntities<Classe> listeClasse(m_bdd->getList<Classe>(Classe::idAnPos, QVariant(m_annee.id()),
-                                                              Classe::idEtabPos,
-                                                              Classe::idNivPos,
-                                                              Classe::numPos));
+    VectorPtr<Classe> listeClasse(bdd()->getList<Classe>(Classe::IdAn, m_annee.id(),
+                                                              Classe::IdEtab,
+                                                              Classe::IdNiv,
+                                                              Classe::Num));
 
     if(!listeClasse.isEmpty())
     {   
-        VectorEntities<Classe>::iterator it = listeClasse.begin();
+        VectorPtr<Classe>::iterator it = listeClasse.begin();
 
         int idEtab = 0;
         int idNiv;
@@ -71,7 +74,7 @@ void TabMenu::classeLayout()
                     etabLayout->setRowStretch(etabLayout->rowCount(),1);
                 etabLayout = new QGridLayout();
                 Etablissement etab((*it).idEtab());
-                m_bdd->get(etab);
+                bdd()->get(etab);
                 QGroupBox *groupeBox = new QGroupBox(etab.nom());
                 m_listeGroupeEtab.append(groupeBox);
                 groupeBox->setLayout(etabLayout);
@@ -106,6 +109,6 @@ void TabMenu::classeLayout()
 //public slots:
 void TabMenu::creerClasse()
 {
-    m_parent->parent()->creerClasse();
+    noyau()->creerClasse(this);
     classeLayout();
 }

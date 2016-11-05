@@ -16,6 +16,13 @@ class TypeEtablissement : public NomEntity
     ATTRIBUT_ENTITY_INT_INF(Max,max,15)
     ATTRIBUT_ENTITY_INT_SUP(Min,min,-18)
 public:
+    //! Positions des attributs.
+    enum Position {Id = NomEntity::Id,
+                   Nom = NomEntity::Nom,
+                   Max = NomEntity::NbrAtt,
+                   Min,
+                   NbrAtt};
+
     using NomEntity::NomEntity;
     BASE_ENTITY(TypeEtablissement,InfoEntity::TypeEtablissementId)
 

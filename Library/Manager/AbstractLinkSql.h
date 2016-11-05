@@ -29,23 +29,23 @@
 //! \ingroup groupeLinkSqlBase
 //! Macro définisant les attributs des liens de type différent de QVariant.
 #define ATTRIBUT_LINK(ENT,NOM,nom,TYPE) /*! \brief Accesseur. */ \
-    TYPE nom (int pos = ENT::nom ## Pos) const {return value<TYPE>(pos);} \
+    TYPE nom (int pos = ENT::NOM) const {return value<TYPE>(pos);} \
     /*! \brief Mutateurs. */ \
-    void set ## NOM (const ENT & entity,int pos = ENT::nom ## Pos-1) {bindValue(pos,entity.nom());}
+    void set ## NOM (const ENT & entity,int pos = ENT::NOM-1) {bindValue(pos,entity.nom());}
 
 //! \ingroup groupeLinkSqlBase
 //! Macro définisant les attributs des liens de type diférent de QVariant.
 #define ATTRIBUT_LINK_NULL_TO_ZERO(ENT,NOM,nom,TYPE) /*! \brief Accesseur. */ \
-    TYPE nom (int pos = ENT::nom ## Pos) const {return value<TYPE>(pos);} \
+    TYPE nom (int pos = ENT::NOM) const {return value<TYPE>(pos);} \
     /*! \brief Mutateurs. */ \
-    void set ## NOM (const ENT & entity,int pos = ENT::nom ## Pos-1) {bindValue(pos,zeroToNull(entity.nom()));}
+    void set ## NOM (const ENT & entity,int pos = ENT::NOM-1) {bindValue(pos,zeroToNull(entity.nom()));}
 
 //! \ingroup groupeLinkSqlBase
 //! Macro définisant les attributs des liens de type QVariant.
 #define ATTRIBUT_QVARIANT_LINK(ENT,NOM,nom) /*! \brief Accesseur. */ \
-    QVariant nom (int pos = ENT::nom ## Pos) const {return m_requete->value(pos);} \
+    QVariant nom (ENT::Position pos = ENT::NOM) const {return m_requete->value(pos);} \
     /*! \brief Mutateurs. */ \
-    void set ## NOM (const ENT & entity,int pos = ENT::nom ## Pos-1) {m_requete->bindValue(pos,entity.nom());}
+    void set ## NOM (const ENT & entity,int pos = ENT::NOM-1) {m_requete->bindValue(pos,entity.nom());}
 
 // Membre
 
@@ -311,8 +311,8 @@ public:
           m_attSql(m_nbrAtt),
           m_table(table)
     {
-        m_attSql[Entity::idPos] = QString("ID");
-        m_attSql[Entity::idPos].squeeze();
+        m_attSql[Entity::Id] = QString("ID");
+        m_attSql[Entity::Id].squeeze();
         for(QMap<int,QString>::const_iterator i = att.cbegin(); i != att.cend(); ++i)
         {
             if(i.key() <= 0 || i.key() >= m_nbrAtt)
@@ -356,7 +356,7 @@ public:
 
 protected:
     //! Accesseur de l'identifiant.
-    int id(int pos = Entity::idPos) const
+    int id(int pos = Entity::Id) const
         {return value<int>(pos);}  
 };
 

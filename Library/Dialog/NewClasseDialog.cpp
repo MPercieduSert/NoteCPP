@@ -1,6 +1,6 @@
 #include "NewClasseDialog.h"
 
-NewClasseDialog::NewClasseDialog(const Annee &annee, VectorEntities<Etablissement> etabs, VectorEntities<EtablissementNiveau> etabNiveaux, VectorEntities<Niveau> niveaux,  VectorEntities<Classe> classes, QWidget *parent)
+NewClasseDialog::NewClasseDialog(const Annee &annee, VectorPtr<Etablissement> etabs, VectorPtr<EtablissementNiveau> etabNiveaux, VectorPtr<Niveau> niveaux,  VectorPtr<Classe> classes, QWidget *parent)
     : QDialog(parent),
       m_annee(annee),
       m_classes(classes),
@@ -14,7 +14,7 @@ NewClasseDialog::NewClasseDialog(const Annee &annee, VectorEntities<Etablissemen
 
     // Choix etablissement
     m_etabComboBox = new QComboBox();
-    for(VectorEntities<Etablissement>::iterator i = m_etabs.begin(); i != m_etabs.end(); ++i)
+    for(VectorPtr<Etablissement>::iterator i = m_etabs.begin(); i != m_etabs.end(); ++i)
     {
         m_etabComboBox->addItem((*i).nom(),QVariant((*i).id()));
     }
@@ -112,8 +112,8 @@ void NewClasseDialog::etabChange(int n)
 {
     m_niveauComboBox->clear();
     int idEtab = m_etabComboBox->itemData(n).toInt();
-    VectorEntities<Niveau>::iterator j;
-    for(VectorEntities<EtablissementNiveau>::iterator i = m_etabNiveaux.begin(); i != m_etabNiveaux.end(); ++i)
+    VectorPtr<Niveau>::iterator j;
+    for(VectorPtr<EtablissementNiveau>::iterator i = m_etabNiveaux.begin(); i != m_etabNiveaux.end(); ++i)
     {
         if((*i).idEtab() == idEtab)
         {
@@ -130,7 +130,7 @@ void NewClasseDialog::nameUpdate(int num)
 {
     if(num > 0 && m_niveauComboBox->currentData().isValid())
     {
-        VectorEntities<Niveau>::iterator j = m_niveaux.findId(m_niveauComboBox->currentData().toInt());
+        VectorPtr<Niveau>::iterator j = m_niveaux.findId(m_niveauComboBox->currentData().toInt());
         if(j != m_niveaux.end())
             m_nameLine->setText((*j).nc()+QString("-")+QString::number(num));
     }
@@ -148,7 +148,7 @@ void NewClasseDialog::niveauChange(int n)
     {
         int etab = m_etabComboBox->currentData().toInt();
         int niv = m_niveauComboBox->itemData(n).toInt();
-        for(VectorEntities<Classe>::iterator i = m_classes.begin(); i != m_classes.end(); ++i)
+        for(VectorPtr<Classe>::iterator i = m_classes.begin(); i != m_classes.end(); ++i)
         {
             if((*i).idNiv() == niv && (*i).idEtab() == etab)
             {

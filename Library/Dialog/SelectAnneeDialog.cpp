@@ -1,6 +1,6 @@
 #include "SelectAnneeDialog.h"
 
-SelectAnneeDialog::SelectAnneeDialog(const VectorEntities<Annee> &listeAnnee, QWidget *parent, int idDefault, bool AnnuleButton, bool creerAnnee) : QDialog(parent)
+SelectAnneeDialog::SelectAnneeDialog(const VectorPtr<Annee> &listeAnnee, QWidget *parent, int idDefault, bool AnnuleButton, bool creerAnnee) : QDialog(parent)
 {
     m_label = new QLabel();
     m_creerBouton = new QPushButton(tr("Créer une nouvelle année"));
@@ -28,7 +28,7 @@ SelectAnneeDialog::SelectAnneeDialog(const VectorEntities<Annee> &listeAnnee, QW
 
         int index = 0;
         int indexDefault = -1;
-        for(VectorEntities<Annee>::iterator i = listeAnnee.cbegin(); i != listeAnnee.cend(); ++i, ++index)
+        for(VectorPtr<Annee>::iterator i = listeAnnee.cbegin(); i != listeAnnee.cend(); ++i, ++index)
         {
             m_listBox->addItem((*i).affiche(),QVariant((*i).id()));
             if((*i).id() == idDefault)

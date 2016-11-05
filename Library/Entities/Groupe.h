@@ -17,6 +17,15 @@ class Groupe : public RelationExactOneNotNullEntity
     ATTRIBUT_ENTITY_STR_NOT_EMPTY(Nom,nom)
     ATTRIBUT_ENTITY_INT_SUP(Type,type,0)
 public:
+    //! Positions des attributs.
+    enum Position {Id = RelationExactOneNotNullEntity::Id,
+                   IdAn = RelationExactOneNotNullEntity::Id1,
+                   IdCl = RelationExactOneNotNullEntity::Id2,
+                   Alpha = RelationExactOneNotNullEntity::NbrAtt,
+                   Nom,
+                   Type,
+                   NbrAtt};
+
     enum grPour {GrAnnee = 0,
                  GrClasse =1};
 

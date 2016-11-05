@@ -29,14 +29,16 @@ SOURCES += \
     NewAnneeDialog.cpp \
     NewClasseDialog.cpp \
     NewEtablissementDialog.cpp \
-    SelectAnneeDialog.cpp
+    SelectAnneeDialog.cpp \
+    SelectDonneeDialog.cpp
 
 
 HEADERS += \ 
     NewAnneeDialog.h \
     NewEtablissementDialog.h \
     NewClasseDialog.h \
-    SelectAnneeDialog.h
+    SelectAnneeDialog.h \
+    SelectDonneeDialog.h
 
 
 unix {

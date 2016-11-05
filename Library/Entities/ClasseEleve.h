@@ -17,6 +17,14 @@ class ClasseEleve : public RelationEntity
     ATTRIBUT_ENTITY_DATE_NULL(Entree,entree)
     ATTRIBUT_ENTITY_DATE_NULL(Sortie,sortie)
 public:
+    //! Positions des attributs.
+    enum Position {Id = RelationEntity::Id,
+                   IdCl = RelationEntity::Id1,
+                   IdEl = RelationEntity::Id2,
+                   Entree = RelationEntity::NbrAtt,
+                   Sortie,
+                   NbrAtt};
+
     using RelationEntity::RelationEntity;
     BASE_ENTITY(ClasseEleve,InfoEntity::ClasseEleveId)
     RELATION_ALIAS_2_CLE(Cl,El,ClasseEleve)

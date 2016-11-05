@@ -1,44 +1,23 @@
 #include "TabModule.h"
-#include "FenPrincipale.h"
 #include "TabAbstractModule.h"
 #include "TabClasse.h"
 #include "TabListeEleve.h"
 #include "TabListeGroupe.h"
 #include "TabMenu.h"
 
-TabModule::TabModule(FenPrincipale *parent): QTabWidget(parent), m_parent(parent)
+TabModule::TabModule(QWidget *parent, Noyau *noyau): QTabWidget(parent), m_noyau(noyau)
 {
-    TabMenu * tabMenu = new TabMenu(parent->annee().id(),this);
-    m_listeTab[MenuTab].insert(parent->annee().id(),tabMenu);
-    addTab(tabMenu, parent->annee().affiche());
+    TabMenu * tabMenu = new TabMenu(noyau->annee().id(),this);
+    m_listeTab[MenuTab].insert(noyau->annee().id(),tabMenu);
+    addTab(tabMenu, noyau->annee().affiche());
     connect(this,&TabModule::currentChanged,this,&TabModule::currentIndexChanged);
 }
-/*
-void TabModule::coller()
-{
-    static_cast<TabAbstractModule *>(currentWidget())->coller();
-}
 
-void TabModule::copier()
-{
-    static_cast<TabAbstractModule *> (currentWidget())->copier();
-}
-
-void TabModule::creerClasse()
-{
-    m_parent->creerClasse();
-}
-*/
 void TabModule::currentIndexChanged()
 {
     static_cast<TabAbstractModule *>(currentWidget())->becomeCurrent();
 }
-/*
-void TabModule::effacer()
-{
-    static_cast<TabAbstractModule *> (currentWidget())->effacer();
-}
-*/
+
 void TabModule::newOngletClasse(int idClasse)
 {
     if(m_listeTab[ClasseTab].contains(idClasse))
@@ -87,9 +66,4 @@ void TabModule::openListeGroupe(int idClasse)
         m_listeTab[GroupeTab].insert(idClasse, tabListeGroupe );
         setCurrentIndex(addTab(tabListeGroupe , parent()->bdd()->afficheClasse(idClasse)+" - Groupes"));
     }
-}*/
-/*
-void TabModule::sauvegarder() const
-{
-    static_cast<TabAbstractModule *>(currentWidget())->sauvegarder();
 }*/

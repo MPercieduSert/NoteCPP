@@ -13,7 +13,7 @@
 #include "../Div/Bdd.h"
 #include "../Entities/Classe.h"
 #include "../Entities/Eleve.h"
-#include "../Entities/VectorEntities.h"
+#include "../Div/VectorPtr.h"
 
 /*! \ingroup groupeModel
  * \brief Model de la liste des éléves.
@@ -29,20 +29,19 @@ public:
                     abandonIndex = 4};
 
 protected:
-    Bdd & m_bdd;                //!< Lien avec la base de donnée.
+    Bdd * m_bdd;                //!< Lien avec la base de donnée.
     Classe m_classe;            //!< Classe associé à la liste.
-    VectorEntities<Eleve> m_data;      //!< Vecteur des éléves présent dans la classe.
+    VectorPtr<Eleve> m_data;      //!< Vecteur des éléves présent dans la classe.
     QStringList m_header;       //!< Entêtes des colonnes.
 
 public:
     //! Constructeur.
-    ListeEleveModel(Bdd & bdd, const Classe &classe, QObject * parent = 0);
+    ListeEleveModel(Bdd * bdd, const Classe &classe, QObject * parent = 0);
     //! Destructeur.
     ~ListeEleveModel();
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role) const;
-
     Qt::ItemFlags flags(const QModelIndex &index) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     bool insertRows(int position, int rows, const QModelIndex &index = QModelIndex());
@@ -52,7 +51,7 @@ public:
     bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
 
 protected:
-    void dataFromBdd();
+    void dataFromBdd();    
 };
 
 #endif // LISTEELEVEMODEL_H

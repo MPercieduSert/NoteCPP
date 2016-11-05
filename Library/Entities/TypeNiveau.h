@@ -15,6 +15,12 @@ class TypeNiveau : public NomEntity
 {
     ATTRIBUT_ENTITY_INT_SUP(AnBac,anBac,-18)
 public:
+    //! Positions des attributs.
+    enum Position {Id = NomEntity::Id,
+                   Nom = NomEntity::Nom,
+                   AnBac = NomEntity::NbrAtt,
+                   NbrAtt};
+
     using NomEntity::NomEntity;
     BASE_ENTITY(TypeNiveau,InfoEntity::TypeNiveauId)
 

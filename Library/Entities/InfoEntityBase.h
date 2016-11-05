@@ -15,7 +15,7 @@
 namespace InfoEntity
 {
 //! Liste des identifiants des types d'entités.
-enum entityBaseId{entityId,
+enum entityBaseId{entityId = -15,
                    ArbreId,
                    DateTimeRelationEntityId,
                    DateTimeNumEntityId,

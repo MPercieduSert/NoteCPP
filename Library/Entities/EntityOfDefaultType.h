@@ -4,18 +4,10 @@
 #ifndef ENTITYOFDEFAULTTYPE_H
 #define ENTITYOFDEFAULTTYPE_H
 
-#include "Arbre.h"
 #include "EntityDivers.h"
 #include "EntityNom.h"
 #include "EntityRelation.h"
 #include "InfoEntity.h"
-
-// Arbre
-ENTITY_OF_TYPE(AttributArbre,Arbre,InfoEntity::AttributArbreId)
-ENTITY_OF_TYPE(CoursArbre,Arbre,InfoEntity::CoursArbreId)
-ENTITY_OF_TYPE(DonneeArbre,Arbre,InfoEntity::DonneeArbreId)
-ENTITY_OF_TYPE(EnonceArbre,Arbre,InfoEntity::EnonceArbreId)
-ENTITY_OF_TYPE(ExerciceArbre,Arbre,InfoEntity::ExerciceArbreId)
 
 // Nc et Nom
 ENTITY_OF_TYPE(Etablissement,NcNomEntity,InfoEntity::EtablissementId)

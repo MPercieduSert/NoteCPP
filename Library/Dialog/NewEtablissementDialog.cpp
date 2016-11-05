@@ -1,6 +1,6 @@
 #include "NewEtablissementDialog.h"
 
-NewEtablissementDialog::NewEtablissementDialog(const VectorEntities<TypeEtablissement> & vectTpEtab, const VectorEntities<Niveau> & vectNiveau,  const QString &nc, const QString &nom, QWidget *parent)
+NewEtablissementDialog::NewEtablissementDialog(const VectorPtr<TypeEtablissement> & vectTpEtab, const VectorPtr<Niveau> & vectNiveau,  const QString &nc, const QString &nom, QWidget *parent)
     : QDialog(parent),
       m_vectTpEtab(vectTpEtab),
       m_vectNiveau(vectNiveau)
@@ -38,7 +38,7 @@ NewEtablissementDialog::NewEtablissementDialog(const VectorEntities<TypeEtabliss
     m_layoutChoixType = new QGridLayout();
     m_signalChoixType = new QSignalMapper(this);
     int j = 0;
-    for(VectorEntities<TypeEtablissement>::iterator i = m_vectTpEtab.begin(); i != m_vectTpEtab.end(); ++i, ++j)
+    for(VectorPtr<TypeEtablissement>::iterator i = m_vectTpEtab.begin(); i != m_vectTpEtab.end(); ++i, ++j)
     {
        QCheckBox *box = new QCheckBox((*i).nom());
        connect(box, SIGNAL(stateChanged(int)), m_signalChoixType, SLOT(map()));
@@ -64,7 +64,7 @@ void NewEtablissementDialog::boxCheckChange(int n)
 {
     if(static_cast<QCheckBox *>(m_signalChoixType->mapping(n))->isChecked())
     {
-        for(VectorEntities<Niveau>::iterator i = m_vectNiveau.begin(); i != m_vectNiveau.end(); ++i)
+        for(VectorPtr<Niveau>::iterator i = m_vectNiveau.begin(); i != m_vectNiveau.end(); ++i)
         {
             if((*i).idTpEtab() == n)
                 m_selectListeClasse->append((*i).id(),(*i).nom(),false);
@@ -72,7 +72,7 @@ void NewEtablissementDialog::boxCheckChange(int n)
     }
     else
     {
-        for(VectorEntities<Niveau>::iterator i = m_vectNiveau.begin(); i != m_vectNiveau.end(); ++i)
+        for(VectorPtr<Niveau>::iterator i = m_vectNiveau.begin(); i != m_vectNiveau.end(); ++i)
         {
             if((*i).idTpEtab() == n)
                 m_selectListeClasse->remove((*i).id(),(*i).nom());
@@ -85,7 +85,7 @@ NewEtablissementDialog::dialogResult NewEtablissementDialog::value() const
      NewEtablissementDialog::dialogResult result;
      result.etab = Etablissement(m_lineNc->text(),m_lineNom->text());
      result.niveaux = m_selectListeClasse->value().second;
-     for(VectorEntities<TypeEtablissement>::iterator i = m_vectTpEtab.begin(); i != m_vectTpEtab.end(); ++i)
+     for(VectorPtr<TypeEtablissement>::iterator i = m_vectTpEtab.begin(); i != m_vectTpEtab.end(); ++i)
      {
          if(static_cast<QCheckBox *>(m_signalChoixType->mapping((*i).id()))->isChecked())
             result.types.append((*i).id());

@@ -28,13 +28,14 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Entities/libEntities.a
 HEADERS += \
     AbstractLinkSql.h \
     AbstractUniqueSql.h \
-    ArbreManager.h \
     InfoBdd.h \
     InfoBddBase.h \
     LinkSql.h \
     LinkSqlBase.h \
     Manager.h \
+    ManagerArbre.h \
     ManagerOf.h \
+    ManagerOfArbre.h \
     ManagerSql.h \
     ReqSql.h \
     UniqueSql.h \
@@ -44,13 +45,14 @@ HEADERS += \
 SOURCES += \
     AbstractLinkSql.cpp \
     AbstractUniqueSql.cpp \
-    ArbreManager.cpp \
     InfoBdd.cpp \
     InfoBddBase.cpp \
     LinkSql.cpp \
     LinkSqlBase.cpp \
     Manager.cpp \
+    ManagerArbre.cpp \
     ManagerOf.cpp \
+    ManagerOfArbre.cpp \
     ManagerSql.cpp \
     ReqSql.cpp \
     UniqueSql.cpp \

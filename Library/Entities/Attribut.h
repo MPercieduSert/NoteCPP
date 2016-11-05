@@ -20,6 +20,17 @@ class Attribut : public NomEntity
     ATTRIBUT_ENTITY_BOOL(PrExercice,prExercice)
     ATTRIBUT_ENTITY_STR_NOT_EMPTY(Nc,nc)
 public:
+    //! Positions des attributs.
+    enum Position {Id = NomEntity::Id,
+                   Nom = NomEntity::Nom,
+                   Nc = NomEntity::NbrAtt,
+                   PrBareme,
+                   PrCommentaire,
+                   PrCorrection,
+                   PrCours,
+                   PrExercice,
+                   NbrAtt};
+
     using NomEntity::NomEntity;
     BASE_ENTITY(Attribut,InfoEntity::AttributId)
 

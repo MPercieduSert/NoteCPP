@@ -186,7 +186,7 @@ protected:
     void bindValuesUnique(const Ent &entity)
     {
         RelationUniqueSqlTemp<Ent>::bindValuesUnique(entity);
-        bindValue(dateUnique,entity.date());
+        bindValue(dateUnique,entity.dateTime());
     }
 };
 

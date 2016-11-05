@@ -41,7 +41,7 @@ public:
 protected:
     QSqlQuery m_requete;                            //! Requéte commune aux manageurs.
     AbstractManagerSql * m_managers[NbrEntity];     //! Tableau des manageurs.
-    VersionBddManager m_managerVersion;         //! Manager de l'entité version de la base de bonnée.
+    VersionBddManager m_managerVersion;             //! Manager de l'entité version de la base de bonnée.
 
 public:
     //! Constructeur.

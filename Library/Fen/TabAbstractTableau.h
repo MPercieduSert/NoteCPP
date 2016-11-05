@@ -4,7 +4,6 @@
 #ifndef TABABSTRACTTABLEAU_H
 #define TABABSTRACTTABLEAU_H
 
-
 #include <QStyledItemDelegate>
 #include <QTableView>
 
@@ -18,6 +17,7 @@ class TabAbstractTableau : public TabAbstractModule
 {
     Q_OBJECT
 protected:
+    QPushButton * m_addColumnButton;        //!< Bouton pour ajouter une colonne
     QStyledItemDelegate * m_delegate;       //!< Déleguer
     MAbstractTableModel * m_model;          //!< Model
     QTableView * m_view;                    //!< Vue
@@ -33,13 +33,15 @@ signals:
 
 public slots:
     //! Slot coorepondant à l'action coller.
-    virtual void coller()   {}
+    void coller();
     //! Slot coorepondant à l'action copier.
-    virtual void copier()   {}
+    void copier();
+    //! Slot coorepondant à l'action copier.
+    void couper();
     //! Slot coorepondant à l'action effacer.
-    virtual void effacer()   {}
+    void effacer();
     //! Slot coorepondant à l'action sauver.
-    virtual void sauvegarder()   {m_model->save();}
+    void save()   {m_model->save();}
 };
 
 #endif // TABABSTRACTTABLEAU_H

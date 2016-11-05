@@ -48,7 +48,8 @@
 /*! \ingroup groupeMacroEntity
  * \brief Macro définissant les menbre static d'une entité.
  */
-#define MEMBRE_STATIC(ENTITY,IDM) enum {ID = IDM}; \
+#define MEMBRE_STATIC(ENTITY,IDM) /*! \brief Identifiant de l'entité.*/ \
+    enum identifiant {ID = IDM}; \
     /*! \brief Renvoie le nom de l'entité.*/ \
     QString name() const {return Name();} \
     /*! \brief Renvoie le nom de l'entité.*/ \
@@ -79,7 +80,10 @@
 /*! \ingroup groupeMacroEntity
  * \brief Macro définissant les opérateur virtuel des entity.
  */
-#define MEMBRE_VIRTUEL(ENTITY) /*! \brief Renvoie l'identifiant du type de l'entité.*/ \
+#define MEMBRE_VIRTUEL(ENTITY) /*! \brief Retourne un QVariant contenant la donnée souhaitée ou un QVariant nulle si num est invalide.*/ \
+    QVariant data(int num) const \
+    {return num < ENTITY::NbrAtt ? dataP(num) : QVariant();} \
+    /*! \brief Renvoie l'identifiant du type de l'entité.*/ \
     int idEntity() const {return ID;} \
     /*! \brief Test d'égalité entre une entité et une référence Entity sur une entité de même type que la première, c'est-à-dire l'égalité de tous les attributs. */ \
     /*! \brief Renvoie le nombre d'attribut de l'entité.*/ \
@@ -121,30 +125,39 @@
 
 //! \ingroup groupeMacroEntity
 //! Macro implémentant les membres types d'une entité ayant un attribut de plus que la classe mère.
-#define MEMBRE_ATT_1(ENTITY,MERE,NOM,nom) enum {nom ## Pos = MERE::NbrAtt,NbrAtt}; \
-    /*! Teste si l'entité est valide.*/ \
+#define MEMBRE_ATT_1(ENTITY,MERE,NOM,nom) /*! \brief Teste si l'entité est valide.*/ \
     bool isValid() const {return MERE::isValid() && m_ ## nom.isValid();} \
-    /*! Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
+    /*! \brief Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
     QString toString() const {return MERE::toString()TO_STRING_ENTITY(nom);} \
-    /*! Test d'égalité entre cette entité et celle transmise en argument.*/ \
+    /*! \brief Test d'égalité entre cette entité et celle transmise en argument.*/ \
     bool operator ==(const ENTITY & entity) const {return MERE::operator ==(entity) && m_ ## nom == entity.nom();} \
     protected: \
-    /*! Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
+    /*! \brief Retourne un QVariant contenant la donnée souhaitée, pos doit être valide.*/ \
+    QVariant dataP(int pos) const \
+    {return pos < MERE::NbrAtt ? MERE::dataP(pos): nom();};  \
+    /*! \brief Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
     void set(const ENTITY & entity){ \
         MERE::set(entity); \
         set ## NOM(entity.nom());}
 
 //! \ingroup groupeMacroEntity
 //! Macro implémentant les membres types d'une entité ayant deux attributs de plus que la classe mère.
-#define MEMBRE_ATT_2(ENTITY,MERE,NOM1,nom1,NOM2,nom2) enum {nom1 ## Pos = MERE::NbrAtt,nom2 ## Pos,NbrAtt}; \
-    /*! Teste si l'entité est valide.*/ \
+#define MEMBRE_ATT_2(ENTITY,MERE,NOM1,nom1,NOM2,nom2) /*! \brief Teste si l'entité est valide.*/ \
     bool isValid() const {return MERE::isValid() && m_ ## nom1.isValid() && m_ ## nom2.isValid();} \
-    /*! Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
+    /*! \brief Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
     QString toString() const {return MERE::toString()TO_STRING_ENTITY(nom1)TO_STRING_ENTITY(nom2);} \
-    /*! Test d'égalité entre cette entité et celle transmise en argument.*/ \
+    /*! \brief Test d'égalité entre cette entité et celle transmise en argument.*/ \
     bool operator ==(const ENTITY & entity) const {return MERE::operator ==(entity) && m_ ## nom1 == entity.nom1() && m_ ## nom2 == entity.nom2();} \
     protected: \
-    /*! Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
+    /*! \brief Retourne un QVariant contenant la donnée souhaitée, pos doit être valide.*/ \
+    QVariant dataP(int pos) const { \
+    if(pos < MERE::NbrAtt) \
+        return MERE::dataP(pos); \
+    else if(pos == MERE::NbrAtt) \
+        return nom1(); \
+    else \
+        return nom2();} \
+    /*! \brief Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
     void set(const ENTITY & entity){ \
         MERE::set(entity); \
         set ## NOM1(entity.nom1()); \
@@ -152,16 +165,25 @@
 
 //! \ingroup groupeMacroEntity
 //! Macro implémentant les membres types d'une entité ayant trois attributs de plus que la classe mère.
-#define MEMBRE_ATT_3(ENTITY,MERE,NOM1,nom1,NOM2,nom2,NOM3,nom3) enum {nom1 ## Pos = MERE::NbrAtt,nom2 ## Pos,nom3 ## Pos,NbrAtt}; \
-    /*! Teste si l'entité est valide.*/ \
+#define MEMBRE_ATT_3(ENTITY,MERE,NOM1,nom1,NOM2,nom2,NOM3,nom3) /*! \brief Teste si l'entité est valide.*/ \
     bool isValid() const {return MERE::isValid() && m_ ## nom1.isValid() && m_ ## nom2.isValid() && m_ ## nom3.isValid();} \
-    /*! Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
+    /*! \brief Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
     QString toString() const {return MERE::toString()TO_STRING_ENTITY(nom1)TO_STRING_ENTITY(nom2)TO_STRING_ENTITY(nom3);} \
-    /*! Test d'égalité entre cette entité et celle transmise en argument.*/ \
+    /*! \brief Test d'égalité entre cette entité et celle transmise en argument.*/ \
     bool operator ==(const ENTITY & entity) const \
     {return MERE::operator ==(entity) && m_ ## nom1 == entity.nom1() && m_ ## nom2 == entity.nom2() && m_ ## nom3 == entity.nom3();} \
     protected: \
-    /*! Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
+    /*! \brief Retourne un QVariant contenant la donnée souhaitée, pos doit être valide.*/ \
+    QVariant dataP(int pos) const { \
+    if(pos < MERE::NbrAtt) \
+        return MERE::dataP(pos); \
+    else if(pos == MERE::NbrAtt) \
+        return nom1(); \
+    else if(pos == MERE::NbrAtt + 1) \
+        return nom2(); \
+    else \
+        return nom3();}\
+    /*! \brief Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
     void set(const ENTITY & entity){ \
         MERE::set(entity); \
         set ## NOM1(entity.nom1()); \
@@ -170,20 +192,32 @@
 
 //! \ingroup groupeMacroEntity
 //! Macro implémentant les membres types d'une entité ayant quatre attributs de plus que la classe mère.
-#define MEMBRE_ATT_4(ENTITY,MERE,NOM1,nom1,NOM2,nom2,NOM3,nom3,NOM4,nom4) \
-    enum {nom1 ## Pos = MERE::NbrAtt,nom2 ## Pos,nom3 ## Pos,nom4 ## Pos,NbrAtt}; \
-    /*! Teste si l'entité est valide.*/ \
+#define MEMBRE_ATT_4(ENTITY,MERE,NOM1,nom1,NOM2,nom2,NOM3,nom3,NOM4,nom4) /*! \brief Teste si l'entité est valide.*/ \
     bool isValid() const \
     {return MERE::isValid() && m_ ## nom1.isValid() && m_ ## nom2.isValid() && m_ ## nom3.isValid() && m_ ## nom4.isValid();} \
-    /*! Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
+    /*! \brief Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
     QString toString() const \
     {return MERE::toString()TO_STRING_ENTITY(nom1)TO_STRING_ENTITY(nom2)TO_STRING_ENTITY(nom3)TO_STRING_ENTITY(nom4);} \
-    /*! Test d'égalité entre cette entité et celle transmise en argument.*/ \
+    /*! \brief Test d'égalité entre cette entité et celle transmise en argument.*/ \
     bool operator ==(const ENTITY & entity) const \
     {return MERE::operator ==(entity) && m_ ## nom1 == entity.nom1() && m_ ## nom2 == entity.nom2() && m_ ## nom3 == entity.nom3() \
         && m_ ## nom4 == entity.nom4();} \
     protected: \
-    /*! Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
+    /*! \brief Retourne un QVariant contenant la donnée souhaitée, pos doit être valide.*/ \
+    QVariant dataP(int pos) const { \
+    if(pos < MERE::NbrAtt) \
+        return MERE::dataP(pos); \
+    else if(pos < MERE::NbrAtt + 2){ \
+        if(pos == MERE::NbrAtt) \
+            return nom1(); \
+        else \
+            return nom2();} \
+    else { \
+        if(pos == MERE::NbrAtt + 2) \
+            return nom3(); \
+        else \
+            return nom4();}}\
+    /*! \brief Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
     void set(const ENTITY & entity){ \
         MERE::set(entity); \
         set ## NOM1(entity.nom1()); \
@@ -193,20 +227,34 @@
 
 //! \ingroup groupeMacroEntity
 //! Macro implémentant les membres types d'une entité ayant cinq attributs de plus que la classe mère.
-#define MEMBRE_ATT_5(ENTITY,MERE,NOM1,nom1,NOM2,nom2,NOM3,nom3,NOM4,nom4,NOM5,nom5) \
-    enum {nom1 ## Pos = MERE::NbrAtt,nom2 ## Pos,nom3 ## Pos,nom4 ## Pos,nom5 ## Pos,NbrAtt}; \
-    /*! Teste si l'entité est valide.*/ \
+#define MEMBRE_ATT_5(ENTITY,MERE,NOM1,nom1,NOM2,nom2,NOM3,nom3,NOM4,nom4,NOM5,nom5) /*! \brief Teste si l'entité est valide.*/ \
     bool isValid() const \
     {return MERE::isValid() && m_ ## nom1.isValid() && m_ ## nom2.isValid() && m_ ## nom3.isValid() && m_ ## nom4.isValid() && m_ ## nom5.isValid();} \
-    /*! Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
+    /*! \brief Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
     QString toString() const \
     {return MERE::toString()TO_STRING_ENTITY(nom1)TO_STRING_ENTITY(nom2)TO_STRING_ENTITY(nom3)TO_STRING_ENTITY(nom4)TO_STRING_ENTITY(nom5);} \
-    /*! Test d'égalité entre cette entité et celle transmise en argument.*/ \
+    /*! \brief Test d'égalité entre cette entité et celle transmise en argument.*/ \
     bool operator ==(const ENTITY & entity) const \
     {return MERE::operator ==(entity) && m_ ## nom1 == entity.nom1() && m_ ## nom2 == entity.nom2() && m_ ## nom3 == entity.nom3() \
         && m_ ## nom4 == entity.nom4() && m_ ## nom5 == entity.nom5();} \
     protected: \
-    /*! Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
+    /*! \brief Retourne un QVariant contenant la donnée souhaitée, pos doit être valide.*/ \
+    QVariant dataP(int pos) const { \
+    if(pos < MERE::NbrAtt) \
+        return MERE::dataP(pos); \
+    else  if(pos == MERE::NbrAtt) \
+        return nom1(); \
+    else if(pos < MERE::NbrAtt + 3){ \
+        if(pos == MERE::NbrAtt + 1) \
+            return nom2(); \
+        else \
+            return nom3();} \
+    else { \
+        if(pos == MERE::NbrAtt + 3) \
+            return nom4(); \
+        else \
+            return nom5();}}\
+    /*! \brief Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
     void set(const ENTITY & entity){ \
         MERE::set(entity); \
         set ## NOM1(entity.nom1()); \
@@ -217,22 +265,39 @@
 
 //! \ingroup groupeMacroEntity
 //! Macro implémentant les membres types d'une entité ayant six attributs de plus que la classe mère.
-#define MEMBRE_ATT_6(ENTITY,MERE,NOM1,nom1,NOM2,nom2,NOM3,nom3,NOM4,nom4,NOM5,nom5,NOM6,nom6) \
-    enum {nom1 ## Pos = MERE::NbrAtt,nom2 ## Pos,nom3 ## Pos,nom4 ## Pos,nom5 ## Pos,nom6 ## Pos,NbrAtt}; \
-    /*! Teste si l'entité est valide.*/ \
+#define MEMBRE_ATT_6(ENTITY,MERE,NOM1,nom1,NOM2,nom2,NOM3,nom3,NOM4,nom4,NOM5,nom5,NOM6,nom6) /*! \brief Teste si l'entité est valide.*/ \
     bool isValid() const \
     {return MERE::isValid() && m_ ## nom1.isValid() && m_ ## nom2.isValid() && m_ ## nom3.isValid() && m_ ## nom4.isValid() && m_ ## nom5.isValid() \
         && m_ ## nom6.isValid();} \
-    /*! Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
+    /*! \brief Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
     QString toString() const \
     {return MERE::toString()TO_STRING_ENTITY(nom1)TO_STRING_ENTITY(nom2)TO_STRING_ENTITY(nom3)TO_STRING_ENTITY(nom4)TO_STRING_ENTITY(nom5) \
         TO_STRING_ENTITY(nom6);} \
-    /*! Test d'égalité entre cette entité et celle transmise en argument.*/ \
+    /*! \brief Test d'égalité entre cette entité et celle transmise en argument.*/ \
     bool operator ==(const ENTITY & entity) const \
     {return MERE::operator ==(entity) && m_ ## nom1 == entity.nom1() && m_ ## nom2 == entity.nom2() && m_ ## nom3 == entity.nom3() \
         && m_ ## nom4 == entity.nom4() && m_ ## nom5 == entity.nom5() && m_ ## nom6 == entity.nom6();} \
     protected: \
-    /*! Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
+    /*! \brief Retourne un QVariant contenant la donnée souhaitée, pos doit être valide.*/ \
+    QVariant dataP(int pos) const { \
+    if(pos < MERE::NbrAtt) \
+        return MERE::dataP(pos); \
+    else  if(pos < MERE::NbrAtt +2){ \
+        if(pos == MERE::NbrAtt) \
+            return nom1(); \
+        else \
+            return nom2();} \
+    else if(pos < MERE::NbrAtt + 4){ \
+        if(pos == MERE::NbrAtt + 2) \
+            return nom3(); \
+        else \
+            return nom4();} \
+    else { \
+        if(pos == MERE::NbrAtt + 4) \
+            return nom5(); \
+        else \
+            return nom6();}}\
+    /*! \brief Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
     void set(const ENTITY & entity){ \
         MERE::set(entity); \
         set ## NOM1(entity.nom1()); \
@@ -244,22 +309,41 @@
 
 //! \ingroup groupeMacroEntity
 //! Macro implémentant les membres types d'une entité ayant sept attributs de plus que la classe mère.
-#define MEMBRE_ATT_7(ENTITY,MERE,NOM1,nom1,NOM2,nom2,NOM3,nom3,NOM4,nom4,NOM5,nom5,NOM6,nom6,NOM7,nom7) \
-    enum {nom1 ## Pos = MERE::NbrAtt,nom2 ## Pos,nom3 ## Pos,nom4 ## Pos,nom5 ## Pos,nom6 ## Pos,nom7 ## Pos,NbrAtt}; \
-    /*! Teste si l'entité est valide.*/ \
+#define MEMBRE_ATT_7(ENTITY,MERE,NOM1,nom1,NOM2,nom2,NOM3,nom3,NOM4,nom4,NOM5,nom5,NOM6,nom6,NOM7,nom7) /*! \brief Teste si l'entité est valide.*/ \
     bool isValid() const \
     {return MERE::isValid() && m_ ## nom1.isValid() && m_ ## nom2.isValid() && m_ ## nom3.isValid() && m_ ## nom4.isValid() && m_ ## nom5.isValid() \
         && m_ ## nom6.isValid() && m_ ## nom7.isValid();} \
-    /*! Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
+    /*! \brief Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
     QString toString() const \
     {return MERE::toString()TO_STRING_ENTITY(nom1)TO_STRING_ENTITY(nom2)TO_STRING_ENTITY(nom3)TO_STRING_ENTITY(nom4)TO_STRING_ENTITY(nom5) \
         TO_STRING_ENTITY(nom6)TO_STRING_ENTITY(nom7);} \
-    /*! Test d'égalité entre cette entité et celle transmise en argument.*/ \
+    /*! \brief Test d'égalité entre cette entité et celle transmise en argument.*/ \
     bool operator ==(const ENTITY & entity) const \
     {return MERE::operator ==(entity) && m_ ## nom1 == entity.nom1() && m_ ## nom2 == entity.nom2() && m_ ## nom3 == entity.nom3() \
         && m_ ## nom4 == entity.nom4() && m_ ## nom5 == entity.nom5() && m_ ## nom6 == entity.nom6() && m_ ## nom7 == entity.nom7();} \
     protected: \
-    /*! Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
+    /*! \brief Retourne un QVariant contenant la donnée souhaitée, pos doit être valide.*/ \
+    QVariant dataP(int pos) const { \
+    if(pos < MERE::NbrAtt) \
+        return MERE::dataP(pos); \
+    else  if(pos < MERE::NbrAtt + 3){ \
+        if(pos == MERE::NbrAtt) \
+            return nom1(); \
+        else if(pos == MERE::NbrAtt + 1) \
+            return nom2(); \
+        else \
+            return nom3();} \
+    else if(pos < MERE::NbrAtt + 5){ \
+        if(pos == MERE::NbrAtt + 3) \
+            return nom4(); \
+        else \
+            return nom5();} \
+    else { \
+        if(pos == MERE::NbrAtt + 5) \
+            return nom6(); \
+        else \
+            return nom7();}}\
+    /*! \brief Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
     void set(const ENTITY & entity){ \
         MERE::set(entity); \
         set ## NOM1(entity.nom1()); \
@@ -272,23 +356,45 @@
 
 //! \ingroup groupeMacroEntity
 //! Macro implémentant les membres types d'une entité ayant huit attributs de plus que la classe mère.
-#define MEMBRE_ATT_8(ENTITY,MERE,NOM1,nom1,NOM2,nom2,NOM3,nom3,NOM4,nom4,NOM5,nom5,NOM6,nom6,NOM7,nom7,NOM8,nom8) \
-    enum {nom1 ## Pos = MERE::NbrAtt,nom2 ## Pos,nom3 ## Pos,nom4 ## Pos,nom5 ## Pos,nom6 ## Pos,nom7 ## Pos,nom8 ## Pos,NbrAtt}; \
-    /*! Teste si l'entité est valide.*/ \
+#define MEMBRE_ATT_8(ENTITY,MERE,NOM1,nom1,NOM2,nom2,NOM3,nom3,NOM4,nom4,NOM5,nom5,NOM6,nom6,NOM7,nom7,NOM8,nom8) /*! \brief Teste si l'entité est valide.*/ \
     bool isValid() const \
     {return MERE::isValid() && m_ ## nom1.isValid() && m_ ## nom2.isValid() && m_ ## nom3.isValid() && m_ ## nom4.isValid() && m_ ## nom5.isValid() \
         && m_ ## nom6.isValid() && m_ ## nom7.isValid() && m_ ## nom8.isValid();} \
-    /*! Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
+    /*! \brief Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
     QString toString() const \
     {return MERE::toString()TO_STRING_ENTITY(nom1)TO_STRING_ENTITY(nom2)TO_STRING_ENTITY(nom3)TO_STRING_ENTITY(nom4)TO_STRING_ENTITY(nom5) \
         TO_STRING_ENTITY(nom6)TO_STRING_ENTITY(nom7)TO_STRING_ENTITY(nom8);} \
-    /*! Test d'égalité entre cette entité et celle transmise en argument.*/ \
+    /*! \brief Test d'égalité entre cette entité et celle transmise en argument.*/ \
     bool operator ==(const ENTITY & entity) const \
     {return MERE::operator ==(entity) && m_ ## nom1 == entity.nom1() && m_ ## nom2 == entity.nom2() && m_ ## nom3 == entity.nom3() \
         && m_ ## nom4 == entity.nom4() && m_ ## nom5 == entity.nom5() && m_ ## nom6 == entity.nom6() && m_ ## nom7 == entity.nom7() \
         && m_ ## nom8 == entity.nom8();} \
     protected: \
-    /*! Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
+    /*! \brief Retourne un QVariant contenant la donnée souhaitée, pos doit être valide.*/ \
+    QVariant dataP(int pos) const { \
+    if(pos < MERE::NbrAtt) \
+        return MERE::dataP(pos); \
+    else  if(pos < MERE::NbrAtt + 4){ \
+        if(pos < MERE::NbrAtt + 2){ \
+            if(pos == MERE::NbrAtt) \
+                return nom1(); \
+            else \
+                return nom2();} \
+        else if(pos == MERE::NbrAtt + 2){ \
+            return nom3(); \
+        else \
+            return nom4();}} \
+    else if(pos < MERE::NbrAtt + 6){ \
+        if(pos == MERE::NbrAtt + 4) \
+            return nom5(); \
+        else \
+            return nom6();} \
+    else { \
+        if(pos == MERE::NbrAtt + 6) \
+            return nom7(); \
+        else \
+            return nom8();}}\
+    /*! \brief Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
     void set(const ENTITY & entity){ \
         MERE::set(entity); \
         set ## NOM1(entity.nom1()); \
@@ -302,23 +408,47 @@
 
 //! \ingroup groupeMacroEntity
 //! Macro implémentant les membres types d'une entité ayant huit attributs de plus que la classe mère.
-#define MEMBRE_ATT_9(ENTITY,MERE,NOM1,nom1,NOM2,nom2,NOM3,nom3,NOM4,nom4,NOM5,nom5,NOM6,nom6,NOM7,nom7,NOM8,nom8,NOM9,nom9) \
-    enum {nom1 ## Pos = MERE::NbrAtt,nom2 ## Pos,nom3 ## Pos,nom4 ## Pos,nom5 ## Pos,nom6 ## Pos,nom7 ## Pos,nom8 ## Pos,nom9 ## Pos,NbrAtt}; \
-    /*! Teste si l'entité est valide.*/ \
+#define MEMBRE_ATT_9(ENTITY,MERE,NOM1,nom1,NOM2,nom2,NOM3,nom3,NOM4,nom4,NOM5,nom5,NOM6,nom6,NOM7,nom7,NOM8,nom8,NOM9,nom9) /*! \brief Teste si l'entité est valide.*/ \
     bool isValid() const \
     {return MERE::isValid() && m_ ## nom1.isValid() && m_ ## nom2.isValid() && m_ ## nom3.isValid() && m_ ## nom4.isValid() && m_ ## nom5.isValid() \
         && m_ ## nom6.isValid() && m_ ## nom7.isValid() && m_ ## nom8.isValid() && m_ ## nom9.isValid();} \
-    /*! Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
+    /*! \brief Renvoie une chaine de caractère contenant la valeur de l'attribut.*/ \
     QString toString() const \
     {return MERE::toString()TO_STRING_ENTITY(nom1)TO_STRING_ENTITY(nom2)TO_STRING_ENTITY(nom3)TO_STRING_ENTITY(nom4)TO_STRING_ENTITY(nom5) \
         TO_STRING_ENTITY(nom6)TO_STRING_ENTITY(nom7)TO_STRING_ENTITY(nom8)TO_STRING_ENTITY(nom9);} \
-    /*! Test d'égalité entre cette entité et celle transmise en argument.*/ \
+    /*! \brief Test d'égalité entre cette entité et celle transmise en argument.*/ \
     bool operator ==(const ENTITY & entity) const \
     {return MERE::operator ==(entity) && m_ ## nom1 == entity.nom1() && m_ ## nom2 == entity.nom2() && m_ ## nom3 == entity.nom3() \
         && m_ ## nom4 == entity.nom4() && m_ ## nom5 == entity.nom5() && m_ ## nom6 == entity.nom6() && m_ ## nom7 == entity.nom7() \
         && m_ ## nom8 == entity.nom8() && m_ ## nom9 == entity.nom9();} \
     protected: \
-    /*! Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
+    /*! \brief Retourne un QVariant contenant la donnée souhaitée, pos doit être valide.*/ \
+    QVariant dataP(int pos) const { \
+    if(pos < MERE::NbrAtt) \
+        return MERE::dataP(pos); \
+    else  if(pos < MERE::NbrAtt + 4){ \
+        if(pos < MERE::NbrAtt + 2){ \
+            if(pos == MERE::NbrAtt) \
+                return nom1(); \
+            else \
+                return nom2();} \
+        else if(pos == MERE::NbrAtt + 2){ \
+            return nom3(); \
+        else \
+            return nom4();}} \
+    else if(pos < MERE::NbrAtt + 6){ \
+        if(pos == MERE::NbrAtt + 4) \
+            return nom5(); \
+        else \
+            return nom6();} \
+    else { \
+        if(pos == MERE::NbrAtt + 6) \
+            return nom7(); \
+        else if (pos == MERE::NbrAtt + 7)\
+            return nom8(); \
+        else \
+            return nom9();}}\
+    /*! \brief Remplace les attributs de l'entité par celle de l'entité transmise.*/ \
     void set(const ENTITY & entity){ \
         MERE::set(entity); \
         set ## NOM1(entity.nom1()); \
@@ -336,11 +466,11 @@
  *
  * Lorsque l'on crée une nouvelle entité il faut :
  *  - créer une classe fille de Entity (ou créer un synonyme d'une classe prédéfinie à l'étape suivante).
- *  - Place la macro BASE_ENTITY(nom de la classe).
- *  - Implémenter les fonctions virtuelles pure: name
- *  - Implémenter les fonctions: isValid(), toString(), operator ==(), set(const ENTITY &)
+ *  - Implémenter les différents constructeurs.
+ *  - Placer la macro BASE_ENTITY(nom de la classe,Identifiant).
+ *  - Placer la macro MEMBRE_ATT_brnAttribut(nom de la classe, non de la classe mère, Attribut1, attribut1, Attribut2, attribut2, ...)
+ *  - Créer si nécessaire des classe LinkSql et Unique Sql pour l'entité.
  *  - Rentrer les informations SQL pour faire le lien avec les entités correspondantes dans la base de donnée.
- *  - Spécialiser les classe LinkSql et Unique Sql pour l'entité.
  *  - Ajouter un manager de l'entité dans Managers (membre, def_get (dans .h) et manager_tab (dans .cpp)).
  */
 class Entity
@@ -348,9 +478,11 @@ class Entity
     ATTRIBUT_ENTITY_ID_NULL()
 
 public:
-    enum {idPos = 0,
-          NbrAtt,
-          ID = InfoEntity::entityBaseId::entityId};
+    //! Position des attributs.
+    enum Position {Id = 0,
+                   NbrAtt};
+    //! Identifiant de l'entité.
+    enum Identifiant{ID = InfoEntity::entityBaseId::entityId};
 
     //! Constructeur par défaut fixant l'identifiant de l'entité.
     Entity(int id = 0)
@@ -362,6 +494,10 @@ public:
     //! Destructeur.
     virtual ~Entity()
         {}
+
+    //! Retourne un QVariant contenant la donnée souhaitée ou un QVariant nulle si num est invalide.
+    virtual QVariant data(int pos) const
+    {return pos == Id ? id() : QVariant();}
 
     //! Teste si l'entité est nouvelle ou si elle provient de la base de donnée en regardant si elle poséde un identifiant non-nul.
     bool isNew() const
@@ -392,6 +528,10 @@ public:
         {return m_id == entity.id();}
 
 protected:
+    //! Retourne un QVariant contenant la donnée souhaitée, num doit être valide.
+    QVariant dataP(int /*pos*/) const
+    {return id();}
+
     //! Remplace les attributs de l'entité par celle de l'entité transmise, sauf l'identifiant.
     void set(const Entity & entity)
         {setId(entity.id());}

@@ -38,7 +38,6 @@ void Bdd::listeMiseAJourBdd(int version)
     {
         m_manager.get<Annee>().creer();
         m_manager.get<Attribut>().creer();
-        m_manager.get<AttributArbre>().creer();
         m_manager.get<AttributCommentaire>().creer();
         m_manager.get<Classe>().creer();
         m_manager.get<ClasseEleve>().creer();
@@ -46,20 +45,16 @@ void Bdd::listeMiseAJourBdd(int version)
         m_manager.get<CommentaireClasse>().creer();
         m_manager.get<CommentaireEleve>().creer();
         m_manager.get<CommentaireGroupe>().creer();
-        m_manager.get<CoursArbre>().creer();
         m_manager.get<Donnee>().creer();
-        m_manager.get<DonneeArbre>().creer();
         m_manager.get<DonneeClasse>().creer();
         m_manager.get<DonneeEleve>().creer();
         m_manager.get<DonneeEtablissement>().creer();
         m_manager.get<DonneeNiveau>().creer();
         m_manager.get<DonneeSource>().creer();
         m_manager.get<Eleve>().creer();
-        m_manager.get<EnonceArbre>().creer();
         m_manager.get<Etablissement>().creer();
         m_manager.get<EtablissementType>().creer();
         m_manager.get<EtablissementNiveau>().creer();
-        m_manager.get<ExerciceArbre>().creer();
         m_manager.get<Groupe>().creer();
         m_manager.get<GroupeEleve>().creer();
         m_manager.get<Niveau>().creer();
@@ -220,6 +215,18 @@ void Bdd::listeMiseAJourBdd(int version)
         save(NiveauPrecedent(ptsi.id(),psi.id()));
         save(NiveauPrecedent(ptsi.id(),pt.id()));
         save(NiveauPrecedent(bcpst1.id(),bcpst2.id()));
+
+        Tree<Donnee> arbre;
+        arbre.root()->setData(Donnee(false,"Contact",Donnee::Perso,Donnee::NoDonnee,0,Donnee::prog::Contact));
+        TreeItem<Donnee> * adr = arbre.root()->addChild(Donnee(false,"Adresse",Donnee::Perso,Donnee::NoDonnee,0,Donnee::prog::Adresse));
+        adr->addChild(Donnee(false,"Numero de rue",Donnee::Perso,Donnee::String,0,Donnee::prog::NbrRue));
+        adr->addChild(Donnee(false,"Rue",Donnee::Perso,Donnee::String,0,Donnee::prog::Rue));
+        adr->addChild(Donnee(false,"Code Postal",Donnee::Perso,Donnee::String,0,Donnee::prog::CodePostal));
+        adr->addChild(Donnee(false,"Ville",Donnee::Perso,Donnee::String,0,Donnee::prog::Ville));
+        adr->addChild(Donnee(false,"Pays",Donnee::Perso,Donnee::String,0,Donnee::prog::Pays));
+        arbre.root()->addChild(Donnee(false,"Teléphone",Donnee::Perso,Donnee::String,0,Donnee::prog::Tel));
+        arbre.root()->addChild(Donnee(false,"Mail",Donnee::Perso,Donnee::String,0,Donnee::prog::Mail));
+        save(arbre, bdd::TreeSave::AddLeaf);
 
         m_manager.saveVersion(bdd::miseAJourBdd::Donnees20160527);
         break;

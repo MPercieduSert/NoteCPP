@@ -3,7 +3,7 @@
 QString AbstractLinkSql::creer(const QMap<int,QPair<bdd::createSql,bool>>& attCaract, const QMap<int, QString> &foreignKey) const
 {
     QString sql(wordSqlString(bdd::wordSql::create));
-    sql.append(" ").append(m_table).append("(").append(attribut(Entity::idPos)).append(" ").append(createSqlString(bdd::createSql::primary));
+    sql.append(" ").append(m_table).append("(").append(attribut(Entity::Id)).append(" ").append(createSqlString(bdd::createSql::primary));
     for(int i = 1; i != m_nbrAtt; ++i)
     {
         sql.append(",").append(attribut(i)).append(" ").append(createSqlString(attCaract.value(i).first));

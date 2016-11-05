@@ -17,16 +17,10 @@ class FenPrincipale;
 class Fen : public QWidget
 {
     Q_OBJECT
-protected:
-    FenPrincipale * m_parent;   //!< Pointeur sur la fenêtre principale.
-
 public:
     //! Constructeur.
-    explicit Fen(FenPrincipale *parent = 0);
+    explicit Fen(QWidget *parent = 0);
 
-    //! Renvoie un pointeur sur la fenêtre principale.
-    FenPrincipale * parent() const
-        {return m_parent;}
 signals:
 
 public slots:
