@@ -3,6 +3,7 @@
 #include "TabClasse.h"
 #include "TabListeEleve.h"
 #include "TabListeGroupe.h"
+#include "TabListeNote.h"
 #include "TabMenu.h"
 
 TabModule::TabModule(QWidget *parent, Noyau *noyau): QTabWidget(parent), m_noyau(noyau)
@@ -67,3 +68,23 @@ void TabModule::openListeGroupe(int idClasse)
         setCurrentIndex(addTab(tabListeGroupe , parent()->bdd()->afficheClasse(idClasse)+" - Groupes"));
     }
 }*/
+void TabModule::openListeNote(int idClasse)
+{
+    if(m_listeTab[ListeNoteTab].contains(idClasse))
+    {
+        setCurrentIndex(indexOf(m_listeTab[ListeNoteTab][idClasse]));
+    }
+    else
+    {
+        TabListeNote * tabListeNote = new TabListeNote(idClasse, this);
+        if(tabListeNote->classe().isValid())
+        {
+            m_listeTab[ListeNoteTab].insert(idClasse,tabListeNote);
+            setCurrentIndex(addTab(tabListeNote, tabListeNote->classe().nom()+" - Liste des notes"));
+        }
+        else
+        {
+            delete tabListeNote;
+        }
+    }
+}

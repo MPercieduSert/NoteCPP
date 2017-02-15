@@ -9,11 +9,11 @@
 #include "UniqueSql.h"
 #include "../Entities/EntityOfDefaultType.h"
 #include "../Entities/Annee.h"
-#include "../Entities/Attribut.h"
 #include "../Entities/Classe.h"
 #include "../Entities/ClasseEleve.h"
 #include "../Entities/Donnee.h"
 #include "../Entities/Eleve.h"
+#include "../Entities/Controle.h"
 #include "../Entities/Groupe.h"
 #include "../Entities/Niveau.h"
 #include "../Entities/TypeEtablissement.h"
@@ -68,7 +68,7 @@ public:
     static QVector<QMap<int,int>> attributUnique()
     {
         QVector<QMap<int,int>> att(1);
-        att[0].insert(AnneeUniqueSql::anUnique,Annee::An);
+        att[0].insert(AnneeUniqueSql::AnUnique,Annee::An);
         return att;
     }
 
@@ -89,36 +89,11 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Attribut.
  */
-template<> class InfoBdd<Attribut> : public NoUniqueInfoBdd, public NodeInfoBdd
+template<> class InfoBdd<Attribut> : public TypeNcNomInfoBdd, public NodeInfoBdd
 {
 public:
-    typedef AttributLinkSql EntLinkSql;
+    typedef TypeNcNomOnlyLinkSql<Attribut> EntLinkSql;
     typedef NoUniqueSql EntUniqueSql;
-
-    //! Retourne la liste des nom sql des attributs.
-    static QMap<int,QString> attribut()
-    {
-        QMap<int,QString> att(NcNomInfoBdd::attribut());
-        att.insert(Attribut::PrBareme,"prbr");
-        att.insert(Attribut::PrCommentaire,"prcm");
-        att.insert(Attribut::PrCorrection,"prcrr");
-        att.insert(Attribut::PrCours,"prcrs");
-        att.insert(Attribut::PrExercice,"prex");
-        return att;
-    }
-
-    //! Retourne la liste des caractéristiques sql des attributs.
-    static QMap<int, QPair<createSql, bool> > creerAttribut()
-    {
-        QMap<int, QPair<createSql, bool> > att(NomInfoBdd::creerAttribut());
-        att.insert(Attribut::Nc,QPair<createSql, bool>(createSql::text,false));
-        att.insert(Attribut::PrBareme,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Attribut::PrCommentaire,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Attribut::PrCorrection,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Attribut::PrCours,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Attribut::PrExercice,QPair<createSql, bool>(createSql::integer,true));
-        return att;
-    }
 
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
@@ -132,28 +107,62 @@ public:
         {return QString("arbat");}
 };
 
-// AttributCommentaire
+// Cible Attribut
 /*! \ingroup groupeInfoBdd
- * \brief Classe contenant les informations sql sur l'entité AttributCommentaire.
+ * \brief Classe contenant les informations sql sur l'entité CibleAttribut.
  */
-template<> class InfoBdd<AttributCommentaire> : public RelationInfoBdd
+template<> class InfoBdd<CibleAttribut> : public CibleInfoBdd
 {
 public:
-    typedef RelationOnlyLinkSql<AttributCommentaire> EntLinkSql;
+    typedef CibleOnlyLinkSql<CibleAttribut> EntLinkSql;
 
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
     //! Retourne le nom la table sql.
     static QString table()
-        {return QString("atcm");}
+        {return QString("cbat");}
+};
+
+// Cible Commentaire
+/*! \ingroup groupeInfoBdd
+ * \brief Classe contenant les informations sql sur l'entité CibleCommentaire.
+ */
+template<> class InfoBdd<CibleCommentaire> : public DateTimeCibleInfoBdd
+{
+public:
+    typedef DateTimeCurrentCibleOnlyLinkSql<CibleCommentaire> EntLinkSql;
+
+    //! Retourne les clés étrangère de la table sql.
+    static QMap<int,QString> foreignKey();
+
+    //! Retourne le nom la table sql.
+    static QString table()
+        {return QString("cbcm");}
+};
+
+// Cible Donnee
+/*! \ingroup groupeInfoBdd
+ * \brief Classe contenant les informations sql sur l'entité CibleDonnee.
+ */
+template<> class InfoBdd<CibleDonnee> : public ValeurNumDateTimeCibleInfoBdd
+{
+public:
+    typedef ValeurNumDateTimeCurrentCibleOnlyLinkSql<CibleDonnee> EntLinkSql;
+
+    //! Retourne les clés étrangère de la table sql.
+    static QMap<int,QString> foreignKey();
+
+    //! Retourne le nom la table sql.
+    static QString table()
+        {return QString("cbdn");}
 };
 
 // Classe
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Classe.
  */
-template<> class InfoBdd<Classe>
+template<> class InfoBdd<Classe> : public NomInfoBdd
 {
 public:
     typedef ClasseLinkSql EntLinkSql;
@@ -162,11 +171,10 @@ public:
     //! Retourne la liste des nom sql des attributs.
     static QMap<int,QString> attribut()
     {
-        QMap<int,QString> att;
+        QMap<int,QString> att(NomInfoBdd::attribut());
         att.insert(Classe::IdAn,"IDan");
         att.insert(Classe::IdEtab,"IDetab");
-        att.insert(Classe::IdNiv,"Idniv");
-        att.insert(Classe::Nom,"nom");
+        att.insert(Classe::IdNiv,"IDniv");
         att.insert(Classe::Num,"num");
         return att;
     }
@@ -175,24 +183,23 @@ public:
     static QVector<QMap<int,int>> attributUnique()
     {
         QVector<QMap<int,int>> att(2);
-        att[0].insert(ClasseUniqueSql::idAnUnique,Classe::IdAn);
-        att[0].insert(ClasseUniqueSql::idEtabUnique,Classe::IdEtab);
-        att[0].insert(ClasseUniqueSql::idNivUnique,Classe::IdNiv);
-        att[0].insert(ClasseUniqueSql::numUnique,Classe::Num);
-        att[1].insert(ClasseUniqueSql::idAnUnique,Classe::IdAn);
-        att[1].insert(ClasseUniqueSql::idEtabUnique,Classe::IdEtab);
-        att[1].insert(ClasseUniqueSql::nomUnique,Classe::Nom);
+        att[0].insert(ClasseUniqueSql::IdAnUnique,Classe::IdAn);
+        att[0].insert(ClasseUniqueSql::IdEtabUnique,Classe::IdEtab);
+        att[0].insert(ClasseUniqueSql::IdNivUnique,Classe::IdNiv);
+        att[0].insert(ClasseUniqueSql::NumUnique,Classe::Num);
+        att[1].insert(ClasseUniqueSql::IdAnUnique,Classe::IdAn);
+        att[1].insert(ClasseUniqueSql::IdEtabUnique,Classe::IdEtab);
+        att[1].insert(ClasseUniqueSql::NomUnique,Classe::Nom);
         return att;
     }
 
     //! Retourne la liste des caractéristiques sql des attributs.
     static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
     {
-        QMap<int,QPair<bdd::createSql, bool>> att;
+        QMap<int,QPair<bdd::createSql, bool>> att(NomInfoBdd::creerAttribut());
         att.insert(Classe::IdAn,QPair<createSql, bool>(createSql::integer,true));
         att.insert(Classe::IdEtab,QPair<createSql, bool>(createSql::integer,true));
         att.insert(Classe::IdNiv,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Classe::Nom,QPair<createSql, bool>(createSql::text,true));
         att.insert(Classe::Num,QPair<createSql, bool>(createSql::integer,true));
         return att;
     }
@@ -213,7 +220,6 @@ template<> class InfoBdd<ClasseEleve> : public RelationInfoBdd
 {
 public:
     typedef ClasseEleveLinkSql EntLinkSql;
-    typedef RelationUniqueSql EntUniqueSql;
 
     //! Retourne la liste des nom sql des attributs.
     static QMap<int,QString> attribut()
@@ -230,7 +236,8 @@ public:
         QMap<int, QPair<bdd::createSql, bool> > att(RelationInfoBdd::creerAttribut());
         att.insert(ClasseEleve::Entree,QPair<createSql, bool>(createSql::text,false));
         att.insert(ClasseEleve::Sortie,QPair<createSql, bool>(createSql::text,false));
-        return att;}
+        return att;
+    }
 
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
@@ -238,6 +245,23 @@ public:
     //! Retourne le nom la table sql.
     static QString table()
         {return QString("clel");}
+};
+
+// Coefficient
+/*! \ingroup groupeInfoBdd
+ * \brief Classe contenant les informations sql sur l'entité Coefficient.
+ */
+template<> class InfoBdd<Coefficient> : public ValeurDoubleIdNumInfoBdd
+{
+public:
+    typedef ValeurDoubleIdNumOnlyLinkSql<Coefficient> EntLinkSql;
+
+    //! Retourne les clés étrangère de la table sql.
+    static QMap<int,QString> foreignKey();
+
+    //! Retourne le nom la table sql.
+    static QString table()
+        {return QString("coef");}
 };
 
 // Commentaire
@@ -254,55 +278,50 @@ public:
         {return QString("cm");}
 };
 
-// CommentaireClasse
+// Controle
 /*! \ingroup groupeInfoBdd
- * \brief Classe contenant les informations sql sur l'entité CommentaireClasse.
+ * \brief Classe contenant les informations sql sur l'entité Controle.
  */
-template<> class InfoBdd<CommentaireClasse> : public DateTimeRelationInfoBdd
+template<> class InfoBdd<Controle> : public NumRelationInfoBdd
 {
 public:
-    typedef DateTimeRelationOnlyLinkSql<CommentaireClasse> EntLinkSql;
+    typedef ControleLinkSql EntLinkSql;
+
+    //! Retourne la liste des nom sql des attributs.
+    static QMap<int,QString> attribut()
+    {
+        QMap<int,QString> att(NumRelationInfoBdd::attribut());
+        att.insert(Controle::Bareme,"br");
+        att.insert(Controle::Date,"dt");
+        att.insert(Controle::Decimale,"dc");
+        att.insert(Controle::Enonce,"en");
+        att.insert(Controle::Minima,"min");
+        att.insert(Controle::Nom,"nom");
+        att.insert(Controle::Saisie,"ss");
+        att.insert(Controle::Total,"tt");
+        return att;
+    }
+
+    //! Retourne la liste des caractéristiques sql des attributs.
+    static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
+    {
+        QMap<int, QPair<bdd::createSql, bool> > att(NumRelationInfoBdd::creerAttribut());
+        att.insert(Controle::Bareme,QPair<createSql, bool>(createSql::integer,true));
+        att.insert(Controle::Date,QPair<createSql, bool>(createSql::text,true));
+        att.insert(Controle::Decimale,QPair<createSql, bool>(createSql::integer,true));
+        att.insert(Controle::Enonce,QPair<createSql, bool>(createSql::integer,true));
+        att.insert(Controle::Minima,QPair<createSql, bool>(createSql::integer,true));
+        att.insert(Controle::Nom,QPair<createSql, bool>(createSql::text,true));
+        att.insert(Controle::Saisie,QPair<createSql, bool>(createSql::integer,true));
+        att.insert(Controle::Total,QPair<createSql, bool>(createSql::integer,true));
+        return att;}
 
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
     //! Retourne le nom la table sql.
     static QString table()
-        {return QString("cmcl");}
-};
-
-// CommentaireEleve
-/*! \ingroup groupeInfoBdd
- * \brief Classe contenant les informations sql sur l'entité CommentaireEleve.
- */
-template<> class InfoBdd<CommentaireEleve> : public DateTimeRelationInfoBdd
-{
-public:
-    typedef DateTimeRelationOnlyLinkSql<CommentaireEleve> EntLinkSql;
-
-    //! Retourne les clés étrangère de la table sql.
-    static QMap<int,QString> foreignKey();
-
-    //! Retourne le nom la table sql.
-    static QString table()
-        {return QString("cmel");}
-};
-
-// CommentaireGroupe
-/*! \ingroup groupeInfoBdd
- * \brief Classe contenant les informations sql sur l'entité CommentaireGroupe.
- */
-template<> class InfoBdd<CommentaireGroupe> : public DateTimeRelationInfoBdd
-{
-public:
-    typedef DateTimeRelationOnlyLinkSql<CommentaireGroupe> EntLinkSql;
-
-    //! Retourne les clés étrangère de la table sql.
-    static QMap<int,QString> foreignKey();
-
-    //! Retourne le nom la table sql.
-    static QString table()
-        {return QString("cmgr");}
+        {return QString("ctr");}
 };
 
 // Donnee
@@ -313,7 +332,7 @@ template<> class InfoBdd<Donnee> : public NodeInfoBdd
 {
 public:
     typedef DonneeLinkSql EntLinkSql;
-    typedef NoUniqueSql EntUniqueSql;
+    typedef DonneeUniqueSql EntUniqueSql;
 
     //! Retourne la liste des nom sql des attributs.
     static QMap<int,QString> attribut()
@@ -329,7 +348,7 @@ public:
     static QVector<QMap<int,int>> attributUnique()
     {
         QVector<QMap<int,int>> att(1);
-        att[0].insert(DonneeUniqueSql::idProgUnique,Donnee::IdProg);
+        att[0].insert(DonneeUniqueSql::IdProgUnique,Donnee::IdProg);
         return att;
     }
 
@@ -370,7 +389,8 @@ public:
         QMap<int,QString> att;
         att.insert(DonneeCard::IdDonnee,"IDdn");
         att.insert(DonneeCard::Card,"cd");
-        att.insert(DonneeCard::Sur,"sur");
+        att.insert(DonneeCard::Exact,"ex");
+        att.insert(DonneeCard::Cible,"cb");
         return att;
     }
 
@@ -378,8 +398,8 @@ public:
     static QVector<QMap<int,int>> attributUnique()
     {
         QVector<QMap<int,int>> att(1);
-        att[0].insert(DonneeCardUniqueSql::idDonneeUnique,DonneeCard::IdDonnee);
-        att[0].insert(DonneeCardUniqueSql::surUnique,DonneeCard::Sur);
+        att[0].insert(DonneeCardUniqueSql::IdDonneeUnique,DonneeCard::IdDonnee);
+        att[0].insert(DonneeCardUniqueSql::CibleUnique,DonneeCard::Cible);
         return att;
     }
 
@@ -389,7 +409,8 @@ public:
         QMap<int, QPair<bdd::createSql, bool> > att;
         att.insert(DonneeCard::IdDonnee,QPair<createSql, bool>(createSql::integer,true));
         att.insert(DonneeCard::Card,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(DonneeCard::Sur,QPair<createSql, bool>(createSql::integer,true));
+        att.insert(DonneeCard::Exact,QPair<createSql,bool>(createSql::integer,false));
+        att.insert(DonneeCard::Cible,QPair<createSql, bool>(createSql::integer,true));
         return att;}
 
     //! Retourne les clés étrangère de la table sql.
@@ -400,96 +421,11 @@ public:
         {return QString("dc");}
 };
 
-// DonneeClasse
-/*! \ingroup groupeInfoBdd
- * \brief Classe contenant les informations sql sur l'entité DonneeClasse.
- */
-template<> class InfoBdd<DonneeClasse> : public ValeurDateTimeRelationInfoBdd
-{
-public:
-    typedef ValeurDateTimeRelationOnlyLinkSql<DonneeClasse> EntLinkSql;
-
-    //! Retourne les clés étrangère de la table sql.
-    static QMap<int,QString> foreignKey();
-
-    //! Retourne le nom la table sql.
-    static QString table()
-        {return QString("dncl");}
-};
-
-// DonneeEleve
-/*! \ingroup groupeInfoBdd
- * \brief Classe contenant les informations sql sur l'entité DonneeEleve.
- */
-template<> class InfoBdd<DonneeEleve> : public ValeurDateTimeRelationInfoBdd
-{
-public:
-    typedef ValeurDateTimeRelationOnlyLinkSql<DonneeEleve> EntLinkSql;
-
-    //! Retourne les clés étrangère de la table sql.
-    static QMap<int,QString> foreignKey();
-
-    //! Retourne le nom la table sql.
-    static QString table()
-        {return QString("dnel");}
-};
-
-// DonneeEtablissement
-/*! \ingroup groupeInfoBdd
- * \brief Classe contenant les informations sql sur l'entité DonneeEtablissement.
- */
-template<> class InfoBdd<DonneeEtablissement> : public ValeurDateTimeRelationInfoBdd
-{
-public:
-    typedef ValeurDateTimeRelationOnlyLinkSql<DonneeEtablissement> EntLinkSql;
-
-    //! Retourne les clés étrangère de la table sql.
-    static QMap<int,QString> foreignKey();
-
-    //! Retourne le nom la table sql.
-    static QString table()
-        {return QString("dnetab");}
-};
-
-// DonneeNiveau
-/*! \ingroup groupeInfoBdd
- * \brief Classe contenant les informations sql sur l'entité DonneeNiveau.
- */
-template<> class InfoBdd<DonneeNiveau> : public ValeurDateTimeRelationInfoBdd
-{
-public:
-    typedef ValeurDateTimeRelationOnlyLinkSql<DonneeNiveau> EntLinkSql;
-
-    //! Retourne les clés étrangère de la table sql.
-    static QMap<int,QString> foreignKey();
-
-    //! Retourne le nom la table sql.
-    static QString table()
-        {return QString("dnniv");}
-};
-
-// DonneeSource
-/*! \ingroup groupeInfoBdd
- * \brief Classe contenant les informations sql sur l'entité DonneeSource.
- */
-template<> class InfoBdd<DonneeSource> : public ValeurDateTimeRelationInfoBdd
-{
-public:
-    typedef ValeurDateTimeRelationOnlyLinkSql<DonneeSource> EntLinkSql;
-
-    //! Retourne les clés étrangère de la table sql.
-    static QMap<int,QString> foreignKey();
-
-    //! Retourne le nom la table sql.
-    static QString table()
-        {return QString("dnsr");}
-};
-
 // Eleve
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Eleve.
  */
-template<> class InfoBdd<Eleve> : public NoKeyInfoBdd
+template<> class InfoBdd<Eleve> : public NomInfoBdd
 {
 public:
     typedef EleveLinkSql EntLinkSql;
@@ -509,9 +445,9 @@ public:
     static QVector<QMap<int,int>> attributUnique()
     {
         QVector<QMap<int,int>> att(1);
-        att[0].insert(EleveUniqueSql::nomUnique,Eleve::Nom);
-        att[0].insert(EleveUniqueSql::naissanceUnique,Eleve::Naissance);
-        att[0].insert(EleveUniqueSql::prenomUnique,Eleve::Prenom);
+        att[0].insert(EleveUniqueSql::NomUnique,Eleve::Nom);
+        att[0].insert(EleveUniqueSql::NaissanceUnique,Eleve::Naissance);
+        att[0].insert(EleveUniqueSql::PrenomUnique,Eleve::Prenom);
         return att;
     }
 
@@ -602,8 +538,8 @@ public:
     static QVector<QMap<int,int>> attributUnique()
     {
         QVector<QMap<int,int>> att(RelationExactOneNotNullInfoBdd::attributUnique());
-        att[0].insert(GroupeUniqueSql::nomUnique,Groupe::Nom);
-        att[1].insert(GroupeUniqueSql::nomUnique,Groupe::Nom);
+        att[0].insert(GroupeUniqueSql::NomUnique,Groupe::Nom);
+        att[1].insert(GroupeUniqueSql::NomUnique,Groupe::Nom);
         return att;
     }
 
@@ -629,10 +565,15 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité GroupeEleve.
  */
-template<> class InfoBdd<GroupeEleve> : public RelationInfoBdd
+template<> class InfoBdd<GroupeEleve> : public NumRelationInfoBdd
 {
 public:
-    typedef RelationOnlyLinkSql<GroupeEleve> EntLinkSql;
+    typedef NumRelationOnlyLinkSql<GroupeEleve> EntLinkSql;
+    typedef RelationUniqueSql EntUniqueSql;
+
+    //! Retourne la liste des attributs uniques.
+    static QVector<QMap<int,int>> attributUnique()
+    {return RelationInfoBdd::attributUnique();}
 
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
@@ -646,10 +587,11 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Niveau.
  */
-template<> class InfoBdd<Niveau> : public NomInfoBdd
+template<> class InfoBdd<Niveau> : public NcNomInfoBdd
 {
 public:
     typedef NiveauLinkSql EntLinkSql;
+    typedef NomUniqueSql EntUniqueSql;
 
     //! Retourne la liste des nom sql des attributs.
     static QMap<int,QString> attribut()
@@ -659,6 +601,10 @@ public:
         att.insert(Niveau::IdTpEtab,"IDtpetab");
         return att;
     }
+
+    //! Retourne la liste des attributs uniques.
+    static QVector<QMap<int,int>> attributUnique()
+    {return NomInfoBdd::attributUnique();}
 
     //! Retourne la liste des caractéristiques sql des attributs.
     static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
@@ -687,31 +633,94 @@ public:
     typedef RelationOnlyLinkSql<NiveauPrecedent> EntLinkSql;
 
     //! Retourne les clés étrangère de la table sql.
-    static QMap<int,QString> foreignKey()
-    {
-        QMap<int,QString> att;
-        att.insert(NiveauPrecedent::IdPrec,InfoBdd<Niveau>::table());
-        att.insert(NiveauPrecedent::IdSuiv,InfoBdd<Niveau>::table());
-        return att;
-    }
+    static QMap<int,QString> foreignKey();
 
     //! Retourne le nom la table sql.
     static QString table()
         {return QString("nivpre");}
 };
 
+// Note
+/*! \ingroup groupeInfoBdd
+ * \brief Classe contenant les informations sql sur l'entité Note.
+ */
+template<> class InfoBdd<Note> : public ValeurIntDateTimeNumRelationInfoBdd
+{
+public:
+    typedef ValeurIntDateTimeCurrentNumRelationOnlyLinkSql<Note> EntLinkSql;
+    typedef RelationUniqueSql EntUniqueSql;
+
+    //! Retourne la liste des attributs uniques.
+    static QVector<QMap<int,int>> attributUnique()
+    {return RelationInfoBdd::attributUnique();}
+
+    //! Retourne les clés étrangère de la table sql.
+    static QMap<int,QString> foreignKey();
+
+    //! Retourne le nom la table sql.
+    static QString table()
+        {return QString("nt");}
+};
+
 // Source
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Source.
  */
-template<> class InfoBdd<Source> : public TypeNomInfoBdd
+template<> class InfoBdd<Source> : public TypeNcNomInfoBdd
 {
 public:
     typedef TypeNcNomOnlyLinkSql<Source> EntLinkSql;
+    typedef NomUniqueSql EntUniqueSql;
+
+    //! Retourne la liste des attributs uniques.
+    static QVector<QMap<int,int>> attributUnique()
+    {return NomInfoBdd::attributUnique();}
 
     //! Retourne le nom la table sql.
     static QString table()
         {return QString("sr");}
+};
+
+// TypeControle
+/*! \ingroup groupeInfoBdd
+ * \brief Classe contenant les informations sql sur l'entité TypeControle.
+ */
+template<> class InfoBdd<TypeControle> : public NcNomInfoBdd
+{
+public:
+    typedef TypeControleLinkSql EntLinkSql;
+    typedef NomUniqueSql EntUniqueSql;
+
+    //! Retourne la liste des nom sql des attributs.
+    static QMap<int,QString> attribut()
+    {
+        QMap<int,QString> att(NcNomInfoBdd::attribut());
+        //att.insert(TypeControle::IdSousType,"IDst");
+        att.insert(TypeControle::Appreciation,"app");
+        att.insert(TypeControle::Decimale,"dc");
+        att.insert(TypeControle::Modif,"md");
+        att.insert(TypeControle::Total,"tt");
+        return att;
+    }
+
+    //! Retourne la liste des attributs uniques.
+    static QVector<QMap<int,int>> attributUnique()
+    {return NomInfoBdd::attributUnique();}
+
+    //! Retourne la liste des caractéristiques sql des attributs.
+    static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
+    {
+        QMap<int,QPair<bdd::createSql, bool>> att(NcNomInfoBdd::creerAttribut());
+        att.insert(TypeControle::Appreciation,QPair<createSql, bool>(createSql::integer,false));
+        att.insert(TypeControle::Decimale,QPair<createSql, bool>(createSql::integer,true));
+        att.insert(TypeControle::Modif,QPair<createSql, bool>(createSql::integer,false));
+        att.insert(TypeControle::Total,QPair<createSql, bool>(createSql::integer,true));
+        return att;
+    }
+
+    //! Retourne le nom la table sql.
+    static QString table()
+        {return QString("tpctr");}
 };
 
 // TypeEtablissement

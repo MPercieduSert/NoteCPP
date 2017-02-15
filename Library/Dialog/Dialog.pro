@@ -30,7 +30,8 @@ SOURCES += \
     NewClasseDialog.cpp \
     NewEtablissementDialog.cpp \
     SelectAnneeDialog.cpp \
-    SelectDonneeDialog.cpp
+    SelectDonneeDialog.cpp \
+    NewControleDiag.cpp
 
 
 HEADERS += \ 
@@ -38,7 +39,8 @@ HEADERS += \
     NewEtablissementDialog.h \
     NewClasseDialog.h \
     SelectAnneeDialog.h \
-    SelectDonneeDialog.h
+    SelectDonneeDialog.h \
+    NewControleDiag.h
 
 
 unix {

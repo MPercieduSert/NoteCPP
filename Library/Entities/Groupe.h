@@ -27,10 +27,10 @@ public:
                    NbrAtt};
 
     enum grPour {GrAnnee = 0,
-                 GrClasse =1};
+                 GrClasse = 1};
 
     BASE_ENTITY(Groupe,InfoEntity::GroupeId)
-    RELATION_ALIAS_2_CLE(An,Cl,Groupe)
+    RELATION_ALIAS_2_CLE(An,Cl)
 
     //! Constructeur par defaut.
     Groupe(int id = 0)

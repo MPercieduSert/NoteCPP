@@ -26,6 +26,14 @@
 else \
     throw std::invalid_argument(messageErreurs(entity).append("\n Erreur de validité").toStdString());
 
+// Macro pour manageur.
+//! \ingroup groupeBaseManager
+//! Coprs des deux methodes modify.
+#define MODIFY prepare(m_sqlModify);\
+    m_link.bindValues(entity);\
+    m_link.setId(entity,m_link.nbrAtt()-1);\
+    execFinish();
+
 /*! \ingroup groupeBaseManager
  * \brief Classe template mère des différents manageurs de type SQL.
  */
@@ -240,14 +248,14 @@ public:
     ListPtr<Ent> getList(const QString & condition)
     {
         prepare(m_sqlGetListWhere.arg(condition));
-        return listFormRequete();
+        return listFromRequete();
     }
 
     //! Renvoie la liste des entités de la table ordonnée suivant la colonne d'identifiant ordre.
     ListPtr<Ent> getList(typename Ent::Position ordre = Ent::Id, bool crois = true)
     {
         prepare(m_sqlGetList.arg(attribut(ordre),croissant(crois)));
-        return listFormRequete();
+        return listFromRequete();
     }
 
     //! Renvoie la liste des entités de la table vérifiant la condition,
@@ -257,7 +265,7 @@ public:
         prepare(m_sqlGetList1Where1.arg(attribut(cle), m_conditionString[cond],
                                         attribut(ordre), croissant(crois)));
         bindValue(0,value);
-        return listFormRequete();
+        return listFromRequete();
     }
 
     //! Renvoie la liste des entités de la table vérifiant la condition,
@@ -268,7 +276,7 @@ public:
                                         attribut(ordre1), croissant(crois1),
                                         attribut(ordre2), croissant(crois2)));
         bindValue(0,value);
-        return listFormRequete();
+        return listFromRequete();
     }
 
     //! Renvoie la liste des entités de la table vérifiant la condition,
@@ -282,7 +290,7 @@ public:
                                         attribut(ordre2), croissant(crois2),
                                         attribut(ordre3), croissant(crois3)));
         bindValue(0,value);
-        return listFormRequete();
+        return listFromRequete();
     }
 
     //! Renvoie la liste des entités de la table vérifiant les deux conditions,
@@ -296,7 +304,7 @@ public:
                                         attribut(ordre), croissant(crois)));
         bindValue(0,value1);
         bindValue(1,value2);
-        return listFormRequete();
+        return listFromRequete();
     }
 
     //! Renvoie la liste des entités de la table vérifiant les deux conditions,
@@ -318,7 +326,7 @@ public:
         bindValue(0,value1);
         bindValue(1,value2);
         bindValue(1,value3);
-        return listFormRequete();
+        return listFromRequete();
     }
 
     //! Renvoie la liste des entités de la table vérifiant une condition sur une jointure (colonneTable = colonneJoin),
@@ -339,7 +347,7 @@ public:
         sqlWhere.chop(5);
         QString sqlOrder;
         for(QMap<int,bool>::const_iterator i = orderMapTable.cbegin(); i != orderMapTable.cend(); ++i)
-            sqlOrder.append(" T.").append(attribut(i.key())).append(croissant(i.value())).append(",");
+            sqlOrder.append(" T.").append(attribut(i.key())).append(" ").append(croissant(i.value())).append(",");
         sqlOrder.chop(1);
         prepare(m_sqlGetListJoin.arg(tableJoin,
                                      attribut(colonneTable),
@@ -351,13 +359,13 @@ public:
             bindValue(j,i.value());
         for(QMap<QString,QVariant>::const_iterator i = whereMapJoin.cbegin(); i != whereMapJoin.cend(); ++i, ++j)
             bindValue(j,i.value());
-        return listFormRequete();
+        return listFromRequete();
     }
 
     //! Renvoie la liste des entités de la table vérifiant une condition sur une jointure (table.ID = join.colonneJoin),
     //! valeur de la colonne de la jointure d'identifiant cleWhere = valueWhere,
     //! ordonnée suivant la colonne de l'entité d'identifiant ordre.
-    template<class Join> ListPtr<Ent> getListJoin(const QString & tableJoin,
+    ListPtr<Ent> getListJoin(const QString & tableJoin,
                                                        const QString & colonneJoin,
                                                        const QString & whereJoin,
                                                        const QVariant & valueWhere,
@@ -368,7 +376,111 @@ public:
                                             whereJoin, cond,
                                             attribut(ordre), croissant(crois)));
         bindValue(0,valueWhere);
-        return listFormRequete();
+        return listFromRequete();
+    }
+
+    //! Renvoie la map des entités de la table vérifiant la condition.
+    MapPtr<Ent> getMap(const QString & condition, typename Ent::Position cleMap = Ent::Id)
+    {
+        prepare(m_sqlGetListWhere.arg(condition));
+        return mapFromRequete(cleMap);
+    }
+
+    //! Renvoie la map des entités de la table.
+    MapPtr<Ent> getMap(typename Ent::Position cleMap = Ent::Id)
+    {
+        prepare(m_sqlGetList.arg(attribut(cleMap),QString()));
+        return mapFromRequete(cleMap);
+    }
+
+    //! Renvoie la map des entités de la table vérifiant la condition,
+    //! valeur de la colonne d'identifiant cle = value.
+    MapPtr<Ent> getMap(typename Ent::Position cle, const QVariant & value, typename Ent::Position cleMap = Ent::Id, bdd::Condition cond = bdd::Condition::Egal)
+    {
+        prepare(m_sqlGetList1Where1.arg(attribut(cle), m_conditionString[cond],
+                                        attribut(cleMap), QString()));
+        bindValue(0,value);
+        return mapFromRequete(cleMap);
+    }
+
+    //! Renvoie la map des entités de la table vérifiant les deux conditions,
+    //! valeur de la colonne d'identifiant cle1 = value1 et valeur de la colonne d'identifiant cle2 = value2.
+    MapPtr<Ent> getMap(typename Ent::Position cle1, const QVariant & value1, typename Ent::Position cle2,  const QVariant & value2,
+                         typename Ent::Position cleMap = Ent::Id, bdd::Condition cond1 = bdd::Condition::Egal, bdd::Condition cond2 = bdd::Condition::Egal)
+    {
+        prepare(m_sqlGetList2Where1.arg(attribut(cle1), m_conditionString[cond1],
+                                        attribut(cle2), m_conditionString[cond2],
+                                        attribut(cleMap), QString()));
+        bindValue(0,value1);
+        bindValue(1,value2);
+        return mapFromRequete(cleMap);
+    }
+
+    //! Renvoie la map des entités de la table vérifiant les deux conditions,
+    //! valeur de la colonne d'identifiant cle1 = value1, valeur de la colonne d'identifiant cle2 = value2
+    //! et valeur de la colonne d'identifiant cle3 = value3.
+    MapPtr<Ent> getMap(typename Ent::Position cle1, const QVariant & value1,
+                         typename Ent::Position cle2, const QVariant & value2,
+                         typename Ent::Position cle3, const QVariant & value3,
+                         typename Ent::Position cleMap = Ent::Id,
+                         bdd::Condition cond1 = bdd::Condition::Egal, bdd::Condition cond2 = bdd::Condition::Egal,
+                         bdd::Condition cond3 = bdd::Condition::Egal)
+    {
+        prepare(m_sqlGetList3Where1.arg(attribut(cle1), m_conditionString[cond1],
+                                        attribut(cle2), m_conditionString[cond2],
+                                        attribut(cle3), m_conditionString[cond3],
+                                        attribut(cleMap), QString()));
+        bindValue(0,value1);
+        bindValue(1,value2);
+        bindValue(1,value3);
+        return mapFromRequete(cleMap);
+    }
+
+    //! Renvoie la map des entités de la table vérifiant une condition sur une jointure (colonneTable = colonneJoin),
+    //! valeur des colonnes de la table Ent d'identifiant key = value de QMap whereMapTable,
+    //! valeur des colonnes de la table Join key = value de QMap whereMapJoin.
+    MapPtr<Ent> getMapJoin(const QString & tableJoin, int colonneTable,
+                           const QString & colonneJoin,
+                           const QMap<int,QVariant> & whereMapTable,
+                           const QMap<QString,QVariant> & whereMapJoin,
+                           typename Ent::Position cleMap = Ent::Id)
+    {
+        QString sqlWhere;
+        for(QMap<int,QVariant>::const_iterator i = whereMapTable.cbegin(); i != whereMapTable.cend(); ++i)
+            sqlWhere.append("T.").append(attribut(i.key())).append("=? AND ");
+        for(QMap<QString,QVariant>::const_iterator i = whereMapJoin.cbegin(); i != whereMapJoin.cend(); ++i)
+            sqlWhere.append("J.").append(i.key()).append("=? AND ");
+        sqlWhere.chop(5);
+        QString sqlOrder(" T.");
+        sqlOrder.append(attribut(cleMap));
+        prepare(m_sqlGetListJoin.arg(tableJoin,
+                                     attribut(colonneTable),
+                                     colonneJoin,
+                                     sqlWhere,
+                                     sqlOrder));
+        int j = 0;
+        for(QMap<int,QVariant>::const_iterator i = whereMapTable.cbegin(); i != whereMapTable.cend(); ++i, ++j)
+            bindValue(j,i.value());
+        for(QMap<QString,QVariant>::const_iterator i = whereMapJoin.cbegin(); i != whereMapJoin.cend(); ++i, ++j)
+            bindValue(j,i.value());
+        return mapFromRequete(cleMap);
+    }
+
+    //! Renvoie la map des entités de la table vérifiant une condition sur une jointure (table.ID = join.colonneJoin),
+    //! valeur de la colonne de la jointure d'identifiant cleWhere = valueWhere.
+    MapPtr<Ent> getMapJoin(const QString & tableJoin,
+                           const QString & colonneJoin,
+                           const QString & whereJoin,
+                           const QVariant & valueWhere,
+                           typename Ent::Position cleMap = Ent::Id,
+                           bdd::Condition cond = bdd::Condition::Egal)
+    {
+        prepare(m_sqlGetListJoin1Where1.arg(tableJoin,
+                                            colonneJoin,
+                                            whereJoin, cond,
+                                            attribut(cleMap),QString()));
+        bindValue(0,valueWhere);
+        return mapFromRequete(cleMap);
     }
 
     //! Hydrate l'entité entity avec les valeurs des attributs de l'entité enregistrée en base de donnée
@@ -383,13 +495,9 @@ public:
     bool getUnique(Ent & entity)
     {
         if(existsUnique(entity) == bdd::Tous)
-        {
             return get(entity);
-        }
         else
-        {
             return false;
-        }
     }
 
     //! Teste s'il y a dans la base de donnée une entité ayant exactement les mêmes attributs (identifiant compris).
@@ -398,7 +506,7 @@ public:
 
     //! Teste s'il y a dans la base de donnée une entité ayant exactement les mêmes attributs (identifiant compris).
     bool sameInBdd(const Ent &entity)
-    {
+    {       
         Ent entityT(entity.id());
         if(get(entityT))
             return entityT == entity;
@@ -466,16 +574,25 @@ protected:
     }
 
     //! Construit la liste des entités correspondant une requète de type sqlGetList.
-    ListPtr<Ent> listFormRequete()
+    ListPtr<Ent> listFromRequete()
     {
         exec();
         ListPtr<Ent> liste;
         while(next())
-        {
             liste.append(m_link.newFromRequete());
-        }
         finish();
         return liste;
+    }
+
+    //! Construit la map des entités correspondant une requète de type sqlGetList.
+    MapPtr<Ent> mapFromRequete(typename Ent::Position cle)
+    {
+        exec();
+        MapPtr<Ent> map;
+        while(next())
+            map.insert(m_link.id(cle),m_link.newFromRequete());
+        finish();
+        return map;
     }
 
     //! Message d'erreurs si l'entité entity n'est pas valide.
@@ -485,13 +602,12 @@ protected:
     QString messageErreursUnique(const Entity & entity) const;
 
     //! Met à jour l'entité entity en base de donnée.
+    virtual void modify(Ent & entity)
+        {MODIFY}
+
+    //! Met à jour l'entité entity en base de donnée.
     virtual void modify(const Ent & entity)
-    {
-        prepare(m_sqlModify);
-        m_link.bindValues(entity);
-        m_link.setId(entity,m_link.nbrAtt()-1);
-        execFinish();
-    }
+        {MODIFY}
 
     //! Transforme QVector<QMap<int,int>> en QVector<QMap<int,QString>> avec les noms des attributs
     QVector<QMap<int,QString>> uniqueInit(const QVector<QMap<int,int>> & attsInt);

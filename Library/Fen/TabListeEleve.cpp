@@ -27,6 +27,9 @@ void TabListeEleve::addColumn()
     Tree<Donnee> tree(bdd()->getArbre<Donnee>(1));
     SelectDonneeDialog dial(tree,this);
     dial.exec();
+    Donnee dn(dial.result());
+    if(bdd()->get(dn))
+        ((ListeEleveModel *) m_model)->insertColumn(dn);
 }
 
 void TabListeEleve::becomeCurrent() const

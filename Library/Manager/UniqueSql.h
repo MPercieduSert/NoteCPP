@@ -13,66 +13,66 @@
 #include "../Entities/Groupe.h"
 
 CONSTR_DESTR_UNIQUE_SQL(Annee,SimpleUniqueSql)
-    enum {anUnique};
+    enum {AnUnique};
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
     void bindValuesUnique(const Annee &entity)
-        {bindValue(anUnique,entity.an());}};
+        {bindValue(AnUnique,entity.an());}};
 
 CONSTR_DESTR_UNIQUE_SQL(Classe,DoubleUniqueSql)
-    enum {idAnUnique,idEtabUnique,idNivUnique,numUnique,nomUnique = idNivUnique};
+    enum {IdAnUnique,IdEtabUnique,IdNivUnique,NumUnique,NomUnique = IdNivUnique};
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
     void bindValuesUnique_1(const Classe & entity)
     {
-        bindValue(idAnUnique,entity.idAn());
-        bindValue(idEtabUnique,entity.idEtab());
-        bindValue(idNivUnique,entity.idNiv());
-        bindValue(numUnique,entity.num());
+        bindValue(IdAnUnique,entity.idAn());
+        bindValue(IdEtabUnique,entity.idEtab());
+        bindValue(IdNivUnique,entity.idNiv());
+        bindValue(NumUnique,entity.num());
     }
 
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
     void bindValuesUnique_2(const Classe & entity)
     {
-        bindValue(idAnUnique,entity.idAn());
-        bindValue(idEtabUnique,entity.idEtab());
-        bindValue(nomUnique,entity.nom());
+        bindValue(IdAnUnique,entity.idAn());
+        bindValue(IdEtabUnique,entity.idEtab());
+        bindValue(NomUnique,entity.nom());
     }};
 
 CONSTR_DESTR_UNIQUE_SQL(Donnee,SimpleUniqueSql)
-    enum {idProgUnique};
+    enum {IdProgUnique};
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
     void bindValuesUnique(const Donnee &entity)
-        {bindValue(idProgUnique,entity.idProg());}};
+        {bindValue(IdProgUnique,entity.idProg());}};
 
 CONSTR_DESTR_UNIQUE_SQL(DonneeCard,SimpleUniqueSql)
-    enum {idDonneeUnique,surUnique};
+    enum {IdDonneeUnique,CibleUnique};
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
     void bindValuesUnique(const DonneeCard &entity)
     {
-        bindValue(idDonneeUnique,entity.idDonnee());
-        bindValue(surUnique,entity.sur());
+        bindValue(IdDonneeUnique,entity.idDonnee());
+        bindValue(CibleUnique,entity.cible());
     }};
 
 CONSTR_DESTR_UNIQUE_SQL(Eleve,NomUniqueSqlTemp)
-    enum{naissanceUnique = NomUniqueSql::NbrUnique, prenomUnique};
+    enum{NaissanceUnique = NomUniqueSql::NbrUnique, PrenomUnique};
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
     void bindValuesUnique(const Eleve & entity)
     {
         NomUniqueSqlTemp<Eleve>::bindValuesUnique(entity);
-        bindValue(naissanceUnique, entity.naissance());
-        bindValue(prenomUnique, entity.prenom());
+        bindValue(NaissanceUnique, entity.naissance());
+        bindValue(PrenomUnique, entity.prenom());
     }};
 
 CONSTR_DESTR_UNIQUE_SQL(Groupe,AttsRelationExactOneNotNullUniqueSql)
-    enum {nomUnique = AttsRelationExactOneNotNullUniqueSql<Groupe>::NbrUnique1};
+    enum {NomUnique = AttsRelationExactOneNotNullUniqueSql<Groupe>::NbrUnique1};
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
     void bindValuesUnique(const Groupe & entity)
     {
-        bindValue(nomUnique,entity.nom());
+        bindValue(NomUnique,entity.nom());
     }};
 #endif // UNIQUESQL

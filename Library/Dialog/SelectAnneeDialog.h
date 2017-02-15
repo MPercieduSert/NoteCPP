@@ -25,17 +25,18 @@ class SelectAnneeDialog : public QDialog
 {
     Q_OBJECT
 public:
+    //! Constante de réponse (autre que l'identifiant de l'année).
     enum DialogCode {Creer = -1,
                      Annuler = -2};
 
 protected:
-    QLabel *m_label;                //! Texte
-    QPushButton *m_cancelBouton;    //! Bouton d'annulation
-    QPushButton *m_creerBouton;     //! Bouton de création
-    QPushButton *m_okBouton;        //! Bouton de confirmation de selection
-    QComboBox *m_listBox;           //! Liste déroulante des différants choix
-    QVBoxLayout *m_vLayout;         //! Layout principal
-    QHBoxLayout *m_hLayout;         //! Layout secondaire      
+    QLabel *m_label;                //!< Texte de l'entête.
+    QPushButton *m_cancelBouton;    //!< Bouton d'annulation.
+    QPushButton *m_creerBouton;     //!< Bouton de création.
+    QPushButton *m_okBouton;        //!< Bouton de confirmation de selection.
+    QComboBox *m_listBox;           //!< Liste déroulante des différants choix.
+    QVBoxLayout *m_vLayout;         //!< Calque principal.
+    QHBoxLayout *m_hLayout;         //!< Calque secondaire.
 
 public:
     //! Constructeur.

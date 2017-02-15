@@ -323,7 +323,7 @@ protected:
     using DoubleUniqueSql<Ent>::prepare;
 
 public:
-    enum {id1Unique = 0,NbrUnique1,id2Unique = 0,NbrUnique2};
+    enum {Id1Unique = 0,NbrUnique1,Id2Unique = 0,NbrUnique2};
     //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
     RelationExactOneNotNullUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
         : DoubleUniqueSql<Ent>(table,atts)
@@ -423,13 +423,13 @@ protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée 1.
     void bindValuesUnique_1(const Ent &entity)
     {
-        bindValue(id1Unique,entity.id1());
+        bindValue(Id1Unique,entity.id1());
     }
 
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée 2.
     void bindValuesUnique_2(const Ent &entity)
     {
-        bindValue(id2Unique,entity.id2());
+        bindValue(Id2Unique,entity.id2());
     }
 };
 

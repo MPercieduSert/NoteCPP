@@ -15,14 +15,15 @@ CONFIG += c++11
 HEADERS += \
     Annee.h \
     Arbre.h \
-    Attribut.h \
     AttributEntity.h \
     Classe.h \
     ClasseEleve.h \
+    Controle.h \
     DonneeCard.h \
     Donnee.h \
     Eleve.h \
     Entity.h \
+    EntityCible.h \
     EntityDivers.h \
     EntityNom.h \
     EntityOfDefaultType.h \
@@ -31,21 +32,24 @@ HEADERS += \
     InfoEntity.h \
     InfoEntityBase.h \
     Niveau.h \
+    TypeControle.h \
     TypeEtablissement.h \
     TypeNiveau.h \
     VersionBdd.h
 
+
 SOURCES += \
     Annee.cpp \
     Arbre.cpp \
-    Attribut.cpp \
     AttributEntity.cpp \
     Classe.cpp \
     ClasseEleve.cpp \
+    Controle.cpp \
     Donnee.cpp \
     DonneeCard.cpp \
     Eleve.cpp \
     Entity.cpp \
+    EntityCible.cpp \
     EntityDivers.cpp \
     EntityNom.cpp \
     EntityOfDefaultType.cpp \
@@ -54,6 +58,7 @@ SOURCES += \
     InfoEntity.cpp \
     InfoEntityBase.cpp \
     Niveau.cpp \
+    TypeControle.cpp \
     TypeEtablissement.cpp \
     TypeNiveau.cpp \
     VersionBdd.cpp

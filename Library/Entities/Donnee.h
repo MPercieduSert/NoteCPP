@@ -47,7 +47,7 @@ public:
     enum prog {NoId,
               Contact,
               Adresse,
-              NbrRue,
+              NumRue,
               Rue,
               CodePostal,
               Ville,

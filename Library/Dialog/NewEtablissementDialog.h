@@ -20,43 +20,67 @@
 #include "../Div/VectorPtr.h"
 #include "../Widget/SelectInListBox.h"
 
-
+/*! \ingroup groupeDialogue
+ * \brief Fenêtre de dialogue de création d'un établissement.
+ */
 class NewEtablissementDialog : public QDialog
 {
     Q_OBJECT
 public:
+    //! Structure de réponse de la fenêtre de dialogue.
     struct dialogResult {
-        Etablissement etab;
-        QVector<int> niveaux;
-        QVector<int> types;
+        Etablissement etab;         //!< Etablissement à créer.
+        QVector<QVariant> donnee;   //!< Vecteur des données sur l'établissement.
+        QVector<int> niveaux;       //!< Liste des identifiant des niveaux présent dans l'établissement.
+        QVector<int> types;         //!< Liste des identifiant des types de classes de l'établissement.
     };
 
+    //! Indices des données sur l'établissement.
+    enum adresse {CodePostalInd,
+                 NumRueInd,
+                 PaysInd,
+                 RueInd,
+                 VilleInd,
+                 Nbr
+              };
+
 protected:
-    const int NbrChoixLine = 4;
+    const int NbrChoixLine = 4;             //!< Nombre de choix du type d'établissement par ligne (+1).
 
     // Donnée
-    VectorPtr<TypeEtablissement> m_vectTpEtab;     //! Liste des types d'établissements
-    VectorPtr<Niveau> m_vectNiveau;                //! Liste des Niveaux
+    VectorPtr<TypeEtablissement> m_vectTpEtab;     //!< Liste des types d'établissements.
+    VectorPtr<Niveau> m_vectNiveau;                //!< Liste des Niveaux.
 
     // Widget
+    QLabel *m_labelCP;              //!< Code postal de l'établissment.
+    QLabel *m_labelNc;              //!< Nom Abrégé de l'établissement.
+    QLabel *m_labelNom;             //!< Nom de l'établissement.
+    QLabel *m_labelNuRue;           //!< Numéro de rue de l'établissement.
+    QLabel *m_labelPays;            //!< Pays de l'établissement.
+    QLabel *m_labelRue;             //!< Nom de Rue de l'adresse de l'établissement.
+    QLabel *m_labelVille;           //!< Ville de l'établissement.
+    QLineEdit *m_lineCp;            //!< Demande du code postal de l'établissement.
+    QLineEdit *m_lineNc;            //!< Demande du nom abrégé de l'établissement.
+    QLineEdit *m_lineNom;           //!< Demande du nom de l'établissement.
+    QLineEdit *m_lineNuRue;         //!< Demande du numéro de rue de l'établissement.
+    QLineEdit *m_linePays;          //!< Demande du pays de l'établissement.
+    QLineEdit *m_lineRue;           //!< Demande la Rue de l'établissement.
+    QLineEdit *m_lineVille;         //!< Demande la ville de l'établissement.
+    QPushButton *m_buttonCancel;    //!< Bouton pour Annuler.
+    QPushButton *m_buttonCreer;     //!< Bouton pour créer l'établissement.
+    SelectInListBox *m_selectListeClasse;  //!< Selection des classe présente dans l'établisement.
 
-    QLabel *m_labelNc;              //! Nom Abrégé de l'établissement
-    QLabel *m_labelNom;             //! Nom de l'établissement
-    QLineEdit *m_lineNc;            //! Demande du nom abrégé de l'établissement
-    QLineEdit *m_lineNom;          //! Demande du nom de l'établissement
-    QPushButton *m_buttonCancel;    //! Bouton pour Annuler
-    QPushButton *m_buttonCreer;     //! Bouton pour créer l'établissement
-    SelectInListBox *m_selectListeClasse;  //! Selection des classe présente dans l'établisement
-
-    QSignalMapper *m_signalChoixType;
+    QSignalMapper *m_signalChoixType;   //!< Carte des choix du type d'établissement.
 
     //Layout
-    QGroupBox *m_groupChoixType;       //! Regroupe les choix des types de classe
-    QVBoxLayout *m_layoutBouton;       //! Bouton créer et annuler
-    QGridLayout *m_layoutChoixType;
-    QHBoxLayout *m_layoutHaut;
-    QVBoxLayout *m_layoutMain;
-    QVBoxLayout *m_layoutNom;
+    QGroupBox *m_groupAdr;              //!< Regroupe les labels de l'adresse.
+    QGroupBox *m_groupChoixType;        //!< Regroupe les choix des types de classe.
+    QGridLayout *m_layoutAdr;           //!< Calque des line de l'adresse.
+    QVBoxLayout *m_layoutBouton;        //!< Calque des bouton créer et annuler.
+    QGridLayout *m_layoutChoixType;     //!< Calque des choix de type d'établissement.
+    QHBoxLayout *m_layoutHaut;          //!< Calque de la partie haute.
+    QVBoxLayout *m_layoutMain;          //!< Calque principal.
+    QVBoxLayout *m_layoutNom;           //!< Calque du choix du nom de l'établissement.
 
 public:
     //! Constructeur.

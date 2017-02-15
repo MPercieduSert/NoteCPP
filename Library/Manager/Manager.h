@@ -21,6 +21,7 @@
 #include <QString>
 #include "../Entities/Entity.h"
 #include "../Div/ListPtr.h"
+#include "../Div/MapPtr.h"
 
 /*! \ingroup groupeBaseManager
  * \brief Espace de nom pour la base de donnée.

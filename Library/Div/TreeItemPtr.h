@@ -12,14 +12,17 @@
 template<class T> class TreeItemPtr : public TreeItem<T*>
 {
 public:
+    //! Iterateur.
     class iterator : public TreeItem<T*>::iterator
     {
     public:
         using TreeItem<T*>::iterator::iterator;
 
+        //! Constructeur.
         iterator(const iterator &i) : TreeItem<T*>::iterator(i)
             {}
 
+        //! opérateur *.
         TreeItemPtr<T> * operator *() const
             {return static_cast<TreeItemPtr<T>*>(TreeItem<T*>::iterator::operator *());}
     };

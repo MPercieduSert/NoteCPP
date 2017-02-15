@@ -65,9 +65,24 @@
 #define ATTRIBUT_ENTITY_DATE_VALIDE(NOM,nom) ATTRIBUT_ENTITY_REF(NOM,nom,DateValide,QDate)
 
 /*! \ingroup groupeBaseAttributEntity
- * \brief Macro de déclaration d'un attribut de type QDateTime ne pouvant pas être nulle dans les entités.
+ * \brief Macro de déclaration d'un attribut de type QDateTime dans les entités.
+ */
+#define ATTRIBUT_ENTITY_DATETIME(NOM,nom) ATTRIBUT_ENTITY_REF(NOM,nom,DateTime,QDateTime)
+
+/*! \ingroup groupeBaseAttributEntity
+ * \brief Macro de déclaration d'un attribut de type QDateTime valide dans les entités.
  */
 #define ATTRIBUT_ENTITY_DATETIME_VALIDE(NOM,nom) ATTRIBUT_ENTITY_REF(NOM,nom,DateTimeValide,QDateTime)
+
+/*! \ingroup groupeBaseAttributEntity
+ * \brief Macro de déclaration d'un attribut de type double dans les entités.
+ */
+#define ATTRIBUT_ENTITY_DOUBLE(NOM,nom) ATTRIBUT_ENTITY_VAL(NOM,nom,Double,double)
+
+/*! \ingroup groupeBaseAttributEntity
+ * \brief Macro de déclaration d'un attribut de type int dans les entités.
+ */
+#define ATTRIBUT_ENTITY_INT(NOM,nom) ATTRIBUT_ENTITY(NOM,nom,IntAttribut,int)
 
 /*! \ingroup groupeBaseAttributEntity
  * \brief Macro de déclaration d'un attribut de type int inférieur ou égale à N dans les entités.
@@ -115,7 +130,8 @@ public:
         {}
 
     //! Renvoie la validité de la valeur.
-    virtual bool isValid() const = 0;
+    virtual bool isValid() const
+        {return true;}
 
     //! Renvoie une chaine de caractère contenant la valeur de l'attribut.
     virtual QString toString() const = 0;
@@ -169,7 +185,7 @@ public:
 template<class T> class AttributEntityVal : public AttributEntity
 {
 protected:
-    T m_valeur; //!< Valeur de l'attribut.
+    T m_valeur = T(); //!< Valeur de l'attribut.
 
 public:
     CONSTR_DEFAUT(AttributEntityVal)
@@ -211,10 +227,6 @@ public:
     BoolAttribut(bool valeur = true)
         :AttributEntityVal<bool>(valeur)
         {}
-
-    //! Teste la validité de la valeur.
-    bool isValid() const final
-        {return true;}
 };
 
 /*! \ingroup groupeBaseAttributEntity
@@ -250,6 +262,22 @@ public:
 };
 
 /*! \ingroup groupeBaseAttributEntity
+ * \brief Classe mère des attributs de type date pouvant être nulle.
+ */
+class DateTimeAttribut : public AttributEntityRef<QDateTime>
+{
+public:
+    //! Constructeur.
+    DateTimeAttribut(const QDateTime & valeur = QDateTime())
+        :AttributEntityRef<QDateTime>(valeur)
+        {}
+
+    //! Teste la validité de la valeur.
+    bool isValid() const final
+        {return true;}
+};
+
+/*! \ingroup groupeBaseAttributEntity
  * \brief Classe mère des attributs de type datetime valide.
  */
 class DateTimeValideAttribut : public AttributEntityRef<QDateTime>
@@ -263,6 +291,30 @@ public:
     //! Teste la validité de la valeur.
     bool isValid() const final
         {return m_valeur.isValid();}
+};
+
+/*! \ingroup groupeBaseAttributEntity
+ * \brief Classe mère des attributs de type double.
+ */
+class DoubleAttribut : public AttributEntityVal<double>
+{
+public:
+    //! Constructeur.
+    DoubleAttribut(double valeur = 0)
+        : AttributEntityVal<double>(valeur)
+        {}
+};
+
+/*! \ingroup groupeBaseAttributEntity
+ * \brief Template des attributs de type entier sana condition.
+ */
+class IntAttribut : public AttributEntityVal<int>
+{
+public:
+    //! Constructeur.
+    IntAttribut(int valeur = 0)
+        :AttributEntityVal<int>(valeur)
+        {}
 };
 
 /*! \ingroup groupeBaseAttributEntity
@@ -307,10 +359,6 @@ public:
     StringAttribut(const QString & valeur = QString())
         :AttributEntityRef<QString>(valeur)
         {}
-
-    //! Teste la validité de la valeur.
-    bool isValid() const final
-        {return true;}
 };
 
 /*! \ingroup groupeBaseAttributEntity
@@ -339,10 +387,6 @@ public:
     VariantAttribut(const QVariant & valeur = QVariant())
         :AttributEntityRef<QVariant>(valeur)
         {}
-
-    //! Teste la validité de la valeur.
-    bool isValid() const final
-        {return true;}
 };
 
 #endif // ATTRIBUTENTITY_H

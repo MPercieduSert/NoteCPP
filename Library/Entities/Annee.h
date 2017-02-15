@@ -14,6 +14,7 @@
 class Annee : public Entity
 {
     ATTRIBUT_ENTITY_INT_SUP(An,an,1)
+
 public:
     //! Positions des attributs.
     enum Position {Id = Entity::Id,

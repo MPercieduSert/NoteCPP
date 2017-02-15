@@ -27,7 +27,7 @@ public:
 
     using RelationEntity::RelationEntity;
     BASE_ENTITY(ClasseEleve,InfoEntity::ClasseEleveId)
-    RELATION_ALIAS_2_CLE(Cl,El,ClasseEleve)
+    RELATION_ALIAS_2_CLE(Cl,El)
 
     //! Constructeur à partir des valeurs attributs.
     ClasseEleve(int idCl, int idEl, const QDate & entree, const QDate & sortie, int id = 0)

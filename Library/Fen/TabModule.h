@@ -17,14 +17,16 @@ class TabModule : public QTabWidget
 {
     Q_OBJECT
 public:
-    enum typeTab {MenuTab = 0,
-                 ClasseTab = 1,
-                 ListeEleveTab = 2,
-                 GroupeTab = 3,
-                 NbrTab = 4};
+    //! Type de module.
+    enum typeTab {MenuTab,
+                 ClasseTab,
+                 ListeEleveTab,
+                 ListeNoteTab,
+                 GroupeTab,
+                 NbrTab};
 protected:
-    Noyau* m_noyau;         //! Pointeur sur le noyau.
-    QMap<int,TabAbstractModule *> m_listeTab[NbrTab];       //! Tableau par type des onglets ouverts
+    Noyau* m_noyau;         //!< Pointeur sur le noyau.
+    QMap<int,TabAbstractModule *> m_listeTab[NbrTab];       //!< Tableau par type des onglets ouverts
     //QList<TabAbstractModule *> m_tabList;
 public:
     //! Constructeur
@@ -51,6 +53,9 @@ public slots:
     void openListeEleve(int idClasse);
     //! Ouvre un ouglet liste des groupe
     //void openListeGroupe(int idClasse);
+    //! Ouvre un onglet liste des notes
+    void openListeNote(int idClasse);
+
 };
 
 #endif // TABMODULE_H

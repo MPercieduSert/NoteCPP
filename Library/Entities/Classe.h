@@ -1,4 +1,4 @@
-/*Auteur: PERCIE DU SERT Maxime
+ /*Auteur: PERCIE DU SERT Maxime
  *Date: 05/03/2016
  */
 #ifndef CLASSE_H
@@ -45,6 +45,13 @@ public:
           m_idEtab(idEtab),
           m_idNiv(idNiv),
           m_num(num)
+    {}
+
+    //! Constructeur à partir d'un jeux de valeurs attributs unique.
+    Classe(int idAn, int idEtab, const QString & nom)
+        : NomEntity(nom),
+          m_idAn(idAn),
+          m_idEtab(idEtab)
     {}
 
   MEMBRE_ATT_4(Classe,NomEntity,IdAn,idAn,IdEtab,idEtab,IdNiv,idNiv,Num,num)

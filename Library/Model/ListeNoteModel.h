@@ -1,12 +1,9 @@
 /*Auteur: PERCIE DU SERT Maxime
- *Date: 15/07/2016
+ *Date: 25/01/2017
  */
-#ifndef LISTEELEVEMODEL_H
-#define LISTEELEVEMODEL_H
+#ifndef LISTENOTEMODEL_H
+#define LISTENOTEMODEL_H
 
-#include <QList>
-#include <QMessageBox>
-#include <QMimeData>
 #include <QStringList>
 
 #include "MAbstractTableModel.h"
@@ -16,31 +13,29 @@
 #include "../Div/VectorPtr.h"
 
 /*! \ingroup groupeModel
- * \brief Model de la liste des éléves.
+ * \brief Model de la liste des notes d'une classe.
  */
-class ListeEleveModel : public MAbstractTableModel
+class ListeNoteModel: public MAbstractTableModel
 {
     Q_OBJECT
 protected:
     Bdd * m_bdd;                                //!< Lien avec la base de donnée.
     Classe m_classe;                            //!< Classe associé à la liste.
-    QVector<VectorPtr<CibleDonnee>> m_dataD;    //!< Ensemble des vecteurs de données sur les éléves.
-    VectorPtr<Eleve> m_dataE;                   //!< Vecteur des éléves présent dans la classe.
-    QStringList m_header;                       //!< Entêtes des colonnes.
+    VectorPtr<Eleve> m_vectEleve;               //!< Vecteur des éléves présent dans la classe.
+    VectorPtr<Controle> m_vectControle;         //!< Liste des controles dont les notes sont affichées
+    QVector<MapPtr<Note>> m_dataN;           //! Ensemble des vecteurs de notes.
 
 public:
     //! numero des colonnes
     enum indexColum {NomIndex = 0,
                     PrenomIndex = 1,
-                    SexeIndex = 2,
-                    NaissanceIndex = 3,
                     NbrDonneeEleve};
 
     //! Constructeur.
-    ListeEleveModel(Bdd * bdd, const Classe &classe, QObject * parent = 0);
+    ListeNoteModel(Bdd * bdd, const Classe &classe, QObject * parent = 0);
 
     //! Destructeur.
-    ~ListeEleveModel()  {}
+    ~ListeNoteModel()  {}
 
     //! Renvoie le nombre de colonnes.
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -54,14 +49,8 @@ public:
     //! Renvoie le label des lignes et des colonnes.
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-    //! Insert de nouvelles lignes.
-    bool insertRows(int position, int rows, const QModelIndex &index = QModelIndex());
-
     //! Insert de nouvelles colonnes.
-    bool insertColumn(const Donnee & dn);
-
-    //! Retire des lignes
-    bool removeRows(int position, int rows, const QModelIndex &index = QModelIndex());
+    bool insertColumn(const Controle &ctr);
 
     //! Renvoie le nombre de lignes.
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -71,7 +60,6 @@ public:
 
     //! Modifie la donnée d'index et de role spécifié.
     bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
-
 };
 
-#endif // LISTEELEVEMODEL_H
+#endif // LISTENOTEMODEL_H

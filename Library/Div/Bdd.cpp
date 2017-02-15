@@ -31,26 +31,31 @@
     return string;
 }*/
 
+ int Bdd::idDonnee(typename Donnee::prog idP)
+ {
+     Donnee dn(idP,0);
+     getUnique(dn);
+     return dn.id();
+ }
+
 void Bdd::listeMiseAJourBdd(int version)
 {
     switch (version) {
     case bdd::miseAJourBdd::creationInitial:
     {
+        // création des tables
         m_manager.get<Annee>().creer();
         m_manager.get<Attribut>().creer();
-        m_manager.get<AttributCommentaire>().creer();
+        m_manager.get<CibleAttribut>().creer();
+        m_manager.get<CibleCommentaire>().creer();
+        m_manager.get<CibleDonnee>().creer();
         m_manager.get<Classe>().creer();
         m_manager.get<ClasseEleve>().creer();
+        m_manager.get<Coefficient>().creer();
         m_manager.get<Commentaire>().creer();
-        m_manager.get<CommentaireClasse>().creer();
-        m_manager.get<CommentaireEleve>().creer();
-        m_manager.get<CommentaireGroupe>().creer();
+        m_manager.get<Controle>().creer();
         m_manager.get<Donnee>().creer();
-        m_manager.get<DonneeClasse>().creer();
-        m_manager.get<DonneeEleve>().creer();
-        m_manager.get<DonneeEtablissement>().creer();
-        m_manager.get<DonneeNiveau>().creer();
-        m_manager.get<DonneeSource>().creer();
+        m_manager.get<DonneeCard>().creer();
         m_manager.get<Eleve>().creer();
         m_manager.get<Etablissement>().creer();
         m_manager.get<EtablissementType>().creer();
@@ -59,15 +64,18 @@ void Bdd::listeMiseAJourBdd(int version)
         m_manager.get<GroupeEleve>().creer();
         m_manager.get<Niveau>().creer();
         m_manager.get<NiveauPrecedent>().creer();
+        m_manager.get<Note>().creer();
         m_manager.get<Source>().creer();
+        m_manager.get<TypeControle>().creer();
         m_manager.get<TypeEtablissement>().creer();
         m_manager.get<TypeNiveau>().creer();
 
-        m_manager.saveVersion(bdd::miseAJourBdd::creationTable20160527);
+        m_manager.saveVersion(bdd::miseAJourBdd::creationTable20170110);
         break;
     }
-    case bdd::miseAJourBdd::creationTable20160527:
+    case bdd::miseAJourBdd::creationTable20170110:
     {
+        // Types d'établissement
         TypeEtablissement primaire(-7,-11,"Primaire");
         TypeEtablissement college(-3,-6,"Collège");
         TypeEtablissement lyceeGeneral(0,-2,"Lycée général");
@@ -86,6 +94,7 @@ void Bdd::listeMiseAJourBdd(int version)
         save(prepa);
         save(ecoleIng);
 
+        // Types de Niveau
         TypeNiveau cp(-11,"CP");
         TypeNiveau ce1(-10,"CE1");
         TypeNiveau ce2(-9,"CE2");
@@ -128,6 +137,7 @@ void Bdd::listeMiseAJourBdd(int version)
         save(sup);
         save(spe);
 
+        // Niveaux
         Niveau Cp(cp.id(),primaire.id(),"CP","CP");
         Niveau Ce1(ce1.id(),primaire.id(),"CE1","CE1");
         Niveau Ce2(ce2.id(),primaire.id(),"CE2","CE2");
@@ -186,6 +196,7 @@ void Bdd::listeMiseAJourBdd(int version)
         save(pt);
         save(bcpst2);
 
+        // Liens entre les niveaux
         save(NiveauPrecedent(Cp.id(),Ce1.id()));
         save(NiveauPrecedent(Ce1.id(),Ce2.id()));
         save(NiveauPrecedent(Ce2.id(),Cm1.id()));
@@ -216,19 +227,42 @@ void Bdd::listeMiseAJourBdd(int version)
         save(NiveauPrecedent(ptsi.id(),pt.id()));
         save(NiveauPrecedent(bcpst1.id(),bcpst2.id()));
 
+        // Donnée de contacts
         Tree<Donnee> arbre;
         arbre.root()->setData(Donnee(false,"Contact",Donnee::Perso,Donnee::NoDonnee,0,Donnee::prog::Contact));
         TreeItem<Donnee> * adr = arbre.root()->addChild(Donnee(false,"Adresse",Donnee::Perso,Donnee::NoDonnee,0,Donnee::prog::Adresse));
-        adr->addChild(Donnee(false,"Numero de rue",Donnee::Perso,Donnee::String,0,Donnee::prog::NbrRue));
-        adr->addChild(Donnee(false,"Rue",Donnee::Perso,Donnee::String,0,Donnee::prog::Rue));
-        adr->addChild(Donnee(false,"Code Postal",Donnee::Perso,Donnee::String,0,Donnee::prog::CodePostal));
-        adr->addChild(Donnee(false,"Ville",Donnee::Perso,Donnee::String,0,Donnee::prog::Ville));
-        adr->addChild(Donnee(false,"Pays",Donnee::Perso,Donnee::String,0,Donnee::prog::Pays));
-        arbre.root()->addChild(Donnee(false,"Teléphone",Donnee::Perso,Donnee::String,0,Donnee::prog::Tel));
-        arbre.root()->addChild(Donnee(false,"Mail",Donnee::Perso,Donnee::String,0,Donnee::prog::Mail));
+        TreeItem<Donnee> * adrNuRue = adr->addChild(Donnee(false,"Numero de rue",Donnee::Perso,Donnee::String,0,Donnee::prog::NumRue));
+        TreeItem<Donnee> * adrRue = adr->addChild(Donnee(false,"Rue",Donnee::Perso,Donnee::String,0,Donnee::prog::Rue));
+        TreeItem<Donnee> * adrCP = adr->addChild(Donnee(false,"Code Postal",Donnee::Perso,Donnee::Int,0,Donnee::prog::CodePostal));
+        TreeItem<Donnee> * adrVille =adr->addChild(Donnee(false,"Ville",Donnee::Perso,Donnee::String,0,Donnee::prog::Ville));
+        TreeItem<Donnee> * adrPays =adr->addChild(Donnee(false,"Pays",Donnee::Perso,Donnee::String,0,Donnee::prog::Pays));
+        TreeItem<Donnee> * tel = arbre.root()->addChild(Donnee(false,"Teléphone",Donnee::Perso,Donnee::String,0,Donnee::prog::Tel));
+        TreeItem<Donnee> * mail = arbre.root()->addChild(Donnee(false,"Mail",Donnee::Perso,Donnee::String,0,Donnee::prog::Mail));
         save(arbre, bdd::TreeSave::AddLeaf);
 
-        m_manager.saveVersion(bdd::miseAJourBdd::Donnees20160527);
+        save(DonneeCard(adrNuRue->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb));
+        save(DonneeCard(adrRue->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb));
+        save(DonneeCard(adrCP->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb));
+        save(DonneeCard(adrVille->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb));
+        save(DonneeCard(adrPays->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb));
+        save(DonneeCard(tel->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb));
+        save(DonneeCard(mail->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb));
+
+        save(DonneeCard(adrNuRue->data().id(),1,true,bdd::cible::EtablissementCb));
+        save(DonneeCard(adrRue->data().id(),1,true,bdd::cible::EtablissementCb));
+        save(DonneeCard(adrCP->data().id(),1,true,bdd::cible::EtablissementCb));
+        save(DonneeCard(adrVille->data().id(),1,true,bdd::cible::EtablissementCb));
+        save(DonneeCard(adrPays->data().id(),1,true,bdd::cible::EtablissementCb));
+        save(DonneeCard(tel->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EtablissementCb));
+        save(DonneeCard(mail->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EtablissementCb));
+
+        // Types de controle
+        save(TypeControle(true,10,false,"DS","Devoir surveillé",20));
+        save(TypeControle(false,1,false,"Colle","Khôle",20));
+        save(TypeControle(false,4,true,"Interro","Interrogation",5));
+
+
+        m_manager.saveVersion(bdd::miseAJourBdd::Donnees20170110);
         break;
     }
     default:

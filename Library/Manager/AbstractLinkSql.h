@@ -268,31 +268,39 @@
 // Only
 
 //! \ingroup groupeLinkSqlBase
-//! Macro définisant les classes onlyLinkSql.
-#define ONLY_LINK(MERE,CLASSE) /*! \ingroup groupeLinkSqlBase */ \
+//! Macro définisant la base des classes onlyLinkSql.
+#define BASE_ONLY_LINK(MERE,CLASSE) /*! \ingroup groupeLinkSqlBase */ \
     /*! \brief Classe mère des liens ayant seulement les attributs de MERE.*/ \
     template<class Ent> class CLASSE : public MERE { \
     public: \
-        /*! \brief Construteur.*/ \
-        CLASSE(const QString & table, const QMap<int,QString> & att) : MERE(table,att) {} \
+        using MERE::MERE; \
         /*! \brief Destructeur.*/ \
-        ~CLASSE() {} \
-        /*! \brief Crée dynamiquement une nouvelle entité de type Ent, l'hydrate à partir de la requète SQL. Puis retourne un  pointeur vers cette nouvelle entité.*/ \
+        ~CLASSE() {}
+
+//! \ingroup groupeLinkSqlBase
+//! Macro définisant la fin des classes onlyLinkSql.
+#define END_ONLY_LINK /*! \brief Crée dynamiquement une nouvelle entité de type Ent, l'hydrate à partir de la requète SQL. Puis retourne un  pointeur vers cette nouvelle entité.*/ \
         Ent * newFromRequete() const
 
-// Définition des Liens des entités de type prédéfini.
 //! \ingroup groupeLinkSqlBase
-//! Macro définisant les Liens des entités de type prédéfini.
-#define LINK_SQL(ENTITY,TYPE,TABLE) /*! \ingroup groupeLinkSqlSpe */ \
-    /*! \brief Lien entre l'entité ENTITY de programation et sa représentation en base de donnée. */ \
-    template<> class LinkSql<ENTITY> : public TYPE ## OnlyLinkSql<ENTITY>\
-    {public:\
-        /*! Construteur, transmettre en argument l'objet de requète utilisée par le manageur. */ \
-        LinkSql<ENTITY>(QSqlQuery * requete) : TYPE ## OnlyLinkSql<ENTITY>(requete) \
-            {m_table = QString(#TABLE); \
-            m_table.squeeze();} \
-        /*! Destructeur.*/ \
-        ~LinkSql<ENTITY>() {}};
+//! Macro définisant les classes onlyLinkSql.
+#define ONLY_LINK(MERE,CLASSE) BASE_ONLY_LINK(MERE,CLASSE) END_ONLY_LINK
+
+//! \ingroup groupeLinkSqlBase
+//! Macro définisant les classes onlyLinkSql à date du jour.
+#define ONLY_LINK_DATE_CURRENT(MERE,CLASSE) BASE_ONLY_LINK(MERE,CLASSE) \
+    /*! \brief Transmet les valeurs des attributs à la requète SQL préparée après avoir imposé la date et l'heure courante.*/\
+    void bindValues(Ent & entity)\
+    {entity.setDateTime(QDateTime::currentDateTime());\
+    MERE::bindValues(entity);}\
+    /*! \brief Transmet les valeurs des attributs à la requète SQL préparée après avoir imposé la date et l'heure courante.*/\
+    void bindValues(const Ent & entity)\
+    {Ent entityDt(entity);\
+    entityDt.setDateTime(QDateTime::currentDateTime());\
+    MERE::bindValues(entityDt);}\
+    END_ONLY_LINK
+
+
 
 /*! \ingroup groupeLinkSqlBase
  * \brief Interface mère des liens entre les entités de programation et les entités en base de donnée.
@@ -316,8 +324,8 @@ public:
         for(QMap<int,QString>::const_iterator i = att.cbegin(); i != att.cend(); ++i)
         {
             if(i.key() <= 0 || i.key() >= m_nbrAtt)
-                throw std::invalid_argument(QString("Indice d'attribut sql invalide de la table : ")
-                                            .append(m_table).append(QString::number(i.key())).append("->").append(i.value()).toStdString());
+                throw std::invalid_argument(QString("Indice d'attribut sql invalide de la table: ")
+                                            .append(m_table).append(", attribut: ").append(QString::number(i.key())).append("->").append(i.value()).toStdString());
             m_attSql[i.key()] = i.value();
             m_attSql[i.key()].squeeze();
         }
@@ -342,6 +350,10 @@ public:
     void fromRequete(Entity & entity) const
         {entity.setId(id());}
 
+    //! Accesseur de l'identifiant.
+    int id(int pos = Entity::Id) const
+        {return value<int>(pos);}
+
     //! Retourne le nombre d'attributs.
     int nbrAtt() const
         {return m_nbrAtt;}
@@ -352,12 +364,7 @@ public:
 
     //! Renvoie le nom de la table.
     const QString & table() const
-        {return m_table;}
-
-protected:
-    //! Accesseur de l'identifiant.
-    int id(int pos = Entity::Id) const
-        {return value<int>(pos);}  
+        {return m_table;} 
 };
 
 #endif // ABSTRACTLINKSQL_H

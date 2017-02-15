@@ -32,6 +32,9 @@
  */
 #define DEFAULT_ANNEE "conf/parametre/initialisation/anneeDefaut"
 
+class TabModule;
+class TabAbstractModule;
+
 /*! \ingroup groupeNoyau
  * \brief Noyau de l'application.
  *
@@ -39,10 +42,6 @@
  *  + Initialise l'application avec la fenêtre principale.
  *  + Affiche les classes de l'année en cours.
  */
-
-class TabModule;
-class TabAbstractModule;
-
 class Noyau : public QObject
 {
     Q_OBJECT
@@ -54,6 +53,7 @@ protected:
      TabModule *m_tabModule;    //!< Zone centrale.
 
 public:
+     //! Constructeur.
     Noyau(const QString &path, QWidget * parent);
 
     //! Renvoie un pointeur sur l'onglet actif.
@@ -117,13 +117,22 @@ public slots:
     void selectDefaultAnnee(QWidget *parent);
 
 signals:
-
+    //! Signal d'activation/désactivation de l'action effacer.
     void effacerPermis(bool bb);
+
+    //! Signal d'activation/désactivation de l'action coller.
     void collerPermis(bool bb);
+
+    //! Signal d'activation/désactivation de l'action copier.
     void copierPermis(bool bb);
+
+    //! Signal d'activation/désactivation de l'action couper.
     void couperPermis(bool bb);
-    //! Signal s'il est permie ou non de créer une nouvelle classe.
+
+    //! Signal d'activation/désactivation de l'action créer une classe.
     void creerClassePermis(bool bb);
+
+    //! Signal d'activation/désactivation de l'action saugarder.
     void savePermis(bool bb);
 };
 

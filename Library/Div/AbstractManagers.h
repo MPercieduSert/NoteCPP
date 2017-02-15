@@ -36,12 +36,12 @@ namespace bdd {
 class AbstractManagers
 {
 public:
-    static const int NbrEntity = InfoEntity::NbrEntity;  //! Nombre de type d'entity à gérer
+    static const int NbrEntity = InfoEntity::NbrEntity;  //!< Nombre de type d'entity à gérer
 
 protected:
-    QSqlQuery m_requete;                            //! Requéte commune aux manageurs.
-    AbstractManagerSql * m_managers[NbrEntity];     //! Tableau des manageurs.
-    VersionBddManager m_managerVersion;             //! Manager de l'entité version de la base de bonnée.
+    QSqlQuery m_requete;                            //!< Requéte commune aux manageurs.
+    AbstractManagerSql * m_managers[NbrEntity];     //!< Tableau des manageurs.
+    VersionBddManager m_managerVersion;             //!< Manager de l'entité version de la base de bonnée.
 
 public:
     //! Constructeur.

@@ -20,12 +20,12 @@ class NewAnneeDialog : public QDialog
 {
     Q_OBJECT
 protected:
-    QLabel *m_label;                //! Texte
-    QPushButton *m_creerBouton;     //! Bouton de confirmation de création
-    QPushButton *m_cancelBouton;    //! Bouton d'annulation
-    SpinBoxAnnee *m_box;            //! Sélecteur d'année
-    QVBoxLayout *m_vLayout;         //! Layout principal
-    QHBoxLayout *m_hLayout;         //! Layout secondaire
+    QLabel *m_label;                //!< Texte
+    QPushButton *m_creerBouton;     //!< Bouton de confirmation de création
+    QPushButton *m_cancelBouton;    //!< Bouton d'annulation
+    SpinBoxAnnee *m_box;            //!< Sélecteur d'année
+    QVBoxLayout *m_vLayout;         //!< Layout principal
+    QHBoxLayout *m_hLayout;         //!< Layout secondaire
 
 public:
     //! Constructeur.

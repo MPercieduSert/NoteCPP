@@ -11,8 +11,10 @@
 struct Info
 {
 public:
+    //! Titre de l'application.
     static QString title()
         {return "Note";}
+    //! Titre de fenêtre principale.
     static QString titleBox()
         {return title();}
 };

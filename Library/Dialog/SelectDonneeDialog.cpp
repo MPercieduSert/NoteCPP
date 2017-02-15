@@ -24,7 +24,7 @@ SelectDonneeDialog::SelectDonneeDialog(const Tree<Donnee> &tree, QWidget *parent
 void SelectDonneeDialog::accept()
 {
     QDialog::accept();
-    setResult(m_treeWidget->value());
+    setResult(m_treeWidget->value().id());
 }
 
 void SelectDonneeDialog::reject()

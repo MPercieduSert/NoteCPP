@@ -11,16 +11,17 @@
 
 /*! \ingroup groupeDivers
  * \brief Classe patron des vector de pointeurs.
- *
  */
 template<class T> class VectorPtr : public QVector<T*>
 {
 public:
+    //! Itérateur.
     class iterator
     {
     protected:
+        //! Type de l'itérateur sur un pointeur.
         typedef T * const * iter;
-        iter m_ptr;
+        iter m_ptr;     //!< Pointeur de l'itérateur.
 
     public:
         //! Constructeur.
@@ -122,6 +123,13 @@ public:
     //! Constructeur à partir d'une liste d'entités temporaire.
     VectorPtr(ListPtr<T> && liste);
 
+    //! Constructeur
+    VectorPtr(int n,const T & value) : QVector<T*>(n)
+    {
+        for(typename QVector<T*>::iterator i = begin(); i != end(); ++i)
+            *i = new T(value);
+    }
+
     //! Destructeur.
     ~VectorPtr()
     {
@@ -177,7 +185,7 @@ template<class T> VectorPtr<T>::VectorPtr(const ListPtr<T> & liste)
     if(!liste.isEmpty())
     {
         typename QVector<T*>::iterator i = begin();
-        for(typename QList<T*>::const_iterator j = liste.cbeginPtr(); j != liste.cendPtr(); ++i, ++j)
+        for(typename QList<T*>::const_iterator j = liste.cbegin(); j != liste.cend(); ++i, ++j)
             *i = new T(**j);
     }
 }
@@ -188,7 +196,7 @@ template<class T> VectorPtr<T>::VectorPtr(ListPtr<T> && liste)
     if(!liste.isEmpty())
     {
         typename QVector<T*>::iterator i = begin();
-        for(typename QList<T*>::const_iterator j = liste.cbeginPtr(); j != liste.cendPtr(); ++i, ++j)
+        for(typename QList<T*>::const_iterator j = liste.cbegin(); j != liste.cend(); ++i, ++j)
             *i = *j;
     }
     liste.clearList();
@@ -203,7 +211,7 @@ template<class T> VectorPtr<T> & VectorPtr<T>::operator =(const ListPtr<T> & lis
     {
         resize(liste.size());
         typename QVector<T*>::iterator i = begin();
-        for(typename QList<T*>::const_iterator j = liste.cbeginPtr(); j != liste.cendPtr(); ++i, ++j)
+        for(typename QList<T*>::const_iterator j = liste.cbegin(); j != liste.cend(); ++i, ++j)
             *i = new T(**j);
     }
     return *this;
@@ -218,7 +226,7 @@ template<class T> VectorPtr<T> & VectorPtr<T>::operator =(ListPtr<T> && liste)
     {
         resize(liste.size());
         typename QVector<T*>::iterator i = begin();
-        for(typename QList<T*>::const_iterator j = liste.cbeginPtr(); j != liste.cendPtr(); ++i, ++j)
+        for(typename QList<T*>::const_iterator j = liste.cbegin(); j != liste.cend(); ++i, ++j)
             *i = *j;
     }
     liste.clearList();
@@ -234,8 +242,8 @@ template<class T> VectorPtr<T> & VectorPtr<T>::operator =(const VectorPtr<T> & v
     {
         resize(vector.size());
         typename QVector<T*>::iterator i = begin();
-        for(typename QVector<T*>::iterator j = vector.begin(); j != vector.end(); ++j, ++i)
-            *i = new T(*j);
+        for(typename QVector<T*>::const_iterator j = vector.cbegin(); j != vector.cend(); ++j, ++i)
+            *i = new T(**j);
     }
     return *this;
 }
@@ -249,10 +257,8 @@ template<class T> VectorPtr<T> & VectorPtr<T>::operator =(VectorPtr<T> && vector
     {
         resize(vector.size());
         typename QVector<T*>::iterator i = begin();
-        for(typename QVector<T*>::const_iterator j = vector.begin(); j != vector.end(); ++j, ++i)
-        {
-            *i = new T(*j);
-        }
+        for(typename QVector<T*>::const_iterator j = vector.cbegin(); j != vector.cend(); ++j, ++i)
+            *i = *j;
         vector.clear();
     }
     return *this;
@@ -265,7 +271,7 @@ template<class T> VectorPtr<T> & VectorPtr<T>::operator << (const ListPtr<T> & l
         int n = size();
         resize(n + liste.size());
         typename QVector<T*>::iterator i = begin() + n;
-        for(typename QList<T*>::const_iterator j = liste.cbeginPtr(); j != liste.cendPtr(); ++i, ++j)
+        for(typename QList<T*>::const_iterator j = liste.cbegin(); j != liste.cend(); ++i, ++j)
             *i = new T(**j);
     }
     return *this;
@@ -278,7 +284,7 @@ template<class T> VectorPtr<T> &VectorPtr<T>::operator <<(ListPtr<T> && liste)
         int n = size();
         resize(n + liste.size());
         typename QVector<T*>::iterator i = begin() + n;
-        for(typename QList<T*>::const_iterator j = liste.cbeginPtr(); j != liste.cendPtr(); ++i, ++j)
+        for(typename QList<T*>::const_iterator j = liste.cbegin(); j != liste.cend(); ++i, ++j)
             *i = *j;
     }
     liste.clearList();

@@ -46,7 +46,8 @@ HEADERS += \
     Info.h \
     ListPtr.h \
     VectorPtr.h \
-    TreeItemPtr.h
+    TreeItemPtr.h \
+    MapPtr.h
 
 SOURCES += \
     AbstractBdd.cpp \
@@ -61,7 +62,8 @@ SOURCES += \
     Info.cpp \
     ListPtr.cpp \
     VectorPtr.cpp \
-    TreeItemPtr.cpp
+    TreeItemPtr.cpp \
+    MapPtr.cpp
 
 unix {
     target.path = /usr/lib

@@ -23,9 +23,9 @@
 class AbstractBdd : public FileInterface
 {
 protected:
-    QSqlDatabase m_bdd;                 //! Connexion à la base de donnée.
-    Managers m_manager;                 //! Manager des entités.
-    const int m_version;                //! Version de la base de donnée requis par le programme
+    QSqlDatabase m_bdd;                 //!< Connexion à la base de donnée.
+    Managers m_manager;                 //!< Manager des entités.
+    const int m_version;                //!< Version de la base de donnée requis par le programme
 
 public:
     //! Constructeur. Donner en argument le type ainsi que le chemin de la base de donnée.
@@ -141,6 +141,42 @@ public:
     //! ordonnée suivant la colonne de l'entité d'identifiant ordre.
     template<class Ent, class Join> ListPtr<Ent> getList(typename Ent::Position cleJoin, typename Join::Position cleWhere, const QVariant & valueWhere, typename Ent::Position ordre = Ent::Id, bdd::Condition cond = bdd::Condition::Egal, bool crois = true);
 
+    //! Renvoie la map des entités de la table des entités Ent.
+    template<class Ent> MapPtr<Ent> getMap(typename Ent::Position cleMap = Ent::Id);
+
+    //! Renvoie la liste des entités de la table des entités Ent vérifiant la condition,
+    //! valeur de la colonne d'identifiant cle = value.
+    template<class Ent> MapPtr<Ent> getMap(typename Ent::Position cle, const QVariant & value, typename Ent::Position cleMap = Ent::Id, bdd::Condition cond = bdd::Condition::Egal);
+
+    //! Renvoie la liste des entités de la table des entités Ent vérifiant les deux conditions,
+    //! valeur de la colonne d'identifiant cle1 = value1 et valeur de la colonne d'identifiant cle2 = value2.
+    template<class Ent> MapPtr<Ent> getMap(typename Ent::Position cle1, const QVariant & value1, typename Ent::Position cle2, const QVariant & value2,
+                                            typename Ent::Position cleMap = Ent::Id, bdd::Condition cond1 = bdd::Condition::Egal, bdd::Condition cond2 = bdd::Condition::Egal);
+
+    //! Renvoie la liste des entités de la table des entités Ent vérifiant les deux conditions,
+    //! valeur de la colonne d'identifiant cle1 = value1, valeur de la colonne d'identifiant cle2 = value2,
+    //! et valeur de la colonne d'identifiant cle3 = value3.
+    template<class Ent> MapPtr<Ent> getMap(typename Ent::Position cle1, const QVariant & value1,
+                                             typename Ent::Position cle2, const QVariant & value2,
+                                             typename Ent::Position cle3, const QVariant & value3,
+                                             typename Ent::Position cleMap = Ent::Id,
+                                             bdd::Condition cond1 = bdd::Condition::Egal, bdd::Condition cond2 = bdd::Condition::Egal,
+                                             bdd::Condition cond3 = bdd::Condition::Egal);
+
+    //! Renvoie la liste des entités de la table vérifiant une condition sur une jointure (colonneTable = colonneJoin),
+    //! valeur des colonnes de la table Ent d'identifiant key = value de QMap whereMapTable,
+    //! valeur des colonnes de la table Join d'identifiant key = value de QMap whereMapJoin.
+    template<class Ent, class Join> MapPtr<Ent> getMap(typename Ent::Position colonneTable,
+                                                       typename Join::Position colonneJoin,
+                                                       const QMap<int,QVariant> & whereMapTable,
+                                                       const QMap<int,QVariant> & whereMapJoin,
+                                                       typename Ent::Position cleMap = Ent::Id);
+
+    //! Renvoie la liste des entités de la table vérifiant une condition sur une jointure,
+    //! valeur de la colonne de la jointure d'identifiant cleWhere = valueWhere.
+    template<class Ent, class Join> MapPtr<Ent> getMap(typename Ent::Position cleJoin, typename Join::Position cleWhere, const QVariant & valueWhere,
+                                                       typename Ent::Position cleMap = Ent::Id, bdd::Condition cond = bdd::Condition::Egal);
+
     //! Hydrate l'entité entity avec les valeurs des attributs de l'entité enregistrées en base de donnée
     //! ayant les mêmes valeurs uniques.
     //! Retourne True si l'opération s'est correctement déroulée.
@@ -212,11 +248,26 @@ public:
     //! Enregistre l'entity dans la base de donnée.
     template<class Ent> void save(const Ent && entity);
 
+    //! Enregistre les entités de vector dans la base de donnée.
+    template<class Ent> void save(ListPtr<Ent> & vector);
+
+    //! Enregistre les entités de vector dans la base de donnée.
+    template<class Ent> void save(const ListPtr<Ent> & vector);
+
+    //! Enregistre les entités de vector dans la base de donnée.
+    template<class Ent> void save(MapPtr<Ent> & vector);
+
+    //! Enregistre les entités de vector dans la base de donnée.
+    template<class Ent> void save(const MapPtr<Ent> & vector);
+
     //! Enregistre l'arbre d'entités dans la base de donnée.
     template<class Ent> void save(Tree<Ent> & arbre, bdd::TreeSave n = bdd::TreeSave::ExternalChange);
 
     //! Enregistre les entités de vector dans la base de donnée.
     template<class Ent> void save(VectorPtr<Ent> & vector);
+
+    //! Enregistre les entités de vector dans la base de donnée.
+    template<class Ent> void save(const VectorPtr<Ent> & vector);
 
     //! Transmet la connexion à la base de donnée aux managers.
     void setBdd();
@@ -313,6 +364,37 @@ template<class Ent, class Join> ListPtr<Ent> AbstractBdd::getList(typename Ent::
                                                       valueWhere, ordre, cond, crois);
 }
 
+template<class Ent> MapPtr<Ent> AbstractBdd::getMap(typename Ent::Position cleMap)
+    {return m_manager.get<Ent>().getMap(cleMap);}
+
+template<class Ent> MapPtr<Ent> AbstractBdd::getMap(typename Ent::Position cle, const QVariant & value, typename Ent::Position cleMap, Condition cond)
+    {return m_manager.get<Ent>().getMap(cle, value, cleMap, cond);}
+
+template<class Ent> MapPtr<Ent> AbstractBdd::getMap(typename Ent::Position cle1, const QVariant & value1, typename Ent::Position cle2, const QVariant & value2, typename Ent::Position cleMap, bdd::Condition cond1, bdd::Condition cond2)
+    { return m_manager.get<Ent>().getMap(cle1, value1, cle2, value2, cleMap, cond1, cond2);}
+
+template<class Ent> MapPtr<Ent> AbstractBdd::getMap(typename Ent::Position cle1, const QVariant & value1, typename Ent::Position cle2, const QVariant & value2, typename Ent::Position cle3, const QVariant & value3, typename Ent::Position cleMap, bdd::Condition cond1, bdd::Condition cond2, bdd::Condition cond3)
+    {return m_manager.get<Ent>().getMap(cle1, value1, cle2, value2, cle3, value3, cleMap, cond1, cond2, cond3);}
+
+template<class Ent, class Join> MapPtr<Ent> AbstractBdd::getMap(typename Ent::Position colonneTable, typename Join::Position colonneJoin,
+                                               const QMap<int,QVariant> & whereMapTable, const QMap<int,QVariant> & whereMapJoin,
+                                               typename Ent::Position cleMap)
+{
+    QMap<QString,QVariant> whereMapJoinString;
+    for(QMap<int,QVariant>::const_iterator i = whereMapJoin.cbegin(); i != whereMapJoin.cend(); i++)
+        whereMapJoinString.insert(m_manager.get<Join>().attribut(i.key()),i.value());
+    return m_manager.get<Ent>().getMapJoin(m_manager.get<Join>().table(),colonneTable, m_manager.get<Join>().attribut(colonneJoin),
+                                                      whereMapTable, whereMapJoinString, cleMap);
+}
+
+template<class Ent, class Join> MapPtr<Ent> AbstractBdd::getMap(typename Ent::Position cleJoin,
+                                                                typename Join::Position cleWhere, const QVariant & valueWhere,
+                                                                typename Ent::Position cleMap, bdd::Condition cond)
+{
+    return m_manager.get<Ent>().getMapJoin(m_manager.get<Join>().table(),m_manager.get<Join>().attribut(cleJoin), get<Join>().attribut(cleWhere),
+                                                      valueWhere, cleMap, cond);
+}
+
 template<class Ent> bool AbstractBdd::getUnique(Ent & entity)
     {return m_manager.get<Ent>().getUnique(entity);}
 
@@ -358,6 +440,30 @@ template<class Ent> void AbstractBdd::save(Ent & entity)
 template<class Ent> void AbstractBdd::save(const Ent &&entity)
     {m_manager.get<Ent>().save(entity);}
 
+template<class Ent> void AbstractBdd::save(ListPtr<Ent> & vector)
+{
+   for(typename ListPtr<Ent>::iterator i = vector.begin(); i != vector.end(); ++i)
+       m_manager.get<Ent>().save(*i);
+}
+
+template<class Ent> void AbstractBdd::save(const ListPtr<Ent> & vector)
+{
+    for(typename ListPtr<Ent>::iterator i = vector.begin(); i != vector.end(); ++i)
+       m_manager.get<Ent>().save(*i);
+}
+
+template<class Ent> void AbstractBdd::save(MapPtr<Ent> & vector)
+{
+   for(typename MapPtr<Ent>::iterator i = vector.begin(); i != vector.end(); ++i)
+       m_manager.get<Ent>().save(*i);
+}
+
+template<class Ent> void AbstractBdd::save(const MapPtr<Ent> & vector)
+{
+    for(typename MapPtr<Ent>::iterator i = vector.begin(); i != vector.end(); ++i)
+       m_manager.get<Ent>().save(*i);
+}
+
 template<class Ent> void AbstractBdd::save(Tree<Ent> & arbre, bdd::TreeSave n)
     {m_manager.get<Ent>().save(arbre,n);}
 
@@ -367,4 +473,9 @@ template<class Ent> void AbstractBdd::save(VectorPtr<Ent> & vector)
        m_manager.get<Ent>().save(*i);
 }
 
+template<class Ent> void AbstractBdd::save(const VectorPtr<Ent> & vector)
+{
+    for(typename VectorPtr<Ent>::iterator i = vector.begin(); i != vector.end(); ++i)
+       m_manager.get<Ent>().save(*i);
+}
 #endif // ABSTRACTBDD_H

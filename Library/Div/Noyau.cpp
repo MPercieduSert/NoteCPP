@@ -140,6 +140,16 @@ void Noyau::creerEtablissement(QWidget * parent, const QString & nc, const QStri
                 m_bdd.save(EtablissementType(result.etab.id(),*i));
             for(QVector<int>::iterator i = result.niveaux.begin(); i != result.niveaux.end(); ++i)
                 m_bdd.save(EtablissementNiveau(result.etab.id(),*i));
+            m_bdd.save(CibleDonnee(m_bdd.idDonnee(Donnee::prog::CodePostal),result.etab.id(),bdd::cible::EtablissementCb,
+                                   0,QVariant(result.donnee.at(NewEtablissementDialog::CodePostalInd))));
+            m_bdd.save(CibleDonnee(m_bdd.idDonnee(Donnee::prog::NumRue),result.etab.id(),bdd::cible::EtablissementCb,
+                                   0,QVariant(result.donnee.at(NewEtablissementDialog::NumRueInd))));
+            m_bdd.save(CibleDonnee(m_bdd.idDonnee(Donnee::prog::Pays),result.etab.id(),bdd::cible::EtablissementCb,
+                                   0,QVariant(result.donnee.at(NewEtablissementDialog::PaysInd))));
+            m_bdd.save(CibleDonnee(m_bdd.idDonnee(Donnee::prog::Rue),result.etab.id(),bdd::cible::EtablissementCb,
+                                   0,QVariant(result.donnee.at(NewEtablissementDialog::RueInd))));
+            m_bdd.save(CibleDonnee(m_bdd.idDonnee(Donnee::prog::Ville),result.etab.id(),bdd::cible::EtablissementCb,
+                                   0,QVariant(result.donnee.at(NewEtablissementDialog::VilleInd))));
         }
     }
 }

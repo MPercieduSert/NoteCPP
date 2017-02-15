@@ -7,14 +7,15 @@
 #include "AbstractLinkSql.h"
 #include "LinkSqlBase.h"
 #include "../Entities/Annee.h"
-#include "../Entities/Attribut.h"
 #include "../Entities/Classe.h"
 #include "../Entities/ClasseEleve.h"
+#include "../Entities/Controle.h"
 #include "../Entities/Donnee.h"
 #include "../Entities/DonneeCard.h"
 #include "../Entities/Eleve.h"
 #include "../Entities/Groupe.h"
 #include "../Entities/Niveau.h"
+#include "../Entities/TypeControle.h"
 #include "../Entities/TypeEtablissement.h"
 #include "../Entities/TypeNiveau.h"
 
@@ -34,36 +35,6 @@ public:
     Annee * newFromRequete() const
     {
         return new Annee(an(),id());
-    }
-};
-
-/*! \ingroup groupeLinkSqlSpe
- * \brief Lien entre l'entité Attribut de programation et sa représentation en base de donnée.
- */
-class AttributLinkSql : public NomLinkSql
-{
-protected:
-    ATTRIBUT_LINK(Attribut,Nc,nc,QString)
-    ATTRIBUT_LINK(Attribut,PrBareme,prBareme,bool)
-    ATTRIBUT_LINK(Attribut,PrCommentaire,prCommentaire,bool)
-    ATTRIBUT_LINK(Attribut,PrCorrection,prCorrection,bool)
-    ATTRIBUT_LINK(Attribut,PrCours,prCours,bool)
-    ATTRIBUT_LINK(Attribut,PrExercice,prExercice,bool)
-public:
-    MEMBRE_LINK_ATT_6(NomLinkSql,AttributLinkSql,Attribut,PrBareme,prBareme,PrCommentaire,prCommentaire,PrCorrection,prCorrection,PrCours,prCours,PrExercice,prExercice,Nc,nc)
-
-    //! Crée dynamiquement une nouvelle entité de type T, l'hydrate à partir de la requète SQL.
-    //! Puis retourne un  pointeur vers cette nouvelle entité.
-    Attribut * newFromRequete() const
-    {
-        return new Attribut(nom(),
-                            prBareme(),
-                            prCommentaire(),
-                            prCorrection(),
-                            prCours(),
-                            prExercice(),
-                            id(),
-                            nc());
     }
 };
 
@@ -106,6 +77,31 @@ public:
 };
 
 /*! \ingroup groupeLinkSqlSpe
+ * \brief Lien entre l'entité Controle de programation et sa représentation en base de donnée.
+ */
+class ControleLinkSql : public NumRelationLinkSql
+{
+protected:
+    ATTRIBUT_LINK(Controle,Bareme,bareme,bool)
+    ATTRIBUT_LINK(Controle,Date,date,QDate)
+    ATTRIBUT_LINK(Controle,Decimale,decimale,int)
+    ATTRIBUT_LINK(Controle,Enonce,enonce,bool)
+    ATTRIBUT_LINK(Controle,Minima,minima,int)
+    ATTRIBUT_LINK(Controle,Nom,nom,QString)
+    ATTRIBUT_LINK(Controle,Saisie,saisie,bool)
+    ATTRIBUT_LINK(Controle,Total,total,int)
+
+public:
+    MEMBRE_LINK_ATT_8(NumRelationLinkSql,ControleLinkSql,Controle,Bareme,bareme,Date,date,Decimale,decimale,Enonce,enonce,Minima,minima,Nom,nom,Saisie,saisie,Total,total)
+    //! Crée dynamiquement une nouvelle entité de type Donnee, l'hydrate à partir de la requète SQL.
+    //! Puis retourne un  pointeur vers cette nouvelle entité.
+    Controle * newFromRequete() const
+    {
+        return new Controle(id1(),id2(),bareme(),date(),decimale(),enonce(),minima(),nom(),num(),saisie(),total(),id());
+    }
+};
+
+/*! \ingroup groupeLinkSqlSpe
  * \brief Lien entre l'entité Donnee de programation et sa représentation en base de donnée.
  */
 class DonneeLinkSql : public TypeNomLinkSql
@@ -115,7 +111,7 @@ protected:
     ATTRIBUT_LINK(Donnee,Modif,modif,bool)
     ATTRIBUT_LINK(Donnee,TpVal,tpVal,int)
 public:
-    MEMBRE_LINK_ATT_1(TypeNomLinkSql,DonneeLinkSql,Donnee,TpVal,tpVal)
+    MEMBRE_LINK_ATT_3(TypeNomLinkSql,DonneeLinkSql,Donnee,IdProg,idProg,Modif,modif,TpVal,tpVal)
     //! Crée dynamiquement une nouvelle entité de type Donnee, l'hydrate à partir de la requète SQL.
     //! Puis retourne un  pointeur vers cette nouvelle entité.
     Donnee * newFromRequete() const
@@ -132,15 +128,15 @@ class DonneeCardLinkSql : public AbstractLinkSql
 protected:
     ATTRIBUT_LINK(DonneeCard,IdDonnee,idDonnee,int)
     ATTRIBUT_LINK(DonneeCard,Card,card,int)
-    ATTRIBUT_LINK(DonneeCard,Sur,sur,int)
+    ATTRIBUT_LINK(DonneeCard,Cible,cible,int)
 
 public:
-    MEMBRE_LINK_ATT_3(AbstractLinkSql,DonneeCardLinkSql,DonneeCard,IdDonnee,idDonnee,Card,card,Sur,sur)
+    MEMBRE_LINK_ATT_3(AbstractLinkSql,DonneeCardLinkSql,DonneeCard,IdDonnee,idDonnee,Card,card,Cible,cible)
     //! Crée dynamiquement une nouvelle entité de type Donnee, l'hydrate à partir de la requète SQL.
     //! Puis retourne un  pointeur vers cette nouvelle entité.
     DonneeCard * newFromRequete() const
     {
-        return new DonneeCard(idDonnee(),card(),sur(),id());
+        return new DonneeCard(idDonnee(),card(),cible(),id());
     }
 };
 
@@ -201,6 +197,27 @@ public:
 };
 
 /*! \ingroup groupeLinkSqlSpe
+ * \brief Lien entre l'entité TypeControle de programation et sa représentation en base de donnée.
+ */
+class TypeControleLinkSql : public NcNomLinkSql
+{
+protected:
+    ATTRIBUT_LINK(TypeControle,Appreciation,appreciation,bool)
+    ATTRIBUT_LINK(TypeControle,Decimale,decimale,int)
+    ATTRIBUT_LINK(TypeControle,Modif,modif,bool)
+    ATTRIBUT_LINK(TypeControle,Total,total,int)
+
+public:
+    MEMBRE_LINK_ATT_4(NcNomLinkSql,TypeControleLinkSql,TypeControle,Appreciation,appreciation,Decimale,decimale,Modif,modif,Total,total)
+    //! Crée dynamiquement une nouvelle entité de type TypeNiveau, l'hydrate à partir de la requète SQL.
+    //! Puis retourne un  pointeur vers cette nouvelle entité.
+    TypeControle * newFromRequete() const
+    {
+        return new TypeControle(appreciation(),decimale(),modif(),nc(),nom(),total(),id());
+    }
+};
+
+/*! \ingroup groupeLinkSqlSpe
  * \brief Lien entre l'entité Niveau de programation et sa représentation en base de donnée.
  */
 class TypeEtablissementLinkSql : public NomLinkSql
@@ -234,5 +251,4 @@ public:
         return new TypeNiveau(anBac(),nom(),id());
     }
 };
-
 #endif // LINKSQL_H

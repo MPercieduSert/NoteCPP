@@ -2,12 +2,6 @@
  *Date: 11/02/2016
  */
 
-/*! \ingroup groupeFile
- * \brief Gestionnaire du fichier de configuration.
- *
- * Gestionnaire du fichier de configuration enregistré sous la forme d'un document XML. Tous les noeuds ont des chemins uniques.
- */
-
 #ifndef CONFIG_H
 #define CONFIG_H
 
@@ -24,6 +18,11 @@
 #include "../Xml/XmlReader.h"
 #include "../Xml/XmlWriter.h"
 
+/*! \ingroup groupeFile
+ * \brief Gestionnaire du fichier de configuration.
+ *
+ * Gestionnaire du fichier de configuration enregistré sous la forme d'un document XML. Tous les noeuds ont des chemins uniques.
+ */
 class Config : public FileInterface
 {
 protected:

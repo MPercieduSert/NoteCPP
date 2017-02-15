@@ -8,13 +8,13 @@ ListeEleveDelegate::ListeEleveDelegate(const Annee &annee, QObject *parent): QSt
 QWidget * ListeEleveDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
     switch (index.column()) {
-    case ListeEleveModel::sexeIndex:
+    case ListeEleveModel::SexeIndex:
     {
         QCheckBox * editor = new QCheckBox("F",parent);
         editor->setAutoFillBackground(true);
         return editor;
     }
-    case ListeEleveModel::naissanceIndex:
+    case ListeEleveModel::NaissanceIndex:
     {
         QDateEdit * editor = new QDateEdit(parent);
         editor->setMinimumDate(QDate(1900,1,1));
@@ -45,7 +45,7 @@ QWidget * ListeEleveDelegate::createEditor(QWidget * parent, const QStyleOptionV
 void ListeEleveDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     switch (index.column()) {
-    case ListeEleveModel::sexeIndex:
+    case ListeEleveModel::SexeIndex:
     {
         bool bb = index.model()->data(index,Qt::EditRole).toBool();
         QCheckBox * checkBox = static_cast<QCheckBox *>(editor);

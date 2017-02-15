@@ -21,14 +21,15 @@ class SelectDonneeDialog : public QDialog
 {
     Q_OBJECT
 protected:
-    QLabel *m_label;                            //! Label
-    QPushButton *m_cancelBouton;                //! Bouton d'annulation
-    QPushButton *m_okBouton;                    //! Bouton de confirmation de selection
-    QHBoxLayout *m_hLayout;                     //! Layout secondaire
-    QVBoxLayout *m_vLayout;                     //! Layout principal
-    ReadTreeWidget<Donnee> * m_treeWidget;      //! Arbre de données
+    QLabel *m_label;                            //!< Texte d'entête.
+    QPushButton *m_cancelBouton;                //!< Bouton d'annulation.
+    QPushButton *m_okBouton;                    //!< Bouton de confirmation de selection.
+    QHBoxLayout *m_hLayout;                     //!< Calque secondaire.
+    QVBoxLayout *m_vLayout;                     //!< Calque principal.
+    ReadTreeWidget<Donnee> * m_treeWidget;      //!< Arbre de données.
 
 public:
+    //! Constructeur.
     SelectDonneeDialog(const Tree<Donnee> & tree, QWidget * parent = 0);
 
 public slots:

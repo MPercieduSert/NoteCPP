@@ -15,12 +15,18 @@
 namespace InfoEntity
 {
 //! Liste des identifiants des types d'entités.
-enum entityBaseId{entityId = -15,
+enum entityBaseId{entityId = -26,
                    ArbreId,
-                   DateTimeRelationEntityId,
+                   ArbreSimpleId,
+                   CibleEntityId,
+                   DateTimeCibleEntityId,
                    DateTimeNumEntityId,
+                   DateTimeNumRelationEntityId,
+                   DateTimeRelationEntityId,
+                   IdNumEntityId,
                    NcNomEntityId,
                    NomEntityId,
+                   NumDateTimeCibleEntityId,
                    NumEntityId,
                    NumRelationEntityId,
                    RelationEntityId,
@@ -29,6 +35,11 @@ enum entityBaseId{entityId = -15,
                    TypeNcNomEntityId,
                    TypeNomEntityId,
                    ValeurDateTimeRelationEntityId,
+                   ValeurIntDateTimeNumRelationEntityId,
+                   ValeurDoubleIdNumEntityId,
+                   ValeurIdNumEntityId,
+                   ValeurIntIdNumEntityId,
+                   ValeurNumDateTimeCibleEntityId,
                    VersionBddId};
 };
 

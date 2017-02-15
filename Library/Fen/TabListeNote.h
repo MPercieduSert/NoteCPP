@@ -1,28 +1,27 @@
 /*Auteur: PERCIE DU SERT Maxime
- *Date: 11/07/2016
+ *Date: 25/01/2017
  */
-#ifndef TABLISTEELEVE_H
-#define TABLISTEELEVE_H
+#ifndef TABLISTENOTE_H
+#define TABLISTENOTE_H
 
 #include "FenPrincipale.h"
 #include "TabAbstractClasse.h"
-#include "../Dialog/SelectDonneeDialog.h"
-#include "../Model/ListeEleveModel.h"
-#include "../Delegate/ListeEleveDelegate.h"
+#include "../Model/ListeNoteModel.h"
+#include "../Delegate/ListeNoteDelegate.h"
 
 /*! \ingroup groupeFen
- * \brief Onglet d'une classe
+ * \brief Onglet des notes d'une classe
  */
-class TabListeEleve : public TabAbstractClasse
+class TabListeNote : public TabAbstractClasse
 {
     Q_OBJECT
 protected:
 
 public:
     //! Constructeur.
-    explicit TabListeEleve(int idClasse, TabModule *parent = 0);
+    explicit TabListeNote(int idClasse, TabModule *parent = 0);
     //! Destructeur.
-    ~TabListeEleve() {}
+    ~TabListeNote() {}
 
 signals:
 
@@ -33,4 +32,4 @@ public slots:
     void addColumn();
 };
 
-#endif // TABLISTEELEVE_H
+#endif // TABLISTENOTE_H

@@ -230,11 +230,11 @@ template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Uniqu
             saveExt(tree.root(),tree.root()->data().id());
             deleteLeafOutOf(tree.root());
             break;
+
+        case TreeSave::EntityOnly:
+            break;
         }
-
     }
-
-
 }
 
 template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Unique>::saveAddLeaf(TreeItem<Ent> * tree)

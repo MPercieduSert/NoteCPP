@@ -29,32 +29,32 @@ class FenPrincipale : public QMainWindow
     Q_OBJECT
 protected:
     // Action
-    QAction *m_actionEditColler;
-    QAction *m_actionEditCopier;
-    QAction *m_actionEditCouper;
-    QAction *m_actionEditEffacer;
-    QAction *m_actionModuleExercice;
-    QAction *m_actionModuleNote;
-    QAction *m_actionNewAnnee;
-    QAction *m_actionNewAttribut;
-    QAction *m_actionNewBareme;
-    QAction *m_actionNewClasse;
-    QAction *m_actionNewControle;
-    QAction *m_actionNewEtablissement;
-    QAction *m_actionNewExercice;
-    QAction *m_actionSave;
-    QAction *m_actionSelectDefaultAnnee;
+    QAction *m_actionEditColler;    //!< Action coller.
+    QAction *m_actionEditCopier;    //!< Action copier.
+    QAction *m_actionEditCouper;    //!< Action couper.
+    QAction *m_actionEditEffacer;   //!< Action effacer.
+    QAction *m_actionModuleExercice;//!< Action ouverture du module d'exercice.
+    QAction *m_actionModuleNote;    //!< Action couverture du module Note.
+    QAction *m_actionNewAnnee;      //!< Action création d'une année.
+    QAction *m_actionNewAttribut;   //!< Action création d'un attribut.
+    QAction *m_actionNewBareme;     //!< Action création d'un barème.
+    QAction *m_actionNewClasse;     //!< Action création d'une classe.
+    QAction *m_actionNewControle;   //!< Action création d'un controle.
+    QAction *m_actionNewEtablissement;  //!< Action création d'un établissement.
+    QAction *m_actionNewExercice;       //!< Action création d'un exercice.
+    QAction *m_actionSave;          //!< Action sauvegarder.
+    QAction *m_actionSelectDefaultAnnee;    //!< Action séléctionner l'année par défaut.
 
     // Menu
-    QMenu *m_menuEdit;
-    QMenu *m_menuFichier;
-    QMenu *m_menuNew;
+    QMenu *m_menuEdit;              //!< Menu édition.
+    QMenu *m_menuFichier;           //!< Menu Fichier.
+    QMenu *m_menuNew;               //!< Menu nouveau.
 
     // Tools Bar
-    QToolBar *m_toolBar;
+    QToolBar *m_toolBar;            //!< Barre d'outils.
 
     // Noyau
-    Noyau * m_noyau;
+    Noyau * m_noyau;                //!< Noyau de l'application.
 
 public:
     /*! \brief Constructeur.

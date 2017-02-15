@@ -22,20 +22,21 @@ class TabMenu : public TabAbstractModule
 {
     Q_OBJECT
 protected:
+    //! Ordre de position dans le layout principal
     enum position{classe,
-                  bouton};                          //! Ordre de position dans le layout principal
+                  bouton};
 
     // Donnée
-    Annee m_annee;                                  //! Annee du menu
-    QList<QGroupBox *> m_listeGroupeEtab;
+    Annee m_annee;                                  //!< Annee du menu
+    QList<QGroupBox *> m_listeGroupeEtab;           //!< Liste des groupes de classes par établissement.
     // QMap<int,QPushButton*> m_classeButtonMap;
 
     // Widget
-    QPushButton *m_newClasseButton;                 //! Bouton pour créer une nouvelle classe
-    QSignalMapper *m_classeMapper;                  //! Lie les boutons des classes à leur actions
+    QPushButton *m_newClasseButton;                 //!< Bouton pour créer une nouvelle classe
+    QSignalMapper *m_classeMapper;                  //!< Lie les boutons des classes à leur actions
 
     // Layout
-    QHBoxLayout *m_classeLayout;                    //! Layaut des classes
+    QHBoxLayout *m_classeLayout;                    //!< Calque des classes
 
 public:
     //! Constructeur

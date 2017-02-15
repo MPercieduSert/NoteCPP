@@ -87,7 +87,8 @@ HEADERS += \
     TabListeEleve.h \
 #    TabListeGroupe.h \
     TabMenu.h \
-    TabModule.h
+    TabModule.h \
+    TabListeNote.h
 
 SOURCES += \
     Fen.cpp \
@@ -103,7 +104,8 @@ SOURCES += \
     TabListeEleve.cpp \
 #    TabListeGroupe.cpp \
     TabMenu.cpp \
-    TabModule.cpp
+    TabModule.cpp \
+    TabListeNote.cpp
 
 unix {
     target.path = /usr/lib

@@ -2,6 +2,13 @@
  *Date: 11/02/2016
  */
 
+#ifndef FILEINTERFACE_H
+#define FILEINTERFACE_H
+
+#include <QFile>
+#include <QMessageBox>
+#include <QString>
+
 /*! \defgroup groupeFile Gestionnaire de fichier
  * \brief Ensemble des gestionnaires de fichier.
  */
@@ -12,14 +19,6 @@
  * Interface pour la gestion des fichiers, cette interface est utilisée par la classe FenFoundFile
  * pour la vérifiaction des chemins des fichiers et leur création s'il sont introuvables.
  */
-
-#ifndef FILEINTERFACE_H
-#define FILEINTERFACE_H
-
-#include <QFile>
-#include <QMessageBox>
-#include <QString>
-
 class FileInterface
 {
 protected:

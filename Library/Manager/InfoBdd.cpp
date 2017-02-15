@@ -7,11 +7,24 @@ QMap<int,QString> InfoBdd<Attribut>::foreignKey()
     return att;
 }
 
-QMap<int,QString> InfoBdd<AttributCommentaire>::foreignKey()
+QMap<int,QString> InfoBdd<CibleAttribut>::foreignKey()
 {
     QMap<int,QString> att;
-    att.insert(AttributCommentaire::IdAt,InfoBdd<Attribut>::table());
-    att.insert(AttributCommentaire::IdCm,InfoBdd<Commentaire>::table());
+    att.insert(CibleAttribut::IdAt,InfoBdd<Attribut>::table());
+    return att;
+}
+
+QMap<int,QString> InfoBdd<CibleCommentaire>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(CibleCommentaire::IdCm,InfoBdd<Commentaire>::table());
+    return att;
+}
+
+QMap<int,QString> InfoBdd<CibleDonnee>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(CibleDonnee::IdDn,InfoBdd<Donnee>::table());
     return att;
 }
 
@@ -32,27 +45,18 @@ QMap<int,QString> InfoBdd<ClasseEleve>::foreignKey()
     return att;
 }
 
-QMap<int,QString> InfoBdd<CommentaireClasse>::foreignKey()
+QMap<int,QString> InfoBdd<Coefficient>::foreignKey()
 {
     QMap<int,QString> att;
-    att.insert(CommentaireClasse::IdCm,InfoBdd<Commentaire>::table());
-    att.insert(CommentaireClasse::IdCl,InfoBdd<Classe>::table());
+    att.insert(Coefficient::IdCtr,InfoBdd<Controle>::table());
     return att;
 }
 
-QMap<int,QString> InfoBdd<CommentaireEleve>::foreignKey()
+QMap<int,QString> InfoBdd<Controle>::foreignKey()
 {
     QMap<int,QString> att;
-    att.insert(CommentaireEleve::IdCm,InfoBdd<Commentaire>::table());
-    att.insert(CommentaireEleve::IdEl,InfoBdd<Eleve>::table());
-    return att;
-}
-
-QMap<int,QString> InfoBdd<CommentaireGroupe>::foreignKey()
-{
-    QMap<int,QString> att;
-    att.insert(CommentaireGroupe::IdCm,InfoBdd<Commentaire>::table());
-    att.insert(CommentaireGroupe::IdGr,InfoBdd<Groupe>::table());
+    att.insert(Controle::IdCl,InfoBdd<Classe>::table());
+    att.insert(Controle::IdTp,InfoBdd<TypeControle>::table());
     return att;
 }
 
@@ -67,46 +71,6 @@ QMap<int,QString> InfoBdd<DonneeCard>::foreignKey()
 {
     QMap<int,QString> att;
     att.insert(DonneeCard::IdDonnee,InfoBdd<Donnee>::table());
-    return att;
-}
-
-QMap<int,QString> InfoBdd<DonneeClasse>::foreignKey()
-{
-    QMap<int,QString> att;
-    att.insert(DonneeClasse::IdDn,InfoBdd<Donnee>::table());
-    att.insert(DonneeClasse::IdCl,InfoBdd<Classe>::table());
-    return att;
-}
-
-QMap<int,QString> InfoBdd<DonneeEleve>::foreignKey()
-{
-    QMap<int,QString> att;
-    att.insert(DonneeEleve::IdDn,InfoBdd<Donnee>::table());
-    att.insert(DonneeEleve::IdEl,InfoBdd<Eleve>::table());
-    return att;
-}
-
-QMap<int,QString> InfoBdd<DonneeEtablissement>::foreignKey()
-{
-    QMap<int,QString> att;
-    att.insert(DonneeEtablissement::IdDn,InfoBdd<Donnee>::table());
-    att.insert(DonneeEtablissement::IdEtab,InfoBdd<Etablissement>::table());
-    return att;
-}
-
-QMap<int,QString> InfoBdd<DonneeNiveau>::foreignKey()
-{
-    QMap<int,QString> att;
-    att.insert(DonneeNiveau::IdDn,InfoBdd<Donnee>::table());
-    att.insert(DonneeNiveau::IdNiv,InfoBdd<Niveau>::table());
-    return att;
-}
-
-QMap<int,QString> InfoBdd<DonneeSource>::foreignKey()
-{
-    QMap<int,QString> att;
-    att.insert(DonneeSource::IdDn,InfoBdd<Donnee>::table());
-    att.insert(DonneeSource::IdSr,InfoBdd<Source>::table());
     return att;
 }
 
@@ -147,5 +111,21 @@ QMap<int,QString> InfoBdd<Niveau>::foreignKey()
     QMap<int,QString> att;
     att.insert(Niveau::IdTp,InfoBdd<TypeNiveau>::table());
     att.insert(Niveau::IdTpEtab,InfoBdd<TypeEtablissement>::table());
+    return att;
+}
+
+QMap<int,QString> InfoBdd<NiveauPrecedent>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(NiveauPrecedent::IdPrec,InfoBdd<Niveau>::table());
+    att.insert(NiveauPrecedent::IdSuiv,InfoBdd<Niveau>::table());
+    return att;
+}
+
+QMap<int,QString> InfoBdd<Note>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(Note::IdCtr,InfoBdd<Controle>::table());
+    att.insert(Note::IdEl,InfoBdd<Eleve>::table());
     return att;
 }

@@ -121,6 +121,7 @@
     class ENTITY : public TYPE \
     {public: \
     using TYPE::TYPE; \
+    using TYPE::operator ==; \
     BASE_ENTITY(ENTITY,ID)};
 
 //! \ingroup groupeMacroEntity
@@ -380,10 +381,10 @@
                 return nom1(); \
             else \
                 return nom2();} \
-        else if(pos == MERE::NbrAtt + 2){ \
+        else if(pos == MERE::NbrAtt + 2) \
             return nom3(); \
         else \
-            return nom4();}} \
+            return nom4();} \
     else if(pos < MERE::NbrAtt + 6){ \
         if(pos == MERE::NbrAtt + 4) \
             return nom5(); \

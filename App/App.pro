@@ -16,6 +16,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 SOURCES += main.cpp \
     ../Library/Delegate/ListeEleveDelegate.cpp \
+    ../Library/Delegate/ListeNoteDelegate.cpp \
     ../Library/Dialog/NewAnneeDialog.cpp \
     ../Library/Dialog/NewClasseDialog.cpp \
     ../Library/Dialog/NewEtablissementDialog.cpp \
@@ -34,19 +35,16 @@ SOURCES += main.cpp \
     ../Library/Div/vectorPtr.cpp \
     ../Library/Entities/Annee.cpp \
     ../Library/Entities/Arbre.cpp \
-    ../Library/Entities/Attribut.cpp \
     ../Library/Entities/AttributEntity.cpp \
 #    ../Library/Entities/Bareme.cpp \
     ../Library/Entities/Classe.cpp \
     ../Library/Entities/ClasseEleve.cpp \
-#    ../Library/Entities/Coefficient.cpp \
-#    ../Library/Entities/Commentaire.cpp \
-#    ../Library/Entities/Controle.cpp \
+    ../Library/Entities/Controle.cpp \
     ../Library/Entities/Donnee.cpp \
     ../Library/Entities/DonneeCard.cpp \
     ../Library/Entities/Eleve.cpp \
-#    ../Library/Entities/Etablissement.cpp \
     ../Library/Entities/Entity.cpp \
+    ../Library/Entities/EntityCible.cpp \
     ../Library/Entities/EntityDivers.cpp \
     ../Library/Entities/EntityNom.cpp \
     ../Library/Entities/EntityOfDefaultType.cpp \
@@ -56,12 +54,8 @@ SOURCES += main.cpp \
     ../Library/Entities/InfoEntity.cpp \
     ../Library/Entities/InfoEntityBase.cpp \
     ../Library/Entities/Niveau.cpp \
-#    ../Library/Entities/Note.cpp \
-#    ../Library/Entities/NumControle.cpp \
 #    ../Library/Entities/Point.cpp \
-#    ../Library/Entities/Source.cpp \
-#    ../Library/Entities/TypeControle.cpp \
-#    ../Library/Entities/TypeGroupe.cpp \
+    ../Library/Entities/TypeControle.cpp \
     ../Library/Entities/TypeEtablissement.cpp \
     ../Library/Entities/TypeNiveau.cpp \
     ../Library/Entities/VersionBdd.cpp \
@@ -76,6 +70,7 @@ SOURCES += main.cpp \
     ../Library/Fen/TabAbstractTableau.cpp \
     ../Library/Fen/TabClasse.cpp \
     ../Library/Fen/TabListeEleve.cpp \
+    ../Library/Fen/TabListeNote.cpp \
 #    ../Library/Fen/TabListeGroupe.cpp \
     ../Library/Fen/TabMenu.cpp \
     ../Library/Fen/TabModule.cpp \
@@ -95,6 +90,7 @@ SOURCES += main.cpp \
     ../Library/Manager/UniqueSqlBase.cpp \
     ../Library/Manager/VersionBddManager.cpp \
     ../Library/Model/ListeEleveModel.cpp \
+    ../Library/Model/ListeNoteModel.cpp \
     ../Library/Model/MAbstractTableModel.cpp \
     ../Library/Model/MAbstractTreeModel.cpp \
     ../Library/Model/TreeModelReadTemp.cpp \
@@ -110,6 +106,7 @@ SOURCES += main.cpp \
 
 HEADERS += \
     ../Library/Delegate/ListeEleveDelegate.h \
+    ../Library/Delegate/ListeNoteDelegate.h \
     ../Library/Dialog/NewAnneeDialog.h \
     ../Library/Dialog/NewClasseDialog.h \
     ../Library/Dialog/NewEtablissementDialog.h \
@@ -129,18 +126,14 @@ HEADERS += \
     ../Library\Div\VectorPtr.h \
     ../Library/Entities/Annee.h \
     ../Library/Entities/Arbre.h \
-    ../Library/Entities/Attribut.h \
     ../Library/Entities/AttributEntity.h \
 #    ../Library/Entities/Bareme.h \
     ../Library/Entities/Classe.h \
     ../Library/Entities/ClasseEleve.h \
-#    ../Library/Entities/Coefficient.h \
-#    ../Library/Entities/Commentaire.h \
-#    ../Library/Entities/Controle.h \
+    ../Library/Entities/Controle.h \
     ../Library/Entities/Donnee.h \
     ../Library/Entities/DonneeCard.h \
     ../Library/Entities/Eleve.h \
-#    ../Library/Entities/Etablissement.h \
     ../Library/Entities/Entity.h \
     ../Library/Entities/EntityDivers.h \
     ../Library/Entities/EntityNom.h \
@@ -151,12 +144,8 @@ HEADERS += \
     ../Library/Entities/InfoEntity.h \
     ../Library/Entities/InfoEntityBase.h \
     ../Library/Entities/Niveau.h \
-#    ../Library/Entities/Note.h \
-#    ../Library/Entities/NumControle.h \
 #    ../Library/Entities/Point.h \
-#    ../Library/Entities/Source.h \
-#    ../Library/Entities/TypeControle.h \
-#    ../Library/Entities/TypeGroupe.h \
+    ../Library/Entities/TypeControle.h \
     ../Library/Entities/TypeEtablissement.h \
     ../Library/Entities/TypeNiveau.h \
     ../Library/Entities/VersionBdd.h \
@@ -171,6 +160,7 @@ HEADERS += \
     ../Library/Fen/TabAbstractTableau.h \
     ../Library/Fen/TabClasse.h \
     ../Library/Fen/TabListeEleve.h \
+    ../Library/Fen/TabListeNote.h \
 #    ../Library/Fen/TabListeGroupe.h \
     ../Library/Fen/TabMenu.h \
     ../Library/Fen/TabModule.h \
@@ -190,6 +180,7 @@ HEADERS += \
     ../Library/Manager/UniqueSqlBase.h \
     ../Library/Manager/VersionBddManager.h \
     ../Library/Model/ListeEleveModel.h \
+    ../Library/Model/ListeNoteModel.h \
     ../Library/Model/MAbstractTableModel.h \
     ../Library/Model/MAbstractTreeModel.h \
     ../Library/Model/TreeModelReadTemp.h \

@@ -17,18 +17,20 @@
 /*! \ingroup groupeDivers
  * \brief Classe patron des listes de de pointeurs utilisées.
  */
-
 template<class T> class ListPtr : public QList<T*>
 {
 public:
+    //! Itérateur.
     class iterator : public QList<T*>::const_iterator
     {
     public:
         using QList<T*>::const_iterator::const_iterator;
 
+        //! Constructeur de recopie.
+        iterator(const typename QList<T*>::const_iterator & i) : QList<T*>::const_iterator(i) {}
+
         //! Constructeur.
-        iterator(const typename QList<T*>::const_iterator & i) : QList<T*>::const_iterator(i)
-            {}
+        iterator(const typename QList<T*>::const_iterator && i) : QList<T*>::const_iterator(i) {}
 
         //! Opérateur *.
         T & operator *() const
@@ -41,6 +43,8 @@ public:
 
 public:
     using QList<T*>::append;
+    using QList<T*>::cbegin;
+    using QList<T*>::cend;
     using QList<T*>::operator <<;
 
     CONSTR_DEFAUT(ListPtr)
@@ -48,8 +52,9 @@ public:
     //! Constructeur de recopie.
     ListPtr(const ListPtr<T> & liste)
     {
-        for(typename QList<T*>::const_iterator i = liste->cbeginPtr(); i != liste->cendPtr(); ++i)
-            append(new T(*i));
+        reserve(liste.size());
+        for(typename QList<T*>::const_iterator i = liste->cbegin(); i != liste->cend(); ++i)
+            append(new T(**i));
     }
 
     //! Constructeur de déplacement.
@@ -58,7 +63,7 @@ public:
     //! Destructeur.
     ~ListPtr()
     {
-        for(typename QList<T*>::const_iterator i = cbeginPtr(); i != cendPtr(); ++i)
+        for(typename QList<T*>::const_iterator i = cbegin(); i != cend(); ++i)
             delete *i;
     }
 
@@ -74,14 +79,6 @@ public:
     iterator begin() const
         {return QList<T*>::cbegin();}
 
-    //! Renvoie un itérateur sur le début de la liste.
-    typename QList<T*>::const_iterator cbeginPtr() const
-        {return QList<T*>::cbegin();}
-
-    //! Renvoie un itérateur sur la fin de la liste.
-    typename QList<T*>::const_iterator cendPtr() const
-        {return QList<T*>::cend();}
-
     //! Renvoie un itérateur sur la fin de la liste.
     iterator end() const
         {return QList<T*>::cend();}
@@ -89,7 +86,7 @@ public:
     //! Supprime toutes les entités pointées par les pointeurs de la liste.
     void clear()
     {
-        for(typename QList<T*>::const_iterator i = cbeginPtr(); i != cendPtr(); ++i)
+        for(typename QList<T*>::const_iterator i = cbegin(); i != cend(); ++i)
             delete *i;
         QList<T*>::clear();
     }
@@ -102,13 +99,22 @@ public:
     ListPtr<T> & operator = (const ListPtr<T> & liste)
     {
         clear();
-        for(typename QList<T*>::const_iterator i = liste->cbeginPtr(); i != liste->cendPtr(); ++i)
-            append(new T(*i));
+        if(!liste.isEmpty())
+        {
+            reserve(liste.size());
+            for(typename QList<T*>::const_iterator i = liste->cbegin(); i != liste->cend(); ++i)
+                append(new T(**i));
+        }
         return *this;
     }
 
     //! Affectation par déplacement
-    ListPtr<T> & operator = (ListPtr<T> && ) = default;
+    ListPtr<T> & operator = (ListPtr<T> && liste)
+    {
+        QList<T*>::operator =(liste);
+        liste.clearList();
+        return *this;
+    }
 
     //! Ajoute un pointeur sur une entité à la liste (ce pointeur doit être créer dynamiquement).
     ListPtr<T> & operator << (T * entity)
