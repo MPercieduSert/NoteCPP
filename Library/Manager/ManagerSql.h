@@ -5,8 +5,8 @@
 #ifndef MANAGERSQL_H
 #define MANAGERSQL_H
 
-#include "Manager.h"
-#include "ReqSql.h"
+#include "AbstractLinkSql.h"
+#include "AbstractManager.h"
 
 // Macro pour manageur.
 //! \ingroup groupeBaseManager
@@ -37,11 +37,12 @@ else \
 /*! \ingroup groupeBaseManager
  * \brief Classe template mère des différents manageurs de type SQL.
  */
-class AbstractManagerSql :  public Manager, public ReqSql
+class AbstractManagerSql :  public ReqSql
 {
 protected:
     static const QVector<QString> m_fonctionAgregaString;
     static const QVector<QString> m_conditionString;
+    //static const QVector<QString> m_conditionNullString;
     //static const std::array<const char *, bdd::Condition> m_fonctionConditionString;
 
 public:
@@ -77,10 +78,10 @@ public:
  *  - bdd::ExisteUni existeUnique(const Ent &) -> Teste s'il y a des coorespondances entre les attributs uniques de l'entité et les entités enregistrées dans la base de donnée.
  *  - int nbrAttUnique() const -> Renvoie le nombre d'attributs uniques.
  */
-template<class Ent, class Link, class Unique> class ManagerSql : public AbstractManagerSql
+template<class Ent, class Unique> class ManagerSql : public AbstractManagerTemp<Ent>, public AbstractManagerSql
 {
 protected:
-    Link m_link;            //!< Lien.
+    LinkSql<Ent> m_link;            //!< Lien.
     Unique m_unique;        //! Condition d'unicité.
     // Requête sql
     QString m_sqlAdd;       //!< Requéte sql d'insertion d'une ligne.
@@ -106,6 +107,14 @@ protected:
     using AbstractManagerSql::value;
 
 public:
+    using AbstractManagerTemp<Ent>::exists;
+    using AbstractManagerTemp<Ent>::existsUnique;
+    using AbstractManagerTemp<Ent>::get;
+    using AbstractManagerTemp<Ent>::getList;
+    using AbstractManagerTemp<Ent>::getUnique;
+    using AbstractManagerTemp<Ent>::sameInBdd;
+    using AbstractManagerTemp<Ent>::save;
+
     //! Contructeur, avec les noms des attributs de la table.
     ManagerSql(const QString & table, const QMap<int,QString> & att, const QVector<QMap<int,int>> & attUnique);
 
@@ -189,7 +198,7 @@ public:
     //! valeur de la colonne d'identifiant cle = value.
     template<class T> T fonctionAgrega(bdd::Agrega fonc, typename Ent::Position att, typename Ent::Position cle, const QVariant & value,
                                        bdd::Condition cond = bdd::Condition::Egal)
-    {
+    {      
         prepare(m_sqlFonctionAgregaWhere1.arg(m_fonctionAgregaString[fonc],
                                               attribut(att),
                                               attribut(cle),
@@ -216,12 +225,6 @@ public:
         next();
         return value<T>();
     }
-
-    //! Hydrate l'entité entity avec les valeurs des attributs de l'entité enregistrée en base de donnée
-    //! ayant le même identifiant que entity.
-    //! Retourne True si l'opération s'est correctement déroulée.
-    bool get(Entity & entity)
-        {return get(Ent::convert(entity));}
 
     //! Hydrate l'entité entity avec les valeurs des attributs de l'entité enregistrée en base de donnée
     //! ayant le même identifiant que entity.
@@ -337,7 +340,7 @@ public:
                                                    const QString & colonneJoin,
                                                    const QMap<int,QVariant> & whereMapTable,
                                                    const QMap<QString,QVariant> & whereMapJoin,
-                                                   const QMap<int,bool> & orderMapTable)
+                                                   const QList<QPair<int,bool>> & orderMapTable)
     {
         QString sqlWhere;
         for(QMap<int,QVariant>::const_iterator i = whereMapTable.cbegin(); i != whereMapTable.cend(); ++i)
@@ -346,8 +349,8 @@ public:
             sqlWhere.append("J.").append(i.key()).append("=? AND ");
         sqlWhere.chop(5);
         QString sqlOrder;
-        for(QMap<int,bool>::const_iterator i = orderMapTable.cbegin(); i != orderMapTable.cend(); ++i)
-            sqlOrder.append(" T.").append(attribut(i.key())).append(" ").append(croissant(i.value())).append(",");
+        for(QList<QPair<int,bool>>::const_iterator i = orderMapTable.cbegin(); i != orderMapTable.cend(); ++i)
+            sqlOrder.append(" T.").append(attribut((*i).first)).append(" ").append(croissant((*i).second)).append(",");
         sqlOrder.chop(1);
         prepare(m_sqlGetListJoin.arg(tableJoin,
                                      attribut(colonneTable),
@@ -373,7 +376,7 @@ public:
     {
         prepare(m_sqlGetListJoin1Where1.arg(tableJoin,
                                             colonneJoin,
-                                            whereJoin, cond,
+                                            whereJoin, m_conditionString[cond],
                                             attribut(ordre), croissant(crois)));
         bindValue(0,valueWhere);
         return listFromRequete();
@@ -477,50 +480,27 @@ public:
     {
         prepare(m_sqlGetListJoin1Where1.arg(tableJoin,
                                             colonneJoin,
-                                            whereJoin, cond,
+                                            whereJoin, m_conditionString[cond],
                                             attribut(cleMap),QString()));
         bindValue(0,valueWhere);
         return mapFromRequete(cleMap);
     }
 
     //! Hydrate l'entité entity avec les valeurs des attributs de l'entité enregistrée en base de donnée
-    //! ayant les mêmes valeurs pour les attributs uniques.
-    //! Retourne True si l'opération s'est correctement déroulée.
-    bool getUnique(Entity & entity)
-        {return getUnique(Ent::convert(entity));}
-
-    //! Hydrate l'entité entity avec les valeurs des attributs de l'entité enregistrée en base de donnée
-    //! ayant les mêmes valeurs pour les attributs uniques.
+    //! ayant les mêmes valeurs pour au moins un ensemble des attributs uniques.
     //! Retourne True si l'opération s'est correctement déroulée.
     bool getUnique(Ent & entity)
     {
-        if(existsUnique(entity) == bdd::Tous)
-            return get(entity);
-        else
-            return false;
+        bdd::ExisteUni n = existsUnique(entity);
+        return (n == bdd::Tous || n == bdd::Meme) ? get(entity) : false;
     }
 
     //! Teste s'il y a dans la base de donnée une entité ayant exactement les mêmes attributs (identifiant compris).
-    bool sameInBdd(const Entity &entity)
-        {return sameInBdd(Ent::convert(entity));}
-
-    //! Teste s'il y a dans la base de donnée une entité ayant exactement les mêmes attributs (identifiant compris).
-    bool sameInBdd(const Ent &entity)
+    bool sameInBdd(const Ent & entity)
     {       
         Ent entityT(entity.id());
-        if(get(entityT))
-            return entityT == entity;
-        else
-            return false;
+        return get(entityT) ? entityT == entity : false;
     }
-
-    //! Enregistre l'entité entity en base de donnée et assigne l'identifiant de l'entité insérée en base de donnée à entity.
-    void save(Entity & entity)
-        {save(Ent::convert(entity));}
-
-    //! Enregistre l'entité entity en base de donnée.
-    void save(const Entity & entity)
-        {save(Ent::convert(entity));}
 
     //! Enregistre l'entité entity en base de donnée et assigne l'identifiant de l'entité insérée en base de donnée à entity.
     void save(Ent & entity)
@@ -535,6 +515,9 @@ public:
         {return m_link.table();}
 
 protected:
+    /*//! Constructeur sans argument pour en faire une classe virtuelle.
+    ManagerSql();*/
+
     //! Insert la nouvelle entité entity dans la base de donnée
     //! et assigne l'identifiant de l'entité insérée en base de donnée à entity.
     virtual void add(Ent & entity)
@@ -601,9 +584,9 @@ protected:
     //! Message d'erreurs s'il existe déjà en base de donnée une entité ayant les mêmes valeurs d'attributs uniques que entity.
     QString messageErreursUnique(const Entity & entity) const;
 
-    //! Met à jour l'entité entity en base de donnée.
+    /*//! Met à jour l'entité entity en base de donnée.
     virtual void modify(Ent & entity)
-        {MODIFY}
+        {MODIFY}*/
 
     //! Met à jour l'entité entity en base de donnée.
     virtual void modify(const Ent & entity)
@@ -616,12 +599,17 @@ protected:
     void writeStringSql();
 };
 
-template<class Ent, class Link, class Unique> ManagerSql<Ent,Link,Unique>::ManagerSql(const QString &table, const QMap<int, QString> &att, const QVector<QMap<int, int>>  & attUnique)
+template<class Ent, class Unique> ManagerSql<Ent,Unique>::ManagerSql(const QString &table, const QMap<int, QString> &att, const QVector<QMap<int, int>>  & attUnique)
     : m_link(table,att),
       m_unique(table,uniqueInit(attUnique))
     {writeStringSql();}
 
-template<class Ent, class Link, class Unique> void ManagerSql<Ent,Link,Unique>::creerSql(const QMap<int,QPair<bdd::createSql,bool>>& attCaract,
+/*template<class Ent, class Unique> ManagerSql<Ent,Unique>::ManagerSql()
+    : m_link(QString(),QMap<int, QString>()),
+      m_unique(QString(),QVector<QMap<int,QString>>())
+    {}*/
+
+template<class Ent, class Unique> void ManagerSql<Ent,Unique>::creerSql(const QMap<int,QPair<bdd::createSql,bool>>& attCaract,
                                                                                       const QVector<QMap<int, int> > & attUnique,
                                                                                       const QMap<int,QString> & foreignKey)
 {
@@ -631,15 +619,15 @@ template<class Ent, class Link, class Unique> void ManagerSql<Ent,Link,Unique>::
     exec(sql);
 }
 
-template<class Ent, class Link, class Unique> QString ManagerSql<Ent,Link,Unique>::messageErreurs(const Entity & entity) const
+template<class Ent, class Unique> QString ManagerSql<Ent,Unique>::messageErreurs(const Entity & entity) const
 {
     QString message("Entité invalide:");
     message.append(Ent::Name()).append(" d'identifiant:").append(QString::number(entity.id())).append("\n")
-            .append(entity.toString());
+            .append(entity.affiche());
     return message;
 }
 
-template<class Ent, class Link, class Unique> QString ManagerSql<Ent,Link,Unique>::messageErreursUnique(const Entity & entity) const
+template<class Ent, class Unique> QString ManagerSql<Ent,Unique>::messageErreursUnique(const Entity & entity) const
 {
     QString message("Entité ayant les même valeurs d'attributs unique déjà présente dans la base de donnée.\n");
     message.append(Ent::Name()).append(" d'identifiant:").append(QString::number(entity.id())).append("\n");
@@ -653,7 +641,7 @@ template<class Ent, class Link, class Unique> QString ManagerSql<Ent,Link,Unique
     return message;
 }
 
-template<class Ent, class Link, class Unique> QVector<QMap<int,QString>> ManagerSql<Ent,Link,Unique>::uniqueInit(const QVector<QMap<int,int>> & attsInt)
+template<class Ent, class Unique> QVector<QMap<int,QString>> ManagerSql<Ent,Unique>::uniqueInit(const QVector<QMap<int,int>> & attsInt)
 {
     QVector<QMap<int,QString>> attsString(attsInt.size());
     for(int i = 0; i!= attsInt.size(); ++i)
@@ -664,7 +652,7 @@ template<class Ent, class Link, class Unique> QVector<QMap<int,QString>> Manager
     return attsString;
 }
 
-template<class Ent, class Link, class Unique> void ManagerSql<Ent,Link,Unique>::writeStringSql()
+template<class Ent, class Unique> void ManagerSql<Ent,Unique>::writeStringSql()
 {
     // Liste des colonnes.
     QString colonnesId;
@@ -768,7 +756,7 @@ template<class Ent, class Link, class Unique> void ManagerSql<Ent,Link,Unique>::
 
     // Get list join 1 where 1
     m_sqlGetListJoin1Where1.append(selectJoin);
-    m_sqlGetListJoin1Where1.append("T.ID=J.%2 WHERE %3%4? ORDER BY %5%6");
+    m_sqlGetListJoin1Where1.append("T.ID=J.%2 WHERE J.%3%4? ORDER BY T.%5%6");
     m_sqlGetListJoin1Where1.squeeze();
 
     // Id last query

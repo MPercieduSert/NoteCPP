@@ -17,6 +17,12 @@ namespace bdd {
     enum creationBdd{
         initiale
     };
+
+    //! Demande autorisation de modification
+    enum DemandeAutorisationModificationBdd{
+        Oui = 1,
+        Non = 0
+    };
 }
 
 
@@ -40,7 +46,7 @@ public:
 
 protected:
     QSqlQuery m_requete;                            //!< Requéte commune aux manageurs.
-    AbstractManagerSql * m_managers[NbrEntity];     //!< Tableau des manageurs.
+    AbstractManager * m_managers[NbrEntity];        //!< Tableau des manageurs.
     VersionBddManager m_managerVersion;             //!< Manager de l'entité version de la base de bonnée.
 
 public:
@@ -53,7 +59,7 @@ public:
     void creerVersion();
 
     //! Retourne le manager des entités de ID, id.
-    Manager * get(int id)
+    AbstractManager * get(int id)
     {
         if(id >= 0 and id < NbrEntity)
         {

@@ -4,9 +4,10 @@ SelectDonneeDialog::SelectDonneeDialog(const Tree<Donnee> &tree, QWidget *parent
     : QDialog(parent)
 {
     m_label = new QLabel(tr("Séléctionner une donnée:"));
+    m_label->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     m_cancelBouton = new QPushButton(tr("Annuler"));
     m_okBouton = new QPushButton(tr("OK"));
-    m_treeWidget = new ReadTreeWidget<Donnee>(tree);
+    m_treeWidget = new ReadTreeWidget<Donnee>(tree, {Donnee::Position::Nom,Donnee::Position::TpVal});
 
     connect(m_cancelBouton,&QPushButton::clicked,this,&SelectDonneeDialog::reject);
     connect(m_okBouton,&QPushButton::clicked,this,&SelectDonneeDialog::accept);

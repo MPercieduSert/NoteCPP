@@ -6,7 +6,7 @@
 
 #include "ManagerArbre.h"
 #include "../Div/Tree.h"
-
+/*
 //! \ingroup groupeBaseManager
 //! Coprs des deux methodes save pour les arbres.
 #define SAVE_MANAGER_OF_ARBRE if(entity.isValid()) \
@@ -25,26 +25,16 @@
                 throw std::invalid_argument(messageErreursUnique(entity).append("\n Erreur d'unicité : il existe déjà dans la base de donnée une entité ayant les mêmes valeurs d'attributs unique que cette nouvelle entité.").toStdString());}}} \
     else \
         throw std::invalid_argument(messageErreurs(entity).append("\n Erreur de validité").toStdString());
-
-namespace bdd {
-    //! Enumeration des différent type de sauvegarde d'un arbre.
-    enum TreeSave {EntityOnly,
-                   AddLeaf,
-                   WithoutDelete,
-                   InternalChange,
-                   ExternalChange};
-
-}
-
+*/
 /*! \ingroup groupeBaseManager
  * \brief Classe template mère des différents manageurs pour les entités de type arbre.
  */
-template<class Ent, class Link, class Unique> class ManagerOfArbre : public ManagerSql<Ent,Link,Unique>
+template<class Ent, class Unique> class ManagerOfArbre : public virtual ManagerSql<Ent,Unique>
 {
 protected:
     ManagerArbre m_managerArbre;
 
-    typedef ManagerSql<Ent,Link,Unique> ManagerSqlEnt;
+    using ManagerSqlEnt = ManagerSql<Ent,Unique>;
 
     using ManagerSqlEnt::m_link;
     using ManagerSqlEnt::m_sqlAdd;
@@ -65,7 +55,7 @@ public:
     using ManagerSqlEnt::save;
 
     //! Constructeur
-    ManagerOfArbre(const QString & table, const QMap<int,QString> & att, const QVector<QMap<int,int>> & attUnique,const QString & tableArbre,const QMap<int,QString> & attArbre = ArbreInfoBdd::attribut());
+    ManagerOfArbre(const QString & table, const QMap<int,QString> & att, const QVector<QMap<int,int>> & attUnique,const QString & tableArbre,const QMap<int,QString> & attArbre = ArbreInfoBdd<Arbre>::attribut());
 
     //! Creer la table.
     void creerSql(const QMap<int,QPair<bdd::createSql,bool>>& attCaract,
@@ -76,7 +66,17 @@ public:
         ManagerSqlEnt::creerSql(attCaract,attUnique,foreignKey);
     }
 
-    //! Renvoie l'arbre racine entity.
+    //! Renvoie l'arbre de toutes les entités.
+    Tree<Ent> getArbre()
+    {
+        ListPtr<Arbre> racines = m_managerArbre.getList(Arbre::Parent,QVariant(QVariant::Int),Arbre::Id,bdd::Condition::Is);
+        Tree<Ent> tree;
+        for(typename ListPtr<Arbre>::iterator i = racines.begin(); i != racines.end(); ++i)
+            tree<<getArbre((*i).id());
+        return tree;
+    }
+
+    //! Renvoie l'arbre de racine entity.
     Tree<Ent> getArbre(const Ent & entity)
     {
         Ent ent(entity.id());
@@ -96,31 +96,30 @@ public:
 
     //! Enregistre l'entité entity en base de donnée.
     void save(Ent & entity)
-    {
-        SAVE_MANAGER_OF_ARBRE
-    }
+        {saveConst(entity);}
 
     //! Enregistre l'entité entity en base de donnée.
     void save(const Ent & entity)
-    {
-        SAVE_MANAGER_OF_ARBRE
-    }
+        {saveConst(entity);}
 
     //! Enregistre l'arbre d'entités.
     void save(Tree<Ent> & tree, bdd::TreeSave n = bdd::TreeSave::ExternalChange);
 
 protected:
-    //! Insert la nouvelle entité entity dans la base de donnée.
-    virtual void add(Ent & entity)
+    //! Constructeur.
+    ManagerOfArbre(const QString & tableArbre,const QMap<int,QString> & attArbre = ArbreInfoBdd<Arbre>::attribut());
+
+    /*//! Insert la nouvelle entité entity dans la base de donnée.
+    void add(Ent & entity)
     {
         prepare(m_sqlAdd);
         m_link.bindValues(entity);
         m_link.setId(entity,m_link.nbrAtt()-1);
         execFinish();
-    }
+    }*/
 
     //! Insert la nouvelle entité entity dans la base de donnée.
-    virtual void add(const Ent & entity)
+    void add(const Ent & entity)
     {
         prepare(m_sqlAdd);
         m_link.bindValues(entity);
@@ -143,6 +142,39 @@ protected:
 
     //! Sauve un arbre où le changement de structure consite seulement l'ajout de nouveaux noeuds.
     void saveAddLeaf(TreeItem<Ent> * tree);
+
+    //! Enregistre l'entité entity en base de donnée.
+    void saveConst(const Ent & entity)
+    {
+        if(entity.isValid())
+        {
+            if(entity.isNew())
+                throw std::invalid_argument("Les nouvelles entités de type arbre ne peut être sauvé dans la base de données uniquement à travers un arbre.");
+            else
+            {
+                if(exists(entity))
+                {
+                    if(!sameInBdd(entity))
+                    {
+                        if(existsUnique(entity) <= bdd::Meme)
+                            modify(entity);
+                        else
+                            throw std::invalid_argument(messageErreursUnique(entity).append("\n Erreur d'unicité :  il existe déjà dans la base de donnée une entité ayant les mêmes valeurs d'attributs unique que l'entité modifiée.").toStdString());
+                    }
+                }
+                else
+                {
+                    if(existsUnique(entity) == bdd::Aucun)
+                        add(entity);
+                    else
+                        throw std::invalid_argument(messageErreursUnique(entity).append("\n Erreur d'unicité : il existe déjà dans la base de donnée une entité ayant les mêmes valeurs d'attributs unique que cette nouvelle entité.").toStdString());
+                }
+            }
+        }
+        else
+            throw std::invalid_argument(messageErreurs(entity).append("\n Erreur de validité").toStdString());
+    }
+
     //! Sauve un arbre où le changement de structure consite en l'ajout de nouveaux noeuds, des permutations à l'interieur de l'arbre et le déplasement de noeuds extérieur à l'arbre.
     void saveExt(TreeItem<Ent> * tree, int idRoot);
 
@@ -153,16 +185,20 @@ protected:
     void writeStringSql();
 };
 
-template<class Ent, class Link, class Unique> ManagerOfArbre<Ent,Link,Unique>::ManagerOfArbre(const QString & table,
+template<class Ent, class Unique> ManagerOfArbre<Ent,Unique>::ManagerOfArbre(const QString & table,
                                                                                               const QMap<int,QString> & att,
                                                                                               const QVector<QMap<int,int>> & attUnique,
                                                                                               const QString & tableArbre,
                                                                                               const QMap<int,QString> & attArbre)
     : ManagerSqlEnt(table,att,attUnique),
-      m_managerArbre(tableArbre,attArbre,ArbreInfoBdd::attributUnique())
+      m_managerArbre(tableArbre,attArbre,ArbreInfoBdd<Arbre>::attributUnique())
     {writeStringSql();}
 
-template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Unique>::deleteLeafOutOf(TreeItem<Ent> * tree)
+template<class Ent, class Unique> ManagerOfArbre<Ent,Unique>::ManagerOfArbre(const QString & tableArbre, const QMap<int,QString> & attArbre)
+    : m_managerArbre(tableArbre,attArbre,ArbreInfoBdd<Arbre>::attributUnique())
+    {writeStringSql();}
+
+template<class Ent, class Unique> void ManagerOfArbre<Ent,Unique>::deleteLeafOutOf(TreeItem<Ent> * tree)
 {
     if(tree->hasChild())
     {
@@ -183,7 +219,7 @@ template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Uniqu
     }
 }
 
-template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Unique>::getArbreRec(TreeItem<Ent> * tree)
+template<class Ent, class Unique> void ManagerOfArbre<Ent,Unique>::getArbreRec(TreeItem<Ent> * tree)
 {
     ListPtr<Arbre> childs = m_managerArbre.getList(Arbre::Parent,tree->data().id(),Arbre::Num);
     for(ListPtr<Arbre>::iterator i = childs.begin(); i != childs.end(); ++i)
@@ -195,7 +231,7 @@ template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Uniqu
     }
 }
 
-template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Unique>::save(Tree<Ent> & tree, bdd::TreeSave n)
+template<class Ent, class Unique> void ManagerOfArbre<Ent,Unique>::save(Tree<Ent> & tree, bdd::TreeSave n)
 {
     using namespace bdd;
     if(n == TreeSave::EntityOnly)
@@ -203,41 +239,56 @@ template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Uniqu
         for(typename TreeItem<Ent>::iterator i = tree.begin(); i != tree.end(); ++i)
             save((*i)->data());
     }
+    else if(n == TreeSave::EntityOnlyWhitoutRoot)
+    {
+        typename TreeItem<Ent>::iterator i = tree.begin();
+        ++i;
+        for(; i != tree.end(); ++i)
+            save((*i)->data());
+    }
     else
     {
-        if(tree.root()->data().isNew())
+        if(n < TreeSave::EntityOnlyWhitoutRoot)
         {
-            Arbre node(0,0);
-            m_managerArbre.save(node);
-            tree.root()->modifData().setId(node.id());
+            if(tree.root()->data().isNew())
+            {
+                Arbre node(0,0);
+                m_managerArbre.save(node);
+                tree.root()->modifData().setId(node.id());
+            }
+            save(tree.root()->data());
         }
-        save(tree.root()->data());
         switch (n) {
         case TreeSave::AddLeaf:
+        case TreeSave::AddLeafWhitoutRoot:
             saveAddLeaf(tree.root());
             break;
 
         case TreeSave::WithoutDelete:
+        case TreeSave::WithoutDeleteWhitoutRoot:
             saveWithoutDelete(tree.root());
             break;
 
         case TreeSave::InternalChange:
+        case TreeSave::InternalChangeWhitoutRoot:
             saveWithoutDelete(tree.root());
             deleteLeafOutOf(tree.root());
             break;
 
         case TreeSave::ExternalChange:
+        case TreeSave::ExternalChangeWhitoutRoot:
             saveExt(tree.root(),tree.root()->data().id());
             deleteLeafOutOf(tree.root());
             break;
 
         case TreeSave::EntityOnly:
+        case TreeSave::EntityOnlyWhitoutRoot:
             break;
         }
     }
 }
 
-template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Unique>::saveAddLeaf(TreeItem<Ent> * tree)
+template<class Ent, class Unique> void ManagerOfArbre<Ent,Unique>::saveAddLeaf(TreeItem<Ent> * tree)
 {
     int i = 0;
     for(typename QList<TreeItem<Ent>*>::const_iterator child = tree->childs().cbegin(); child != tree->childs().cend(); ++i, ++child)
@@ -254,7 +305,7 @@ template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Uniqu
     }
 }
 
-template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Unique>::saveWithoutDelete(TreeItem<Ent> * tree)
+template<class Ent, class Unique> void ManagerOfArbre<Ent,Unique>::saveWithoutDelete(TreeItem<Ent> * tree)
 {
     int i = 0;
     int idParent = tree->parent()->data().id();
@@ -270,7 +321,7 @@ template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Uniqu
     }
 }
 
-template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Unique>::saveExt(TreeItem<Ent> * tree, int idRoot)
+template<class Ent, class Unique> void ManagerOfArbre<Ent,Unique>::saveExt(TreeItem<Ent> * tree, int idRoot)
 {
     int i = 0;
     int idParent = tree->parent()->data().id();
@@ -289,7 +340,7 @@ template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Uniqu
     }
 }
 
-template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Unique>::writeStringSql()
+template<class Ent, class Unique> void ManagerOfArbre<Ent,Unique>::writeStringSql()
 {
     m_sqlAdd.clear();
     m_sqlAdd.append("INSERT INTO ").append(table()).append("(");
@@ -303,4 +354,5 @@ template<class Ent, class Link, class Unique> void ManagerOfArbre<Ent,Link,Uniqu
     m_sqlAdd.append(")");
     m_sqlAdd.squeeze();
 }
+
 #endif // MANAGEROFARBRE_H

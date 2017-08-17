@@ -4,29 +4,31 @@
 #ifndef ANNEE_H
 #define ANNEE_H
 
-#include "AttributEntity.h"
+#include "AttributSimple.h"
 #include "Entity.h"
 #include "InfoEntity.h"
+
+SINGLE_ATTRIBUT(AnAttribut,AttributIntSup,AttributIntSup<1>,An,an,int)
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Annee.
  */
-class Annee : public Entity
+class Annee : public EntityAttributsID<AnAttribut,InfoEntity::AnneeId>
 {
-    ATTRIBUT_ENTITY_INT_SUP(An,an,1)
-
 public:
     //! Positions des attributs.
-    enum Position {Id = Entity::Id,
-                   An = Entity::NbrAtt,
+    enum Position {Id = PositionEnum<IdAttribut,Annee>::Position,
+                   An = PositionEnum<AnAttribut,Annee>::Position,
                    NbrAtt};
 
-    using Entity::Entity;
-    BASE_ENTITY(Annee,InfoEntity::AnneeId)
+    using EAID = EntityAttributsID<AnAttribut,InfoEntity::AnneeId>;
+    using EAID::EntityAttributsID;
+    BASE_ENTITY(Annee)
 
     //! Constructeur à partir des valeurs attributs.
     Annee(int an, int id)
-        : Entity(id), m_an(an) {}
+        : EAID(id)
+        {setAn(an);}
 
     //! Renvoie la chaine de caractère "annee-annee+1".
     QString affiche() const;
@@ -34,8 +36,6 @@ public:
     //! Oprérateur d'ordre strictement croissant sur an.
     bool operator < (const Annee & annee) const
         {return an() < annee.an();}
-
-    MEMBRE_ATT_1(Annee,Entity,An,an)
 };
 
 #endif // ANNEE_H

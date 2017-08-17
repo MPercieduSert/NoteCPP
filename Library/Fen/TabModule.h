@@ -20,9 +20,11 @@ public:
     //! Type de module.
     enum typeTab {MenuTab,
                  ClasseTab,
+                 CoursTab,
                  ListeEleveTab,
                  ListeNoteTab,
                  GroupeTab,
+                 MotCleTab,
                  NbrTab};
 protected:
     Noyau* m_noyau;         //!< Pointeur sur le noyau.
@@ -49,8 +51,12 @@ public slots:
     //void effacer();
     //! Ouvre un nouvel onglet classe
     void newOngletClasse(int idClasse);
+    //! Ouvre un onglet donnant acces au cours
+    void openCours();
     //! Ouvre un onglet liste des éléves
     void openListeEleve(int idClasse);
+    //! Ouvre un onglet donnant acces au cours
+    void openMotCle();
     //! Ouvre un ouglet liste des groupe
     //void openListeGroupe(int idClasse);
     //! Ouvre un onglet liste des notes

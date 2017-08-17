@@ -6,6 +6,6 @@
 
 #include "EntityDivers.h"
 
-ENTITY_OF_TYPE(VersionBdd,DateTimeNumEntity,InfoEntity::entityBaseId::VersionBddId)
+using VersionBdd = DateTimeCurrentNumEntity<InfoEntity::entityBaseId::VersionBddId>;
 
 #endif // VERSIONBDD_H

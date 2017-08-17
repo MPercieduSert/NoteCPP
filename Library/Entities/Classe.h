@@ -4,57 +4,60 @@
 #ifndef CLASSE_H
 #define CLASSE_H
 
-#include "AttributEntity.h"
-#include "EntityNom.h"
+#include "AttributMultiple.h"
+#include "Entity.h"
 #include "InfoEntity.h"
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Bareme.
  */
-class Classe : public NomEntity
+class Classe : public EntityAttributsID<Attributs<RelationNumAttribut,Id3Attribut,NomAttribut>,InfoEntity::ClasseId>
 {
-    ATTRIBUT_ENTITY_ID(An)
-    ATTRIBUT_ENTITY_ID(Etab)
-    ATTRIBUT_ENTITY_ID(Niv)
-    ATTRIBUT_ENTITY_INT_SUP(Num,num,0)
 public:
     //! Positions des attributs.
-    enum Position {Id = NomEntity::Id,
-                   Nom = NomEntity::Nom,
-                   IdAn = NomEntity::NbrAtt,
-                   IdEtab,
-                   IdNiv,
-                   Num,
-                   NbrAtt};
+    enum Position {Id = PositionEnum<IdAttribut,Classe>::Position,
+                   Id1 = PositionEnum<Id1Attribut,Classe>::Position,
+                   Id2 = PositionEnum<Id2Attribut,Classe>::Position,
+                   Num = PositionEnum<NumAttribut,Classe>::Position,
+                   Id3 = PositionEnum<Id3Attribut,Classe>::Position,
+                   Nom = PositionEnum<NomAttribut,Classe>::Position,
+                   NbrAtt,
+                   IdAn = Id1,
+                   IdEtab = Id2,
+                   IdNiv = Id3};
 
-    using NomEntity::NomEntity;
-    BASE_ENTITY(Classe,InfoEntity::ClasseId)
-
-    //! Constructeur à partir des valeurs attributs.
-    Classe(int idAn, int idEtab, int idNiv, const QString & nom, int num, int id =0)
-        : NomEntity(nom,id),
-          m_idAn(idAn),
-          m_idEtab(idEtab),
-          m_idNiv(idNiv),
-          m_num(num)
-    {}
+    using EAID = EntityAttributsID<Attributs<RelationNumAttribut,Id3Attribut,NomAttribut>,InfoEntity::ClasseId>;
+    using EAID::EntityAttributsID;
+    BASE_ENTITY(Classe)
+    ALIAS_CLE(An,1)
+    ALIAS_CLE(Etab,2)
+    ALIAS_CLE(Niv,3)
 
     //! Constructeur à partir d'un jeux de valeurs attributs unique.
     Classe(int idAn, int idEtab, int idNiv, int num)
-        : m_idAn(idAn),
-          m_idEtab(idEtab),
-          m_idNiv(idNiv),
-          m_num(num)
-    {}
+    {
+          setIdAn(idAn);
+          setIdEtab(idEtab);
+          setIdNiv(idNiv);
+          setNum(num);
+    }
 
     //! Constructeur à partir d'un jeux de valeurs attributs unique.
     Classe(int idAn, int idEtab, const QString & nom)
-        : NomEntity(nom),
-          m_idAn(idAn),
-          m_idEtab(idEtab)
-    {}
+    {
+        setIdAn(idAn);
+        setIdEtab(idEtab);
+        setNom(nom);
 
-  MEMBRE_ATT_4(Classe,NomEntity,IdAn,idAn,IdEtab,idEtab,IdNiv,idNiv,Num,num)
+    }
+
+    //! Constructeur à partir des valeurs attributs.
+    Classe(int idAn, int idEtab, int idNiv, const QString & nom, int num, int id =0)
+        : Classe(idAn,idEtab,idNiv,num)
+    {
+        setId(id);
+        setNom(nom);
+    }
 };
 
 #endif // CLASSE_H

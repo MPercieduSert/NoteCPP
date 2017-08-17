@@ -5,7 +5,6 @@
 #define VERSIONBDDMANAGER_H
 
 #include "InfoBddBase.h"
-#include "LinkSqlBase.h"
 #include "ManagerSql.h"
 #include "UniqueSqlBase.h"
 #include "../Entities/VersionBdd.h"
@@ -13,19 +12,20 @@
 /*! \ingroup groupeBaseManager
  * \brief Manager de l'entité VersionBdd
  */
-class VersionBddManager : public ManagerSql<VersionBdd,DateTimeNumOnlyLinkSql<VersionBdd>,NumUniqueSql>
+class VersionBddManager : public ManagerSql<VersionBdd,NumUniqueSql<VersionBdd>>
 {
 public:
+    using VersionInfoBdd = InfoBddBase<NumUniqueInfoBdd<VersionBdd>,DateTimeInfoBdd<VersionBdd>>;
     // Constructeur.
     VersionBddManager()
      : ManagerSql("vrbdd",
-                  DateTimeNumInfoBdd::attribut(),
-                  NumInfoBdd::attributUnique())
+                  VersionInfoBdd::attribut(),
+                  VersionInfoBdd::attributUnique())
         {}
 
     // Creer la table.
     void creer()
-    {creerSql(DateTimeNumInfoBdd::creerAttribut(),NumInfoBdd::attributUnique());}
+    {creerSql(VersionInfoBdd::creerAttribut(),VersionInfoBdd::attributUnique());}
 };
 
 #endif // VERSIONBDDMANAGER_H

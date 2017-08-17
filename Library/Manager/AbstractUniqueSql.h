@@ -19,9 +19,9 @@
  * \brief Spéciations des conditions d'unicités.
  */
 
-#include "Manager.h"
+#include "AbstractManager.h"
 #include "ReqSql.h"
-#include "../Entities/EntityRelation.h"
+#include "../Entities/AttributMultiple.h"
 
 // Définition des conditions d'unicité des entités de type prédéfini.
 //! \ingroup groupeUniqueSqlBase
@@ -91,9 +91,7 @@ public:
 
     //! L'attribut ne possède pas d'ensemble de valeur unique.
     bdd::ExisteUni existsUnique(const Entity & /*entity*/)
-    {
-        return bdd::Aucun;
-    }
+        {return bdd::Aucun;}
 };
 
 /*! \ingroup groupeUniqueSqlBase
@@ -128,7 +126,13 @@ public:
         exec();
         if(next())
         {
-            entity.setId(id());
+            if(entity.id() == 0)
+                entity.setId(id());
+            else if(entity.id() != id())
+            {
+                finish();
+                return bdd::Autre;
+            }
             finish();
             return bdd::Tous;
         }
@@ -148,8 +152,16 @@ public:
         exec();
         if(next())
         {
-            finish();
-            return bdd::Tous;
+            if(entity.id() == 0 || entity.id() == id())
+            {
+                finish();
+                return bdd::Tous;
+            }
+            else
+            {
+                finish();
+                return bdd::Autre;
+            }
         }
         else
         {
@@ -167,7 +179,7 @@ template<class Ent> QString SimpleUniqueSql<Ent>::creer(const QString & table,co
 {
     using namespace bdd;
     QString sql(",");
-    sql.append(createSqlString(createSql::constraint)).append(" UN").append(table).append(" ").append(createSqlString(createSql::unique)).append(" (");
+    sql.append(createSqlString(createSql::Constraint)).append(" UN").append(table).append(" ").append(createSqlString(createSql::Unique)).append(" (");
     for(QMap<int,QString>::const_iterator i = atts.at(0).cbegin(); i != atts.at(0).cend(); ++i)
         sql.append(i.value()).append(",");
     sql.chop(1);
@@ -221,25 +233,40 @@ public:
 
         if(idUni1 == idUni2)
         {
-            if(idUni1 != 0)
-            {
-                entity.setId(idUni1);
-                return bdd::Tous;
-            }
+            if(idUni1 == 0)
+                return bdd::Aucun;
             else
-                {return bdd::Aucun;}
+            {
+                if(entity.id() == 0)
+                    entity.setId(idUni1);
+                else if(entity.id() != idUni1)
+                    return bdd::Autre;
+                return bdd::Tous;
+            }       
         }
         else
         {
-            if(idUni1 == 0 || idUni2 == 0)
+            if(idUni1 == 0)
             {
-                if(entity.id() != 0 && (idUni1 == entity.id() || idUni2 == entity.id()))
-                    {return bdd::Meme;}
-                else
-                    {return bdd::Autre;}
+                if(entity.id() == 0)
+                    entity.setId(idUni2);
+                else if(entity.id() != idUni2)
+                    return bdd::Autre;
+                return bdd::Meme;
             }
             else
-                {return bdd::Conflit;}
+            {
+                if(idUni2 == 0)
+                {
+                    if(entity.id() == 0)
+                        entity.setId(idUni1);
+                    else if(entity.id() != idUni1)
+                        return bdd::Autre;
+                    return bdd::Meme;
+                }
+                else
+                    return bdd::Conflit;
+            }
         }
     }
 
@@ -265,21 +292,36 @@ public:
         if(idUni1 == idUni2)
         {
             if(idUni1 == 0)
-                {return bdd::Tous;}
+                return bdd::Aucun;
             else
-                {return bdd::Aucun;}
+            {
+                if(entity.id() == 0 || entity.id() == idUni1)
+                    return bdd::Tous;
+                else
+                    return bdd::Autre;
+            }
         }
         else
         {
-            if(idUni1 == 0 || idUni2 == 0)
+            if(idUni1 == 0)
             {
-                if(entity.id() != 0 && (idUni1 == entity.id() || idUni2 == entity.id()))
-                    {return bdd::Meme;}
+                if(entity.id() == 0 || entity.id() == idUni1)
+                    return bdd::Meme;
                 else
-                    {return bdd::Autre;}
+                    return bdd::Autre;
             }
             else
-                {return bdd::Conflit;}
+            {
+                if(idUni2 == 0)
+                {
+                    if(entity.id() == 0 || entity.id() == idUni2)
+                        return bdd::Meme;
+                    else
+                        return bdd::Autre;
+                }
+                else
+                    return bdd::Conflit;
+            }
         }
     }
 
@@ -298,7 +340,7 @@ template<class Ent> QString DoubleUniqueSql<Ent>::creer(const QString & table,co
     for(int n = 0; n != atts.size(); ++n)
     {
         sql.append(",");
-        sql.append(createSqlString(createSql::constraint)).append(" UN").append(QString::number(n)).append(table).append(" ").append(createSqlString(createSql::unique)).append(" (");
+        sql.append(createSqlString(createSql::Constraint)).append(" UN").append(QString::number(n)).append(table).append(" ").append(createSqlString(createSql::Unique)).append(" (");
         for(QMap<int,QString>::const_iterator i = atts.at(n).cbegin(); i != atts.at(n).cend(); ++i)
             sql.append(i.value()).append(",");
         sql.chop(1);
@@ -310,7 +352,7 @@ template<class Ent> QString DoubleUniqueSql<Ent>::creer(const QString & table,co
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe mère des classes conditions d'unicité pour les entité possédant deux clés avec exactement une non nulle et unique.
  */
-template<class Ent> class RelationExactOneNotNullUniqueSqlTemp : public DoubleUniqueSql<Ent>
+template<class Ent> class RelationExactOneNotNullUniqueSql : public DoubleUniqueSql<Ent>
 {
 protected:
     using DoubleUniqueSql<Ent>::m_unique_1;
@@ -325,12 +367,12 @@ protected:
 public:
     enum {Id1Unique = 0,NbrUnique1,Id2Unique = 0,NbrUnique2};
     //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    RelationExactOneNotNullUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
+    RelationExactOneNotNullUniqueSql(const QString & table, const QVector<QMap<int,QString>> & atts)
         : DoubleUniqueSql<Ent>(table,atts)
     {}
 
     //! Destructeur.
-    ~RelationExactOneNotNullUniqueSqlTemp()
+    ~RelationExactOneNotNullUniqueSql()
     {}
 
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée,
@@ -433,18 +475,16 @@ protected:
     }
 };
 
-typedef RelationExactOneNotNullUniqueSqlTemp<RelationExactOneNotNullEntity> RelationExactOneNotNullUniqueSql;
-
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe mère des classes conditions d'unicité pour les entité possédant deux clés avec exactement une non nulle et une condition
  * d'unicité sur la clé non nulle et d'autre attributs commums aux deux clés.
  */
-template<class Ent> class AttsRelationExactOneNotNullUniqueSql : public RelationExactOneNotNullUniqueSqlTemp<Ent>
+template<class Ent> class AttsRelationExactOneNotNullUniqueSql : public RelationExactOneNotNullUniqueSql<Ent>
 {
 public:
     //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
     AttsRelationExactOneNotNullUniqueSql(const QString & table, const QVector<QMap<int,QString>> & atts)
-        : RelationExactOneNotNullUniqueSqlTemp<Ent>(table,atts)
+        : RelationExactOneNotNullUniqueSql<Ent>(table,atts)
     {}
 
     //! Destructeur.
@@ -458,14 +498,14 @@ protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée 1.
     void bindValuesUnique_1(const Ent &entity)
     {
-        RelationExactOneNotNullUniqueSqlTemp<Ent>::bindValuesUnique_1(entity);
+        RelationExactOneNotNullUniqueSql<Ent>::bindValuesUnique_1(entity);
         bindValuesUnique(entity);
     }
 
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée 2.
     void bindValuesUnique_2(const Ent &entity)
     {
-        RelationExactOneNotNullUniqueSqlTemp<Ent>::bindValuesUnique_2(entity);
+        RelationExactOneNotNullUniqueSql<Ent>::bindValuesUnique_2(entity);
         bindValuesUnique(entity);
     }
 };

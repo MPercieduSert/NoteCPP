@@ -5,8 +5,11 @@
 #define MANAGEROF_H
 
 #include "InfoBdd.h"
-#include "LinkSql.h"
 #include "ManagerOfArbre.h"
+#include "ManagerOfArbreModifControle.h"
+#include "ManagerOfArbreSimple.h"
+#include "ManagerOfArbreSimpleModifControle.h"
+#include "ManagerOfModifControle.h"
 #include "ManagerSql.h"
 #include "UniqueSql.h"
 
@@ -18,37 +21,99 @@
 /*! \ingroup groupeBaseManager
  * \brief Macro spécialisant les ManagerOf pour les entités de type Arbre.
  */
-#define MANAGER_OF_ARBRE(ENTITY) template<> class ManagerOf<ENTITY> : public ManagerOfArbre<ENTITY,typename InfoBdd<ENTITY>::EntLinkSql,typename InfoBdd<ENTITY>::EntUniqueSql> \
+#define MANAGER_OF_ARBRE(ENTITY) template<> class ManagerOf<ENTITY> : public ManagerOfArbre<ENTITY, typename InfoBdd<ENTITY>::EntUniqueSql> \
     {public: \
         /*! Constructeur.*/ \
-        ManagerOf(): ManagerOfArbre<ENTITY,typename InfoBdd<ENTITY>::EntLinkSql,typename InfoBdd<ENTITY>::EntUniqueSql> \
+        ManagerOf(): ManagerOfArbre<ENTITY,typename InfoBdd<ENTITY>::EntUniqueSql> \
 (InfoBdd<ENTITY>::table(),InfoBdd<ENTITY>::attribut(),InfoBdd<ENTITY>::attributUnique(),InfoBdd<ENTITY>::tableArbre(),InfoBdd<ENTITY>::attributArbre()) {} \
     /*! Creer la table.*/ \
     void creer() \
     {creerSql(InfoBdd<ENTITY>::creerAttribut(),InfoBdd<ENTITY>::attributUnique(),InfoBdd<ENTITY>::foreignKey());}};
 
+/*! \ingroup groupeBaseManager
+ * \brief Macro spécialisant les ManagerOf pour les entités de type ArbreSimple.
+ */
+#define MANAGER_OF_ARBRE_SIMPLE(ENTITY) template<> class ManagerOf<ENTITY> : public ManagerOfArbreSimple<ENTITY, typename InfoBdd<ENTITY>::EntUniqueSql> \
+    {public: \
+        /*! Constructeur.*/ \
+        ManagerOf(): ManagerOfArbreSimple<ENTITY,typename InfoBdd<ENTITY>::EntUniqueSql> \
+            (InfoBdd<ENTITY>::table(), InfoBdd<ENTITY>::attribut(), InfoBdd<ENTITY>::attributUnique()) {} \
+        /*! Creer la table.*/ \
+        void creer() \
+            {creerSql(InfoBdd<ENTITY>::creerAttribut(),InfoBdd<ENTITY>::attributUnique(),InfoBdd<ENTITY>::foreignKey());}};
+
+/*! \ingroup groupeBaseManager
+ * \brief Trait donnant le type du managerOf en fonction de l'entier bddInfo::TypeManager.
+ */
+template<class Ent, class Unique, int N> struct TypeManagerOf;
+template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::Simple>
+    {using ManagerOfType = ManagerSql<Ent,Unique>;};
+template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::Arbre>
+    {using ManagerOfType = ManagerOfArbre<Ent,Unique>;};
+template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::ArbreSimple>
+    {using ManagerOfType = ManagerOfArbreSimple<Ent,Unique>;};
+template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::ModifControle>
+    {using ManagerOfType = ManagerOfModifControle<Ent,Unique>;};
+template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::ArbreModifControle>
+    {using ManagerOfType = ManagerOfArbreModifControle<Ent,Unique>;};
+template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::ArbreSimpleModifControle>
+    {using ManagerOfType = ManagerOfArbreSimpleModifControle<Ent,Unique>;};
 
 /*! \ingroup groupeBaseManager
  * \brief Classe template permettant d'instancier les différents manageurs.
  */
-template<class Ent> class ManagerOf : public ManagerSql<Ent,typename InfoBdd<Ent>::EntLinkSql,typename InfoBdd<Ent>::EntUniqueSql>
+template<class Ent, int typeManager> class ManagerOfTemp :
+        public TypeManagerOf<Ent,typename InfoBdd<Ent>::EntUniqueSql,typeManager>::ManagerOfType
 {
-protected:
-    using ManagerSql<Ent,typename InfoBdd<Ent>::EntLinkSql,typename InfoBdd<Ent>::EntUniqueSql>::creerSql;
 public:
     //! Constructeur.
-    ManagerOf()
-        : ManagerSql<Ent,typename InfoBdd<Ent>::EntLinkSql,typename InfoBdd<Ent>::EntUniqueSql>(InfoBdd<Ent>::table(),
-                                                                                            InfoBdd<Ent>::attribut(),
-                                                                                            InfoBdd<Ent>::attributUnique())
-        {}
+    ManagerOfTemp()
+        : ManagerSql<Ent,typename InfoBdd<Ent>::EntUniqueSql>(InfoBdd<Ent>::table(),
+                                                              InfoBdd<Ent>::attribut(),
+                                                              InfoBdd<Ent>::attributUnique())
+    {}
 
     //! Creer la table.
     void creer()
-    {creerSql(InfoBdd<Ent>::creerAttribut(),InfoBdd<Ent>::attributUnique(),InfoBdd<Ent>::foreignKey());}
+    {ManagerSql<Ent,typename InfoBdd<Ent>::EntUniqueSql>::
+                creerSql(InfoBdd<Ent>::creerAttribut(),InfoBdd<Ent>::attributUnique(),InfoBdd<Ent>::foreignKey());}
 };
 
-MANAGER_OF_ARBRE(Attribut)
-MANAGER_OF_ARBRE(Donnee)
+template<class Ent> class ManagerOfTemp<Ent,bddInfo::typeManager::Arbre> : public ManagerOfArbre<Ent, typename InfoBdd<Ent>::EntUniqueSql>
+{
+public:
+    //! Constructeur.
+    ManagerOfTemp()
+        : ManagerSql<Ent, typename InfoBdd<Ent>::EntUniqueSql>(InfoBdd<Ent>::table(),
+                                                               InfoBdd<Ent>::attribut(),
+                                                               InfoBdd<Ent>::attributUnique()),
+          ManagerOfArbre<Ent, typename InfoBdd<Ent>::EntUniqueSql>(InfoBdd<Ent>::tableArbre(),
+                                                                   InfoBdd<Ent>::attributArbre())
+    {}
 
+    //! Creer la table.
+    void creer()
+        {ManagerOfArbre<Ent, typename InfoBdd<Ent>::EntUniqueSql>::
+                creerSql(InfoBdd<Ent>::creerAttribut(),InfoBdd<Ent>::attributUnique(),InfoBdd<Ent>::foreignKey());}
+};
+
+template<class Ent> class ManagerOfTemp<Ent,bddInfo::typeManager::ArbreModifControle> : public ManagerOfArbreModifControle<Ent, typename InfoBdd<Ent>::EntUniqueSql>
+{
+public:
+    //! Constructeur.
+    ManagerOfTemp()
+        : ManagerSql<Ent, typename InfoBdd<Ent>::EntUniqueSql>(InfoBdd<Ent>::table(),
+                                                               InfoBdd<Ent>::attribut(),
+                                                               InfoBdd<Ent>::attributUnique()),
+          ManagerOfArbreModifControle<Ent, typename InfoBdd<Ent>::EntUniqueSql>(InfoBdd<Ent>::tableArbre(),
+                                                                                InfoBdd<Ent>::attributArbre())
+    {}
+
+    //! Creer la table.
+    void creer()
+        {ManagerOfArbreModifControle<Ent, typename InfoBdd<Ent>::EntUniqueSql>::
+                creerSql(InfoBdd<Ent>::creerAttribut(),InfoBdd<Ent>::attributUnique(),InfoBdd<Ent>::foreignKey());}
+};
+
+template<class Ent> using ManagerOf = ManagerOfTemp<Ent,TypeManager<Ent>::value>;
 #endif // MANAGEROF_H

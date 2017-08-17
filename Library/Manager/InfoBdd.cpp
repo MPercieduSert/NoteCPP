@@ -1,16 +1,16 @@
 #include "InfoBdd.h"
 
-QMap<int,QString> InfoBdd<Attribut>::foreignKey()
+QMap<int,QString> InfoBdd<MotCle>::foreignKey()
 {
     QMap<int,QString> att;
-    att.insert(Attribut::Id,tableArbre());
+    att.insert(MotCle::Id,tableArbre());
     return att;
 }
 
-QMap<int,QString> InfoBdd<CibleAttribut>::foreignKey()
+QMap<int,QString> InfoBdd<CibleMotCle>::foreignKey()
 {
     QMap<int,QString> att;
-    att.insert(CibleAttribut::IdAt,InfoBdd<Attribut>::table());
+    att.insert(CibleMotCle::IdMC,InfoBdd<MotCle>::table());
     return att;
 }
 
@@ -70,7 +70,7 @@ QMap<int,QString> InfoBdd<Donnee>::foreignKey()
 QMap<int,QString> InfoBdd<DonneeCard>::foreignKey()
 {
     QMap<int,QString> att;
-    att.insert(DonneeCard::IdDonnee,InfoBdd<Donnee>::table());
+    att.insert(DonneeCard::IdDn,InfoBdd<Donnee>::table());
     return att;
 }
 
@@ -106,6 +106,13 @@ QMap<int,QString> InfoBdd<GroupeEleve>::foreignKey()
     return att;
 }
 
+QMap<int,QString> InfoBdd<MotClePermission>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(MotClePermission::IdMC,InfoBdd<MotCle>::table());
+    return att;
+}
+
 QMap<int,QString> InfoBdd<Niveau>::foreignKey()
 {
     QMap<int,QString> att;
@@ -127,5 +134,12 @@ QMap<int,QString> InfoBdd<Note>::foreignKey()
     QMap<int,QString> att;
     att.insert(Note::IdCtr,InfoBdd<Controle>::table());
     att.insert(Note::IdEl,InfoBdd<Eleve>::table());
+    return att;
+}
+
+QMap<int,QString> InfoBdd<TypeControle>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(TypeControle::Parent,table());
     return att;
 }

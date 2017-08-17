@@ -15,7 +15,8 @@ CONFIG += c++11
 HEADERS += \
     Annee.h \
     Arbre.h \
-    AttributEntity.h \
+    AttributMultiple.h \
+    AttributSimple.h \
     Classe.h \
     ClasseEleve.h \
     Controle.h \
@@ -24,13 +25,14 @@ HEADERS += \
     Eleve.h \
     Entity.h \
     EntityCible.h \
+    EntityComplexe.h \
     EntityDivers.h \
-    EntityNom.h \
     EntityOfDefaultType.h \
     EntityRelation.h \
     Groupe.h \
     InfoEntity.h \
     InfoEntityBase.h \
+    MotCle.h \
     Niveau.h \
     TypeControle.h \
     TypeEtablissement.h \
@@ -38,10 +40,15 @@ HEADERS += \
     VersionBdd.h
 
 
+
+
+
+
 SOURCES += \
     Annee.cpp \
     Arbre.cpp \
-    AttributEntity.cpp \
+    AttributMultiple.cpp \
+    AttributSimple.cpp \
     Classe.cpp \
     ClasseEleve.cpp \
     Controle.cpp \
@@ -50,18 +57,23 @@ SOURCES += \
     Eleve.cpp \
     Entity.cpp \
     EntityCible.cpp \
+    EntityComplexe.cpp \
     EntityDivers.cpp \
-    EntityNom.cpp \
     EntityOfDefaultType.cpp \
     EntityRelation.cpp \
     Groupe.cpp \
     InfoEntity.cpp \
     InfoEntityBase.cpp \
+    MotCle.cpp \
     Niveau.cpp \
     TypeControle.cpp \
     TypeEtablissement.cpp \
     TypeNiveau.cpp \
     VersionBdd.cpp
+
+
+
+
 
 unix {
     target.path = /usr/lib

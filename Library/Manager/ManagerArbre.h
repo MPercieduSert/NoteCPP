@@ -5,7 +5,6 @@
 #define MANAGERARBRE_H
 
 #include "InfoBddBase.h"
-#include "LinkSqlBase.h"
 #include "ManagerSql.h"
 #include "UniqueSqlBase.h"
 #include "../Entities/Arbre.h"
@@ -41,10 +40,10 @@ else \
 /*! \ingroup groupeBaseManager
  * \brief Classe des manageurs pour les entités de type arbre.
  */
-class ManagerArbre : public ManagerSql<Arbre,ArbreOnlyLinkSql,ArbreUniqueSql>
+class ManagerArbre : public ManagerSql<Arbre,ArbreUniqueSql<Arbre>>
 {
 protected:
-    typedef ManagerSql<Arbre,ArbreOnlyLinkSql,ArbreUniqueSql> ManagerSqlArbre;
+    typedef ManagerSql<Arbre,ArbreUniqueSql<Arbre>> ManagerSqlArbre;
     QString m_sqlGetParent;
 
 public:
@@ -70,7 +69,7 @@ public:
     {
         QMap<int,QString> key;
         key.insert(Arbre::Parent,table());
-        creerSql(ArbreInfoBdd::creerAttribut(),ArbreInfoBdd::attributUnique(),key);
+        creerSql(ArbreInfoBdd<Arbre>::creerAttribut(),ArbreInfoBdd<Arbre>::attributUnique(),key);
     }
 
     //! Supprime de la base de donnée le noeud node ainsi que tous ses déscendants (opération stable).

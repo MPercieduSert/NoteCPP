@@ -95,7 +95,7 @@ void Noyau::creerClasse(QWidget *parent)
     if(dial.exec() == QDialog::Accepted)
     {
         NewClasseDialog::dialogResult value = dial.value();
-        if(value.classe.id() == NewClasseDialog::dialogResult::creerEtab)
+        if(value.classe.id() == NewClasseDialog::dialogResult::CreerEtab)
         {
             creerEtablissement(parent);
             creerClasse(parent);
@@ -111,7 +111,7 @@ void Noyau::creerClasse(QWidget *parent)
                       QString::number(i)+"nom_classe"+QString::number(classe.id()),
                       QString::number(i)+"prenom_classe"+QString::number(classe.id()));
                 m_bdd.save(eleve);
-                m_bdd.save(ClasseEleve(classe.id(),eleve.id()));
+                m_bdd.save(ClasseEleve(classe.id(),eleve.id(),value.entree));
             }
         }
     }

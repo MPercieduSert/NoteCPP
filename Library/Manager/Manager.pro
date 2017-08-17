@@ -26,16 +26,20 @@ else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Entities/libEntities.a
 
 HEADERS += \
+    AbstractGestionAutorisation.h \
     AbstractLinkSql.h \
+    AbstractManager.h \
     AbstractUniqueSql.h \
+    GestionAutorisationCible.h \
     InfoBdd.h \
     InfoBddBase.h \
-    LinkSql.h \
-    LinkSqlBase.h \
-    Manager.h \
     ManagerArbre.h \
     ManagerOf.h \
     ManagerOfArbre.h \
+    ManagerOfArbreModifControle.h \
+    ManagerOfArbreSimple.h \
+    ManagerOfArbreSimpleModifControle.h \
+    ManagerOfModifControle.h \
     ManagerSql.h \
     ReqSql.h \
     UniqueSql.h \
@@ -43,16 +47,20 @@ HEADERS += \
     VersionBddManager.h
 
 SOURCES += \
+    AbstractGestionAutorisation.cpp \
     AbstractLinkSql.cpp \
+    AbstractManager.cpp \
     AbstractUniqueSql.cpp \
+    GestionAutorisationCible.cpp \
     InfoBdd.cpp \
     InfoBddBase.cpp \
-    LinkSql.cpp \
-    LinkSqlBase.cpp \
-    Manager.cpp \
     ManagerArbre.cpp \
     ManagerOf.cpp \
     ManagerOfArbre.cpp \
+    ManagerOfArbreModifControle.cpp \
+    ManagerOfArbreSimple.cpp \
+    ManagerOfArbreSimpleModifControle.cpp \
+    ManagerOfModifControle.cpp \
     ManagerSql.cpp \
     ReqSql.cpp \
     UniqueSql.cpp \

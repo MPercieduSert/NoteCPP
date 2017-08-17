@@ -4,8 +4,10 @@
 #ifndef NEWCLASSEDIALOG_H
 #define NEWCLASSEDIALOG_H
 
+#include <QCalendarWidget>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDateEdit>
 #include <QDialog>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -25,7 +27,7 @@
 #include "../Entities/EntityOfDefaultType.h"
 #include "../Div/VectorPtr.h"
 #include "../Widget/SpinBoxAnnee.h"
-#include "../Widget/SpinBoxNumClasse.h"
+#include "../Widget/SpinBoxNumExclu.h"
 
 
 /*! \ingroup groupeDialogue
@@ -36,10 +38,12 @@ class NewClasseDialog : public QDialog
     Q_OBJECT
 public:
     //! Structure de réponse de la fenêtre de dialogue.
-    struct dialogResult {
+    struct dialogResult
+    {
         //!< Type du résultat autre que accepter et annuler (transmis par l'identifiant de la classe)
-        enum button {creerEtab = -1};
+        enum {CreerEtab = -1};
         Classe classe;  //!< Classe à créer.
+        QDate entree;   //!< Date d'entree des éléves dans la classe.
         int nbrEleve;   //!< Nombre d'éléves de la classe.
     };
 
@@ -54,6 +58,7 @@ protected:
 
     // Label
     QLabel *m_anneeLabel;       //!< Affichage de l'année.
+    QLabel *m_entreeLabel;      //!< Label de la date d'entrée des éléves dans la classe.
     QLabel *m_nameLabel;        //!< Label du nom de la classe.
     QLabel *m_nbrEleveLabel;    //!< Label du choix du nombre d'éléves.
     //QLabel *m_nbrPhaseLabel;  //!< Label du choix du nombre de phase dans l'année.
@@ -61,13 +66,14 @@ protected:
     QLabel *m_numLabel;         //!< Label du choix du numéro de la classe.
     //QLabel *m_colleLabel;     //!< Label du choix de la présence de colle.
 
+    QDateEdit *m_entreeDate;  //!< Selectionne une date d'entrée des élèves.
     QLineEdit *m_nameLine;      //!< Champ du nom de la classe.
     //QCheckBox *m_colleCheckBox;   //!< Choix de la présence de colle.
     QSpinBox *m_nbrEleveSpinBox;    //!< Choix du nombre d'éléves.
     //QSpinBox * m_nbrPhaseSpinBox; //!< Choix du nombre de phases.
     QComboBox *m_etabComboBox;      //!< Choix d'établissement de la classe.
     QComboBox *m_niveauComboBox;    //!< Choix du niveau de la classe.
-    SpinBoxNumClasse *m_numSpinBox; //!< Choix du numéro de la classe.
+    SpinBoxNumExclu *m_numSpinBox; //!< Choix du numéro de la classe.
 
     // Bouton
     QPushButton *m_cancelBouton;    //!< Bouton d'annulation.
@@ -90,7 +96,7 @@ public:
     //! Destructeur.
     ~NewClasseDialog()  {}
 
-    //! Retour de la fenêtre de dialogue.
+    //! Retourne le résultat de la fenêtre de dialogue.
     dialogResult value() const;
 signals:
 

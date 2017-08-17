@@ -4,36 +4,42 @@
 #ifndef TYPEETABLISSEMENT_H
 #define TYPEETABLISSEMENT_H
 
-#include "AttributEntity.h"
-#include "EntityNom.h"
+#include "AttributMultiple.h"
+#include "Entity.h"
 #include "InfoEntity.h"
+
+SINGLE_ATTRIBUT(MaxAttribut,AttributIntInf,AttributIntInf<15>,Max,max,int)
+SINGLE_ATTRIBUT(MinAttribut,AttributIntSup,AttributIntSup<-18>,Min,min,int)
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité TypeEtablissement.
  */
-class TypeEtablissement : public NomEntity
+class TypeEtablissement : public EntityAttributsID<Attributs<MaxAttribut,MinAttribut,NomAttribut>,InfoEntity::TypeEtablissementId>
 {
-    ATTRIBUT_ENTITY_INT_INF(Max,max,15)
-    ATTRIBUT_ENTITY_INT_SUP(Min,min,-18)
 public:
     //! Positions des attributs.
-    enum Position {Id = NomEntity::Id,
-                   Nom = NomEntity::Nom,
-                   Max = NomEntity::NbrAtt,
-                   Min,
+    enum Position {Id = PositionEnum<IdAttribut,TypeEtablissement>::Position,
+                   Max = PositionEnum<MaxAttribut,TypeEtablissement>::Position,
+                   Min = PositionEnum<MinAttribut,TypeEtablissement>::Position,
+                   Nom = PositionEnum<NomAttribut,TypeEtablissement>::Position,
                    NbrAtt};
 
-    using NomEntity::NomEntity;
-    BASE_ENTITY(TypeEtablissement,InfoEntity::TypeEtablissementId)
+    using EAID = EntityAttributsID<Attributs<MaxAttribut,MinAttribut,NomAttribut>,InfoEntity::TypeEtablissementId>;
+    using EAID::EntityAttributsID;
+    BASE_ENTITY(TypeEtablissement)
+
+    //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
+    TypeEtablissement(const QString & nom, int id = 0)
+        : EAID(id)
+        {setNom(nom);}
 
     //! Constructeur à partir des valeurs attributs.
     TypeEtablissement(int max, int min, const QString &nom, int id = 0)
-        : NomEntity(nom, id),
-          m_max(max),
-          m_min(min)
-    {}
-
-    MEMBRE_ATT_2(TypeEtablissement,NomEntity,Max,max,Min,min)
+        : TypeEtablissement(nom, id)
+    {
+        setMax(max);
+        setMin(min);
+    }
 };
 
 #endif // TYPEETABLISSEMENT_H

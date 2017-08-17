@@ -23,20 +23,25 @@ using T::prepare; \
 using T::toInt;
 
 namespace bdd {
-    enum createSql{primary,
-                   integer,
-                   text,
-                   blob,
-                   real,
-                   numeric,
-                   notNull,
-                   constraint,
-                   unique,
-                   foreign,
-                   ref,
+    enum createSql{Blob,
+                   Bool,
+                   Constraint,
+                   Date,
+                   DateTime,
+                   Double,
+                   Foreign,
+                   Integer,
+                   NotNull,
+                   Numeric,
+                   Primary,
+                   Real,
+                   Ref,
+                   Text,
+                   Variant,
+                   Unique,
                    NbrType};
 
-    enum wordSql{create};
+    enum wordSql{Create};
 }
 
 /*! \ingroup groupeBaseManager
@@ -61,6 +66,9 @@ public:
 
     //! Renvoie une QString correspondant au type.
     static QString createSqlString(bdd::createSql n);
+
+    QString lastQuery() const
+        {return m_requete->lastQuery();}
 
     //! Modifie le pointeur vers l'objet requête.
     static void setRequete(QSqlQuery * req)

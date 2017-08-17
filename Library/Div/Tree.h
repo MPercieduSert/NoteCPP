@@ -39,10 +39,18 @@ public:
         tree.m_i = nullptr;
     }
 
+    //! Constructeur de recopie.
+    template<class U> Tree(const Tree<U> & tree)
+        : Tree(new TreeItem<T>(*(tree.root())))
+        {}
+
     //! Constructeur, crée une racine de donnée associée data et initialise l'itérateur sur cette racine.
     Tree(const T & data)
         : Tree(new TreeItem<T>(data))
         {}
+
+    //! Constructeur, créer un arbre possédant la même structure et les même valeur que tree, T doit posséder un constructeur à partir de U.
+    //template<class U> Tree(const Tree<U> & tree);
 
     //! Destructeur. Détruit tous les noeuds de l'arbre.
     ~Tree()
@@ -74,6 +82,21 @@ public:
     //! Crée un itérateur initialisé sur le noeud virtuel nul. Cette fonction permet la compatibilité avec les algorithmes standards. Utiliser de préférence la méthode isNull directement sur le pointeur.
     typename TreeItem<T>::iterator end() const
         {return nullptr;}
+
+    //! Créer une nouveau de valeur T est l'insert à l'indice position dans la liste des descendants directs du noeud courant.
+    void insertChild(const T & data, const int position = 0)
+        {(*m_i)->insertChild(data, position);}
+
+    //! Insert une copie de tree à l'indice position dans la liste des descendants directs du noeud courant.
+    void insertChild(const Tree<T> & tree, const int position = 0)
+        {(*m_i)->insertChild(new TreeItem<T>(tree.root()), position);}
+
+    //! Insert tree à l'indice position dans la liste des descendants directs du noeud courant.
+    void insertChild(Tree<T> && tree, const int position = 0)
+    {
+        (*m_i)->insertChild(tree.root(), position);
+        tree.rootNull();
+    }
 
     //! Replace l'itérateur sur le noeud suivant (méthode de parcours incrémentation-décrémentation) puis test si le nouveau noeud n'est pas la racine.
     bool next() const
@@ -171,10 +194,18 @@ public:
     T & operator * ()
         {return (*m_i)->modifData();}
 
-    //! Ajoute une copie de Tree et de ses descendant aux descendants directs du noeud courant.
+    //! Ajoute une copie de Tree et de ses descendant aux descendants directs du noeud courant sans modifier ce dernier.
     Tree<T> & operator << (const Tree<T> & tree)
     {
-        m_i = &((**m_i)<<tree);
+        (**m_i) << &tree.root();
+        return *this;
+    }
+
+    //! Ajoute Tree et de ses descendant aux descendants directs du noeud courant sans modifier ce dernier.
+    Tree<T> & operator << (Tree<T> && tree)
+    {
+        (**m_i) << tree.root();
+        tree.rootNull();
         return *this;
     }
 
@@ -188,7 +219,18 @@ public:
 
     //! Transmet une référence sur la donnée du noeud de chemin absolue d'indices list. Cette méthode ne déplace pas le noeud courant. (Le chemin d'indice doit être valide.)
     T & operator [](const QList<int> & list);
+
+protected:
+    //! Met la racine à zero.
+    void rootNull()
+        {m_root = nullptr;}
 };
+
+//template<class T> template<class U> Tree<T>::Tree(const Tree<U> & tree)
+//{
+//    m_root = new TreeItem<U>(&tree.root());
+//    m_i = m_root;
+//}
 
 template<class T> Tree<T> & Tree<T>::seek(const QList<int> & list, bool root, bool verif)
 {

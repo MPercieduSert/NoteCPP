@@ -7,6 +7,7 @@
 #include "MAbstractTreeModel.h"
 #include "../Div/Tree.h"
 #include <QMessageBox>
+#include <QItemSelection>
 
 /*! \ingroup groupeModel
  * \brief Classe template des models de type arbre non-modifiable.
@@ -14,22 +15,30 @@
 template<class Ent> class TreeModelReadTemp : public MAbstractTreeModel
 {
 protected:
-    QStringList m_header;   //!< List des noms des colonnes.
+    QList<typename Ent::Position> m_atts;   //!< Liste des attributs à afficher.
+    QStringList m_header;   //!< Liste des noms des colonnes.
     Tree<Ent> m_tree;       //!< Arbre de donnée.
 
 public:
     //! Constructeur.
-    TreeModelReadTemp(QObject *parent = 0) : MAbstractTreeModel(parent) {}
+    TreeModelReadTemp(const QList<typename Ent::Position> & atts = QList<typename Ent::Position>(), QObject *parent = 0) : MAbstractTreeModel(parent), m_atts(atts) {}
 
     //! Destructeur.
     ~TreeModelReadTemp() {}
 
     //! Renvoie le nombre de colonnes.
-    int columnCount(const QModelIndex & /*parent = QModelIndex()*/) const
-        {return Ent::NbrAtt;}
+    int columnCount() const
+        {return m_atts.isEmpty() ? Ent::NbrAtt : m_atts.count();}
+
+    //! Renvoie le nombre de colonnes.
+    int columnCount(const QModelIndex & /*parent*/) const
+        {return columnCount();}
 
     //! Renvoie la donnée correspondant à l'index et au role.
     QVariant data(const QModelIndex &index, int role) const;
+
+    //! Renvoie un index sur le premier (dans le sens de parcourt) noeud de l'arbre ayant pour donnée un entité d'identifiant id.
+    QItemSelection foundId(int id) const;
 
     //! Renvoie les labels des colonnes
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
@@ -61,7 +70,18 @@ template<class Ent> QVariant TreeModelReadTemp<Ent>::data(const QModelIndex &ind
         return QVariant();
 
     TreeItem<Ent> *item = getItem(index);
-    return item->data().data(index.column());
+    return m_atts.isEmpty() ? item->data().data(index.column()) : item->data().data(m_atts.at(index.column()));
+}
+
+template<class Ent> QItemSelection TreeModelReadTemp<Ent>::foundId(int id) const
+{
+    typename TreeItem<Ent>::iterator i = m_tree.begin();
+    while(i != m_tree.end() && (*i)->data().id() != id )
+        ++i;
+    if(i != m_tree.end())
+        return QItemSelection(createIndex((*i)->position(),0,(*i)),createIndex((*i)->position(),m_atts.count()-1,(*i)));
+    else
+        return QItemSelection();
 }
 
 template<class Ent> TreeItem<Ent>* TreeModelReadTemp<Ent>::getItem(const QModelIndex & index) const
@@ -77,8 +97,13 @@ template<class Ent> TreeItem<Ent>* TreeModelReadTemp<Ent>::getItem(const QModelI
 
 template<class Ent> QVariant TreeModelReadTemp<Ent>::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (orientation == Qt::Horizontal && role == Qt::DisplayRole && section < m_header.count())
-        return m_header.at(section);
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+    {
+        if(!m_header.isEmpty() && section < m_header.count())
+            return m_header.at(section);
+        else
+            return m_atts.isEmpty() ? Ent::nomAttribut(section) : Ent::nomAttribut(m_atts.at(section));
+    }
     return QVariant();
 }
 

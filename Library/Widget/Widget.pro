@@ -13,16 +13,33 @@ QT += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 SOURCES += \
+    Plotter.cpp \
     ReadTreeWidget.cpp \
     SelectInListBox.cpp \
     SpinBoxAnnee.cpp \
-    SpinBoxNumClasse.cpp
+    SpinBoxDecimale.cpp \
+    SpinBoxNumExclu.cpp \
+    HeaderView.cpp \
+    SpinBoxNote.cpp \
+    BarPlotter.cpp \
+    Histogramme.cpp \
+    EditTreeWidget.cpp
+
 
 HEADERS += \
+    Plotter.h \
     ReadTreeWidget.h \
     SelectInListBox.h \
     SpinBoxAnnee.h \
-    SpinBoxNumClasse.h
+    SpinBoxDecimale.h \
+    SpinBoxNumExclu.h \
+    HeaderView.h \
+    SpinBoxNote.h \
+    BarPlotter.h \
+    Histogramme.h \
+    EditTreeWidget.h
+
+
 
 unix {
     target.path = /usr/lib

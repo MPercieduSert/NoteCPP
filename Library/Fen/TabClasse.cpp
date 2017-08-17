@@ -5,11 +5,11 @@ TabClasse::TabClasse(int idClasse, TabModule *parent) : TabAbstractClasse(idClas
     if(m_classe.isValid())
     {
         m_listeEleveButton = new QPushButton(tr("Liste des éléves"));
-        connect(m_listeEleveButton,&QPushButton::clicked,this,&TabClasse::openListeEleve);
+        connect(m_listeEleveButton,&QPushButton::clicked,[this](){m_parent->openListeEleve(m_classe.id());});
         m_listeGroupeButton = new QPushButton(tr("Liste de groupes"));
-        connect(m_listeGroupeButton,&QPushButton::clicked,this,&TabClasse::openListeGroupe);
+        connect(m_listeGroupeButton,&QPushButton::clicked,[this](){/*m_parent->openListeGroupe(m_classe.id())*/;});
         m_listeNoteButton = new QPushButton(tr("Notes"));
-        connect(m_listeNoteButton,&QPushButton::clicked,this,&TabClasse::openListeNote);
+        connect(m_listeNoteButton,&QPushButton::clicked,[this](){m_parent->openListeNote(m_classe.id());});
 
         m_bouttonTabLayout = new QHBoxLayout();
         m_bouttonTabLayout->addWidget(m_listeEleveButton);

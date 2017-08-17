@@ -8,122 +8,246 @@
 #include "../Entities/Arbre.h"
 #include "../Entities/EntityCible.h"
 #include "../Entities/EntityDivers.h"
-#include "../Entities/EntityNom.h"
 #include "../Entities/EntityRelation.h"
 
 // Unique Arbre
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le couple (num,parent).
  */
-template<class Ent> class ArbreUniqueSqlTemp : public SimpleUniqueSql<Ent>
+template<class Ent> class ArbreUniqueSql : public SimpleUniqueSql<Ent>
 {
 protected:
     using SimpleUniqueSql<Ent>::bindValue;
 
 public:
     enum {NumUnique,ParentUnique,NbrUnique};
-    //! Constructeur.
-    ArbreUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
-        :SimpleUniqueSql<Ent>(table,atts)
-        {}
+    using SimpleUniqueSql<Ent>::SimpleUniqueSql;
 
     //!Destructeur.
-    ~ArbreUniqueSqlTemp()
-        {}
+    ~ArbreUniqueSql() {}
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
-    void bindValuesUnique(const Arbre & entity)
+    void bindValuesUnique(const Ent & entity)
     {
         bindValue(NumUnique,entity.num());
         bindValue(ParentUnique,entity.parent());
     }
 };
 
-typedef ArbreUniqueSqlTemp<Arbre> ArbreUniqueSql;
-
-// Unique Cible
+// Unique CibleSimple
 /*! \ingroup groupeUniqueSqlBase
- * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le triple (Id1,IdCible,Cible).
+ * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le couple (IdCible,Cible).
  */
-template<class Ent> class CibleUniqueSqlTemp : public SimpleUniqueSql<Ent>
+template<class Ent> class CibleSimpleUniqueSql : public SimpleUniqueSql<Ent>
 {
 protected:
     using SimpleUniqueSql<Ent>::bindValue;
 
 public:
-    enum {Id1Unique,IdCibleUnique,CibleUnique,NbrUnique};
-    //! Constructeur.
-    CibleUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
-        : SimpleUniqueSql<Ent>(table,atts)
-        {}
+    enum {IdCibleUnique,CibleUnique,NbrUnique};
+    using SimpleUniqueSql<Ent>::SimpleUniqueSql;
 
     //!Destructeur.
-    ~CibleUniqueSqlTemp()
-        {}
+    ~CibleSimpleUniqueSql() {}
+
+protected:
+    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+    void bindValuesUnique(const Ent & entity)
+    {
+        bindValue(IdCibleUnique,entity.idCible());
+        bindValue(CibleUnique,entity.cible());
+    }
+};
+
+/*! \ingroup groupeUniqueSqlBase
+ * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le triple (IdCible,Cible,Num).
+ */
+template<class Ent> class CibleSimpleNumUniqueSql : public CibleSimpleUniqueSql<Ent>
+{
+protected:
+    using CibleSimpleUniqueSql<Ent>::bindValue;
+
+public:
+    enum {NumUnique = CibleSimpleUniqueSql<Ent>::NbrUnique, NbrUnique};
+    using CibleSimpleUniqueSql<Ent>::CibleSimpleUniqueSql;
+
+    //!Destructeur.
+    ~CibleSimpleNumUniqueSql() {}
+
+protected:
+    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+    void bindValuesUnique(const Ent & entity)
+    {
+        CibleSimpleUniqueSql<Ent>::bindValuesUnique(entity);
+        bindValue(NumUnique,entity.num());
+    }
+};
+
+// Unique Cible
+/*! \ingroup groupeUniqueSqlBase
+ * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le couple (Id1,Cible).
+ */
+template<class Ent> class IdCibleUniqueSql : public SimpleUniqueSql<Ent>
+{
+protected:
+    using SimpleUniqueSql<Ent>::bindValue;
+
+public:
+    enum {Id1Unique,CibleUnique,NbrUnique};
+    using SimpleUniqueSql<Ent>::SimpleUniqueSql;
+
+    //!Destructeur.
+    ~IdCibleUniqueSql() {}
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
     void bindValuesUnique(const Ent & entity)
     {
         bindValue(Id1Unique,entity.id1());
+        bindValue(CibleUnique,entity.cible());
+    }
+};
+
+
+/*! \ingroup groupeUniqueSqlBase
+ * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le triple (Id1,IdCible,Cible).
+ */
+template<class Ent> class CibleUniqueSql : public IdCibleUniqueSql<Ent>
+{
+protected:
+    using IdCibleUniqueSql<Ent>::bindValue;
+
+public:
+    enum {IdCibleUnique = IdCibleUniqueSql<Ent>::NbrUnique, NbrUnique};
+    using IdCibleUniqueSql<Ent>::IdCibleUniqueSql;
+
+    //!Destructeur.
+    ~CibleUniqueSql() {}
+
+protected:
+    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+    void bindValuesUnique(const Ent & entity)
+    {
+        IdCibleUniqueSql<Ent>::bindValuesUnique(entity);
+        bindValue(IdCibleUnique,entity.idCible());
+    }
+};
+
+/*! \ingroup groupeUniqueSqlBase
+ * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le 4-upplet (Id1,IdCible,Cible,DateTime).
+ */
+template<class Ent> class DateTimeCibleUniqueSql : public CibleUniqueSql<Ent>
+{
+protected:
+    using CibleUniqueSql<Ent>::bindValue;
+
+public:
+    enum {DateTimeUnique = CibleUniqueSql<Ent>::NbrUnique, NbrUnique};
+    using CibleUniqueSql<Ent>::CibleUniqueSql;
+
+    //!Destructeur.
+    ~DateTimeCibleUniqueSql() {}
+
+protected:
+    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+    void bindValuesUnique(const Ent & entity)
+    {
+        CibleUniqueSql<Ent>::bindValuesUnique(entity);
+        bindValue(DateTimeUnique,entity.dateTime());
+    }
+};
+
+/*! \ingroup groupeUniqueSqlBase
+ * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le 4-upplet (Id1,IdCible,Cible,Num).
+ */
+template<class Ent> class NumCibleUniqueSql : public CibleUniqueSql<Ent>
+{
+protected:
+    using CibleUniqueSql<Ent>::bindValue;
+
+public:
+    enum {NumUnique = CibleUniqueSql<Ent>::NbrUnique, NbrUnique};
+    using CibleUniqueSql<Ent>::CibleUniqueSql;
+
+    //!Destructeur.
+    ~NumCibleUniqueSql() {}
+
+protected:
+    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+    void bindValuesUnique(const Ent & entity)
+    {
+        CibleUniqueSql<Ent>::bindValuesUnique(entity);
+        bindValue(NumUnique,entity.num());
+    }
+};
+
+// Cible Null
+
+/*! \ingroup groupeUniqueSqlBase
+ * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le couple (IdCible,Cible).
+ */
+template<class Ent> class CibleNullUniqueSql : public SimpleUniqueSql<Ent>
+{
+protected:
+    using SimpleUniqueSql<Ent>::bindValue;
+
+public:
+    enum {IdCibleUnique, CibleUnique, NbrUnique};
+    using SimpleUniqueSql<Ent>::SimpleUniqueSql;
+
+    //!Destructeur.
+    ~CibleNullUniqueSql() {}
+
+protected:
+    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+    void bindValuesUnique(const Ent & entity)
+    {
         bindValue(IdCibleUnique,entity.idCible());
         bindValue(CibleUnique,entity.cible());
     }
 };
 
-typedef CibleUniqueSqlTemp<CibleEntity> CibleUniqueSql;
-
 /*! \ingroup groupeUniqueSqlBase
- * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le 4-upplet (Id1,IdCible,Cible,Num).
+ * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le tripplet (IdCible,Cible,Num).
  */
-template<class Ent> class NumCibleUniqueSqlTemp : public CibleUniqueSqlTemp<Ent>
+template<class Ent> class NumCibleNullUniqueSql : public CibleNullUniqueSql<Ent>
 {
 protected:
-    using CibleUniqueSqlTemp<Ent>::bindValue;
+    using CibleNullUniqueSql<Ent>::bindValue;
 
 public:
-    enum {NumUnique = CibleUniqueSqlTemp<Ent>::NbrUnique, NbrUnique};
-    //! Constructeur.
-    NumCibleUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
-        : CibleUniqueSqlTemp<Ent>(table,atts)
-        {}
+    enum {NumUnique = CibleNullUniqueSql<Ent>::NbrUnique, NbrUnique};
+    using CibleNullUniqueSql<Ent>::CibleNullUniqueSql;
 
     //!Destructeur.
-    ~NumCibleUniqueSqlTemp()
-        {}
+    ~NumCibleNullUniqueSql() {}
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
-    void bindValuesUnique(const NumDateTimeCibleEntity & entity)
+    void bindValuesUnique(const Ent & entity)
     {
-        CibleUniqueSqlTemp<Ent>::bindValuesUnique(entity);
+        CibleNullUniqueSql<Ent>::bindValuesUnique(entity);
         bindValue(NumUnique,entity.num());
     }
 };
-
-typedef NumCibleUniqueSqlTemp<NumDateTimeCibleEntity> NumDateTimeCibleUniqueSql;
 
 // Unique Nom
 
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le nom.
  */
-template<class Ent> class NomUniqueSqlTemp : public SimpleUniqueSql<Ent>
+template<class Ent> class NomUniqueSql : public SimpleUniqueSql<Ent>
 {
 protected:
     using SimpleUniqueSql<Ent>::bindValue;
 
 public:
     enum {NomUnique,NbrUnique};
-    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    NomUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
-        :SimpleUniqueSql<Ent>(table,atts)
-    {}
+    using SimpleUniqueSql<Ent>::SimpleUniqueSql;
 
     //! Destructeur.
-    ~NomUniqueSqlTemp()
-    {}
+    ~NomUniqueSql() {}
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
@@ -131,88 +255,70 @@ protected:
         {bindValue(NomUnique,entity.nom());}
 };
 
-typedef NomUniqueSqlTemp<NomEntity> NomUniqueSql;
-
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le couple (nc, nom).
  */
-template<class Ent> class NcNomUniqueSqlTemp : public NomUniqueSqlTemp<Ent>
+template<class Ent> class NcNomUniqueSql : public NomUniqueSql<Ent>
 {
 protected:
-    using NomUniqueSqlTemp<Ent>::bindValue;
+    using NomUniqueSql<Ent>::bindValue;
 
 public:
-    enum {NcUnique = NomUniqueSqlTemp<Ent>::NbrUnique};
-    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    NcNomUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
-        : NomUniqueSqlTemp<Ent>(table,atts)
-        {}
+    enum {NcUnique = NomUniqueSql<Ent>::NbrUnique};
+    using NomUniqueSql<Ent>::NomUniqueSql;
 
     //! Destructeur.
-    ~NcNomUniqueSqlTemp()
-        {}
+    ~NcNomUniqueSql() {}
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
-    void bindValuesUnique(const NcNomEntity &entity)
+    void bindValuesUnique(const Ent &entity)
     {
-        NomUniqueSqlTemp<Ent>::bindValuesUnique(entity);
+        NomUniqueSql<Ent>::bindValuesUnique(entity);
         bindValue(NcUnique,entity.nc());
     }
 };
 
-typedef NcNomUniqueSqlTemp<NcNomEntity> NcNomUniqueSql;
-
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le couple (nom, type).
  */
-template<class Ent> class TypeNomUniqueSqlTemp : public NomUniqueSqlTemp<Ent>
+template<class Ent> class TypeNomUniqueSql : public NomUniqueSql<Ent>
 {
 protected:
-    using NomUniqueSqlTemp<Ent>::bindValue;
+    using NomUniqueSql<Ent>::bindValue;
 
 public:
-    enum {TypeUnique = NomUniqueSqlTemp<Ent>::NbrUnique};
-    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    TypeNomUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
-        : NomUniqueSqlTemp<Ent>(table,atts)
-        {}
+    enum {TypeUnique = NomUniqueSql<Ent>::NbrUnique,NbrUnique};
+    using NomUniqueSql<Ent>::NomUniqueSql;
 
     //! Destructeur.
-    ~TypeNomUniqueSqlTemp()
-        {}
+    ~TypeNomUniqueSql() {}
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
-    void bindValuesUnique(const TypeNomEntity &entity)
+    void bindValuesUnique(const Ent &entity)
     {
-        NomUniqueSqlTemp<Ent>::bindValuesUnique(entity);
+        NomUniqueSql<Ent>::bindValuesUnique(entity);
         bindValue(TypeUnique,entity.type());
     }
 };
-
-typedef TypeNomUniqueSqlTemp<TypeNomEntity> TypeNomUniqueSql;
 
 // Unique Relation
 
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le couple de clé (id1,id2).
  */
-template<class Ent> class RelationUniqueSqlTemp : public SimpleUniqueSql<Ent>
+template<class Ent> class RelationUniqueSql : public SimpleUniqueSql<Ent>
 {
 protected:
     using SimpleUniqueSql<Ent>::bindValue;
 
 public:
     enum {Id1Unique,Id2Unique,NbrUnique};
-    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    RelationUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
-        :SimpleUniqueSql<Ent>(table,atts)
-    {}
+    using SimpleUniqueSql<Ent>::SimpleUniqueSql;
 
     //! Destructeur.
-    ~RelationUniqueSqlTemp()
-    {}
+    ~RelationUniqueSql() {}
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
@@ -223,88 +329,70 @@ protected:
     }
 };
 
-typedef RelationUniqueSqlTemp<RelationEntity> RelationUniqueSql;
-
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le triplet (id1,id2,date).
  */
-template<class Ent> class DateTimeRelationUniqueSqlTemp : public RelationUniqueSqlTemp<Ent>
+template<class Ent> class DateTimeRelationUniqueSql : public RelationUniqueSql<Ent>
 {
 protected:
-    using RelationUniqueSqlTemp<Ent>::bindValue;
+    using RelationUniqueSql<Ent>::bindValue;
 
 public:
-    enum {DateTimeUnique = RelationUniqueSql::NbrUnique,NbrUnique};
-    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    DateTimeRelationUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
-        : RelationUniqueSqlTemp<Ent>(table,atts)
-    {}
+    enum {DateTimeUnique = RelationUniqueSql<Ent>::NbrUnique,NbrUnique};
+    using RelationUniqueSql<Ent>::RelationUniqueSql;
 
     //! Destructeur.
-    ~DateTimeRelationUniqueSqlTemp()
-    {}
+    ~DateTimeRelationUniqueSql() {}
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
     void bindValuesUnique(const Ent &entity)
     {
-        RelationUniqueSqlTemp<Ent>::bindValuesUnique(entity);
+        RelationUniqueSql<Ent>::bindValuesUnique(entity);
         bindValue(DateTimeUnique,entity.dateTime());
     }
 };
 
-typedef DateTimeRelationUniqueSqlTemp<DateTimeRelationEntity> DateTimeRelationUniqueSql;
-
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le triplet (id1,id2,num).
  */
-template<class Ent> class NumRelationUniqueSqlTemp : public RelationUniqueSqlTemp<Ent>
+template<class Ent> class NumRelationUniqueSql : public RelationUniqueSql<Ent>
 {
 protected:
-    using RelationUniqueSqlTemp<Ent>::bindValue;
+    using RelationUniqueSql<Ent>::bindValue;
 
 public:
-    enum {NumUnique = RelationUniqueSql::NbrUnique,NbrUnique};
-    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    NumRelationUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
-        : RelationUniqueSqlTemp<Ent>(table,atts)
-    {}
+    enum {NumUnique = RelationUniqueSql<Ent>::NbrUnique,NbrUnique};
+    using RelationUniqueSql<Ent>::RelationUniqueSql;
 
     //! Destructeur.
-    ~NumRelationUniqueSqlTemp()
-    {}
+    ~NumRelationUniqueSql() {}
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
     void bindValuesUnique(const Ent &entity)
     {
-        RelationUniqueSqlTemp<Ent>::bindValuesUnique(entity);
+        RelationUniqueSql<Ent>::bindValuesUnique(entity);
         bindValue(NumUnique,entity.num());
     }
 };
-
-typedef NumRelationUniqueSqlTemp<NumRelationEntity> NumRelationUniqueSql;
 
 // Unique Divers
 
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le num.
  */
-template<class Ent> class NumUniqueSqlTemp : public SimpleUniqueSql<Ent>
+template<class Ent> class NumUniqueSql : public SimpleUniqueSql<Ent>
 {
 protected:
     using SimpleUniqueSql<Ent>::bindValue;
 
 public:
     enum {NumUnique,NbrUnique};
-    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    NumUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
-        :SimpleUniqueSql<Ent>(table,atts)
-    {}
+    using SimpleUniqueSql<Ent>::SimpleUniqueSql;
 
     //! Destructeur.
-    ~NumUniqueSqlTemp()
-    {}
+    ~NumUniqueSql() {}
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
@@ -312,62 +400,69 @@ protected:
         {bindValue(NumUnique,entity.num());}
 };
 
-typedef NumUniqueSqlTemp<NumEntity> NumUniqueSql;
-
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le couple (id1,num).
  */
-template<class Ent> class IdNumUniqueSqlTemp : public NumUniqueSqlTemp<Ent>
+template<class Ent> class IdNumUniqueSql : public NumUniqueSql<Ent>
 {
 protected:
-    using NumUniqueSqlTemp<Ent>::bindValue;
+    using NumUniqueSql<Ent>::bindValue;
 
 public:
-    enum {Id1Unique = NumUniqueSqlTemp<Ent>::NbrUnique,NbrUnique};
-    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    IdNumUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
-        : NumUniqueSqlTemp<Ent>(table,atts)
-    {}
+    enum {Id1Unique = NumUniqueSql<Ent>::NbrUnique,NbrUnique};
+    using NumUniqueSql<Ent>::NumUniqueSql;
 
     //! Destructeur.
-    ~IdNumUniqueSqlTemp()
-    {}
+    ~IdNumUniqueSql() {}
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
-    void bindValuesUnique(const IdNumEntity &entity)
+    void bindValuesUnique(const Ent &entity)
     {
-        NumUniqueSqlTemp<Ent>::bindValuesUnique(entity);
+        NumUniqueSql<Ent>::bindValuesUnique(entity);
         bindValue(Id1Unique,entity.id1());
     }
 };
 
-typedef IdNumUniqueSqlTemp<IdNumEntity> IdNumUniqueSql;
+/*! \ingroup groupeUniqueSqlBase
+ * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur l'attribut idProg.
+ */
+template<class Ent> class IdProgUniqueSql : public SimpleUniqueSql<Ent>
+{
+protected:
+    using SimpleUniqueSql<Ent>::bindValue;
+
+public:
+    enum {IdProgUnique ,NbrUnique};
+    using SimpleUniqueSql<Ent>::SimpleUniqueSql;
+
+    //! Destructeur.
+    ~IdProgUniqueSql() {}
+
+protected:
+    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+    void bindValuesUnique(const Ent &entity)
+        {bindValue(IdProgUnique,entity.idProg());}
+};
 
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le texte.
  */
-template<class Ent> class TexteUniqueSqlTemp : public SimpleUniqueSql<Ent>
+template<class Ent> class TexteUniqueSql : public SimpleUniqueSql<Ent>
 {
 protected:
     using SimpleUniqueSql<Ent>::bindValue;
 
 public:
     enum {TexteUnique,NbrUnique};
-    //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
-    TexteUniqueSqlTemp(const QString & table, const QVector<QMap<int,QString>> & atts)
-        : SimpleUniqueSql<Ent>(table,atts)
-    {}
+    using SimpleUniqueSql<Ent>::SimpleUniqueSql;
 
     //! Destructeur.
-    ~TexteUniqueSqlTemp()
-    {}
+    ~TexteUniqueSql() {}
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
-    void bindValuesUnique(const TexteEntity &entity)
+    void bindValuesUnique(const Ent &entity)
         {bindValue(TexteUnique,entity.texte());}
 };
-
-typedef TexteUniqueSqlTemp<TexteEntity> TexteUniqueSql;
 #endif // UNIQUESQLBASE_H

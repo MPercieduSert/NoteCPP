@@ -6,48 +6,45 @@
 
 #include "EntityCible.h"
 #include "EntityDivers.h"
-#include "EntityNom.h"
 #include "EntityRelation.h"
 #include "InfoEntity.h"
 
 // Cible
-CIBLE_ENTITY(CibleAttribut,CibleEntity,InfoEntity::CibleAttributId,At)
-CIBLE_ENTITY(CibleCommentaire,DateTimeCibleEntity,InfoEntity::CibleCommentaireId,Cm)
-CIBLE_ENTITY(CibleDonnee,ValeurNumDateTimeCibleEntity,InfoEntity::CibleDonneeId,Dn)
+ID1_ENTITY(CibleMotCle,Cible,InfoEntity::CibleMotCleId,MC)
+ID1_ENTITY(CibleCommentaire,CibleNullDateTimeCurrentNum,InfoEntity::CibleCommentaireId,Cm)
+ID1_ENTITY(CibleDonnee,CibleDateTimeCurrentNumValeurVariant,InfoEntity::CibleDonneeId,Dn)
+ID1_ENTITY(MotClePermission,IdCibleNum,InfoEntity::MotClePermissionId,MC)
+using RestrictionModification = CibleSimpleNumEntity<InfoEntity::RestrictionModificationId>;
 
 // Id, Num et Valeur
-VAL_ID_NUM_ENTITY(Coefficient,ValeurDoubleIdNumEntity,InfoEntity::CoefficientId,Ctr)
+ID1_ENTITY(Coefficient,IdNumValeurDouble,InfoEntity::CoefficientId,Ctr)
 
 // Nc et Nom
-ENTITY_OF_TYPE(Etablissement,NcNomEntity,InfoEntity::EtablissementId)
+using Etablissement = NcNomEntity<InfoEntity::EtablissementId>;
 
 // Nc, Nom et Type
-ENTITY_OF_TYPE(Attribut,TypeNcNomEntity,InfoEntity::AttributId)
-
-// Nom et Type
-ENTITY_OF_TYPE(Source,TypeNcNomEntity,InfoEntity::SourceId)
+using Source = NcNomTypeEntity<InfoEntity::SourceId>;
 
 // Relation daté.
 
 // Relation numéroté.
-RELATION_ENTITY(GroupeEleve,NumRelationEntity,InfoEntity::GroupeEleveId,Gr,El)
+RELATION_ENTITY(GroupeEleve,Num,InfoEntity::GroupeEleveId,Gr,El)
 
 // Relation numéroté, daté et valué.
-RELATION_ENTITY(Note,ValeurIntDateTimeNumRelationEntity,InfoEntity::NoteId,Ctr,El)
+RELATION_ENTITY(Note,DateTimeCurrentNumValeurInt,InfoEntity::NoteId,Ctr,El)
 
 //Relation simple.
 //RELATION_ENTITY(SourceCorrection,RelationEntity,InfoEntity::SourceCorrectionId,Sr,Crr)
 //RELATION_ENTITY(SourceCours,RelationEntity,InfoEntity::SourceCoursId,Sr,Crs)
 //RELATION_ENTITY(SourceExercice,RelationEntity,InfoEntity::SourceExerciceId,Sr,Ex)
-RELATION_ENTITY(EtablissementNiveau,RelationEntity,InfoEntity::EtablissementNiveauId,Etab,Niv)
-RELATION_ENTITY(EtablissementType,RelationEntity,InfoEntity::EtablissementTypeId,Etab,Tp)
-RELATION_ENTITY(NiveauPrecedent,RelationEntity,InfoEntity::NiveauPrecedentId,Prec,Suiv)
-
+RELATION_ENTITY(EtablissementNiveau,,InfoEntity::EtablissementNiveauId,Etab,Niv)
+RELATION_ENTITY(EtablissementType,,InfoEntity::EtablissementTypeId,Etab,Tp)
+RELATION_ENTITY(NiveauPrecedent,,InfoEntity::NiveauPrecedentId,Prec,Suiv)
 
 //RELATION_ENTITY(ExerciceCorrection,RelationEntity,InfoEntity::ExerciceCorrectionId,Ex,Crr)
 //RELATION_ENTITY(ExerciceUtilisation,RelationEntity,InfoEntity::ExerciceUtilisationId,Ex,Ut)
 
 // Texte
-ENTITY_OF_TYPE(Commentaire,TexteEntity,InfoEntity::CommentaireId)
+using Commentaire = TexteDateTimeEntity<DateTimeCurrentAttribut,InfoEntity::CommentaireId>;
 
 #endif // ENTITYOFDEFAULTTYPE_H

@@ -28,19 +28,23 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../Widget/libWidget.a
 SOURCES += \
     NewAnneeDialog.cpp \
     NewClasseDialog.cpp \
+    NewControleDialog.cpp \
     NewEtablissementDialog.cpp \
     SelectAnneeDialog.cpp \
     SelectDonneeDialog.cpp \
-    NewControleDiag.cpp
+    NewTypeControleDialog.cpp \
+    ControleGraphDialog.cpp
 
 
 HEADERS += \ 
     NewAnneeDialog.h \
-    NewEtablissementDialog.h \
     NewClasseDialog.h \
+    NewControleDialog.h \
+    NewEtablissementDialog.h \
     SelectAnneeDialog.h \
     SelectDonneeDialog.h \
-    NewControleDiag.h
+    NewTypeControleDialog.h \
+    ControleGraphDialog.h
 
 
 unix {

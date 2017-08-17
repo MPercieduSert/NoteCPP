@@ -45,10 +45,9 @@ void Bdd::listeMiseAJourBdd(int version)
     {
         // création des tables
         m_manager.get<Annee>().creer();
-        m_manager.get<Attribut>().creer();
-        m_manager.get<CibleAttribut>().creer();
         m_manager.get<CibleCommentaire>().creer();
         m_manager.get<CibleDonnee>().creer();
+        m_manager.get<CibleMotCle>().creer();
         m_manager.get<Classe>().creer();
         m_manager.get<ClasseEleve>().creer();
         m_manager.get<Coefficient>().creer();
@@ -58,23 +57,21 @@ void Bdd::listeMiseAJourBdd(int version)
         m_manager.get<DonneeCard>().creer();
         m_manager.get<Eleve>().creer();
         m_manager.get<Etablissement>().creer();
-        m_manager.get<EtablissementType>().creer();
         m_manager.get<EtablissementNiveau>().creer();
+        m_manager.get<EtablissementType>().creer();
         m_manager.get<Groupe>().creer();
         m_manager.get<GroupeEleve>().creer();
+        m_manager.get<MotCle>().creer();
+        m_manager.get<MotClePermission>().creer();
         m_manager.get<Niveau>().creer();
         m_manager.get<NiveauPrecedent>().creer();
         m_manager.get<Note>().creer();
+        m_manager.get<RestrictionModification>().creer();
         m_manager.get<Source>().creer();
         m_manager.get<TypeControle>().creer();
         m_manager.get<TypeEtablissement>().creer();
         m_manager.get<TypeNiveau>().creer();
 
-        m_manager.saveVersion(bdd::miseAJourBdd::creationTable20170110);
-        break;
-    }
-    case bdd::miseAJourBdd::creationTable20170110:
-    {
         // Types d'établissement
         TypeEtablissement primaire(-7,-11,"Primaire");
         TypeEtablissement college(-3,-6,"Collège");
@@ -85,14 +82,15 @@ void Bdd::listeMiseAJourBdd(int version)
         TypeEtablissement iut(2,1,"IUT");
         TypeEtablissement ecoleIng(8,1,"Ecole d'ingénieure");
 
-        save(primaire);
-        save(college);
-        save(lyceeGeneral);
-        save(lyceePro);
-        save(Universite);
-        save(iut);
-        save(prepa);
-        save(ecoleIng);
+        QList<bdd::Autorisation> rien({bdd::Modif,bdd::Suppr});
+        save(primaire,rien);
+        save(college,rien);
+        save(lyceeGeneral,rien);
+        save(lyceePro,rien);
+        save(Universite,rien);
+        save(iut,rien);
+        save(prepa,rien);
+        save(ecoleIng,rien);
 
         // Types de Niveau
         TypeNiveau cp(-11,"CP");
@@ -116,26 +114,26 @@ void Bdd::listeMiseAJourBdd(int version)
         TypeNiveau sup(1,"Prépa Science sup");
         TypeNiveau spe(2,"Prépa Science spé");
 
-        save(cp);
-        save(ce1);
-        save(ce2);
-        save(cm1);
-        save(cm2);
-        save(six);
-        save(cinq);
-        save(quatre);
-        save(trois);
-        save(deux);
-        save(un);
-        save(ter);
-        save(l1);
-        save(l2);
-        save(l3);
-        save(m1);
-        save(m2);
-        save(these);
-        save(sup);
-        save(spe);
+        save(cp,rien);
+        save(ce1,rien);
+        save(ce2,rien);
+        save(cm1,rien);
+        save(cm2,rien);
+        save(six,rien);
+        save(cinq,rien);
+        save(quatre,rien);
+        save(trois,rien);
+        save(deux,rien);
+        save(un,rien);
+        save(ter,rien);
+        save(l1,rien);
+        save(l2,rien);
+        save(l3,rien);
+        save(m1,rien);
+        save(m2,rien);
+        save(these,rien);
+        save(sup,rien);
+        save(spe,rien);
 
         // Niveaux
         Niveau Cp(cp.id(),primaire.id(),"CP","CP");
@@ -167,102 +165,161 @@ void Bdd::listeMiseAJourBdd(int version)
         Niveau pt(spe.id(),prepa.id(),"PT","PT");
         Niveau bcpst2(spe.id(),prepa.id(),"BCPST2","BCPST2");
 
-        save(Cp);
-        save(Ce1);
-        save(Ce2);
-        save(Cm1);
-        save(Cm2);
-        save(Six);
-        save(Cinq);
-        save(Quatre);
-        save(Trois);
-        save(deuxG);
-        save(unS);
-        save(unES);
-        save(unL);
-        save(terS);
-        save(terES);
-        save(terL);
-        save(deuxPro);
-        save(unPro);
-        save(terPro);
-        save(mpsi);
-        save(pcsi);
-        save(ptsi);
-        save(bcpst1);
-        save(mp);
-        save(pc);
-        save(psi);
-        save(pt);
-        save(bcpst2);
+        save(Cp,rien);
+        save(Ce1,rien);
+        save(Ce2,rien);
+        save(Cm1,rien);
+        save(Cm2,rien);
+        save(Six,rien);
+        save(Cinq,rien);
+        save(Quatre,rien);
+        save(Trois,rien);
+        save(deuxG,rien);
+        save(unS,rien);
+        save(unES,rien);
+        save(unL,rien);
+        save(terS,rien);
+        save(terES,rien);
+        save(terL,rien);
+        save(deuxPro,rien);
+        save(unPro,rien);
+        save(terPro,rien);
+        save(mpsi,rien);
+        save(pcsi,rien);
+        save(ptsi,rien);
+        save(bcpst1,rien);
+        save(mp,rien);
+        save(pc,rien);
+        save(psi,rien);
+        save(pt,rien);
+        save(bcpst2,rien);
 
         // Liens entre les niveaux
-        save(NiveauPrecedent(Cp.id(),Ce1.id()));
-        save(NiveauPrecedent(Ce1.id(),Ce2.id()));
-        save(NiveauPrecedent(Ce2.id(),Cm1.id()));
-        save(NiveauPrecedent(Cm1.id(),Cm2.id()));
-        save(NiveauPrecedent(Cm2.id(),Six.id()));
-        save(NiveauPrecedent(Six.id(),Cinq.id()));
-        save(NiveauPrecedent(Cinq.id(),Quatre.id()));
-        save(NiveauPrecedent(Quatre.id(),Trois.id()));
-        save(NiveauPrecedent(Trois.id(),deuxG.id()));
-        save(NiveauPrecedent(deuxG.id(),unS.id()));
-        save(NiveauPrecedent(deuxG.id(),unES.id()));
-        save(NiveauPrecedent(deuxG.id(),unL.id()));
-        save(NiveauPrecedent(unS.id(),terS.id()));
-        save(NiveauPrecedent(unES.id(),terES.id()));
-        save(NiveauPrecedent(unL.id(),terL.id()));
-        save(NiveauPrecedent(Trois.id(),deuxPro.id()));
-        save(NiveauPrecedent(deuxPro.id(),unPro.id()));
-        save(NiveauPrecedent(unPro.id(),terPro.id()));
-        save(NiveauPrecedent(terS.id(),mpsi.id()));
-        save(NiveauPrecedent(terS.id(),pcsi.id()));
-        save(NiveauPrecedent(terS.id(),ptsi.id()));
-        save(NiveauPrecedent(terS.id(),bcpst1.id()));
-        save(NiveauPrecedent(mpsi.id(),mp.id()));
-        save(NiveauPrecedent(pcsi.id(),pc.id()));
-        save(NiveauPrecedent(mpsi.id(),psi.id()));
-        save(NiveauPrecedent(pcsi.id(),psi.id()));
-        save(NiveauPrecedent(ptsi.id(),psi.id()));
-        save(NiveauPrecedent(ptsi.id(),pt.id()));
-        save(NiveauPrecedent(bcpst1.id(),bcpst2.id()));
+        save(NiveauPrecedent(Cp.id(),Ce1.id()),rien);
+        save(NiveauPrecedent(Ce1.id(),Ce2.id()),rien);
+        save(NiveauPrecedent(Ce2.id(),Cm1.id()),rien);
+        save(NiveauPrecedent(Cm1.id(),Cm2.id()),rien);
+        save(NiveauPrecedent(Cm2.id(),Six.id()),rien);
+        save(NiveauPrecedent(Six.id(),Cinq.id()),rien);
+        save(NiveauPrecedent(Cinq.id(),Quatre.id()),rien);
+        save(NiveauPrecedent(Quatre.id(),Trois.id()),rien);
+        save(NiveauPrecedent(Trois.id(),deuxG.id()),rien);
+        save(NiveauPrecedent(deuxG.id(),unS.id()),rien);
+        save(NiveauPrecedent(deuxG.id(),unES.id()),rien);
+        save(NiveauPrecedent(deuxG.id(),unL.id()),rien);
+        save(NiveauPrecedent(unS.id(),terS.id()),rien);
+        save(NiveauPrecedent(unES.id(),terES.id()),rien);
+        save(NiveauPrecedent(unL.id(),terL.id()),rien);
+        save(NiveauPrecedent(Trois.id(),deuxPro.id()),rien);
+        save(NiveauPrecedent(deuxPro.id(),unPro.id()),rien);
+        save(NiveauPrecedent(unPro.id(),terPro.id()),rien);
+        save(NiveauPrecedent(terS.id(),mpsi.id()),rien);
+        save(NiveauPrecedent(terS.id(),pcsi.id()),rien);
+        save(NiveauPrecedent(terS.id(),ptsi.id()),rien);
+        save(NiveauPrecedent(terS.id(),bcpst1.id()),rien);
+        save(NiveauPrecedent(mpsi.id(),mp.id()),rien);
+        save(NiveauPrecedent(pcsi.id(),pc.id()),rien);
+        save(NiveauPrecedent(mpsi.id(),psi.id()),rien);
+        save(NiveauPrecedent(pcsi.id(),psi.id()),rien);
+        save(NiveauPrecedent(ptsi.id(),psi.id()),rien);
+        save(NiveauPrecedent(ptsi.id(),pt.id()),rien);
+        save(NiveauPrecedent(bcpst1.id(),bcpst2.id()),rien);
 
         // Donnée de contacts
         Tree<Donnee> arbre;
-        arbre.root()->setData(Donnee(false,"Contact",Donnee::Perso,Donnee::NoDonnee,0,Donnee::prog::Contact));
-        TreeItem<Donnee> * adr = arbre.root()->addChild(Donnee(false,"Adresse",Donnee::Perso,Donnee::NoDonnee,0,Donnee::prog::Adresse));
-        TreeItem<Donnee> * adrNuRue = adr->addChild(Donnee(false,"Numero de rue",Donnee::Perso,Donnee::String,0,Donnee::prog::NumRue));
-        TreeItem<Donnee> * adrRue = adr->addChild(Donnee(false,"Rue",Donnee::Perso,Donnee::String,0,Donnee::prog::Rue));
-        TreeItem<Donnee> * adrCP = adr->addChild(Donnee(false,"Code Postal",Donnee::Perso,Donnee::Int,0,Donnee::prog::CodePostal));
-        TreeItem<Donnee> * adrVille =adr->addChild(Donnee(false,"Ville",Donnee::Perso,Donnee::String,0,Donnee::prog::Ville));
-        TreeItem<Donnee> * adrPays =adr->addChild(Donnee(false,"Pays",Donnee::Perso,Donnee::String,0,Donnee::prog::Pays));
-        TreeItem<Donnee> * tel = arbre.root()->addChild(Donnee(false,"Teléphone",Donnee::Perso,Donnee::String,0,Donnee::prog::Tel));
-        TreeItem<Donnee> * mail = arbre.root()->addChild(Donnee(false,"Mail",Donnee::Perso,Donnee::String,0,Donnee::prog::Mail));
+        arbre.root()->setData(Donnee("Contact",Donnee::Perso,Donnee::NoDonnee,Donnee::prog::Contact));
+        TreeItem<Donnee> * adr = arbre.root()->addChild(Donnee("Adresse",Donnee::Perso,Donnee::NoDonnee,Donnee::prog::Adresse));
+        TreeItem<Donnee> * adrNuRue = adr->addChild(Donnee("Numero de rue",Donnee::Perso,Donnee::String,Donnee::prog::NumRue));
+        TreeItem<Donnee> * adrRue = adr->addChild(Donnee("Rue",Donnee::Perso,Donnee::String,Donnee::prog::Rue));
+        TreeItem<Donnee> * adrCP = adr->addChild(Donnee("Code Postal",Donnee::Perso,Donnee::Int,Donnee::prog::CodePostal));
+        TreeItem<Donnee> * adrVille =adr->addChild(Donnee("Ville",Donnee::Perso,Donnee::String,Donnee::prog::Ville));
+        TreeItem<Donnee> * adrPays =adr->addChild(Donnee("Pays",Donnee::Perso,Donnee::String,Donnee::prog::Pays));
+        TreeItem<Donnee> * tel = arbre.root()->addChild(Donnee("Teléphone",Donnee::Perso,Donnee::String,Donnee::prog::Tel));
+        TreeItem<Donnee> * mail = arbre.root()->addChild(Donnee("Mail",Donnee::Perso,Donnee::String,Donnee::prog::Mail));
         save(arbre, bdd::TreeSave::AddLeaf);
+        setRestriction(arbre,rien);
 
-        save(DonneeCard(adrNuRue->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb));
-        save(DonneeCard(adrRue->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb));
-        save(DonneeCard(adrCP->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb));
-        save(DonneeCard(adrVille->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb));
-        save(DonneeCard(adrPays->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb));
-        save(DonneeCard(tel->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb));
-        save(DonneeCard(mail->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb));
+        save(DonneeCard(adrNuRue->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb),rien);
+        save(DonneeCard(adrRue->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb),rien);
+        save(DonneeCard(adrCP->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb),rien);
+        save(DonneeCard(adrVille->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb),rien);
+        save(DonneeCard(adrPays->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb),rien);
+        save(DonneeCard(tel->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb),rien);
+        save(DonneeCard(mail->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EleveCb),rien);
 
-        save(DonneeCard(adrNuRue->data().id(),1,true,bdd::cible::EtablissementCb));
-        save(DonneeCard(adrRue->data().id(),1,true,bdd::cible::EtablissementCb));
-        save(DonneeCard(adrCP->data().id(),1,true,bdd::cible::EtablissementCb));
-        save(DonneeCard(adrVille->data().id(),1,true,bdd::cible::EtablissementCb));
-        save(DonneeCard(adrPays->data().id(),1,true,bdd::cible::EtablissementCb));
-        save(DonneeCard(tel->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EtablissementCb));
-        save(DonneeCard(mail->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EtablissementCb));
+        save(DonneeCard(adrNuRue->data().id(),1,true,bdd::cible::EtablissementCb),rien);
+        save(DonneeCard(adrRue->data().id(),1,true,bdd::cible::EtablissementCb),rien);
+        save(DonneeCard(adrCP->data().id(),1,true,bdd::cible::EtablissementCb),rien);
+        save(DonneeCard(adrVille->data().id(),1,true,bdd::cible::EtablissementCb),rien);
+        save(DonneeCard(adrPays->data().id(),1,true,bdd::cible::EtablissementCb),rien);
+        save(DonneeCard(tel->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EtablissementCb),rien);
+        save(DonneeCard(mail->data().id(),DonneeCard::cardinal::Infini,false,bdd::cible::EtablissementCb),rien);
 
         // Types de controle
-        save(TypeControle(true,10,false,"DS","Devoir surveillé",20));
-        save(TypeControle(false,1,false,"Colle","Khôle",20));
-        save(TypeControle(false,4,true,"Interro","Interrogation",5));
+        save(TypeControle(true,10,false,"DS","Devoir surveillé",20),rien);
+        save(TypeControle(false,1,false,"Colle","Khôle",20),rien);
+        save(TypeControle(false,4,true,"Interro","Interrogation",5),rien);
 
+        // MotClé
+        //Difficulté
+        Tree<MotCle> arbreDiff;
+        arbreDiff.root()->setData(MotCle("Diff","Difficultés",MotCle::prog::ArbreDiff));
+        arbreDiff.root()->addChild(MotCle("QC","Question de Cours",MotCle::prog::QuestionCoursDiff));
+        arbreDiff.root()->addChild(MotCle("ExC","Exercice de Cours",MotCle::prog::ExerciceCoursDiff));
+        arbreDiff.root()->addChild(MotCle("Int","Intermédiaire",MotCle::prog::IntermediaireDiff));
+        arbreDiff.root()->addChild(MotCle("Diff","Difficile",MotCle::prog::DifficileDiff));
+        arbreDiff.root()->addChild(MotCle("TD","Trés Difficile",MotCle::prog::TresDifficileDiff));
+        arbreDiff.root()->addChild(MotCle("Imp","Impossible",MotCle::prog::ImposibleDiff));
+        save(arbreDiff,bdd::TreeSave::AddLeaf);
+        setRestriction(arbreDiff,rien);
 
-        m_manager.saveVersion(bdd::miseAJourBdd::Donnees20170110);
+        for(TreeItem<MotCle>::iterator i = arbreDiff.begin() + 1; i != arbreDiff.end(); i++)
+            save(MotClePermission((*i)->data().id(),Cible<Controle>::value,bdd::motClePermissionNum::VisibleAttNum),rien);
+
+        //Compétence
+        Tree<MotCle> arbreComp;
+        arbreComp.root()->setData(MotCle("Comp","Compétences",MotCle::prog::ArbreComp));
+        TreeItem<MotCle> * mathComp = arbreComp.root()->addChild(MotCle("Math Comp","Compétences Mathématiques",MotCle::prog::MathComp));
+        mathComp->addChild(MotCle("An","Analyser",MotCle::prog::AnalyserComp));
+        mathComp->addChild(MotCle("Mod(M)","Modéliser (Math)",MotCle::prog::ModeliserMathComp));
+        mathComp->addChild(MotCle("Rep","Représenter",MotCle::prog::RepresenterComp));
+        mathComp->addChild(MotCle("Arg","Argumenter",MotCle::prog::ArgumenterComp));
+        mathComp->addChild(MotCle("Cal","Calculer",MotCle::prog::CalculerComp));
+        mathComp->addChild(MotCle("Com(M)","Communiquer (Math)",MotCle::prog::CommuniquerMathComp));
+        TreeItem<MotCle> * infoComp = arbreComp.root()->addChild(MotCle("Info Comp","Compétences Informatiques",MotCle::prog::InfoComp));
+        infoComp->addChild(MotCle("Mod(I)","Modéliser (Info)",MotCle::prog::ModeliserInfoComp));
+        infoComp->addChild(MotCle("Img","Imaginer",MotCle::prog::ImaginerComp));
+        infoComp->addChild(MotCle("Trad","Traduire",MotCle::prog::TraduireComp));
+        infoComp->addChild(MotCle("Eval","Evaluer",MotCle::prog::EvaluerComp));
+        infoComp->addChild(MotCle("Spé","Spécifier",MotCle::prog::SpecifierComp));
+        infoComp->addChild(MotCle("Com(I)","Communiquer (Info)",MotCle::prog::CommuniquerInfoComp));
+        save(arbreComp,bdd::TreeSave::AddLeaf);
+        setRestriction(arbreComp,rien);
+
+        for(TreeItem<MotCle>::iterator i = arbreComp.begin() + 1; i != arbreComp.end(); i++)
+            save(MotClePermission((*i)->data().id(),Cible<Controle>::value,bdd::motClePermissionNum::VisibleAttNum),rien);
+
+        //!Savoir
+        Tree<MotCle> arbreSav;
+        arbreSav.root()->setData(MotCle("Savoir","Savoir et savoir-faire",MotCle::prog::SavoirArbre));
+        TreeItem<MotCle> * mathSav = arbreSav.root()->addChild(MotCle("Math Sav","Savoir et savoir-faire Mathématiques",MotCle::prog::MathSav));
+        mathSav->addChild(MotCle("Logi","Logique",MotCle::prog::LogiqueSav));
+        mathSav->addChild(MotCle("Alg","Algèbre",MotCle::prog::AlgebreSav));
+        mathSav->addChild(MotCle("An","Analyse",MotCle::prog::AnalyseSav));
+        mathSav->addChild(MotCle("Prob","Probabilité",MotCle::prog::ProbaSav));
+        /*TreeItem<MotCle> * infoSav =*/ arbreSav.root()->addChild(MotCle("Info Sav","Savoir et savoir-faire Informatique",MotCle::prog::InfoSav));
+        save(arbreSav,bdd::TreeSave::AddLeaf);
+        setRestriction(arbreSav,rien);
+
+        //!Programme
+        Tree<MotCle> arbreProg;
+        arbreProg.root()->setData(MotCle("Prog","Programmes",MotCle::prog::ArbreProg));
+        /*TreeItem<MotCle> * mathProg =*/ arbreProg.root()->addChild(MotCle("Prog Math","Programme de Mathématiques",MotCle::prog::MathProg));
+        /*TreeItem<MotCle> * InfoProg =*/ arbreProg.root()->addChild(MotCle("Prog Info","Programme d'informatique",MotCle::prog::InfoProg));
+        save(arbreProg,bdd::TreeSave::AddLeaf);
+        setRestriction(arbreProg,rien);
+
+        m_manager.saveVersion(bdd::miseAJourBdd::Donnees20170816);
         break;
     }
     default:

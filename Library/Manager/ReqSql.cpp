@@ -6,9 +6,7 @@ void ReqSql::affError() const
 {
     QSqlError err(m_requete->lastError());
     if(err.isValid())
-    {
-        throw std::invalid_argument(err.text().append("\n"+err.nativeErrorCode()+"\n"+m_requete->lastQuery()).toStdString());
-    }
+        throw std::invalid_argument(err.text().append("\n"+err.nativeErrorCode()+m_requete->lastQuery()).toStdString());
 }
 
 QString ReqSql::createSqlString(bdd::createSql n)
@@ -16,27 +14,32 @@ QString ReqSql::createSqlString(bdd::createSql n)
     using namespace bdd;
     switch (n)
     {
-    case createSql::primary:
+    case createSql::Primary:
         return "integer primary key";
-    case createSql::integer:
+    case createSql::Bool:
+    case createSql::Integer:
         return "integer";
-    case createSql::text:
+    case createSql::DateTime:
+    case createSql::Date:
+    case createSql::Text:
         return "text";
-    case createSql::blob:
+    case createSql::Variant:
+    case createSql::Blob:
         return "blob";
-    case createSql::real:
+    case createSql::Double:
+    case createSql::Real:
         return "real";
-    case createSql::numeric:
+    case createSql::Numeric:
         return "numeric";
-    case createSql::notNull:
+    case createSql::NotNull:
         return "not null";
-    case createSql::constraint:
+    case createSql::Constraint:
         return "constraint";
-    case createSql::unique:
+    case createSql::Unique:
         return "unique";
-    case createSql::foreign:
+    case createSql::Foreign:
         return "foreign key";
-    case createSql::ref:
+    case createSql::Ref:
         return "references";
     default:
         throw std::invalid_argument("Invalid argument dans createSqlString");
@@ -48,7 +51,7 @@ QString ReqSql::wordSqlString(bdd::wordSql n)
     using namespace bdd;
     switch (n)
     {
-    case wordSql::create:
+    case wordSql::Create:
         return "CREATE TABLE";
     default:
         throw std::invalid_argument("Invalid argument dans wordSqlString");

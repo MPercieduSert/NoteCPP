@@ -13,12 +13,12 @@ TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += c++11
 SOURCES += \
-    ListeEleveDelegate.cpp \
-    ListeNoteDelegate.cpp
+    ListeNoteDelegate.cpp \
+    ListeElevesDelegate.cpp
 
 HEADERS += \
-    ListeEleveDelegate.h \
-    ListeNoteDelegate.h
+    ListeNoteDelegate.h \
+    ListeElevesDelegate.h
 
 unix {
     target.path = /usr/lib

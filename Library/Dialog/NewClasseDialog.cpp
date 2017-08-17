@@ -45,7 +45,7 @@ NewClasseDialog::NewClasseDialog(const Annee &annee, VectorPtr<Etablissement> et
     // Choix du numero de la classe
     m_numLabel = new QLabel(tr("Numéro de la classe :"));
 
-    m_numSpinBox = new SpinBoxNumClasse();
+    m_numSpinBox = new SpinBoxNumExclu();
     if(m_niveauComboBox->count() > 0)
         niveauChange(0);
 
@@ -58,6 +58,11 @@ NewClasseDialog::NewClasseDialog(const Annee &annee, VectorPtr<Etablissement> et
     m_nbrEleveSpinBox->setRange(1, 1000);
     m_nbrEleveSpinBox->setValue(30);
 
+    // Dates d'entrées
+    m_entreeLabel = new QLabel(tr("Date d'entrée des élèves:"));
+    m_entreeDate = new QDateEdit(QDate(m_annee.an(),9,1));
+    m_entreeDate->setCalendarPopup(true);
+
     m_gridLayout = new QGridLayout();
     m_gridLayout->addWidget(m_niveauLabel,0,0);
     m_gridLayout->addWidget(m_niveauComboBox,1,0);
@@ -67,6 +72,8 @@ NewClasseDialog::NewClasseDialog(const Annee &annee, VectorPtr<Etablissement> et
     m_gridLayout->addWidget(m_nameLine,3,1);
     m_gridLayout->addWidget(m_nbrEleveLabel,4,0);
     m_gridLayout->addWidget(m_nbrEleveSpinBox,4,1);
+    m_gridLayout->addWidget(m_entreeLabel,5,0);
+    m_gridLayout->addWidget(m_entreeDate,5,1);
 
     m_groupePara = new QGroupBox(tr("Paramètres:"));
     m_groupePara->setLayout(m_gridLayout);
@@ -165,7 +172,7 @@ NewClasseDialog::dialogResult NewClasseDialog::value() const
     dialogResult value;
     if(m_creerEtab)
     {
-        value.classe.setId(dialogResult::creerEtab);
+        value.classe.setId(dialogResult::CreerEtab);
     }
     else
     {
@@ -175,6 +182,7 @@ NewClasseDialog::dialogResult NewClasseDialog::value() const
                       m_niveauComboBox->currentData().toInt(),
                       m_nameLine->text(),
                       m_numSpinBox->value());
+        value.entree = m_entreeDate->date();
         value.nbrEleve = m_nbrEleveSpinBox->value();
     }
     return value;

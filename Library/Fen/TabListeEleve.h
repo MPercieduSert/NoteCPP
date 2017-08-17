@@ -8,7 +8,7 @@
 #include "TabAbstractClasse.h"
 #include "../Dialog/SelectDonneeDialog.h"
 #include "../Model/ListeEleveModel.h"
-#include "../Delegate/ListeEleveDelegate.h"
+#include "../Delegate/ListeElevesDelegate.h"
 
 /*! \ingroup groupeFen
  * \brief Onglet d'une classe

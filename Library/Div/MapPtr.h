@@ -82,8 +82,12 @@ public:
         {QMap<int,T*>::clear();}
 
     //! Insert un pointeur dans la liste.
+    void insert(int key, const T & entity)
+        {insert(key, new T(entity));}
+
+    //! Insert un pointeur dans la liste.
     void insert(const T & entity)
-        {insert(entity.id(), new T(entity));}
+        {insert(entity.id(), entity);}
 
     //! Insert un pointeur dans la liste.
     void insert(T * ptr)
@@ -97,13 +101,17 @@ public:
     MapPtr<T> & operator = (const MapPtr<T> & liste)
     {
         clear();
-        for(typename QMap<int,T*>::const_iterator i = liste->cbegin(); i != liste->cend(); ++i)
+        for(typename QMap<int,T*>::const_iterator i = liste.cbegin(); i != liste.cend(); ++i)
             insert(i.key(),new T(**i));
         return *this;
     }
 
     //! Affectation par déplacement
     MapPtr<T> & operator = (MapPtr<T> && ) = default;
+
+    //! Opérateur [].
+    T & operator [](int n) const
+        {return *(QMap<int,T*>::operator [](n));}
 };
 
 #endif // MAPPTR_H

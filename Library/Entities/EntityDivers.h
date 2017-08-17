@@ -4,146 +4,183 @@
 #ifndef ENTITYDIVERS
 #define ENTITYDIVERS
 
+#include "AttributMultiple.h"
 #include "Entity.h"
 
-//! \ingroup groupeMacroEntity
-//! Macro implémentant une classe ayant les attribut id1, num et valeur.
-#define VAL_TYPE_ID_NUM_ENTITY(NOM,TVAL,TYPE) \
-    /*! \ingroup groupeEntity \brief Représentation de l'entité ENTITY.*/ \
-    class Valeur##NOM##IdNumEntity : public IdNumEntity \
-    {ATTRIBUT_ENTITY_##TVAL(Valeur,valeur) \
-    public: \
-    /*! Positions des attributs.*/ \
-    enum Position {Id = IdNumEntity::Id, Num = IdNumEntity::Num, Id1 = IdNumEntity::Id1, Valeur = IdNumEntity::NbrAtt,NbrAtt}; \
-    using IdNumEntity::IdNumEntity; \
-    BASE_ENTITY_ABS(Valeur##NOM##IdNumEntity) \
-    /*! Constructeur à partir des valeurs attributs.*/ \
-    Valeur##NOM##IdNumEntity(int id1, int num, TYPE valeur, int id = 0) : IdNumEntity(id1,num,id), m_valeur(valeur) {} \
-    MEMBRE_ATT_1(Valeur##NOM##IdNumEntity,IdNumEntity,Valeur,valeur)};
-
-//! \ingroup groupeMacroEntity
-//! Macro définissant les positions des attributs pour une entité de type IdNum.
-#define ENUM_IdNum(ID1) /*! \brief Positions des attributs */ \
-    enum Position {Id = IdNumEntity::Id, Num = IdNumEntity::Num, Id ## ID1 = IdNumEntity::Id1, NbrAtt};
-
-//! \ingroup groupeMacroEntity
-//! Macro définissant les positions des attributs pour une entité de type IdNum.
-#define ENUM_ValIdNum(ID1) /*! \brief Positions des attributs */ \
-    enum Position {Id = IdNumEntity::Id, Num = IdNumEntity::Num, Id ## ID1 = IdNumEntity::Id1, Valeur = IdNumEntity::NbrAtt, NbrAtt};
-
-//! \ingroup groupeMacroEntity
-//! Macro implémentant une classe de ayant un identifiant.
-#define ID1_ENTITY(ENTITY,MERE,TPENUM,IDT,ID1) \
-    /*! \ingroup groupeEntity \brief Représentation de l'entité ENTITY.*/ \
-    class ENTITY : public MERE \
-    {public: \
-    using MERE::MERE; \
-    ENUM_##TPENUM(ID1) \
-    BASE_ENTITY(ENTITY,IDT) \
-    ALIAS_CLE(ID1,1)};
-
-//! \ingroup groupeMacroEntity
-//! Macro implémentant une classe de ayant un identifiant et un num.
-#define ID_NUM_ENTITY(ENTITY,IDT,ID1) ID1_ENTITY(ENTITY,IdNumEntity,IdNum,IDT,ID1)
-
-//! \ingroup groupeMacroEntity
-//! Macro implémentant une classe de ayant un identifiant, un num et une valeur.
-#define VAL_ID_NUM_ENTITY(ENTITY,MERE,IDT,ID1) ID1_ENTITY(ENTITY,MERE,ValIdNum,IDT,ID1)
-
 /*! \ingroup groupeBaseEntity
- * \brief Classe de base des entités ayant un attribut num.
+ * \brief Classe de base des entités ayant un attribut dateTime et Num.
  */
-class NumEntity : public Entity
+template<class DateTimeAtt, int IDM> class DateTimeNumEntity : public EntityAttributsID<Attributs<DateTimeAtt,NumAttribut>,IDM>
 {
-    ATTRIBUT_ENTITY_INT_SUP(Num,num,0)
 public:
     //! Positions des attributs.
-    enum Position {Id = Entity::Id,
-                   Num = Entity::NbrAtt,
+    enum Position {Id = PositionEnum<IdAttribut,DateTimeNumEntity<DateTimeAtt,IDM>>::Position,
+                   DateTime = PositionEnum<DateTimeAtt,DateTimeNumEntity<DateTimeAtt,IDM>>::Position,
+                   Num = PositionEnum<NumAttribut,DateTimeNumEntity<DateTimeAtt,IDM>>::Position,
                    NbrAtt};
+    using EAID = EntityAttributsID<Attributs<DateTimeAtt,NumAttribut>,IDM>;
+    using EntityAttributsID<Attributs<DateTimeAtt,NumAttribut>,IDM>::EntityAttributsID;
+    using EAID::setDateTime;
+    using EAID::setNum;
+    BASE_ENTITY(DateTimeNumEntity)
 
-    using Entity::Entity;
-    BASE_ENTITY_ABS(NumEntity)
-
-    //! Constructeur à partir des valeurs attributs.
-    NumEntity(int num, int id)
-        : Entity(id), m_num(num) {}
-
-    MEMBRE_ATT_1(NumEntity,Entity,Num,num)
-};
-
-/*! \ingroup groupeBaseEntity
- * \brief Classe de base des entités ayant un attribut datetime et num.
- */
-class DateTimeNumEntity : public NumEntity
-{
-    ATTRIBUT_ENTITY_DATETIME(DateTime,dateTime)
-public:
-    //! Positions des attributs.
-    enum Position {Id = NumEntity::Id,
-                   Num = NumEntity::Num,
-                   DateTime = NumEntity::NbrAtt,
-                   NbrAtt};
-
-    using NumEntity::NumEntity;
-    BASE_ENTITY_ABS(DateTimeNumEntity)
+    //! Constructeur à partir d'un jeux de valeurs attributs unique.
+    DateTimeNumEntity(int num, int id)
+        : EAID(id)
+        {setNum(num);}
 
     //! Constructeur à partir des valeurs attributs.
     DateTimeNumEntity(const QDateTime & dateTime, int num, int id = 0)
-        : NumEntity(num,id), m_dateTime(dateTime) {}
+        : DateTimeNumEntity(num, id)
+        {setDateTime(dateTime);}
+};
 
-    MEMBRE_ATT_1(DateTimeNumEntity,NumEntity,DateTime,dateTime)
+template<int IDM> using DateTimeCurrentNumEntity = DateTimeNumEntity<DateTimeCurrentAttribut,IDM>;
+template<int IDM> using DateTimeValideNumEntity = DateTimeNumEntity<DateTimeValideAttribut,IDM>;
+
+/*! \ingroup groupeBaseEntity
+ * \brief Classe de base des entités ayant un attribut nom et nc.
+ */
+template<int IDM> class NcNomEntity : public EntityAttributsID<NcNomAttribut,IDM>
+{
+public:
+    //! Positions des attributs.
+    enum Position {Id = PositionEnum<IdAttribut,NcNomEntity<IDM>>::Position,
+                   Nc = PositionEnum<NcAttribut,NcNomEntity<IDM>>::Position,
+                   Nom = PositionEnum<NomAttribut,NcNomEntity<IDM>>::Position,
+                   NbrAtt};
+    using EAID = EntityAttributsID<NcNomAttribut,IDM>;
+    using EntityAttributsID<NcNomAttribut,IDM>::EntityAttributsID;
+    using EAID::setNc;
+    using EAID::setNom;
+    BASE_ENTITY(NcNomEntity)
+
+    //! Constructeur à partir d'un jeux de valeurs attributs unique.
+    NcNomEntity(const QString & nom, int id = 0)
+        : EAID(id)
+        {setNom(nom);}
+
+    //! Constructeur à partir des valeurs attributs.
+    NcNomEntity(const QString & nc, const QString & nom, int id = 0)
+        : NcNomEntity(nom, id)
+        {setNc(nc);}
 };
 
 /*! \ingroup groupeBaseEntity
- * \brief Classe de base des entités ayant un attribut identifiant et num.
+ * \brief Classe de base des entités ayant des attributs nc, nom et type.
  */
-class IdNumEntity : public NumEntity
+template<int IDM> class NcNomTypeEntity : public EntityAttributsID<NcNomTypeAttribut,IDM>
 {
-    ATTRIBUT_ENTITY_ID(1)
 public:
     //! Positions des attributs.
-    enum Position {Id = NumEntity::Id,
-                   Num = NumEntity::Num,
-                   Id1 = NumEntity::NbrAtt,
+    enum Position {Id = PositionEnum<IdAttribut,NcNomTypeEntity<IDM>>::Position,
+                   Nc = PositionEnum<NcAttribut,NcNomTypeEntity<IDM>>::Position,
+                   Nom = PositionEnum<NomAttribut,NcNomTypeEntity<IDM>>::Position,
+                   Type = PositionEnum<TypeAttribut,NcNomTypeEntity<IDM>>::Position,
                    NbrAtt};
+    using EAID = EntityAttributsID<NcNomTypeAttribut,IDM>;
+    using EntityAttributsID<NcNomTypeAttribut,IDM>::EntityAttributsID;
+    using EAID::setNc;
+    using EAID::setNom;
+    using EAID::setType;
+    BASE_ENTITY(NcNomTypeEntity)
 
-    BASE_ENTITY_ABS(IdNumEntity)
-    //! Constructeur avec identifiant.
-    IdNumEntity(int id)
-        : NumEntity(id) {}
+    //! Constructeur à partir d'un jeux de valeurs attributs unique.
+    NcNomTypeEntity(const QString & nom)
+        {setNom(nom);}
+
+    //! Constructeur à partir d'un jeux de valeurs attributs unique.
+    NcNomTypeEntity(const QString & nom, int type)
+        : NcNomTypeEntity(nom)
+        {setType(type);}
 
     //! Constructeur à partir des valeurs attributs.
-    IdNumEntity(int id1, int num, int id = 0)
-        : NumEntity(num,id), m_id1(id1) {}
-
-    MEMBRE_ATT_1(IdNumEntity,NumEntity,Id1,id1)
+    NcNomTypeEntity(const QString & nc, const QString & nom, int type, int id = 0)
+        : EAID(id)
+    {
+        setNc(nc);
+        setNom(nom);
+        setType(type);
+    }
 };
 
-VAL_TYPE_ID_NUM_ENTITY(Int,INT,int)
-VAL_TYPE_ID_NUM_ENTITY(Double,DOUBLE,double)
-VAL_TYPE_ID_NUM_ENTITY(,VARIANT,const QVariant &)
-
 /*! \ingroup groupeBaseEntity
- * \brief Classe de base des entités ayant un attribut texte.
+ * \brief Classe de base des entités ayant un attribut nom.
  */
-class TexteEntity : public Entity
+template<int IDM> class NomEntity : public EntityAttributsID<NomAttribut,IDM>
 {
-    ATTRIBUT_ENTITY_STR_NOT_EMPTY(Texte,texte)
 public:
     //! Positions des attributs.
-    enum Position {Id = Entity::Id,
-                   Texte = Entity::NbrAtt,
+    enum Position {Id = PositionEnum<IdAttribut,NomEntity<IDM>>::Position,
+                   Nom = PositionEnum<NomAttribut,NomEntity<IDM>>::Position,
                    NbrAtt};
-
-    using Entity::Entity;
-    BASE_ENTITY_ABS(TexteEntity)
+    using EAID = EntityAttributsID<NomAttribut,IDM>;
+    using EntityAttributsID<NomAttribut,IDM>::EntityAttributsID;
+    using EAID::setNom;
+    BASE_ENTITY(NomEntity)
 
     //! Constructeur à partir des valeurs attributs.
-    TexteEntity(const QString & txt, int id = 0)
-        : Entity(id), m_texte(txt) {}
+    NomEntity(const QString & nom, int id = 0)
+        : EAID(id)
+        {setNom(nom);}
+};
 
-    MEMBRE_ATT_1(TexteEntity,Entity,Texte,texte)
+/*! \ingroup groupeBaseEntity
+ * \brief Classe de base des entités ayant un attribut nom et type.
+ */
+template<int IDM> class NomTypeEntity : public EntityAttributsID<NomTypeAttribut,IDM>
+{
+public:
+    //! Positions des attributs.
+    enum Position {Id = PositionEnum<IdAttribut,NomTypeEntity<IDM>>::Position,
+                   Nom = PositionEnum<NomAttribut,NomTypeEntity<IDM>>::Position,
+                   Type = PositionEnum<TypeAttribut,NomTypeEntity<IDM>>::Position,
+                   NbrAtt};
+    using EAID = EntityAttributsID<NomTypeAttribut,IDM>;
+    using EntityAttributsID<NomTypeAttribut,IDM>::EntityAttributsID;
+    using EAID::setNom;
+    using EAID::setType;
+    BASE_ENTITY(NomTypeEntity)
+
+    //! Constructeur à partir d'un jeux de valeurs attributs unique.
+    NomTypeEntity(const QString & nom)
+        {setNom(nom);}
+
+    //! Constructeur à partir des valeurs attributs.
+    NomTypeEntity(const QString & nom, int type, int id = 0)
+        : EAID(id)
+    {
+        setNom(nom);
+        setType(type);
+    }
+};
+
+/*! \ingroup groupeBaseEntity
+ * \brief Classe de base des entités ayant un attribut Texte et DateTime.
+ */
+template<class DateTimeAtt, int IDM> class TexteDateTimeEntity : public EntityAttributsID<Attributs<TexteAttribut,DateTimeAtt>,IDM>
+{
+public:
+    //! Positions des attributs.
+    enum Position {Id = PositionEnum<IdAttribut,TexteDateTimeEntity<DateTimeAtt,IDM>>::Position,
+                   Texte = PositionEnum<TexteAttribut,TexteDateTimeEntity<DateTimeAtt,IDM>>::Position,
+                   DateTime = PositionEnum<DateTimeAtt,TexteDateTimeEntity<DateTimeAtt,IDM>>::Position,
+                   NbrAtt};
+    using EAID = EntityAttributsID<Attributs<TexteAttribut,DateTimeAtt>,IDM>;
+    using EntityAttributsID<Attributs<TexteAttribut,DateTimeAtt>,IDM>::EntityAttributsID;
+    using EAID::setDateTime;
+    using EAID::setTexte;
+    BASE_ENTITY(TexteDateTimeEntity)
+
+    //! Constructeur à partir des valeurs attributs.
+    TexteDateTimeEntity(const QString & texte, int id = 0)
+        : EAID(id)
+        {setTexte(texte);}
+
+    //! Constructeur à partir des valeurs attributs.
+    TexteDateTimeEntity(const QDateTime & dateTime, const QString & texte, int id = 0)
+        : TexteDateTimeEntity(texte,id)
+        {setDateTime(dateTime);}
 };
 
 #endif // ENTITYDIVERS

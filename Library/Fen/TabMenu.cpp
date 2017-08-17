@@ -15,17 +15,21 @@ TabMenu::TabMenu(int idAn, TabModule *parent)
     else if(bdd()->get(m_annee))
     {
         classeLayout();
-        m_newClasseButton = new QPushButton("Créer une classe");
+        m_newClasseButton = new QPushButton(tr("Créer une classe"));
+        m_coursButton = new QPushButton(tr("Cours"));
+        m_motCleButton = new QPushButton(tr("Mots Clés"));
         m_mainLayout->addWidget(m_newClasseButton);
+        m_mainLayout->addWidget(m_coursButton);
+        m_mainLayout->addWidget(m_motCleButton);
         connect(m_newClasseButton,&QPushButton::clicked,this,&TabMenu::creerClasse);
+        connect(m_coursButton,&QPushButton::clicked,[this](){m_parent->openCours();});
+        connect(m_motCleButton,&QPushButton::clicked,[this](){m_parent->openMotCle();});
     }
     else
-    {
         throw std::invalid_argument(QString("L'année d'identifiant ")
                                     .append(QString::number(idAn))
                                     .append(" n'existe dans la base de donnée.")
                                     .toStdString());
-    }
 }
 
 void TabMenu::becomeCurrent() const
@@ -112,3 +116,5 @@ void TabMenu::creerClasse()
     noyau()->creerClasse(this);
     classeLayout();
 }
+
+

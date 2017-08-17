@@ -25,7 +25,7 @@ public:
     //! Constructeur.
     SpinBoxAnnee(int value = QDate::currentDate().year(), QWidget *parent = 0);
 
-    //! Returne la valeur selectionnée.
+    //! Retourne la valeur selectionnée.
     int value() const         {return m_value;}
 
     //! incrémente de steps fois la valeur.

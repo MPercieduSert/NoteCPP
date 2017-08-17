@@ -1,96 +1,55 @@
 #include "ListeNoteModel.h"
 
 ListeNoteModel::ListeNoteModel(Bdd *bdd, const Classe &classe, QObject *parent)
-    : MAbstractTableModel(parent),
-      m_bdd(bdd),
+    : ListeElevesModel(bdd,bdd->getMap<Eleve,ClasseEleve>(ClasseEleve::IdEl,ClasseEleve::IdCl,classe.id()),parent,QList<int>()<<Eleve::Nom<<Eleve::Prenom),
       m_classe(classe)
-{
-    QMap<int,QVariant> where;
-    where.insert(ClasseEleve::IdCl,classe.id());
-    QMap<int,bool> order;
-    order.insert(Eleve::Nom,true);
-    order.insert(Eleve::Prenom,true);
-    order.insert(Eleve::Naissance,true);
-    m_vectEleve = m_bdd->getVector<Eleve,ClasseEleve>(Eleve::Id,
-                                               ClasseEleve::IdEl,
-                                               QMap<int,QVariant>(),
-                                               where,
-                                               order);
+    {insertColumn(m_bdd->getList<Controle>(Controle::IdCl,classe.id(),Controle::Date));}
 
-    m_vectControle = m_bdd->getVector<Controle>(Controle::IdCl,classe.id(),Controle::Date);
-    m_dataN.resize(m_vectControle.size());
-    int j = 0;
-    for(VectorPtr<Controle>::iterator i = m_vectControle.begin(); i != m_vectControle.end(); ++i, ++j)
-        m_dataN[j] = m_bdd->getMap<Note>(Note::IdCtr,(*i).id(),Note::IdEl);
-}
-
-int ListeNoteModel::columnCount(const QModelIndex & /*parent*/) const
+QVariant ListeNoteModel::dataPropre(const Indice &indice, int role) const
 {
-    return NbrDonneeEleve + m_vectControle.count();
-}
-
-QVariant ListeNoteModel::data(const QModelIndex &index, int role) const
-{
-    if(index.isValid() && (role == Qt::DisplayRole || role == Qt::EditRole))
+    if(indice.first < m_dataN.count())
     {
-        if(index.column() < NbrDonneeEleve)
-        {
-            switch (index.column())
-            {
-            case NomIndex:
-                return QVariant(m_vectEleve[index.row()].nom());
-                break;
-            case PrenomIndex:
-                return QVariant(m_vectEleve[index.row()].prenom());
-                break;
-            }
-        }
-        else
-            return m_dataN.at(index.column()-NbrDonneeEleve)[m_vectEleve[index.row()].id()]->valeur();
-    }
+        switch (role) {
+        case Qt::DisplayRole:
+            return (double) m_dataN[indice.first][indice.second].valeur() / m_vectControle[indice.first].decimale();
+        case Qt::EditRole:
+            return m_dataN[indice.first][indice.second].valeur();
+        case Qt::ForegroundRole:
+            return m_dataN[indice.first][indice.second].valeur() >= m_vectControle[indice.first].minima() ?
+                    QBrush(Qt::blue) : QBrush(Qt::red);
+        case Qt::WhatsThisRole:
+            return std::count_if(m_dataN[indice.first].cbegin(),m_dataN[indice.first].cend(),
+                    [this,&indice](Note * const ptr) -> bool {return ptr->valeur() > m_dataN[indice.first][indice.second].valeur();}) + 1;
+        default:
+            break;
+    }}
     return QVariant();
-}
-
-Qt::ItemFlags ListeNoteModel::flags(const QModelIndex &index) const
-{
-    if (!index.isValid())
-        return Qt::ItemIsEnabled;
-
-    if (index.column() < NbrDonneeEleve)
-        return QAbstractItemModel::flags(index);
-
-    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
-}
-
-QVariant ListeNoteModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (role != Qt::DisplayRole)
-        return QVariant();
-
-    if (orientation == Qt::Horizontal)
-    {
-        if(section == NomIndex)
-            return tr("Nom");
-        else if(section == PrenomIndex)
-            return tr("Prenom");
-        else
-            return m_vectControle[section-NbrDonneeEleve].nom();
-    }
-    else
-        return section+1;
 }
 
 bool ListeNoteModel::insertColumn(const Controle &ctr)
 {
     beginInsertColumns(QModelIndex(),columnCount(),columnCount());
+    headerInsert(m_dataN.count(),ctr.nom());
+    appendIdCol(m_dataN.count());
     m_vectControle.append(ctr);
     m_dataN.append(m_bdd->getMap<Note>(Note::IdCtr,ctr.id(),Note::IdEl));
     endInsertColumns();
     return true;
 }
 
-int ListeNoteModel::rowCount(const QModelIndex & /*parent*/) const
-    {return m_vectEleve.size();}
+bool ListeNoteModel::insertColumn(const ListPtr<Controle> &ctrs)
+{
+    beginInsertColumns(QModelIndex(),columnCount(),columnCount());
+    for(ListPtr<Controle>::iterator i = ctrs.begin(); i != ctrs.end(); ++i)
+    {
+        headerInsert(m_dataN.count(),(*i).nom());
+        appendIdCol(m_dataN.count());
+        m_vectControle.append(*i);
+        m_dataN.append(m_bdd->getMap<Note>(Note::IdCtr,(*i).id(),Note::IdEl));
+    }
+    endInsertColumns();
+    return true;
+}
 
 void ListeNoteModel::save()
 {
@@ -98,13 +57,37 @@ void ListeNoteModel::save()
         m_bdd->save(*i);
 }
 
-bool ListeNoteModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool ListeNoteModel::setDataPropre(const Indice &indice, const QVariant &value, int /*role*/)
 {
-    if (index.isValid() && role == Qt::EditRole && index.column() >= NbrDonneeEleve)
+    if(indice.first < m_dataN.count())
     {
-        m_dataN.at(index.column()-NbrDonneeEleve)[m_vectEleve[index.row()].id()]->setValeur(value.toInt());
-        emit dataChanged(index, index);
+        m_dataN[indice.first][indice.second].setValeur(value.toInt());
         return true;
     }
-    return false;
+    else
+        return false;
+}
+
+void ListeNoteModel::sortPropre(int column, Qt::SortOrder order)
+{
+    if(column < m_dataN.count())
+        std::sort(m_idRow.begin(),m_idRow.end(),[order,column,this] (int i, int j) -> bool
+                                                {return order == Qt::SortOrder::AscendingOrder ?
+                        m_dataN[column][i].valeur() < m_dataN[column][j].valeur()
+                      : m_dataN[column][i].valeur() > m_dataN[column][j].valeur();});
+}
+
+QVector<double> ListeNoteModel::vectNotes(int section) const
+{
+    int pos = m_idCol[section] - Offset;
+    if(0 <= pos && pos < m_vectControle.count())
+    {
+        QVector<double> vect(m_dataN[pos].count());
+        QVector<double>::iterator j = vect.begin();
+        for(MapPtr<Note>::iterator i = m_dataN[pos].begin(); i != m_dataN[pos].end(); ++i, ++j)
+            *j = (double) (*i).valeur() / m_vectControle[pos].decimale();
+        return vect;
+    }
+    else
+        return QVector<double>();
 }

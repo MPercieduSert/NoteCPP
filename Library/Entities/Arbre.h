@@ -4,109 +4,72 @@
 #ifndef ARBRE_H
 #define ARBRE_H
 
-#include "AttributEntity.h"
-#include "EntityDivers.h"
+#include "AttributMultiple.h"
+#include "Entity.h"
+#include "InfoEntityBase.h"
 
+SINGLE_ATTRIBUT(FeuilleAttribut,AttributBool,AttributBool,Feuille,feuille,bool)
 
 /*! \ingroup groupeBaseEntity
  * \brief Classe mère des entités de type arbre simple.
  */
-/*
-class ArbreSimple : public Entity
+
+class ArbreSimpleAttribut : public ParentAttribut
 {
-    ATTRIBUT_ENTITY_INT_SUP(Parent,parent,0)
 public:
-    //! Positions des attributs.
-    enum Position {Id = Entity::Id,
-                   Parent = NumEntity::NbrAtt,
-                   NbrAtt};
-    enum Ordre  {OrdreAtt = Position::Id};
+    enum {Ordre = Entity::Id};
+    using ParentAttribut::ParentAttribut;
 
-    BASE_ENTITY(ArbreSimple,InfoEntity::entityBaseId::ArbreSimpleId)
-
-    //! Constructeur à partir des valeurs attributs.
-    ArbreSimple(int parent, int id)
-        : Entity(id),
-          m_parent(parent)
-        {}
-
-    MEMBRE_ATT_1(Arbre,Entity,Parent,parent)
+    CONSTR_DESTR_DEFAUT(ArbreSimpleAttribut)
 };
 
 /*! \ingroup groupeBaseEntity
  * \brief Classe mère des entités de type arbre.
  */
-/*
-class Arbre : public ArbreSimple
-{
 
-    ATTRIBUT_ENTITY_BOOL(Feuille,feuille)
-    ATTRIBUT_ENTITY_INT_SUP(Num,num,0)
+class ArbreAttribut : public Attributs<ArbreSimpleAttribut,FeuilleAttribut,NumAttribut>
+{
 public:
     //! Positions des attributs.
-    enum Position {Id = ArbreSimple::Id,
-                   Parent = ArbreSimple::Parent,
-                   Feuille = ArbreSimple::NbrAtt,
+    enum Position {
+                   Parent,
+                   Feuille,
                    Num,
                    NbrAtt};
 
-    BASE_ENTITY(Arbre,InfoEntity::entityBaseId::ArbreId)
+    enum Ordre  {OrdreAtt = Num};
+    using Attributs<ArbreSimpleAttribut,FeuilleAttribut,NumAttribut>::Attributs;
 
-    //! Constructeur par defaut.
-    Arbre(int id)
-        : ArbreSimple(id)
-        {}
-
-    //! Constructeur à partir des valeurs attributs.
-    Arbre(bool feuille, int num, int parent, int id = 0)
-        : ArbreSimple(parent,id),
-          m_feuille(feuille),
-          m_parent(parent)
-        {}
-
-    //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
-    Arbre(int num, int parent, int id = 0)
-        : NumEntity(num,id),
-          m_parent(parent)
-        {}
-
-    MEMBRE_ATT_2(Arbre,NumEntity,Feuille,feuille,Parent,parent)
+    CONSTR_DESTR_DEFAUT(ArbreAttribut)
 };
-*/
-class Arbre : public NumEntity
-{
 
-    ATTRIBUT_ENTITY_BOOL(Feuille,feuille)
-    ATTRIBUT_ENTITY_INT_SUP(Parent,parent,0)
+class Arbre : public EntityAttributsID<ArbreAttribut,InfoEntity::ArbreId>
+{
 public:
     //! Positions des attributs.
-    enum Position {Id = NumEntity::Id,
-                   Num = NumEntity::Num,
-                   Feuille = NumEntity::NbrAtt,
-                   Parent,
+    enum Position {Id = PositionEnum<IdAttribut,Arbre>::Position,
+                   Parent = PositionEnum<ArbreSimpleAttribut,Arbre>::Position,
+                   Feuille = PositionEnum<FeuilleAttribut,Arbre>::Position,
+                   Num = PositionEnum<NumAttribut,Arbre>::Position,
                    NbrAtt};
 
-    BASE_ENTITY(Arbre,InfoEntity::entityBaseId::ArbreId)
-
-    //! Constructeur par defaut.
-    Arbre(int id)
-        : NumEntity(id)
-        {}
-
-    //! Constructeur à partir des valeurs attributs.
-    Arbre(bool feuille, int num, int parent, int id = 0)
-        : NumEntity(num,id),
-          m_feuille(feuille),
-          m_parent(parent)
-        {}
+    using EAID = EntityAttributsID<ArbreAttribut,InfoEntity::ArbreId>;
+    using EAID::EntityAttributsID;
+    BASE_ENTITY(Arbre)
 
     //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
     Arbre(int num, int parent, int id = 0)
-        : NumEntity(num,id),
-          m_parent(parent)
-        {}
+        : EAID(id)
+    {
+        setNum(num);
+        setParent(parent);
+    }
 
-    MEMBRE_ATT_2(Arbre,NumEntity,Feuille,feuille,Parent,parent)
+    //! Constructeur à partir des valeurs attributs.
+    Arbre(bool feuille, int num, int parent, int id = 0)
+        : Arbre(num,parent,id)
+        {setFeuille(feuille);}
 };
+
 
 #endif // ARBREENTITY_H

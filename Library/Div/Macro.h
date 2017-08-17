@@ -30,4 +30,8 @@
 #define DESTR_VIDE(T) /*! Destructeur vide.*/ \
     ~T() {}
 
+//! \ingroup groupeMacro
+//! Macro déclarant les différents constructeurs et le destructeur par defaut.
+#define CONSTR_DESTR_DEFAUT(T) CONSTR_AFFECT_DEFAUT(T) CONSTR_DEFAUT(T) DESTR_VIDE(T)
+
 #endif // MACRO_H

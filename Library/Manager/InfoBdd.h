@@ -4,8 +4,8 @@
 #ifndef INFOBDD_H
 #define INFOBDD_H
 
+#include <type_traits>
 #include "InfoBddBase.h"
-#include "LinkSql.h"
 #include "UniqueSql.h"
 #include "../Entities/EntityOfDefaultType.h"
 #include "../Entities/Annee.h"
@@ -15,18 +15,71 @@
 #include "../Entities/Eleve.h"
 #include "../Entities/Controle.h"
 #include "../Entities/Groupe.h"
+#include "../Entities/MotCle.h"
 #include "../Entities/Niveau.h"
+#include "../Entities/TypeControle.h"
 #include "../Entities/TypeEtablissement.h"
 #include "../Entities/TypeNiveau.h"
 
+/*! \defgroup groupeInfoBdd Information sur la structure de la base de données.
+ * \ingroup groupeManager
+ * \brief Ensemble d'informations sur la structure des entités dans la base de données.
+ */
+
 using namespace bdd;
+
+template<class Ent> struct Cible : std::integral_constant<int,-1> {};
+template<> struct Cible<Annee> : std::integral_constant<int,0> {};
+template<> struct Cible<CibleCommentaire> : std::integral_constant<int,1> {};
+template<> struct Cible<CibleDonnee> : std::integral_constant<int,2> {};
+template<> struct Cible<CibleMotCle> : std::integral_constant<int,3> {};
+template<> struct Cible<Classe> : std::integral_constant<int,4> {};
+template<> struct Cible<ClasseEleve> : std::integral_constant<int,5> {};
+template<> struct Cible<Coefficient> : std::integral_constant<int,6> {};
+template<> struct Cible<Commentaire> : std::integral_constant<int,7> {};
+template<> struct Cible<Controle> : std::integral_constant<int,8> {};
+template<> struct Cible<Donnee> : std::integral_constant<int,9> {};
+template<> struct Cible<DonneeCard> : std::integral_constant<int,10> {};
+template<> struct Cible<Eleve> : std::integral_constant<int,11> {};
+template<> struct Cible<Etablissement> : std::integral_constant<int,12> {};
+template<> struct Cible<EtablissementNiveau> : std::integral_constant<int,13> {};
+template<> struct Cible<EtablissementType> : std::integral_constant<int,14> {};
+template<> struct Cible<Groupe> : std::integral_constant<int,15> {};
+template<> struct Cible<GroupeEleve> : std::integral_constant<int,16> {};
+template<> struct Cible<MotCle> : std::integral_constant<int,17> {};
+template<> struct Cible<MotClePermission> : std::integral_constant<int,18> {};
+template<> struct Cible<Niveau> : std::integral_constant<int,19> {};
+template<> struct Cible<NiveauPrecedent> : std::integral_constant<int,20> {};
+template<> struct Cible<Note> : std::integral_constant<int,21> {};
+template<> struct Cible<RestrictionModification> : std::integral_constant<int,22> {};
+template<> struct Cible<Source> : std::integral_constant<int,23> {};
+template<> struct Cible<TypeControle> : std::integral_constant<int,24> {};
+template<> struct Cible<TypeEtablissement> : std::integral_constant<int,25> {};
+template<> struct Cible<TypeNiveau> : std::integral_constant<int,26> {};
+
+
+
+/*! \ingroup groupeInfoBdd
+ * \brief Traits donnant le type de manager associé à l'entité.
+ */
+template<class Ent> struct TypeManager : std::integral_constant<int,bddInfo::typeManager::Simple> {};
+template<> struct TypeManager<Coefficient> : std::integral_constant<int,bddInfo::typeManager::ModifControle> {};
+template<> struct TypeManager<DonneeCard> : std::integral_constant<int,bddInfo::typeManager::ModifControle> {};
+template<> struct TypeManager<MotClePermission> : std::integral_constant<int,bddInfo::typeManager::ModifControle> {};
+template<> struct TypeManager<Niveau> : std::integral_constant<int,bddInfo::typeManager::ModifControle> {};
+template<> struct TypeManager<NiveauPrecedent> : std::integral_constant<int,bddInfo::typeManager::ModifControle> {};
+template<> struct TypeManager<TypeEtablissement> : std::integral_constant<int,bddInfo::typeManager::ModifControle> {};
+template<> struct TypeManager<TypeNiveau> : std::integral_constant<int,bddInfo::typeManager::ModifControle> {};
+template<> struct TypeManager<Donnee> : std::integral_constant<int,bddInfo::typeManager::ArbreModifControle> {};
+template<> struct TypeManager<MotCle> : std::integral_constant<int,bddInfo::typeManager::ArbreModifControle> {};
+template<> struct TypeManager<TypeControle> : std::integral_constant<int,bddInfo::typeManager::ArbreSimpleModifControle> {};
+
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant des informations sql sur les entités.
  */
 template<class Ent> class InfoBdd
 {
 public:
-    typedef AbstractLinkSql EntLinkSql;
     typedef AbstractUniqueSql EntUniqueSql;
 
     //! Retourne la liste des nom sql des attributs.
@@ -47,22 +100,15 @@ public:
 };
 
 // Annee
+SINGLE_INFOBDD(An,An,an,Integer,true)
+
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Annee.
  */
-template<> class InfoBdd<Annee> : public NoKeyInfoBdd
+template<> class InfoBdd<Annee> : public AnInfoBdd<Annee>, public NoKeyInfoBdd
 {
 public:
-    typedef AnneeLinkSql EntLinkSql;
     typedef AnneeUniqueSql EntUniqueSql;
-
-    //! Retourne la liste des nom sql des attributs.
-    static QMap<int,QString> attribut()
-    {
-        QMap<int,QString> att;
-        att.insert(Annee::An,"an");
-        return att;
-    }
 
     //! Retourne la liste des attributs uniques.
     static QVector<QMap<int,int>> attributUnique()
@@ -72,67 +118,33 @@ public:
         return att;
     }
 
-    //! Retourne la liste des caractéristiques sql des attributs.
-    static QMap<int, QPair<createSql, bool> > creerAttribut()
-    {
-        QMap<int, QPair<createSql, bool> > att;
-        att.insert(Annee::An,QPair<createSql, bool>(createSql::integer,true));
-        return att;
-    }
-
     //! Retourne le nom la table sql.
     static QString table()
         {return QString("an");}
 };
 
-// Attribut
-/*! \ingroup groupeInfoBdd
- * \brief Classe contenant les informations sql sur l'entité Attribut.
- */
-template<> class InfoBdd<Attribut> : public TypeNcNomInfoBdd, public NodeInfoBdd
-{
-public:
-    typedef TypeNcNomOnlyLinkSql<Attribut> EntLinkSql;
-    typedef NoUniqueSql EntUniqueSql;
-
-    //! Retourne les clés étrangère de la table sql.
-    static QMap<int,QString> foreignKey();
-
-    //! Retourne le nom la table sql.
-    static QString table()
-        {return QString("at");}
-
-    //! Retourne le nom la table sql.
-    static QString tableArbre()
-        {return QString("arbat");}
-};
-
-// Cible Attribut
+// Cible MotCle
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité CibleAttribut.
  */
-template<> class InfoBdd<CibleAttribut> : public CibleInfoBdd
+template<> class InfoBdd<CibleMotCle> : public CibleInfoBdd<CibleMotCle>
 {
 public:
-    typedef CibleOnlyLinkSql<CibleAttribut> EntLinkSql;
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
     //! Retourne le nom la table sql.
     static QString table()
-        {return QString("cbat");}
+        {return QString("cbmc");}
 };
 
 // Cible Commentaire
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité CibleCommentaire.
  */
-template<> class InfoBdd<CibleCommentaire> : public DateTimeCibleInfoBdd
+template<> class InfoBdd<CibleCommentaire> : public InfoBddBase<CibleNullNumInfoBdd<CibleCommentaire>,DateTimeInfoBdd<CibleCommentaire>>
 {
 public:
-    typedef DateTimeCurrentCibleOnlyLinkSql<CibleCommentaire> EntLinkSql;
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
@@ -145,11 +157,11 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité CibleDonnee.
  */
-template<> class InfoBdd<CibleDonnee> : public ValeurNumDateTimeCibleInfoBdd
+template<> class InfoBdd<CibleDonnee> : public InfoBddBase<CibleNumInfoBdd<CibleDonnee>,
+                                                            DateTimeInfoBdd<CibleDonnee>,
+                                                            ValeurVariantInfoBdd<CibleDonnee>>
 {
 public:
-    typedef ValeurNumDateTimeCurrentCibleOnlyLinkSql<CibleDonnee> EntLinkSql;
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
@@ -162,22 +174,14 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Classe.
  */
-template<> class InfoBdd<Classe> : public NomInfoBdd
+template<> class InfoBdd<Classe> : public InfoBddBase<Id1InfoBdd<Classe>,
+                                                      Id2InfoBdd<Classe>,
+                                                      Id3InfoBdd<Classe>,
+                                                      NomInfoBdd<Classe>,
+                                                      NumInfoBdd<Classe>>
 {
 public:
-    typedef ClasseLinkSql EntLinkSql;
     typedef ClasseUniqueSql EntUniqueSql;
-
-    //! Retourne la liste des nom sql des attributs.
-    static QMap<int,QString> attribut()
-    {
-        QMap<int,QString> att(NomInfoBdd::attribut());
-        att.insert(Classe::IdAn,"IDan");
-        att.insert(Classe::IdEtab,"IDetab");
-        att.insert(Classe::IdNiv,"IDniv");
-        att.insert(Classe::Num,"num");
-        return att;
-    }
 
     //! Retourne la liste des attributs uniques.
     static QVector<QMap<int,int>> attributUnique()
@@ -193,17 +197,6 @@ public:
         return att;
     }
 
-    //! Retourne la liste des caractéristiques sql des attributs.
-    static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
-    {
-        QMap<int,QPair<bdd::createSql, bool>> att(NomInfoBdd::creerAttribut());
-        att.insert(Classe::IdAn,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Classe::IdEtab,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Classe::IdNiv,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Classe::Num,QPair<createSql, bool>(createSql::integer,true));
-        return att;
-    }
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
@@ -213,32 +206,17 @@ public:
 };
 
 // ClasseEleve
+SINGLE_INFOBDD(Entree,Entree,et,Date,true)
+SINGLE_INFOBDD(Sortie,Sortie,st,Date,false)
+
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité ClasseEleve.
  */
-template<> class InfoBdd<ClasseEleve> : public RelationInfoBdd
+template<> class InfoBdd<ClasseEleve> : public InfoBddBase<RelationInfoBdd<ClasseEleve>,
+                                                           EntreeInfoBdd<ClasseEleve>,
+                                                           SortieInfoBdd<ClasseEleve>>
 {
 public:
-    typedef ClasseEleveLinkSql EntLinkSql;
-
-    //! Retourne la liste des nom sql des attributs.
-    static QMap<int,QString> attribut()
-    {
-        QMap<int,QString> att(RelationInfoBdd::attribut());
-        att.insert(ClasseEleve::Entree,"ent");
-        att.insert(ClasseEleve::Sortie,"sort");
-        return att;
-    }
-
-    //! Retourne la liste des caractéristiques sql des attributs.
-    static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
-    {
-        QMap<int, QPair<bdd::createSql, bool> > att(RelationInfoBdd::creerAttribut());
-        att.insert(ClasseEleve::Entree,QPair<createSql, bool>(createSql::text,false));
-        att.insert(ClasseEleve::Sortie,QPair<createSql, bool>(createSql::text,false));
-        return att;
-    }
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
@@ -251,11 +229,9 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Coefficient.
  */
-template<> class InfoBdd<Coefficient> : public ValeurDoubleIdNumInfoBdd
+template<> class InfoBdd<Coefficient> : public InfoBddBase<IdNumInfoBdd<Coefficient>,ValeurDoubleInfoBdd<Coefficient>>
 {
 public:
-    typedef ValeurDoubleIdNumOnlyLinkSql<Coefficient> EntLinkSql;
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
@@ -268,54 +244,34 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Commentaire.
  */
-template<> class InfoBdd<Commentaire> : public TexteInfoBdd
+template<> class InfoBdd<Commentaire> : public TexteUniqueInfoBdd<Commentaire>, public NoKeyInfoBdd
 {
 public:
-    typedef TexteOnlyLinkSql<Commentaire> EntLinkSql;
-
     //! Retourne le nom la table sql.
     static QString table()
         {return QString("cm");}
 };
 
 // Controle
+SINGLE_INFOBDD(Bareme,Bareme,br,Bool,true)
+SINGLE_INFOBDD(Enonce,Enonce,en,Bool,true)
+SINGLE_INFOBDD(Minima,Minima,min,Integer,true)
+
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Controle.
  */
-template<> class InfoBdd<Controle> : public NumRelationInfoBdd
+template<> class InfoBdd<Controle> : public InfoBddBase<RelationNumInfoBdd<Controle>,
+                                                        BaremeInfoBdd<Controle>,
+                                                        DateValideInfoBdd<Controle>,
+                                                        DecimaleInfoBdd<Controle>,
+                                                        EnonceInfoBdd<Controle>,
+                                                        MinimaInfoBdd<Controle>,
+                                                        NomInfoBdd<Controle>,
+                                                        SaisieInfoBdd<Controle>,
+                                                        TotalInfoBdd<Controle>>
+
 {
 public:
-    typedef ControleLinkSql EntLinkSql;
-
-    //! Retourne la liste des nom sql des attributs.
-    static QMap<int,QString> attribut()
-    {
-        QMap<int,QString> att(NumRelationInfoBdd::attribut());
-        att.insert(Controle::Bareme,"br");
-        att.insert(Controle::Date,"dt");
-        att.insert(Controle::Decimale,"dc");
-        att.insert(Controle::Enonce,"en");
-        att.insert(Controle::Minima,"min");
-        att.insert(Controle::Nom,"nom");
-        att.insert(Controle::Saisie,"ss");
-        att.insert(Controle::Total,"tt");
-        return att;
-    }
-
-    //! Retourne la liste des caractéristiques sql des attributs.
-    static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
-    {
-        QMap<int, QPair<bdd::createSql, bool> > att(NumRelationInfoBdd::creerAttribut());
-        att.insert(Controle::Bareme,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Controle::Date,QPair<createSql, bool>(createSql::text,true));
-        att.insert(Controle::Decimale,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Controle::Enonce,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Controle::Minima,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Controle::Nom,QPair<createSql, bool>(createSql::text,true));
-        att.insert(Controle::Saisie,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Controle::Total,QPair<createSql, bool>(createSql::integer,true));
-        return att;}
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
@@ -328,39 +284,13 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Donnee.
  */
-template<> class InfoBdd<Donnee> : public NodeInfoBdd
+template<> class InfoBdd<Donnee> : public InfoBddBase<IdProgUniqueInfoBdd<Donnee>,
+                                                      NomInfoBdd<Donnee>,
+                                                      TypeInfoBdd<Donnee>,
+                                                      TpValInfoBdd<Donnee>>,
+                                                      public NodeInfoBdd
 {
 public:
-    typedef DonneeLinkSql EntLinkSql;
-    typedef DonneeUniqueSql EntUniqueSql;
-
-    //! Retourne la liste des nom sql des attributs.
-    static QMap<int,QString> attribut()
-    {
-        QMap<int,QString> att(TypeNomInfoBdd::attribut());
-        att.insert(Donnee::IdProg,"idp");
-        att.insert(Donnee::Modif,"md");
-        att.insert(Donnee::TpVal,"tpvl");
-        return att;
-    }
-
-    //! Retourne la liste des attributs uniques.
-    static QVector<QMap<int,int>> attributUnique()
-    {
-        QVector<QMap<int,int>> att(1);
-        att[0].insert(DonneeUniqueSql::IdProgUnique,Donnee::IdProg);
-        return att;
-    }
-
-    //! Retourne la liste des caractéristiques sql des attributs.
-    static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
-    {
-        QMap<int, QPair<bdd::createSql, bool> > att(TypeNomInfoBdd::creerAttribut());
-        att.insert(Donnee::IdProg,QPair<createSql, bool>(createSql::integer,false));
-        att.insert(Donnee::Modif,QPair<createSql, bool>(createSql::integer,false));
-        att.insert(Donnee::TpVal,QPair<createSql, bool>(createSql::integer,true));
-        return att;}
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
@@ -377,42 +307,9 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité DonneeCard.
  */
-template<> class InfoBdd<DonneeCard>
+template<> class InfoBdd<DonneeCard> : public InfoBddBase<IdCibleUniqueInfoBdd<DonneeCard>,CardInfoBdd<DonneeCard>,ExactInfoBdd<DonneeCard>>
 {
 public:
-    typedef DonneeCardLinkSql EntLinkSql;
-    typedef DonneeCardUniqueSql EntUniqueSql;
-
-    //! Retourne la liste des nom sql des attributs.
-    static QMap<int,QString> attribut()
-    {
-        QMap<int,QString> att;
-        att.insert(DonneeCard::IdDonnee,"IDdn");
-        att.insert(DonneeCard::Card,"cd");
-        att.insert(DonneeCard::Exact,"ex");
-        att.insert(DonneeCard::Cible,"cb");
-        return att;
-    }
-
-    //! Retourne la liste des attributs uniques.
-    static QVector<QMap<int,int>> attributUnique()
-    {
-        QVector<QMap<int,int>> att(1);
-        att[0].insert(DonneeCardUniqueSql::IdDonneeUnique,DonneeCard::IdDonnee);
-        att[0].insert(DonneeCardUniqueSql::CibleUnique,DonneeCard::Cible);
-        return att;
-    }
-
-    //! Retourne la liste des caractéristiques sql des attributs.
-    static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
-    {
-        QMap<int, QPair<bdd::createSql, bool> > att;
-        att.insert(DonneeCard::IdDonnee,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(DonneeCard::Card,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(DonneeCard::Exact,QPair<createSql,bool>(createSql::integer,false));
-        att.insert(DonneeCard::Cible,QPair<createSql, bool>(createSql::integer,true));
-        return att;}
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
@@ -422,24 +319,18 @@ public:
 };
 
 // Eleve
+SINGLE_INFOBDD(Fille,Fille,fl,Bool,true)
+SINGLE_INFOBDD(Naissance,Naissance,na,Date,true)
+SINGLE_INFOBDD(Prenom,Prenom,pn,Text,true)
+
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Eleve.
  */
-template<> class InfoBdd<Eleve> : public NomInfoBdd
+template<> class InfoBdd<Eleve> : public InfoBddBase<FilleInfoBdd<Eleve>,NaissanceInfoBdd<Eleve>,NomInfoBdd<Eleve>,PrenomInfoBdd<Eleve>>,
+                                  public NoKeyInfoBdd
 {
 public:
-    typedef EleveLinkSql EntLinkSql;
     typedef EleveUniqueSql EntUniqueSql;
-
-    //! Retourne la liste des nom sql des attributs.
-    static QMap<int,QString> attribut()
-    {
-        QMap<int,QString> att(NomInfoBdd::attribut());
-        att.insert(Eleve::Fille,"fl");
-        att.insert(Eleve::Naissance,"ne");
-        att.insert(Eleve::Prenom,"pnm");
-        return att;
-    }
 
     //! Retourne la liste des attributs uniques.
     static QVector<QMap<int,int>> attributUnique()
@@ -448,16 +339,6 @@ public:
         att[0].insert(EleveUniqueSql::NomUnique,Eleve::Nom);
         att[0].insert(EleveUniqueSql::NaissanceUnique,Eleve::Naissance);
         att[0].insert(EleveUniqueSql::PrenomUnique,Eleve::Prenom);
-        return att;
-    }
-
-    //! Retourne la liste des caractéristiques sql des attributs.
-    static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
-    {
-        QMap<int, QPair<bdd::createSql, bool> > att(NomInfoBdd::creerAttribut());
-        att.insert(Eleve::Fille,QPair<bdd::createSql, bool>(createSql::integer,true));
-        att.insert(Eleve::Naissance,QPair<bdd::createSql, bool>(createSql::text,true));
-        att.insert(Eleve::Prenom,QPair<bdd::createSql, bool>(createSql::text,true));
         return att;
     }
 
@@ -470,11 +351,10 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Etablissement.
  */
-template<> class InfoBdd<Etablissement> : public NcNomInfoBdd
+template<> class InfoBdd<Etablissement> : public InfoBddBase<NomUniqueInfoBdd<Etablissement>,NcInfoBdd<Etablissement>>,
+                                          public NoKeyInfoBdd
 {
 public:
-    typedef NcNomOnlyLinkSql<Etablissement> EntLinkSql;
-
     //! Retourne le nom la table sql.
     static QString table()
         {return QString("etab");}
@@ -484,11 +364,9 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité EtablissementNiveau.
  */
-template<> class InfoBdd<EtablissementNiveau> : public RelationInfoBdd
+template<> class InfoBdd<EtablissementNiveau> : public RelationInfoBdd<EtablissementNiveau>
 {
 public:
-    typedef RelationOnlyLinkSql<EtablissementNiveau> EntLinkSql;
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
@@ -501,11 +379,9 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité EtablissementType.
  */
-template<> class InfoBdd<EtablissementType> : public RelationInfoBdd
+template<> class InfoBdd<EtablissementType> : public RelationInfoBdd<EtablissementType>
 {
 public:
-    typedef RelationOnlyLinkSql<EtablissementType> EntLinkSql;
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
@@ -518,38 +394,20 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Groupe.
  */
-template<> class InfoBdd<Groupe>
+template<> class InfoBdd<Groupe> : public InfoBddBase<RelationExactOneNotNullInfoBdd<Groupe>,
+                                                      AlphaInfoBdd<Groupe>,
+                                                      NomInfoBdd<Groupe>,
+                                                      TypeInfoBdd<Groupe>>
 {
 public:
-    typedef GroupeLinkSql EntLinkSql;
     typedef GroupeUniqueSql EntUniqueSql;
-
-    //! Retourne la liste des nom sql des attributs.
-    static QMap<int,QString> attribut()
-    {
-        QMap<int,QString> att(RelationExactOneNotNullInfoBdd::attribut());
-        att.insert(Groupe::Alpha,"alp");
-        att.insert(Groupe::Nom,"nm");
-        att.insert(Groupe::Type,"tp");
-        return att;
-    }
 
     //! Retourne la liste des attributs uniques.
     static QVector<QMap<int,int>> attributUnique()
     {
-        QVector<QMap<int,int>> att(RelationExactOneNotNullInfoBdd::attributUnique());
+        QVector<QMap<int,int>> att(RelationExactOneNotNullInfoBdd<Groupe>::attributUnique());
         att[0].insert(GroupeUniqueSql::NomUnique,Groupe::Nom);
         att[1].insert(GroupeUniqueSql::NomUnique,Groupe::Nom);
-        return att;
-    }
-
-    //! Retourne la liste des caractéristiques sql des attributs.
-    static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
-    {
-        QMap<int,QPair<bdd::createSql, bool>> att(RelationExactOneNotNullInfoBdd::creerAttribut());
-        att.insert(Groupe::Alpha,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Groupe::Nom,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Groupe::Type,QPair<createSql, bool>(createSql::integer,true));
         return att;
     }
 
@@ -565,16 +423,9 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité GroupeEleve.
  */
-template<> class InfoBdd<GroupeEleve> : public NumRelationInfoBdd
+template<> class InfoBdd<GroupeEleve> : public InfoBddBase<RelationInfoBdd<GroupeEleve>,NumInfoBdd<GroupeEleve>>
 {
 public:
-    typedef NumRelationOnlyLinkSql<GroupeEleve> EntLinkSql;
-    typedef RelationUniqueSql EntUniqueSql;
-
-    //! Retourne la liste des attributs uniques.
-    static QVector<QMap<int,int>> attributUnique()
-    {return RelationInfoBdd::attributUnique();}
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
@@ -583,38 +434,48 @@ public:
         {return QString("grel");}
 };
 
+// MotCle
+/*! \ingroup groupeInfoBdd
+ * \brief Classe contenant les informations sql sur l'entité MotCle.
+ */
+template<> class InfoBdd<MotCle> : public InfoBddBase<NcInfoBdd<MotCle>,NomInfoBdd<MotCle>,IdProgUniqueInfoBdd<MotCle>>,
+                                   public NodeInfoBdd
+{
+public:
+    //! Retourne les clés étrangère de la table sql.
+    static QMap<int,QString> foreignKey();
+
+    //! Retourne le nom la table sql.
+    static QString table()
+        {return QString("mc");}
+
+    //! Retourne le nom la table sql.
+    static QString tableArbre()
+        {return QString("arbmc");}
+};
+
+// MotClePermission
+/*! \ingroup groupeInfoBdd
+ * \brief Classe contenant les informations sql sur l'entité MotClePermission.
+ */
+template<> class InfoBdd<MotClePermission> : public InfoBddBase<IdCibleUniqueInfoBdd<MotClePermission>,NumInfoBdd<MotClePermission>>
+{
+public:
+    //! Retourne les clés étrangère de la table sql.
+    static QMap<int,QString> foreignKey();
+
+    //! Retourne le nom la table sql.
+    static QString table()
+        {return QString("mcp");}
+    };
+
 // Niveau
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Niveau.
  */
-template<> class InfoBdd<Niveau> : public NcNomInfoBdd
+template<> class InfoBdd<Niveau> : public InfoBddBase<NomUniqueInfoBdd<Niveau>,Id1InfoBdd<Niveau>,Id2InfoBdd<Niveau>,NcInfoBdd<Niveau>>
 {
 public:
-    typedef NiveauLinkSql EntLinkSql;
-    typedef NomUniqueSql EntUniqueSql;
-
-    //! Retourne la liste des nom sql des attributs.
-    static QMap<int,QString> attribut()
-    {
-        QMap<int,QString> att(NcNomInfoBdd::attribut());
-        att.insert(Niveau::IdTp,"IDtp");
-        att.insert(Niveau::IdTpEtab,"IDtpetab");
-        return att;
-    }
-
-    //! Retourne la liste des attributs uniques.
-    static QVector<QMap<int,int>> attributUnique()
-    {return NomInfoBdd::attributUnique();}
-
-    //! Retourne la liste des caractéristiques sql des attributs.
-    static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
-    {
-        QMap<int,QPair<bdd::createSql, bool>> att(NcNomInfoBdd::creerAttribut());
-        att.insert(Niveau::IdTp,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(Niveau::IdTpEtab,QPair<createSql, bool>(createSql::integer,true));
-        return att;
-    }
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
@@ -627,11 +488,9 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité NiveauPrecedent.
  */
-template<> class InfoBdd<NiveauPrecedent> : public RelationInfoBdd
+template<> class InfoBdd<NiveauPrecedent> : public RelationInfoBdd<NiveauPrecedent>
 {
 public:
-    typedef RelationOnlyLinkSql<NiveauPrecedent> EntLinkSql;
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
@@ -644,16 +503,9 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Note.
  */
-template<> class InfoBdd<Note> : public ValeurIntDateTimeNumRelationInfoBdd
+template<> class InfoBdd<Note> : public InfoBddBase<RelationInfoBdd<Note>,DateTimeInfoBdd<Note>,NumInfoBdd<Note>,ValeurIntInfoBdd<Note>>
 {
 public:
-    typedef ValeurIntDateTimeCurrentNumRelationOnlyLinkSql<Note> EntLinkSql;
-    typedef RelationUniqueSql EntUniqueSql;
-
-    //! Retourne la liste des attributs uniques.
-    static QVector<QMap<int,int>> attributUnique()
-    {return RelationInfoBdd::attributUnique();}
-
     //! Retourne les clés étrangère de la table sql.
     static QMap<int,QString> foreignKey();
 
@@ -662,61 +514,84 @@ public:
         {return QString("nt");}
 };
 
+// RestrictiontionModification
+/*! \ingroup groupeInfoBdd
+ * \brief Classe contenant les informations sql sur l'entité Annee.
+ */
+template<> class InfoBdd<RestrictionModification> : public CibleSimpleNumUniqueInfoBdd<RestrictionModification>,
+                                                    public NoKeyInfoBdd
+{
+public:
+    //! Retourne le nom la table sql.
+    static QString table()
+        {return QString("am");}
+
+    //! Retourne la table IdToCible.
+    static QVector<int> idToCibleTable()
+    {
+            QVector<int> table(InfoEntity::NbrEntity);
+            table[InfoEntity::AnneeId]=Cible<Annee>::value;
+            table[InfoEntity::CibleCommentaireId]=Cible<CibleCommentaire>::value;
+            table[InfoEntity::CibleDonneeId]=Cible<CibleDonnee>::value;
+            table[InfoEntity::CibleMotCleId]=Cible<CibleMotCle>::value;
+            table[InfoEntity::ClasseId]=Cible<Classe>::value;
+            table[InfoEntity::ClasseEleveId]=Cible<ClasseEleve>::value;
+            table[InfoEntity::CoefficientId]=Cible<Coefficient>::value;
+            table[InfoEntity::CommentaireId]=Cible<Commentaire>::value;
+            table[InfoEntity::ControleId]=Cible<Controle>::value;
+            table[InfoEntity::DonneeId]=Cible<Donnee>::value;
+            table[InfoEntity::DonneeCardId]=Cible<DonneeCard>::value;
+            table[InfoEntity::EleveId]=Cible<Eleve>::value;
+            table[InfoEntity::EtablissementId]=Cible<Etablissement>::value;
+            table[InfoEntity::EtablissementNiveauId]=Cible<EtablissementNiveau>::value;
+            table[InfoEntity::EtablissementTypeId]=Cible<EtablissementType>::value;
+            table[InfoEntity::GroupeId]=Cible<Groupe>::value;
+            table[InfoEntity::GroupeEleveId]=Cible<GroupeEleve>::value;
+            table[InfoEntity::MotCleId]=Cible<MotCle>::value;
+            table[InfoEntity::MotClePermissionId]=Cible<MotClePermission>::value;
+            table[InfoEntity::NiveauId]=Cible<Niveau>::value;
+            table[InfoEntity::NiveauPrecedentId]=Cible<NiveauPrecedent>::value;
+            table[InfoEntity::NoteId]=Cible<Note>::value;
+            table[InfoEntity::RestrictionModificationId]=Cible<RestrictionModification>::value;
+            table[InfoEntity::SourceId]=Cible<Source>::value;
+            table[InfoEntity::TypeControleId]=Cible<TypeControle>::value;
+            table[InfoEntity::TypeEtablissementId]=Cible<TypeEtablissement>::value;
+            table[InfoEntity::TypeNiveauId]=Cible<TypeNiveau>::value;
+            return table;
+    }
+};
+
 // Source
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité Source.
  */
-template<> class InfoBdd<Source> : public TypeNcNomInfoBdd
+template<> class InfoBdd<Source> : public InfoBddBase<NomUniqueInfoBdd<Source>,NcInfoBdd<Source>,TypeInfoBdd<Source>>,
+                                   public NoKeyInfoBdd
 {
 public:
-    typedef TypeNcNomOnlyLinkSql<Source> EntLinkSql;
-    typedef NomUniqueSql EntUniqueSql;
-
-    //! Retourne la liste des attributs uniques.
-    static QVector<QMap<int,int>> attributUnique()
-    {return NomInfoBdd::attributUnique();}
-
     //! Retourne le nom la table sql.
     static QString table()
         {return QString("sr");}
 };
 
 // TypeControle
+SINGLE_INFOBDD(Appreciation,Appreciation,app,Bool,true)
+
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité TypeControle.
  */
-template<> class InfoBdd<TypeControle> : public NcNomInfoBdd
+template<> class InfoBdd<TypeControle> : public InfoBddBase<NomUniqueInfoBdd<TypeControle>,
+                                                            AppreciationInfoBdd<TypeControle>,
+                                                            DecimaleInfoBdd<TypeControle>,
+                                                            ModifInfoBdd<TypeControle>,
+                                                            NcInfoBdd<TypeControle>,
+                                                            ParentInfoBdd<TypeControle>,
+                                                            TotalInfoBdd<TypeControle>,
+                                                            TypeInfoBdd<TypeControle>>
 {
 public:
-    typedef TypeControleLinkSql EntLinkSql;
-    typedef NomUniqueSql EntUniqueSql;
-
-    //! Retourne la liste des nom sql des attributs.
-    static QMap<int,QString> attribut()
-    {
-        QMap<int,QString> att(NcNomInfoBdd::attribut());
-        //att.insert(TypeControle::IdSousType,"IDst");
-        att.insert(TypeControle::Appreciation,"app");
-        att.insert(TypeControle::Decimale,"dc");
-        att.insert(TypeControle::Modif,"md");
-        att.insert(TypeControle::Total,"tt");
-        return att;
-    }
-
-    //! Retourne la liste des attributs uniques.
-    static QVector<QMap<int,int>> attributUnique()
-    {return NomInfoBdd::attributUnique();}
-
-    //! Retourne la liste des caractéristiques sql des attributs.
-    static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
-    {
-        QMap<int,QPair<bdd::createSql, bool>> att(NcNomInfoBdd::creerAttribut());
-        att.insert(TypeControle::Appreciation,QPair<createSql, bool>(createSql::integer,false));
-        att.insert(TypeControle::Decimale,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(TypeControle::Modif,QPair<createSql, bool>(createSql::integer,false));
-        att.insert(TypeControle::Total,QPair<createSql, bool>(createSql::integer,true));
-        return att;
-    }
+    //! Retourne les clés étrangère de la table sql.
+    static QMap<int,QString> foreignKey();
 
     //! Retourne le nom la table sql.
     static QString table()
@@ -727,59 +602,27 @@ public:
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité TypeEtablissement.
  */
-template<> class InfoBdd<TypeEtablissement> : public NomInfoBdd
+template<> class InfoBdd<TypeEtablissement> : public InfoBddBase<NomUniqueInfoBdd<TypeEtablissement>,
+                                                                 MaxInfoBdd<TypeEtablissement>,
+                                                                 MinInfoBdd<TypeEtablissement>>,
+                                              public NoKeyInfoBdd
 {
 public:
-    typedef TypeEtablissementLinkSql EntLinkSql;
-
-    //! Retourne la liste des nom sql des attributs.
-    static QMap<int,QString> attribut()
-    {
-        QMap<int,QString> att(NomInfoBdd::attribut());
-        att.insert(TypeEtablissement::Max,"max");
-        att.insert(TypeEtablissement::Min,"min");
-        return att;
-    }
-
-    //! Retourne la liste des caractéristiques sql des attributs.
-    static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
-    {
-        QMap<int,QPair<bdd::createSql, bool>> att(NomInfoBdd::creerAttribut());
-        att.insert(TypeEtablissement::Max,QPair<createSql, bool>(createSql::integer,true));
-        att.insert(TypeEtablissement::Min,QPair<createSql, bool>(createSql::integer,true));
-        return att;
-    }
-
     //! Retourne le nom la table sql.
     static QString table()
         {return QString("tpetab");}
 };
 
 // TypeNiveau
+SINGLE_INFOBDD(AnBac,AnBac,an,Integer,true)
+
 /*! \ingroup groupeInfoBdd
  * \brief Classe contenant les informations sql sur l'entité TypeNiveau.
  */
-template<> class InfoBdd<TypeNiveau> : public NomInfoBdd
+template<> class InfoBdd<TypeNiveau> : public InfoBddBase<NomUniqueInfoBdd<TypeNiveau>,AnBacInfoBdd<TypeNiveau>>,
+                                       public NoKeyInfoBdd
 {
 public:
-    typedef TypeNiveauLinkSql EntLinkSql;
-
-    //! Retourne la liste des nom sql des attributs.
-    static QMap<int,QString> attribut()
-    {
-        QMap<int,QString> att(NomInfoBdd::attribut());
-        att.insert(TypeNiveau::AnBac,"an");
-        return att;
-    }
-
-    //! Retourne la liste des caractéristiques sql des attributs.
-    static QMap<int, QPair<bdd::createSql, bool> > creerAttribut()
-    {
-        QMap<int,QPair<bdd::createSql, bool>> att(NomInfoBdd::creerAttribut());
-        att.insert(TypeNiveau::AnBac,QPair<createSql, bool>(createSql::integer,true));
-        return att;
-    }
-
     //! Retourne le nom la table sql.
     static QString table()
         {return QString("tpniv");}

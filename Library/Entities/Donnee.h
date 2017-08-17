@@ -4,26 +4,22 @@
 #ifndef DONNEE_H
 #define DONNEE_H
 
-#include "AttributEntity.h"
-#include "EntityNom.h"
+#include "AttributMultiple.h"
+#include "Entity.h"
 #include "InfoEntity.h"
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Donnee.
  */
-class Donnee : public TypeNomEntity
+class Donnee : public EntityAttributsID<Attributs<NomTypeAttribut,IdProgAttribut,TpValAttribut>,InfoEntity::DonneeId>
 {
-    ATTRIBUT_ENTITY_INT_SUP(IdProg,idProg,0)
-    ATTRIBUT_ENTITY_BOOL(Modif,modif)
-    ATTRIBUT_ENTITY_INT_SUP(TpVal,tpVal,0)
 public:
     //! Positions des attributs.
-    enum Position {Id = TypeNomEntity::Id,
-                   Nom = TypeNomEntity::Nom,
-                   Type = TypeNomEntity::Type,
-                   IdProg = TypeNomEntity::NbrAtt,
-                   Modif,
-                   TpVal,
+    enum Position {Id = PositionEnum<IdAttribut,Donnee>::Position,
+                   Nom = PositionEnum<NomAttribut,Donnee>::Position,
+                   Type = PositionEnum<TypeAttribut,Donnee>::Position,
+                   IdProg = PositionEnum<IdProgAttribut,Donnee>::Position,
+                   TpVal = PositionEnum<TpValAttribut,Donnee>::Position,
                    NbrAtt};
 
     //! Différents types d'affichage.
@@ -56,27 +52,23 @@ public:
               Mail};
 
 public:
-    BASE_ENTITY(Donnee,InfoEntity::DonneeId)
-    //! Constructeur par defaut.
-    Donnee(int id)
-        :TypeNomEntity(id)
-    {}
-
-    //! Constructeur à partir des valeurs attributs.
-    Donnee(bool modif, const QString & nom, int type, int tpVal ,int id = 0, int idProg = prog::NoId)
-        : TypeNomEntity(nom, type, id),
-          m_idProg(idProg),
-          m_modif(modif),
-          m_tpVal(tpVal)
-    {}
+    using EAID = EntityAttributsID<Attributs<NomTypeAttribut,IdProgAttribut,TpValAttribut>,InfoEntity::DonneeId>;
+    using EAID::EntityAttributsID;
+    BASE_ENTITY(Donnee)
 
     //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
     Donnee(int idProg, int id)
-        : TypeNomEntity(id), m_idProg(idProg)
-    {}
+        : EAID(id)
+        {setIdProg(idProg);}
 
-
-    MEMBRE_ATT_3(Donnee,TypeNomEntity,IdProg,idProg,Modif,modif,TpVal,tpVal)
+    //! Constructeur à partir des valeurs attributs.
+    Donnee(const QString & nom, int type, int tpVal, int idProg = prog::NoId, int id = 0)
+        : Donnee(idProg,id)
+    {
+        setNom(nom);
+        setType(type);
+        setTpVal(tpVal);
+    }
 };
 
 #endif // DONNEE_H

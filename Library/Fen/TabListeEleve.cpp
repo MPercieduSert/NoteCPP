@@ -4,7 +4,7 @@ TabListeEleve::TabListeEleve(int idClasse, TabModule *parent) : TabAbstractClass
 {
     if(m_classe.isValid())
     {
-        m_delegate = new ListeEleveDelegate(m_annee,this);
+        m_delegate = new ListeElevesDelegate(this);
         m_model = new ListeEleveModel(bdd(),m_classe,this);
         m_view = new QTableView();
         m_addColumnButton = new QPushButton(tr("Ajouter une nouvelle colonne au tableau"));
@@ -13,6 +13,8 @@ TabListeEleve::TabListeEleve(int idClasse, TabModule *parent) : TabAbstractClass
         m_view->setModel(m_model);
         m_view->setItemDelegate(m_delegate);
         m_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
+        m_view->setSortingEnabled(true);
+        m_view->sortByColumn(0,Qt::AscendingOrder);
         connect(m_addColumnButton,&QPushButton::clicked,this,&TabListeEleve::addColumn);
         connect(m_saveButton,&QPushButton::clicked,this,&TabAbstractTableau::save);
 

@@ -6,8 +6,14 @@
 
 #include "FenPrincipale.h"
 #include "TabAbstractClasse.h"
-#include "../Model/ListeNoteModel.h"
 #include "../Delegate/ListeNoteDelegate.h"
+#include "../Dialog/ControleGraphDialog.h"
+#include "../Dialog/NewControleDialog.h"
+#include "../Dialog/NewTypeControleDialog.h"
+#include "../Model/ListeNoteModel.h"
+#include "../Widget/HeaderView.h"
+#include "../Widget/Plotter.h"
+
 
 /*! \ingroup groupeFen
  * \brief Onglet des notes d'une classe
@@ -16,6 +22,7 @@ class TabListeNote : public TabAbstractClasse
 {
     Q_OBJECT
 protected:
+    HeaderView * m_header;
 
 public:
     //! Constructeur.
@@ -30,6 +37,8 @@ public slots:
     void becomeCurrent() const;
     //! Ouvre l'abre des données sur les éléves puis ajoute la colonne correspondand à la donnée séléctionnée.
     void addColumn();
+    //! Ouvre une fenêtre affichant l'histogramme de l'épreuve.
+    void openControleGraph(int section);
 };
 
 #endif // TABLISTENOTE_H

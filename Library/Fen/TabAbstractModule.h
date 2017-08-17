@@ -37,8 +37,6 @@ public:
         {return m_parent->noyau();}
 signals:
 
-
-
 public slots:
     //! Action à effectuer lorsque l'onglet devient actif.
     virtual void becomeCurrent() const = 0;

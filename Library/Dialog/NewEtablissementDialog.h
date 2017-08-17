@@ -86,7 +86,7 @@ public:
     //! Constructeur.
     explicit NewEtablissementDialog(const VectorPtr<TypeEtablissement> & vectTpEtab, const VectorPtr<Niveau> & vectNiveau, const QString & nc = QString(), const QString & nom = QString(), QWidget *parent = 0);
 
-    //! Reourne le resultat de la fenêtre de dialogue.
+    //! Retourne le resultat de la fenêtre de dialogue.
     dialogResult value() const;
 
 public slots:

@@ -4,246 +4,276 @@
 #ifndef ENTITYRELATION
 #define ENTITYRELATION
 
+#include "AttributMultiple.h"
 #include "Entity.h"
 
 //! \ingroup groupeMacroEntity
-//! Macro définissant les alias des deux clés d'une relation.
-#define RELATION_ALIAS_2_CLE(ID1,ID2) ALIAS_CLE(ID1,1) \
-    ALIAS_CLE(ID2,2)
+//! Macro implémentant une classe ayant 2 clé.
+#define RELATION_ENTITY(ENTITY,TYPE,IDT,ID1,ID2) \
+    /*! \ingroup groupeEntity \brief Représentation de l'entité ENTITY.*/ \
+    class ENTITY : public Relation##TYPE##Entity<IDT> \
+    {public: \
+    using Relation##TYPE##Entity<IDT>::Relation##TYPE##Entity; \
+    using Relation##TYPE##Entity<IDT>::operator ==; \
+    ENUM_Relation##TYPE(ID1,ID2)\
+    BASE_ENTITY(ENTITY) \
+    ALIAS_CLE(ID1,1) \
+    ALIAS_CLE(ID2,2)};
+
 
 //! \ingroup groupeMacroEntity
 //! Macro définissant les positions des attributs pour une relation simple.
-#define ENUM_RelationEntity(ID1,ID2) /*! \brief Positions des attributs */ \
-    enum Position {Id = RelationEntity::Id, Id ## ID1 = RelationEntity::Id1, Id ## ID2 = RelationEntity::Id2, NbrAtt};
-
-//! \ingroup groupeMacroEntity
-//! Macro définissant les positions des attributs pour une relation où une des deux clés est inutile.
-#define ENUM_RelationExactOneNotNullEntity(ID1,ID2) /*! \brief Positions des attributs */ \
-    enum Position {Id = RelationExactOneNotNullEntity::Id, Id ## ID1 = RelationExactOneNotNullEntity::Id1, Id ## ID2 = RelationExactOneNotNullEntity::Id2, NbrAtt};
-
-//! \ingroup groupeMacroEntity
-//! Macro définissant les positions des attributs pour une relation datée.
-#define ENUM_DateTimeRelationEntity(ID1,ID2) /*! \brief Positions des attributs */ \
-    enum Position {Id = DateTimeRelationEntity::Id, Id ## ID1 = DateTimeRelationEntity::Id1, Id ## ID2 = DateTimeRelationEntity::Id2, DateTime = DateTimeRelationEntity::DateTime, NbrAtt};
-
-//! \ingroup groupeMacroEntity
-//! Macro définissant les positions des attributs pour une relation datée et valuée.
-#define ENUM_ValeurDateTimeRelationEntity(ID1,ID2) /*! \brief Positions des attributs */ \
-    enum Position {Id = ValeurDateTimeRelationEntity::Id, Id ## ID1 = ValeurDateTimeRelationEntity::Id1, \
-    Id ## ID2 = ValeurDateTimeRelationEntity::Id2,\
-    DateTime = ValeurDateTimeRelationEntity::DateTime, Valeur = ValeurDateTimeRelationEntity::Valeur, NbrAtt};
-
-//! \ingroup groupeMacroEntity
-//! Macro définissant les positions des attributs pour une relation numéroté.
-#define ENUM_NumRelationEntity(ID1,ID2) /*! \brief Positions des attributs */ \
-    enum Position {Id = NumRelationEntity::Id, Id ## ID1 = NumRelationEntity::Id1, Id ## ID2 = NumRelationEntity::Id2, Num = NumRelationEntity::Num,\
-    NbrAtt};
-
-//! \ingroup groupeMacroEntity
-//! Macro définissant les positions des attributs pour une relation numéroté et daté.
-#define ENUM_DateTimeNumRelationEntity(ID1,ID2) /*! \brief Positions des attributs */ \
-    enum Position {Id = DateTimeNumRelationEntity::Id, Id ## ID1 = DateTimeNumRelationEntity::Id1, Id ## ID2 = DateTimeNumRelationEntity::Id2,\
-    Num = DateTimeNumRelationEntity::Num, DateTime = DateTimeNumRelationEntity::DateTime, NbrAtt};
-
-//! \ingroup groupeMacroEntity
-//! Macro définissant les positions des attributs pour une relation numéroté et daté.
-#define ENUM_ValeurIntDateTimeNumRelationEntity(ID1,ID2) /*! \brief Positions des attributs */ \
-    enum Position {Id = ValeurIntDateTimeNumRelationEntity::Id, Id ## ID1 = ValeurIntDateTimeNumRelationEntity::Id1,\
-    Id ## ID2 = ValeurIntDateTimeNumRelationEntity::Id2, Num = ValeurIntDateTimeNumRelationEntity::Num,\
-    DateTime = ValeurIntDateTimeNumRelationEntity::DateTime, Valeur = ValeurIntDateTimeNumRelationEntity::Valeur, NbrAtt};
-
-//! \ingroup groupeMacroEntity
-//! Macro implémentant une classe de relation.
-#define RELATION_ENTITY(ENTITY,MERE,IDT,ID1,ID2) \
-    /*! \ingroup groupeEntity \brief Représentation de l'entité ENTITY.*/ \
-    class ENTITY : public MERE \
-    {public: \
-    using MERE::MERE; \
-    using MERE::operator ==; \
-    ENUM_##MERE(ID1,ID2) \
-    BASE_ENTITY(ENTITY,IDT) \
-    RELATION_ALIAS_2_CLE(ID1,ID2)};
+#define ENUM_Relation(ID1,ID2) /*! \brief Positions des attributs */ \
+    enum Position {Id, Id1, Id2, NbrAtt, Id ## ID1 = Id1, Id ## ID2 = Id2};
 
 /*! \ingroup groupeBaseEntity
- * \brief Classe de base des entités possédant deux clés.
+ * \brief Classe de base des entités ayant pour attribut deux clés.
  */
-class RelationEntity : public Entity
+template<int IDM> class RelationEntity : public EntityAttributsID<RelationAttribut,IDM>
 {
-    ATTRIBUT_ENTITY_ID(1)
-    ATTRIBUT_ENTITY_ID(2)
 public:
     //! Positions des attributs.
-    enum Position {Id = Entity::Id,
-                   Id1 = Entity::NbrAtt,
-                   Id2,
+    enum Position {Id = PositionEnum<IdAttribut,RelationEntity<IDM>>::Position,
+                   Id1 = PositionEnum<Id1Attribut,RelationEntity<IDM>>::Position,
+                   Id2 = PositionEnum<Id2Attribut,RelationEntity<IDM>>::Position,
                    NbrAtt};
-
-    using Entity::Entity;
-    BASE_ENTITY_ABS(RelationEntity)
+    using EAID = EntityAttributsID<RelationAttribut,IDM>;
+    using EntityAttributsID<RelationAttribut,IDM>::EntityAttributsID;
+    using EAID::setId1;
+    using EAID::setId2;
+    BASE_ENTITY(RelationEntity)
 
     //! Constructeur à partir des valeurs attributs.
     RelationEntity(int id1, int id2, int id = 0)
-        : Entity(id), m_id1(id1), m_id2(id2) {}
-
-    MEMBRE_ATT_2(RelationEntity,Entity,Id1,id1,Id2,id2)
+        : EAID(id)
+    {
+        setId1(id1);
+        setId2(id2);
+    }
 };
 
+//! \ingroup groupeMacroEntity
+//! Macro définissant les positions des attributs pour une relation simple.
+#define ENUM_RelationExactOneNotNull(ID1,ID2) ENUM_(ID1,ID2)
+
 /*! \ingroup groupeBaseEntity
- * \brief Classe de base des entités possédant deux clés dont exactement une non nulle.
+ * \brief Classe de base des entités ayant pour attribut deux clés.
  */
-class RelationExactOneNotNullEntity : public Entity
+template<int IDM> class RelationExactOneNotNullEntity : public EntityAttributsID<RelationExactOneNotNullAttribut,IDM>
 {
-    ATTRIBUT_ENTITY_ID_NULL(1)
-    ATTRIBUT_ENTITY_ID_NULL(2)
 public:
     //! Positions des attributs.
-    enum Position {Id = Entity::Id,
-                   Id1 = Entity::NbrAtt,
-                   Id2,
+    enum Position {Id = PositionEnum<IdAttribut,RelationExactOneNotNullEntity<IDM>>::Position,
+                   Id1 = PositionEnum<Id1Attribut,RelationExactOneNotNullEntity<IDM>>::Position,
+                   Id2 = PositionEnum<Id2Attribut,RelationExactOneNotNullEntity<IDM>>::Position,
                    NbrAtt};
-
-    using Entity::Entity;
-    BASE_ENTITY_ABS(RelationExactOneNotNullEntity)
+    using EAID = EntityAttributsID<RelationExactOneNotNullAttribut,IDM>;
+    using EntityAttributsID<RelationExactOneNotNullAttribut,IDM>::EntityAttributsID;
+    using EAID::setId1;
+    using EAID::setId2;
+    BASE_ENTITY(RelationExactOneNotNullEntity)
 
     //! Constructeur à partir des valeurs attributs.
     RelationExactOneNotNullEntity(int id1, int id2, int id = 0)
-        : Entity(id), m_id1(id1), m_id2(id2) {}
-
-    MEMBRE_ATT_2(RelationExactOneNotNullEntity,Entity,Id1,id1,Id2,id2)
+        : EAID(id)
+    {
+        setId1(id1);
+        setId2(id2);
+    }
 };
+
+//! \ingroup groupeMacroEntity
+//! Macro définissant les positions des attributs pour une relation avec un attribut dateTime.
+#define ENUM_RelationDateTime(ID1,ID2) /*! \brief Positions des attributs */ \
+    enum Position {Id, Id1, Id2, DateTime, NbrAtt, Id ## ID1 = Id1, Id ## ID2 = Id2};
 
 /*! \ingroup groupeBaseEntity
- * \brief Classe de base des entités possédant deux clés et un attribut date valide.
+ * \brief Classe de base des entités ayant pour attribut deux clés et une dateTime.
  */
-class DateTimeRelationEntity : public RelationEntity
+template<class DateTimeAtt, int IDM> class RelationDateTimeEntity : public EntityAttributsID<Attributs<RelationAttribut,DateTimeAtt>,IDM>
 {
-    ATTRIBUT_ENTITY_DATETIME(DateTime,dateTime)
 public:
     //! Positions des attributs.
-    enum Position {Id = RelationEntity::Id,
-                   Id1 = RelationEntity::Id1,
-                   Id2 = RelationEntity::Id2,
-                   DateTime = RelationEntity::NbrAtt,
+    enum Position {Id = PositionEnum<IdAttribut,RelationDateTimeEntity<DateTimeAtt,IDM>>::Position,
+                   Id1 = PositionEnum<Id1Attribut,RelationDateTimeEntity<DateTimeAtt,IDM>>::Position,
+                   Id2 = PositionEnum<Id2Attribut,RelationDateTimeEntity<DateTimeAtt,IDM>>::Position,
+                   DateTime = PositionEnum<DateTimeAtt,RelationDateTimeEntity<DateTimeAtt,IDM>>::Position,
                    NbrAtt};
+    using EAID = EntityAttributsID<Attributs<RelationAttribut,DateTimeAtt>,IDM>;
+    using EntityAttributsID<Attributs<RelationAttribut,DateTimeAtt>,IDM>::EntityAttributsID;
+    using EAID::setId1;
+    using EAID::setId2;
+    using EAID::setDateTime;
+    BASE_ENTITY(RelationDateTimeEntity)
 
-    using RelationEntity::RelationEntity;
-    BASE_ENTITY_ABS(DateTimeRelationEntity)
+    //! Constructeur à partir d'un jeux de valeurs attributs unique.
+    RelationDateTimeEntity(int id1, int id2, int id = 0)
+        : EAID(id)
+    {
+        setId1(id1);
+        setId2(id2);
+    }
 
     //! Constructeur à partir des valeurs attributs.
-    DateTimeRelationEntity(int id1, int id2, const QDateTime & dateTime, int id = 0)
-        : RelationEntity(id1, id2, id), m_dateTime(dateTime) {}
-
-    MEMBRE_ATT_1(DateTimeRelationEntity,RelationEntity,DateTime,dateTime)
+    RelationDateTimeEntity(int id1, int id2, const QDateTime & dateTime, int id = 0)
+        : RelationDateTimeEntity(id1, id2, id)
+        {setDateTime(dateTime);}
 };
+
+template<int IDM> using RelationDateTimeCurrentEntity = RelationDateTimeEntity<DateTimeCurrentAttribut,IDM>;
+#define ENUM_RelationDateTimeCurrent(ID1,ID2) ENUM_RelationDateTime(ID1,ID2)
+
+template<int IDM> using RelationDateTimeValideEntity = RelationDateTimeEntity<DateTimeValideAttribut,IDM>;
+#define ENUM_RelationDateTimeValide(ID1,ID2) ENUM_RelationDateTime(ID1,ID2)
+
+//! \ingroup groupeMacroEntity
+//! Macro définissant les positions des attributs pour une relation avec un attribut num.
+#define ENUM_RelationNum(ID1,ID2) /*! \brief Positions des attributs */ \
+    enum Position {Id, Id1, Id2, Num, NbrAtt, Id ## ID1 = Id1, Id ## ID2 = Id2};
 
 /*! \ingroup groupeBaseEntity
- * \brief Classe de base des entités possédant deux clés et des attributs date valide et valeur.
+ * \brief Classe de base des entités ayant pour attribut deux clés et un numero.
  */
-class ValeurDateTimeRelationEntity : public DateTimeRelationEntity
+template<int IDM> class RelationNumEntity : public EntityAttributsID<Attributs<RelationAttribut,NumAttribut>,IDM>
 {
-    ATTRIBUT_ENTITY_VARIANT(Valeur,valeur)
 public:
     //! Positions des attributs.
-    enum Position {Id = DateTimeRelationEntity::Id,
-                   Id1 = DateTimeRelationEntity::Id1,
-                   Id2 = DateTimeRelationEntity::Id2,
-                   DateTime = DateTimeRelationEntity::DateTime,
-                   Valeur = DateTimeRelationEntity::NbrAtt,
+    enum Position {Id = PositionEnum<IdAttribut,RelationNumEntity<IDM>>::Position,
+                   Id1 = PositionEnum<Id1Attribut,RelationNumEntity<IDM>>::Position,
+                   Id2 = PositionEnum<Id2Attribut,RelationNumEntity<IDM>>::Position,
+                   Num = PositionEnum<NumAttribut,RelationNumEntity<IDM>>::Position,
                    NbrAtt};
-
-    using DateTimeRelationEntity::DateTimeRelationEntity;
-    BASE_ENTITY_ABS(ValeurDateTimeRelationEntity)
+    using EAID = EntityAttributsID<Attributs<RelationAttribut,NumAttribut>,IDM>;
+    using EntityAttributsID<Attributs<RelationAttribut,NumAttribut>,IDM>::EntityAttributsID;
+    using EAID::setId1;
+    using EAID::setId2;
+    using EAID::setNum;
+    BASE_ENTITY(RelationNumEntity)
 
     //! Constructeur à partir des valeurs attributs.
-    ValeurDateTimeRelationEntity(int id1, int id2, const QDateTime & date, const QVariant & valeur, int id = 0)
-        : DateTimeRelationEntity(id1, id2, date, id), m_valeur(valeur) {}
-
-    //! Constructeur à partir des valeurs attributs.
-    ValeurDateTimeRelationEntity(int id1, int id2, const QVariant & valeur, int id = 0)
-        : DateTimeRelationEntity(id1, id2, id), m_valeur(valeur) {}
-
-    MEMBRE_ATT_1(ValeurDateTimeRelationEntity,DateTimeRelationEntity,Valeur,valeur)
+    RelationNumEntity(int id1, int id2, int num = 0, int id = 0)
+        : EAID(id)
+    {
+        setId1(id1);
+        setId2(id2);
+        setNum(num);
+    }
 };
+
+//! \ingroup groupeMacroEntity
+//! Macro définissant les positions des attributs pour une relation avec un attribut dateTime et num.
+#define ENUM_RelationDateTimeNum(ID1,ID2) /*! \brief Positions des attributs */ \
+    enum Position {Id, Id1, Id2, DateTime, Num, NbrAtt, Id ## ID1 = Id1, Id ## ID2 = Id2};
 
 /*! \ingroup groupeBaseEntity
- * \brief Classe abstraite de base des entités possédant deux clés et un attribut numéro.
+ * \brief Classe de base des entités ayant pour attribut deux clés, une dateTime et un numero.
  */
-class NumRelationEntity : public RelationEntity
+template<class DateTimeAtt,int IDM> class RelationDateTimeNumEntity : public EntityAttributsID<Attributs<RelationAttribut,DateTimeAtt,NumAttribut>,IDM>
 {
-    ATTRIBUT_ENTITY_INT_SUP(Num,num,0)
 public:
     //! Positions des attributs.
-    enum Position {Id = RelationEntity::Id,
-                   Id1 = RelationEntity::Id1,
-                   Id2 = RelationEntity::Id2,
-                   Num = RelationEntity::NbrAtt,
+    enum Position {Id = PositionEnum<IdAttribut,RelationDateTimeNumEntity<DateTimeAtt,IDM>>::Position,
+                   Id1 = PositionEnum<Id1Attribut,RelationDateTimeNumEntity<DateTimeAtt,IDM>>::Position,
+                   Id2 = PositionEnum<Id2Attribut,RelationDateTimeNumEntity<DateTimeAtt,IDM>>::Position,
+                   DateTime = PositionEnum<DateTimeAtt,RelationDateTimeNumEntity<DateTimeAtt,IDM>>::Position,
+                   Num = PositionEnum<NumAttribut,RelationDateTimeNumEntity<DateTimeAtt,IDM>>::Position,
                    NbrAtt};
+    using EAID = EntityAttributsID<Attributs<RelationAttribut,DateTimeAtt,NumAttribut>,IDM>;
+    using EntityAttributsID<Attributs<RelationAttribut,DateTimeAtt,NumAttribut>,IDM>::EntityAttributsID;
+    using EAID::setId1;
+    using EAID::setId2;
+    using EAID::setDateTime;
+    using EAID::setNum;
+    BASE_ENTITY(RelationDateTimeNumEntity)
 
-    BASE_ENTITY_ABS(NumRelationEntity)
-
-    //! Constructeur.
-    NumRelationEntity(int id)
-        : RelationEntity(id) {}
+    //! Constructeur à partir d'un jeux de valeurs attributs unique.
+    RelationDateTimeNumEntity(int id1, int id2, int num = 0, int id = 0)
+        : EAID(id)
+    {
+        setId1(id1);
+        setId2(id2);
+        setNum(num);
+    }
 
     //! Constructeur à partir des valeurs attributs.
-    NumRelationEntity(int id1, int id2, int num = 0, int id = 0)
-        : RelationEntity(id1, id2, id), m_num(num) {}
-
-    MEMBRE_ATT_1(NumRelationEntity,RelationEntity,Num,num)
+    RelationDateTimeNumEntity(int id1, int id2, const QDateTime & dateTime, int num, int id = 0)
+        : RelationDateTimeNumEntity(id1, id2, num, id)
+        {setDateTime(dateTime);}
 };
+
+template<int IDM> using RelationDateTimeCurrentNumEntity = RelationDateTimeNumEntity<DateTimeCurrentAttribut,IDM>;
+#define ENUM_RelationDateTimeCurrentNum(ID1,ID2) ENUM_RelationDateTimeNum(ID1,ID2)
+
+template<int IDM> using RelationDateTimeValideNumEntity = RelationDateTimeNumEntity<DateTimeValideAttribut,IDM>;
+#define ENUM_RelationDateTimeValideNum(ID1,ID2) ENUM_RelationDateTimeNum(ID1,ID2)
+
+//! \ingroup groupeMacroEntity
+//! Macro définissant les positions des attributs pour une relation avec un attribut dateTime, num et Valeur.
+#define ENUM_RelationDateTimeNumValeur(ID1,ID2) /*! \brief Positions des attributs */ \
+    enum Position {Id, Id1, Id2, DateTime, Num, NbrAtt, Id ## ID1 = Id1, Id ## ID2 = Id2};
 
 /*! \ingroup groupeBaseEntity
- * \brief Classe abstraite de base des entités possédant deux clés, un attribut datetime et numéro.
+ * \brief Classe de base des entités ayant pour attribut deux clés, une dateTime et un numero.
  */
-class DateTimeNumRelationEntity : public NumRelationEntity
+template<class DateTimeAtt,class ValeurAttribut,class T,int IDM> class RelationDateTimeNumValeurEntity : public EntityAttributsID<Attributs<RelationAttribut,DateTimeAtt,NumAttribut,ValeurAttribut>,IDM>
 {
-    ATTRIBUT_ENTITY_DATETIME(DateTime,dateTime)
 public:
     //! Positions des attributs.
-    enum Position {Id = NumRelationEntity::Id,
-                   Id1 = NumRelationEntity::Id1,
-                   Id2 = NumRelationEntity::Id2,
-                   Num = NumRelationEntity::Num,
-                   DateTime = NumRelationEntity::NbrAtt,
+    enum Position {Id = PositionEnum<IdAttribut,RelationDateTimeNumValeurEntity<DateTimeAtt,ValeurAttribut,T,IDM>>::Position,
+                   Id1 = PositionEnum<Id1Attribut,RelationDateTimeNumValeurEntity<DateTimeAtt,ValeurAttribut,T,IDM>>::Position,
+                   Id2 = PositionEnum<Id2Attribut,RelationDateTimeNumValeurEntity<DateTimeAtt,ValeurAttribut,T,IDM>>::Position,
+                   DateTime = PositionEnum<DateTimeAtt,RelationDateTimeNumValeurEntity<DateTimeAtt,ValeurAttribut,T,IDM>>::Position,
+                   Num = PositionEnum<NumAttribut,RelationDateTimeNumValeurEntity<DateTimeAtt,ValeurAttribut,T,IDM>>::Position,
+                   Valeur = PositionEnum<ValeurAttribut,RelationDateTimeNumValeurEntity<DateTimeAtt,ValeurAttribut,T,IDM>>::Position,
                    NbrAtt};
-    using NumRelationEntity::NumRelationEntity;
-    BASE_ENTITY_ABS(DateTimeNumRelationEntity)
+    using EAID = EntityAttributsID<Attributs<RelationAttribut,DateTimeAtt,NumAttribut,ValeurAttribut>,IDM>;
+    using EntityAttributsID<Attributs<RelationAttribut,DateTimeAtt,NumAttribut,ValeurAttribut>,IDM>::EntityAttributsID;
+    using EAID::setId1;
+    using EAID::setId2;
+    using EAID::setDateTime;
+    using EAID::setNum;
+    using EAID::setValeur;
+    BASE_ENTITY(RelationDateTimeNumValeurEntity)
+
+    //! Constructeur à partir d'un jeux de valeurs attributs unique.
+    RelationDateTimeNumValeurEntity(int id1, int id2, int num = 0, int id = 0)
+        : EAID(id)
+    {
+        setId1(id1);
+        setId2(id2);
+        setNum(num);
+    }
 
     //! Constructeur à partir des valeurs attributs.
-    DateTimeNumRelationEntity(int id1, int id2, const QDateTime & date, int num, int id = 0)
-        : NumRelationEntity(id1, id2, num, id), m_dateTime(date) {}
+    RelationDateTimeNumValeurEntity(int id1, int id2, int num, T valeur, int id = 0)
+        : RelationDateTimeNumValeurEntity(id1, id2, num, id)
+        {setValeur(valeur);}
 
-    MEMBRE_ATT_1(DateTimeNumRelationEntity,NumRelationEntity,DateTime,dateTime)
+    //! Constructeur à partir des valeurs attributs.
+    RelationDateTimeNumValeurEntity(int id1, int id2, const QDateTime & dateTime, int num, T valeur, int id = 0)
+        : RelationDateTimeNumValeurEntity(id1, id2, num, id)
+    {
+        setDateTime(dateTime);
+        setValeur(valeur);
+    }
 };
 
-/*! \ingroup groupeBaseEntity
- * \brief Classe abstraite de base des entités possédant deux clés, un attribut datetime, numéro et valeur (entier).
- */
-class ValeurIntDateTimeNumRelationEntity : public DateTimeNumRelationEntity
-{
-    ATTRIBUT_ENTITY_INT(Valeur,valeur)
-public:
-    //! Positions des attributs.
-    enum Position {Id = DateTimeNumRelationEntity::Id,
-                   Id1 = DateTimeNumRelationEntity::Id1,
-                   Id2 = DateTimeNumRelationEntity::Id2,
-                   Num = DateTimeNumRelationEntity::Num,
-                   DateTime = DateTimeNumRelationEntity::DateTime,
-                   Valeur = DateTimeNumRelationEntity::NbrAtt,
-                   NbrAtt};
+template<int IDM> using RelationDateTimeCurrentNumValeurDoubleEntity = RelationDateTimeNumValeurEntity<DateTimeCurrentAttribut,ValeurDoubleAttribut,double,IDM>;
+#define ENUM_RelationDateTimeCurrentNumValeurDouble(ID1,ID2) ENUM_RelationDateTimeNumValeur(ID1,ID2)
 
-    using DateTimeNumRelationEntity::DateTimeNumRelationEntity;
-    BASE_ENTITY_ABS(ValeurIntDateTimeNumRelationEntity)
+template<int IDM> using RelationDateTimeCurrentNumValeurIntEntity = RelationDateTimeNumValeurEntity<DateTimeCurrentAttribut,ValeurIntAttribut,int,IDM>;
+#define ENUM_RelationDateTimeCurrentNumValeurInt(ID1,ID2) ENUM_RelationDateTimeNumValeur(ID1,ID2)
 
-    //! Constructeur à partir des valeurs attributs.
-    ValeurIntDateTimeNumRelationEntity(int id1, int id2, const QDateTime & date, int num, int valeur, int id = 0)
-        : DateTimeNumRelationEntity(id1, id2, date, num, id), m_valeur(valeur) {}
+template<int IDM> using RelationDateTimeCurrentNumValeurVariantEntity = RelationDateTimeNumValeurEntity<DateTimeCurrentAttribut,ValeurVariantAttribut,const QVariant &,IDM>;
+#define ENUM_RelationDateTimeCurrentNumValeurVariant(ID1,ID2) ENUM_RelationDateTimeNumValeur(ID1,ID2)
 
-    //! Constructeur à partir des valeurs attributs.
-    ValeurIntDateTimeNumRelationEntity(int id1, int id2, int num, int valeur, int id = 0)
-        : DateTimeNumRelationEntity(id1, id2, num, id), m_valeur(valeur) {}
+template<int IDM> using RelationDateTimeValideNumValeurDoubleEntity = RelationDateTimeNumValeurEntity<DateTimeValideAttribut,ValeurDoubleAttribut,double,IDM>;
+#define ENUM_RelationDateTimeValideNumValeurDouble(ID1,ID2) ENUM_RelationDateTimeNumValeur(ID1,ID2)
 
-    MEMBRE_ATT_1(ValeurIntDateTimeNumRelationEntity,DateTimeNumRelationEntity,Valeur,valeur)
-};
+template<int IDM> using RelationDateTimeValideNumValeurIntEntity = RelationDateTimeNumValeurEntity<DateTimeValideAttribut,ValeurIntAttribut,int,IDM>;
+#define ENUM_RelationDateTimeValideNumValeurInt(ID1,ID2) ENUM_RelationDateTimeNumValeur(ID1,ID2)
+
+template<int IDM> using RelationDateTimeValideNumValeurVariantEntity = RelationDateTimeNumValeurEntity<DateTimeValideAttribut,ValeurVariantAttribut,const QVariant &,IDM>;
+#define ENUM_RelationDateTimeValideNumValeurVariant(ID1,ID2) ENUM_RelationDateTimeNumValeur(ID1,ID2)
 
 #endif // ENTITYRELATION

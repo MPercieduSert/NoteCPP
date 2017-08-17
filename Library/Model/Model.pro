@@ -33,7 +33,9 @@ SOURCES += \
     MAbstractTreeModel.cpp \
     TreeModelReadTemp.cpp \
     TreeModelTemp.cpp \
-    ListeNoteModel.cpp
+    ListeNoteModel.cpp \
+    TreeModelReadAttributs.cpp \
+    ListeElevesModel.cpp
 
 HEADERS += \
     ListeEleveModel.h \
@@ -41,7 +43,9 @@ HEADERS += \
     MAbstractTreeModel.h \
     TreeModelReadTemp.h \
     TreeModelTemp.h \
-    ListeNoteModel.h
+    ListeNoteModel.h \
+    TreeModelReadAttributs.h \
+    ListeElevesModel.h
 
 unix {
     target.path = /usr/lib

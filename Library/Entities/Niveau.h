@@ -4,37 +4,45 @@
 #ifndef NIVEAU_H
 #define NIVEAU_H
 
-#include "AttributEntity.h"
-#include "EntityNom.h"
+#include "AttributMultiple.h"
+#include "Entity.h"
 #include "InfoEntity.h"
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Niveau.
  */
-class Niveau : public NcNomEntity
+class Niveau : public EntityAttributsID<Attributs<RelationAttribut,NcNomAttribut>,InfoEntity::NiveauId>
 {
-    ATTRIBUT_ENTITY_ID(Tp)
-    ATTRIBUT_ENTITY_ID(TpEtab)
 public:
     //! Positions des attributs.
-    enum Position {Id = NcNomEntity::Id,
-                   Nom = NcNomEntity::Nom,
-                   Nc = NcNomEntity::Nc,
-                   IdTp = NcNomEntity::NbrAtt,
-                   IdTpEtab,
-                   NbrAtt};
+    enum Position {Id = PositionEnum<IdAttribut,Niveau>::Position,
+                   Id1 = PositionEnum<Id1Attribut,Niveau>::Position,
+                   Id2 = PositionEnum<Id2Attribut,Niveau>::Position,
+                   Nc = PositionEnum<NcAttribut,Niveau>::Position,
+                   Nom = PositionEnum<NomAttribut,Niveau>::Position,
+                   NbrAtt,
+                   IdTp = Id1,
+                   IdTpEtab = Id2};
 
-    using NcNomEntity::NcNomEntity;
-    BASE_ENTITY(Niveau,InfoEntity::NiveauId)
+    using EAID = EntityAttributsID<Attributs<RelationAttribut,NcNomAttribut>,InfoEntity::NiveauId>;
+    using EAID::EntityAttributsID;
+    BASE_ENTITY(Niveau)
+    ALIAS_CLE(Tp,1)
+    ALIAS_CLE(TpEtab,2)
+
+    //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
+    Niveau(const QString & nom, int id = 0)
+        : EAID(id)
+        {setNom(nom);}
 
     //! Constructeur à partir des valeurs attributs.
     Niveau(int idTp, int idTpEtab, const QString & nc, const QString & nom, int id = 0)
-        : NcNomEntity(nc,nom,id),
-          m_idTp(idTp),
-          m_idTpEtab(idTpEtab)
-    {}
-
-    MEMBRE_ATT_2(Niveau,NcNomEntity,IdTp,idTp,IdTpEtab,idTpEtab)
+        : Niveau(nom,id)
+    {
+        setNc(nc);
+        setIdTp(idTp);
+        setIdTpEtab(idTpEtab);
+    }
 };
 
 #endif // NIVEAU_H

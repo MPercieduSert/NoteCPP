@@ -27,16 +27,18 @@ protected:
                   bouton};
 
     // Donnée
-    Annee m_annee;                                  //!< Annee du menu
+    Annee m_annee;                                  //!< Annee du menu.
     QList<QGroupBox *> m_listeGroupeEtab;           //!< Liste des groupes de classes par établissement.
     // QMap<int,QPushButton*> m_classeButtonMap;
 
     // Widget
-    QPushButton *m_newClasseButton;                 //!< Bouton pour créer une nouvelle classe
-    QSignalMapper *m_classeMapper;                  //!< Lie les boutons des classes à leur actions
+    QPushButton *m_newClasseButton;                 //!< Bouton pour créer une nouvelle classe.
+    QPushButton *m_coursButton;                     //!< Bouton ouvrant l'onglet des cours.
+    QPushButton *m_motCleButton;                    //!< Bouton ouvrant l'onglet des mots clés.
+    QSignalMapper *m_classeMapper;                  //!< Lie les boutons des classes à leur actions.
 
     // Layout
-    QHBoxLayout *m_classeLayout;                    //!< Calque des classes
+    QHBoxLayout *m_classeLayout;                    //!< Calque des classes.
 
 public:
     //! Constructeur

@@ -10,8 +10,7 @@ namespace bdd {
     //! Enumération des mise-à-jour de la base de donnée.
     enum miseAJourBdd{
         creationInitial = creationBdd::initiale,
-        creationTable20170110,
-        Donnees20170110,
+        Donnees20170816,
         endMiseAJour
     };
 
@@ -28,7 +27,7 @@ namespace bdd {
 
     //! Enumération des cibles.
     enum cible {AnneeCb = 0,
-                AttributCb = 1,
+                AutorisationModificationCb = 1,
                 BaremeCb = 2,
                 ClasseCb = 3,
                 CommentaireCb = 4,
@@ -49,6 +48,10 @@ namespace bdd {
                 TypeNiveauCb = 19,
                 SourceCb = 20
                };
+
+    enum commentaireNum {AppreciationNum = 0};
+
+    enum motClePermissionNum {VisibleAttNum = 0};
 }
 
 /*! \ingroup groupeFile

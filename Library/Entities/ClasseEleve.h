@@ -4,39 +4,50 @@
 #ifndef CLASSEELEVE_H
 #define CLASSEELEVE_H
 
-#include "AttributEntity.h"
-#include "EntityRelation.h"
+#include "AttributMultiple.h"
+#include "Entity.h"
 #include "InfoEntity.h"
+
+SINGLE_ATTRIBUT(EntreeAttribut,AttributDateValide,AttributDateValide,Entree,entree,QDate)
+SINGLE_ATTRIBUT(SortieAttribut,AttributDateNull,AttributDateNull,Sortie,sortie,QDate)
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité ClasseEleve.
  */
-
-class ClasseEleve : public RelationEntity
+class ClasseEleve : public EntityAttributsID<Attributs<RelationAttribut,EntreeAttribut,SortieAttribut>,InfoEntity::ClasseEleveId>
 {
-    ATTRIBUT_ENTITY_DATE_NULL(Entree,entree)
-    ATTRIBUT_ENTITY_DATE_NULL(Sortie,sortie)
 public:
     //! Positions des attributs.
-    enum Position {Id = RelationEntity::Id,
-                   IdCl = RelationEntity::Id1,
-                   IdEl = RelationEntity::Id2,
-                   Entree = RelationEntity::NbrAtt,
-                   Sortie,
-                   NbrAtt};
+    enum Position {Id = PositionEnum<IdAttribut,ClasseEleve>::Position,
+                   Id1 = PositionEnum<Id1Attribut,ClasseEleve>::Position,
+                   Id2 = PositionEnum<Id2Attribut,ClasseEleve>::Position,
+                   Entree = PositionEnum<EntreeAttribut,ClasseEleve>::Position,
+                   Sortie = PositionEnum<SortieAttribut,ClasseEleve>::Position,
+                   NbrAtt,
+                   IdCl = Id1,
+                   IdEl = Id2};
 
-    using RelationEntity::RelationEntity;
-    BASE_ENTITY(ClasseEleve,InfoEntity::ClasseEleveId)
-    RELATION_ALIAS_2_CLE(Cl,El)
+    using EAID = EntityAttributsID<Attributs<RelationAttribut,EntreeAttribut,SortieAttribut>,InfoEntity::ClasseEleveId>;
+    using EAID::EntityAttributsID;
+    BASE_ENTITY(ClasseEleve)
+    ALIAS_CLE(Cl,1)
+    ALIAS_CLE(El,2)
+
+    //! Constructeur à partir d'un jeux de valeurs attributs unique.
+    ClasseEleve(int idCl, int idEl, int id = 0)
+        : EAID(id)
+    {
+        setIdCl(idCl);
+        setIdEl(idEl);
+    }
 
     //! Constructeur à partir des valeurs attributs.
-    ClasseEleve(int idCl, int idEl, const QDate & entree, const QDate & sortie, int id = 0)
-        : RelationEntity(idCl, idEl, id),
-          m_entree(entree),
-          m_sortie(sortie)
-    {}
-
-    MEMBRE_ATT_2(ClasseEleve,RelationEntity,Entree,entree,Sortie,sortie)
+    ClasseEleve(int idCl, int idEl, const QDate & entree, const QDate & sortie = QDate(), int id = 0)
+        : ClasseEleve(idCl, idEl, id)
+    {
+          setEntree(entree);
+          setSortie(sortie);
+    }
 };
 
 #endif // CLASSEELEVE_H

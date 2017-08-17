@@ -4,58 +4,58 @@
 #ifndef GROUPE_H
 #define GROUPE_H
 
-#include "AttributEntity.h"
-#include "EntityRelation.h"
+#include "AttributMultiple.h"
+#include "Entity.h"
 #include "InfoEntity.h"
+
+
 
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité Groupe.
  */
-class Groupe : public RelationExactOneNotNullEntity
+class Groupe : public EntityAttributsID<Attributs<RelationExactOneNotNullAttribut,AlphaAttribut,NomTypeAttribut>,InfoEntity::GroupeId>
 {
-    ATTRIBUT_ENTITY_INT_SUP(Alpha,alpha,0)
-    ATTRIBUT_ENTITY_STR_NOT_EMPTY(Nom,nom)
-    ATTRIBUT_ENTITY_INT_SUP(Type,type,0)
 public:
     //! Positions des attributs.
-    enum Position {Id = RelationExactOneNotNullEntity::Id,
-                   IdAn = RelationExactOneNotNullEntity::Id1,
-                   IdCl = RelationExactOneNotNullEntity::Id2,
-                   Alpha = RelationExactOneNotNullEntity::NbrAtt,
-                   Nom,
-                   Type,
-                   NbrAtt};
+    enum Position {Id = PositionEnum<IdAttribut,Groupe>::Position,
+                   Id1 = PositionEnum<Id1NullAttribut,Groupe>::Position,
+                   Id2 = PositionEnum<Id2NullAttribut,Groupe>::Position,
+                   Alpha = PositionEnum<AlphaAttribut,Groupe>::Position,
+                   Nom = PositionEnum<NomAttribut,Groupe>::Position,
+                   Type = PositionEnum<TypeAttribut,Groupe>::Position,
+                   NbrAtt,
+                   IdAn = Id1,
+                   IdCl = Id2};
 
     enum grPour {GrAnnee = 0,
                  GrClasse = 1};
 
-    BASE_ENTITY(Groupe,InfoEntity::GroupeId)
-    RELATION_ALIAS_2_CLE(An,Cl)
-
-    //! Constructeur par defaut.
-    Groupe(int id = 0)
-        :RelationExactOneNotNullEntity(id)
-    {}
+    using EAID = EntityAttributsID<Attributs<RelationExactOneNotNullAttribut,AlphaAttribut,NomTypeAttribut>,InfoEntity::GroupeId>;
+    using EAID::EntityAttributsID;
+    BASE_ENTITY(Groupe)
+    ALIAS_CLE(An,1)
+    ALIAS_CLE(Cl,2)
 
     //! Constructeur à partir des valeurs attributs.
     Groupe(int idAn, int idCl, int alpha, const QString & nom, int type, int id = 0)
-        : RelationExactOneNotNullEntity(idAn,idCl,id),
-          m_alpha(alpha),
-          m_nom(nom),
-          m_type(type)
-    {}
+        : EAID(id)
+    {
+        setIdAn(idAn);
+        setIdCl(idCl);
+        setAlpha(alpha);
+        setNom(nom);
+        setType(type);
+    }
 
     //! Constructeur à partir des valeurs d'un ensemble d'attributs unique.
     Groupe(int cle, const QString & nom, grPour pr)
-        : m_nom(nom)
     {
+        setNom(nom);
         if(pr == GrClasse)
             {setIdCl(cle);}
         else
             {setIdAn(cle);}
     }
-
-    MEMBRE_ATT_3(Groupe,RelationExactOneNotNullEntity,Alpha,alpha,Nom,nom,Type,type)
 };
 
 #endif // GROUPE_H

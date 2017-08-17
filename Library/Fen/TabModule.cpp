@@ -1,10 +1,12 @@
 #include "TabModule.h"
 #include "TabAbstractModule.h"
 #include "TabClasse.h"
+#include "TabCours.h"
 #include "TabListeEleve.h"
 #include "TabListeGroupe.h"
 #include "TabListeNote.h"
 #include "TabMenu.h"
+#include "TabMotCle.h"
 
 TabModule::TabModule(QWidget *parent, Noyau *noyau): QTabWidget(parent), m_noyau(noyau)
 {
@@ -15,16 +17,12 @@ TabModule::TabModule(QWidget *parent, Noyau *noyau): QTabWidget(parent), m_noyau
 }
 
 void TabModule::currentIndexChanged()
-{
-    static_cast<TabAbstractModule *>(currentWidget())->becomeCurrent();
-}
+    {static_cast<TabAbstractModule *>(currentWidget())->becomeCurrent();}
 
 void TabModule::newOngletClasse(int idClasse)
 {
     if(m_listeTab[ClasseTab].contains(idClasse))
-    {
         setCurrentIndex(indexOf(m_listeTab[ClasseTab][idClasse]));
-    }
     else
     {
         TabClasse * tabClasse = new TabClasse(idClasse, this);
@@ -33,13 +31,22 @@ void TabModule::newOngletClasse(int idClasse)
     }
 }
 
+void TabModule::openCours()
+{
+    if(!m_listeTab[CoursTab].isEmpty())
+        setCurrentIndex(indexOf(m_listeTab[CoursTab].first()));
+    else
+    {
+        TabCours * tabCours = new TabCours(0,this);
+        m_listeTab[CoursTab].insert(0,tabCours);
+        setCurrentIndex(addTab(tabCours,tr("Cours")));
+    }
+}
 
 void TabModule::openListeEleve(int idClasse)
 {
     if(m_listeTab[ListeEleveTab].contains(idClasse))
-    {
         setCurrentIndex(indexOf(m_listeTab[ListeEleveTab][idClasse]));
-    }
     else
     {
         TabListeEleve * tabListeEleve = new TabListeEleve(idClasse, this);
@@ -49,11 +56,22 @@ void TabModule::openListeEleve(int idClasse)
             setCurrentIndex(addTab(tabListeEleve, tabListeEleve->classe().nom()+" - Liste des éléves"));
         }
         else
-        {
             delete tabListeEleve;
-        }
     }
 }
+
+void TabModule::openMotCle()
+{
+    if(!m_listeTab[MotCleTab].isEmpty())
+        setCurrentIndex(indexOf(m_listeTab[MotCleTab].first()));
+    else
+    {
+        TabMotCle * tabMotCle = new TabMotCle(0,this);
+        m_listeTab[MotCleTab].insert(0,tabMotCle);
+        setCurrentIndex(addTab(tabMotCle,tr("Mots Clés")));
+    }
+}
+
 /*
 void TabModule::openListeGroupe(int idClasse)
 {
@@ -71,9 +89,7 @@ void TabModule::openListeGroupe(int idClasse)
 void TabModule::openListeNote(int idClasse)
 {
     if(m_listeTab[ListeNoteTab].contains(idClasse))
-    {
         setCurrentIndex(indexOf(m_listeTab[ListeNoteTab][idClasse]));
-    }
     else
     {
         TabListeNote * tabListeNote = new TabListeNote(idClasse, this);
@@ -83,8 +99,6 @@ void TabModule::openListeNote(int idClasse)
             setCurrentIndex(addTab(tabListeNote, tabListeNote->classe().nom()+" - Liste des notes"));
         }
         else
-        {
             delete tabListeNote;
-        }
     }
 }
