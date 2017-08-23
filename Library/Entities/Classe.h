@@ -9,7 +9,7 @@
 #include "InfoEntity.h"
 
 /*! \ingroup groupeEntity
- * \brief Représentation de l'entité Bareme.
+ * \brief Représentation de l'entité Classe.
  */
 class Classe : public EntityAttributsID<Attributs<RelationNumAttribut,Id3Attribut,NomAttribut>,InfoEntity::ClasseId>
 {

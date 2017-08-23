@@ -29,20 +29,18 @@ HEADERS += \
     EntityDivers.h \
     EntityOfDefaultType.h \
     EntityRelation.h \
+    Forme.h \
     Groupe.h \
     InfoEntity.h \
     InfoEntityBase.h \
     MotCle.h \
     Niveau.h \
     TypeControle.h \
+    TypeCours.h \
     TypeEtablissement.h \
     TypeNiveau.h \
+    Utilisation.h \
     VersionBdd.h
-
-
-
-
-
 
 SOURCES += \
     Annee.cpp \
@@ -61,19 +59,18 @@ SOURCES += \
     EntityDivers.cpp \
     EntityOfDefaultType.cpp \
     EntityRelation.cpp \
+    Forme.cpp \
     Groupe.cpp \
     InfoEntity.cpp \
     InfoEntityBase.cpp \
     MotCle.cpp \
     Niveau.cpp \
     TypeControle.cpp \
+    TypeCours.cpp \
     TypeEtablissement.cpp \
     TypeNiveau.cpp \
+    Utilisation.cpp \
     VersionBdd.cpp
-
-
-
-
 
 unix {
     target.path = /usr/lib

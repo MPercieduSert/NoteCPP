@@ -11,6 +11,7 @@
 #include "../Entities/DonneeCard.h"
 #include "../Entities/Eleve.h"
 #include "../Entities/Groupe.h"
+#include "../Entities/Utilisation.h"
 
 CONSTR_DESTR_UNIQUE_SQL(Annee,SimpleUniqueSql)
     enum {AnUnique};
@@ -68,4 +69,24 @@ protected:
     {
         bindValue(NomUnique,entity.nom());
     }};
+
+CONSTR_DESTR_UNIQUE_SQL(Utilisation,DoubleUniqueSql)
+    enum {IdCibleUnique,IdOrigineUnique,CibleUnique,OrigineUnique,NumUnique,DateTimeUnique = 0,NomUnique};
+protected:
+    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+    void bindValuesUnique_1(const Utilisation & entity)
+        {
+            bindValue(IdCibleUnique,entity.idCible());
+            bindValue(IdOrigineUnique,entity.idOrigine());
+            bindValue(CibleUnique,entity.cible());
+            bindValue(OrigineUnique,entity.origine());
+            bindValue(NumUnique,entity.num());
+        }
+
+        //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+        void bindValuesUnique_2(const Utilisation & entity)
+        {
+            bindValue(DateTimeUnique,entity.dateTime());
+            bindValue(NomUnique,entity.nom());
+        }};
 #endif // UNIQUESQL

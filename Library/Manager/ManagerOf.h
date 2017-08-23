@@ -19,30 +19,6 @@
  */
 
 /*! \ingroup groupeBaseManager
- * \brief Macro spécialisant les ManagerOf pour les entités de type Arbre.
- */
-#define MANAGER_OF_ARBRE(ENTITY) template<> class ManagerOf<ENTITY> : public ManagerOfArbre<ENTITY, typename InfoBdd<ENTITY>::EntUniqueSql> \
-    {public: \
-        /*! Constructeur.*/ \
-        ManagerOf(): ManagerOfArbre<ENTITY,typename InfoBdd<ENTITY>::EntUniqueSql> \
-(InfoBdd<ENTITY>::table(),InfoBdd<ENTITY>::attribut(),InfoBdd<ENTITY>::attributUnique(),InfoBdd<ENTITY>::tableArbre(),InfoBdd<ENTITY>::attributArbre()) {} \
-    /*! Creer la table.*/ \
-    void creer() \
-    {creerSql(InfoBdd<ENTITY>::creerAttribut(),InfoBdd<ENTITY>::attributUnique(),InfoBdd<ENTITY>::foreignKey());}};
-
-/*! \ingroup groupeBaseManager
- * \brief Macro spécialisant les ManagerOf pour les entités de type ArbreSimple.
- */
-#define MANAGER_OF_ARBRE_SIMPLE(ENTITY) template<> class ManagerOf<ENTITY> : public ManagerOfArbreSimple<ENTITY, typename InfoBdd<ENTITY>::EntUniqueSql> \
-    {public: \
-        /*! Constructeur.*/ \
-        ManagerOf(): ManagerOfArbreSimple<ENTITY,typename InfoBdd<ENTITY>::EntUniqueSql> \
-            (InfoBdd<ENTITY>::table(), InfoBdd<ENTITY>::attribut(), InfoBdd<ENTITY>::attributUnique()) {} \
-        /*! Creer la table.*/ \
-        void creer() \
-            {creerSql(InfoBdd<ENTITY>::creerAttribut(),InfoBdd<ENTITY>::attributUnique(),InfoBdd<ENTITY>::foreignKey());}};
-
-/*! \ingroup groupeBaseManager
  * \brief Trait donnant le type du managerOf en fonction de l'entier bddInfo::TypeManager.
  */
 template<class Ent, class Unique, int N> struct TypeManagerOf;

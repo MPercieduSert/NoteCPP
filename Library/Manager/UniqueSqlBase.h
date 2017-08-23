@@ -84,6 +84,30 @@ protected:
     }
 };
 
+/*! \ingroup groupeUniqueSqlBase
+ * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le triple (IdCible,Cible,Num,Type).
+ */
+template<class Ent> class CibleSimpleNumTypeUniqueSql : public CibleSimpleNumUniqueSql<Ent>
+{
+protected:
+    using CibleSimpleNumUniqueSql<Ent>::bindValue;
+
+public:
+    enum {TypeUnique = CibleSimpleNumUniqueSql<Ent>::NbrUnique, NbrUnique};
+    using CibleSimpleNumUniqueSql<Ent>::CibleSimpleNumUniqueSql;
+
+    //!Destructeur.
+    ~CibleSimpleNumTypeUniqueSql() {}
+
+protected:
+    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+    void bindValuesUnique(const Ent & entity)
+    {
+        CibleSimpleNumUniqueSql<Ent>::bindValuesUnique(entity);
+        bindValue(TypeUnique,entity.type());
+    }
+};
+
 // Unique Cible
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe condition d'unicité pour les entités possédant une seule condition d'unicité sur le couple (Id1,Cible).
@@ -443,6 +467,33 @@ protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
     void bindValuesUnique(const Ent &entity)
         {bindValue(IdProgUnique,entity.idProg());}
+};
+
+/*! \ingroup groupeUniqueSqlBase
+ * \brief Classe condition d'unicité pour les entités possédant deux conditions d'unicité sur l'attribut idProg et le nom.
+ */
+template<class Ent> class IdProgNomUniqueSql : public DoubleUniqueSql<Ent>
+{
+protected:
+    using DoubleUniqueSql<Ent>::bindValue;
+    using DoubleUniqueSql<Ent>::bindValuesUnique_1;
+    using DoubleUniqueSql<Ent>::bindValuesUnique_2;
+
+public:
+    enum {IdProgUnique ,NomUnique = IdProgUnique};
+    using DoubleUniqueSql<Ent>::DoubleUniqueSql;
+
+    //! Destructeur.
+    ~IdProgNomUniqueSql() {}
+
+protected:
+    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+    void bindValuesUnique_1(const Ent &entity)
+        {bindValue(IdProgUnique,entity.idProg());}
+
+    //! Transmet les valeurs des attributs uniques à la requète SQL préparée.
+    void bindValuesUnique_2(const Ent &entity)
+        {bindValue(NomUnique,entity.nom());}
 };
 
 /*! \ingroup groupeUniqueSqlBase

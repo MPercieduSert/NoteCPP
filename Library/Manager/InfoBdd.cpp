@@ -7,13 +7,6 @@ QMap<int,QString> InfoBdd<MotCle>::foreignKey()
     return att;
 }
 
-QMap<int,QString> InfoBdd<CibleMotCle>::foreignKey()
-{
-    QMap<int,QString> att;
-    att.insert(CibleMotCle::IdMC,InfoBdd<MotCle>::table());
-    return att;
-}
-
 QMap<int,QString> InfoBdd<CibleCommentaire>::foreignKey()
 {
     QMap<int,QString> att;
@@ -21,10 +14,32 @@ QMap<int,QString> InfoBdd<CibleCommentaire>::foreignKey()
     return att;
 }
 
+QMap<int,QString> InfoBdd<Cours>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(Cours::Id,tableArbre());
+    att.insert(Cours::IdTpCrs,InfoBdd<TypeCours>::table());
+    return att;
+}
+
 QMap<int,QString> InfoBdd<CibleDonnee>::foreignKey()
 {
     QMap<int,QString> att;
     att.insert(CibleDonnee::IdDn,InfoBdd<Donnee>::table());
+    return att;
+}
+
+QMap<int,QString> InfoBdd<CibleMotCle>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(CibleMotCle::IdMC,InfoBdd<MotCle>::table());
+    return att;
+}
+
+QMap<int,QString> InfoBdd<CibleTexte>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(CibleTexte::IdTxt,InfoBdd<Texte>::table());
     return att;
 }
 
@@ -90,6 +105,14 @@ QMap<int,QString> InfoBdd<EtablissementType>::foreignKey()
     return att;
 }
 
+QMap<int,QString> InfoBdd<Exercice>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(Exercice::Id,tableArbre());
+    att.insert(Exercice::IdTpEx,InfoBdd<Exercice>::table());
+    return att;
+}
+
 QMap<int,QString> InfoBdd<Groupe>::foreignKey()
 {
     QMap<int,QString> att;
@@ -137,9 +160,48 @@ QMap<int,QString> InfoBdd<Note>::foreignKey()
     return att;
 }
 
+QMap<int,QString> InfoBdd<TexteSource>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(TexteSource::IdSr,InfoBdd<Source>::table());
+    att.insert(TexteSource::IdTxt,InfoBdd<Texte>::table());
+    return att;
+}
+
 QMap<int,QString> InfoBdd<TypeControle>::foreignKey()
 {
     QMap<int,QString> att;
     att.insert(TypeControle::Parent,table());
+    return att;
+}
+
+QMap<int,QString> InfoBdd<TypeCours>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(TypeCours::IdFE,InfoBdd<Forme>::table());
+    att.insert(TypeCours::IdFC,InfoBdd<Forme>::table());
+    att.insert(TypeCours::IdFP,InfoBdd<Forme>::table());
+    att.insert(TypeCours::Parent,table());
+    return att;
+}
+
+QMap<int,QString> InfoBdd<TypeExercice>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(TypeExercice::Parent,table());
+    return att;
+}
+
+QMap<int,QString> InfoBdd<TypeUtilisation>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(TypeUtilisation::Parent,table());
+    return att;
+}
+
+QMap<int,QString> InfoBdd<Utilisation>::foreignKey()
+{
+    QMap<int,QString> att;
+    att.insert(Utilisation::IdTpUt,InfoBdd<TypeUtilisation>::table());
     return att;
 }

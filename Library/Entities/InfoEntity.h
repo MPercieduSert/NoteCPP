@@ -24,17 +24,21 @@ enum entityId  {AnneeId,
                 CibleCommentaireId,
                 CibleDonneeId,
                 CibleMotCleId,
+                CibleTexteId,
                 ClasseId,
                 ClasseEleveId,
                 CoefficientId,
                 CommentaireId,
                 ControleId,
+                CoursId,
                 DonneeId,
                 DonneeCardId,
                 EleveId,
                 EtablissementId,
                 EtablissementNiveauId,
                 EtablissementTypeId,
+                ExerciceId,
+                FormeId,
                 GroupeId,
                 GroupeEleveId,
                 MotCleId,
@@ -44,9 +48,15 @@ enum entityId  {AnneeId,
                 NoteId,
                 RestrictionModificationId,
                 SourceId,
+                TexteId,
+                TexteSourceId,
                 TypeControleId,
+                TypeCoursId,
                 TypeEtablissementId,
+                TypeExerciceId,
                 TypeNiveauId,
+                TypeUtilisationId,
+                UtilisationId,
                 NbrEntity};
 
 /*    AttributCorrectionId,
@@ -78,7 +88,7 @@ enum entityId  {AnneeId,
 //! Constantes de base contenant les caractéristiques de bases des entités.
 enum caracteristique
 {NbrAttribut = 1};
-};
+}
 
 /*! \ingroup groupeInfoEntity
  * \brief Trait effectuant la correspondance entre l'identifiant et le type d'entités.

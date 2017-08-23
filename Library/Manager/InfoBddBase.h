@@ -87,12 +87,14 @@ template<class Att, class... Atts> QMap<int, QPair<bdd::createSql, bool> > InfoB
 SINGLE_INFOBDD(Alpha,Alpha,al,Integer,true)
 SINGLE_INFOBDD(Card,Card,cd,Integer,true)
 SINGLE_INFOBDD(CibleAtt,Cible,cb,Integer,true)
+SINGLE_INFOBDD(Creation,Creation,cr,DateTime,true)
 SINGLE_INFOBDD(DateValide,Date,dt,Date,true)
 SINGLE_INFOBDD(DateTime,DateTime,dt,DateTime,true)
 SINGLE_INFOBDD(Decimale,Decimale,dc,Integer,true)
 SINGLE_INFOBDD(Exact,Exact,ex,Bool,true)
 SINGLE_INFOBDD(Feuille,Feuille,fl,Bool,true)
 SINGLE_INFOBDD(IdCible,IdCible,IDCb,Integer,true)
+SINGLE_INFOBDD(IdOrigine,IdOrigine,IDO,Integer,true)
 SINGLE_INFOBDD(IdProg,IdProg,ip,Integer,false)
 SINGLE_INFOBDD(Id1,Id1,ID1,Integer,true)
 SINGLE_INFOBDD(Id1Null,Id1,ID1,Integer,false)
@@ -102,9 +104,11 @@ SINGLE_INFOBDD(Id3,Id3,ID3,Integer,true)
 SINGLE_INFOBDD(Max,Max,mx,Integer,true)
 SINGLE_INFOBDD(Min,Min,mi,Integer,true)
 SINGLE_INFOBDD(Modif,Modif,md,Bool,true)
+SINGLE_INFOBDD(Modification,Modification,mf,DateTime,true)
 SINGLE_INFOBDD(Nc,Nc,nc,Text,true)
 SINGLE_INFOBDD(Nom,Nom,mn,Text,true)
 SINGLE_INFOBDD(Num,Num,nm,Integer,true)
+SINGLE_INFOBDD(Origine,Origine,org,Integer,true)
 SINGLE_INFOBDD(Parent,Parent,pt,Integer,false)
 SINGLE_INFOBDD(Saisie,Saisie,ss,Bool,true)
 SINGLE_INFOBDD(Texte,Texte,te,Text,true)
@@ -163,6 +167,25 @@ public:
         {return ArbreInfoBdd<Arbre>::attribut();}
 };
 
+// IdProgNomUnique
+/*! \ingroup groupeInfoBddBase
+ * \brief Classe mère des InfoBdd pour les entités de type IdCibleEntity.
+ */
+template<class Ent> class IdProgNomUniqueInfoBdd : public InfoBddBase<IdProgInfoBdd<Ent>,NomInfoBdd<Ent>>
+{
+public:
+    typedef IdProgNomUniqueSql<Ent> EntUniqueSql;
+    FONC_UNIQUE_LINK
+};
+
+template<class Ent> QVector<QMap<int,int>> IdProgNomUniqueInfoBdd<Ent>::attributUnique()
+{
+    QVector<QMap<int,int>> att(2);
+    att[0].insert(IdProgNomUniqueSql<Ent>::IdProgUnique,Ent::IdProg);
+    att[1].insert(IdProgNomUniqueSql<Ent>::NomUnique,Ent::Nom);
+    return att;
+}
+
 //IdCibleEntity
 /*! \ingroup groupeInfoBddBase
  * \brief Classe mère des InfoBdd pour les entités de type IdCibleEntity.
@@ -216,6 +239,24 @@ template<class Ent> QVector<QMap<int,int>> CibleSimpleNumUniqueInfoBdd<Ent>::att
 {
     QVector<QMap<int,int>> att(CibleSimpleUniqueInfoBdd<Ent>::attributUnique());
     att[0].insert(CibleSimpleNumUniqueSql<Ent>::NumUnique,Ent::Num);
+    return att;
+}
+
+//CibleSimpleNumType
+/*! \ingroup groupeInfoBddBase
+ * \brief Classe mère des InfoBdd pour les entités de type CibleSimpleNumTypeEntity.
+ */
+template<class Ent> class CibleSimpleNumTypeUniqueInfoBdd : public InfoBddBase<CibleSimpleNumUniqueInfoBdd<Ent>,TypeInfoBdd<Ent>>
+{
+public:
+    typedef CibleSimpleNumTypeUniqueSql<Ent> EntUniqueSql;
+    FONC_UNIQUE_LINK
+};
+
+template<class Ent> QVector<QMap<int,int>> CibleSimpleNumTypeUniqueInfoBdd<Ent>::attributUnique()
+{
+    QVector<QMap<int,int>> att(CibleSimpleNumUniqueInfoBdd<Ent>::attributUnique());
+    att[0].insert(CibleSimpleNumTypeUniqueSql<Ent>::TypeUnique,Ent::Type);
     return att;
 }
 
@@ -368,7 +409,7 @@ template<class Ent> QVector<QMap<int,int>> IdProgUniqueInfoBdd<Ent>::attributUni
 /*! \ingroup groupeInfoBdd
  * \brief Classe mère des InfoBdd pour les entités de type TexteEntity.
  */
-template<class Ent> class TexteUniqueInfoBdd : public TexteInfoBdd<Ent>
+template<class Ent> class TexteUniqueInfoBdd : public InfoBddBase<CreationInfoBdd<Ent>,ModificationInfoBdd<Ent>,TexteInfoBdd<Ent>>
 {
 public:
     typedef TexteUniqueSql<Ent> EntUniqueSql;

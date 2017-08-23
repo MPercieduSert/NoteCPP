@@ -4,6 +4,7 @@
 #ifndef ENTITYCIBLE_H
 #define ENTITYCIBLE_H
 
+#include "Arbre.h"
 #include "AttributMultiple.h"
 #include "Entity.h"
 
@@ -19,6 +20,104 @@
     ENUM_##TYPE(ID1) \
     BASE_ENTITY(ENTITY) \
     ALIAS_CLE(ID1,1)};
+
+//! \ingroup groupeMacroEntity
+//! Macro définissant les positions des attributs pour une clé étrangère, un parent, un idProg, un nom cours et un nom.
+#define ENUM_IdArbreSimpleIdprogNcNomTemp(ID1) /*! \brief Positions des attributs */ \
+    enum Position {Id = mere::Id, Id1 = mere::Id1, Parent = mere::Parent, Cible = mere::IdProg, Nc == mere::Nc, Nom = mere::Nom, NbrAtt, Id ## ID1 = Id1};
+
+/*! \ingroup groupeBaseEntity
+ * \brief Classe de base des entités ayant un attribut clé étrangère, parent, idProg, nom cours et nom.
+ */
+template<class Id1Att, int IDM> class IdArbreSimpleIdprogNcNomEntityTemp : public EntityAttributsID<Attributs<Id1Att,ArbreSimpleAttribut,IdProgAttribut,NcNomAttribut>,IDM>
+{
+public:
+    //! Positions des attributs.
+    enum Position {Id = PositionEnum<IdAttribut,IdArbreSimpleIdprogNcNomEntityTemp<Id1Att,IDM>>::Position,
+                   Id1 = PositionEnum<Id1Att,IdArbreSimpleIdprogNcNomEntityTemp<Id1Att,IDM>>::Position,
+                   Parent = PositionEnum<ArbreSimpleAttribut,IdArbreSimpleIdprogNcNomEntityTemp<Id1Att,IDM>>::Position,
+                   IdProg = PositionEnum<IdProgAttribut,IdArbreSimpleIdprogNcNomEntityTemp<Id1Att,IDM>>::Position,
+                   Nc = PositionEnum<NcAttribut,IdArbreSimpleIdprogNcNomEntityTemp<Id1Att,IDM>>::Position,
+                   Nom = PositionEnum<NomAttribut,IdArbreSimpleIdprogNcNomEntityTemp<Id1Att,IDM>>::Position,
+                   NbrAtt};
+    using EAID = EntityAttributsID<Attributs<Id1Att,ArbreSimpleAttribut,IdProgAttribut,NcNomAttribut>,IDM>;
+    using EntityAttributsID<Attributs<Id1Att,ArbreSimpleAttribut,IdProgAttribut,NcNomAttribut>,IDM>::EntityAttributsID;
+    using EAID::setId1;
+    using EAID::setIdProg;
+    using EAID::setNc;
+    using EAID::setNom;
+    using EAID::setParent;
+    BASE_ENTITY(IdArbreSimpleIdprogNcNomEntityTemp)
+
+    //! Constructeur à partir d'un jeux de valeurs attributs unique.
+    IdArbreSimpleIdprogNcNomEntityTemp(int idProg, int id = 0)
+        : EAID(id)
+        {setIdProg(idProg);}
+
+    //! Constructeur à partir d'un jeux de valeurs attributs unique.
+    IdArbreSimpleIdprogNcNomEntityTemp(const QString & nom, int id = 0)
+        : EAID(id)
+        {setNom(nom);}
+
+    //! Constructeur à partir des valeurs attributs.
+    IdArbreSimpleIdprogNcNomEntityTemp(int id1, const QString & nc, const QString & nom, int parent, int idProg, int id = 0)
+        : EAID(id, nom)
+    {
+        setId1(id1);
+        setIdProg(idProg);
+        setNc(nc);
+        setParent(parent);
+    }
+};
+
+template<int IDM> using IdArbreSimpleIdprogNcNomEntity = IdArbreSimpleIdprogNcNomEntityTemp<Id1Attribut,IDM>;
+#define ENUM_IdArbreSimpleIdprogNcNom(ID1) ENUM_IdArbreSimpleIdprogNcNomTemp(ID1)
+
+template<int IDM> using IdNullArbreSimpleIdprogNcNomEntity = IdArbreSimpleIdprogNcNomEntityTemp<Id1NullAttribut,IDM>;
+#define ENUM_IdNullArbreSimpleIdprogNcNom(ID1) ENUM_IdArbreSimpleIdprogNcNomTemp(ID1)
+
+//! \ingroup groupeMacroEntity
+//! Macro définissant les positions des attributs pour une clé étrangère, une creation, une modification et un numéro.
+#define ENUM_IdCreationModifNumTemp(ID1) /*! \brief Positions des attributs */ \
+    enum Position {Id = mere::Id, Id1 = mere::Id1, Creation = mere::Creation, Modification = mere::Modification, Num = mere::Num, NbrAtt, Id ## ID1 = Id1};
+
+/*! \ingroup groupeBaseEntity
+ * \brief Classe de base des entités ayant un attribut clé étrangère, creation, modification, et num.
+ */
+template<class Id1Att, int IDM> class IdCreationModifNumEntityTemp : public EntityAttributsID<Attributs<Id1Att,CreationAttribut,ModificationAttribut,NumAttribut>,IDM>
+{
+public:
+    //! Positions des attributs.
+    enum Position {Id = PositionEnum<IdAttribut,IdCreationModifNumEntityTemp<Id1Att,IDM>>::Position,
+                   Id1 = PositionEnum<Id1Att,IdCreationModifNumEntityTemp<Id1Att,IDM>>::Position,
+                   Creation = PositionEnum<CreationAttribut,IdCreationModifNumEntityTemp<Id1Att,IDM>>::Position,
+                   Modification = PositionEnum<ModificationAttribut,IdCreationModifNumEntityTemp<Id1Att,IDM>>::Position,
+                   Num = PositionEnum<NumAttribut,IdCreationModifNumEntityTemp<Id1Att,IDM>>::Position,
+                   NbrAtt};
+    using EAID = EntityAttributsID<Attributs<Id1Att,CreationAttribut,ModificationAttribut,NumAttribut>,IDM>;
+    using EntityAttributsID<Attributs<Id1Att,CreationAttribut,ModificationAttribut,NumAttribut>,IDM>::EntityAttributsID;
+    using EAID::setId1;
+    using EAID::setCreation;
+    using EAID::setModification;
+    using EAID::setNum;
+    BASE_ENTITY(IdCreationModifNumEntityTemp)
+
+    //! Constructeur à partir des valeurs attributs.
+    IdCreationModifNumEntityTemp(int id1, const QDateTime & creation, const QDateTime & modif, int num, int id = 0)
+        : EAID(id)
+    {
+        setId1(id1);
+        setCreation(creation);
+        setModification(modif);
+        setNum(num);
+    }
+};
+
+template<int IDM> using IdCreationModifNumEntity = IdCreationModifNumEntityTemp<Id1Attribut,IDM>;
+#define ENUM_IdCreationModifNum(ID1) ENUM_IdCreationModifNumTemp(ID1)
+
+template<int IDM> using IdNullCreationModifNumEntity = IdCreationModifNumEntityTemp<Id1NullAttribut,IDM>;
+#define ENUM_IdNullCreationModifNum(ID1) ENUM_IdCreationModifNumTemp(ID1)
 
 //! \ingroup groupeMacroEntity
 //! Macro définissant les positions des attributs pour une clé, une clé de cible et une cible.
@@ -59,6 +158,56 @@ template<int IDM> using CibleEntity = CibleEntityTemp<Id1Attribut,IDM>;
 
 template<int IDM> using CibleNullEntity = CibleEntityTemp<Id1NullAttribut,IDM>;
 #define ENUM_CibleNull(ID1) ENUM_CibleTemp(ID1)
+
+//! \ingroup groupeMacroEntity
+//! Macro définissant les positions des attributs pour une clé, une clé de cible, une cible, un numéro et un type.
+#define ENUM_CibleNumTypeTemp(ID1) /*! \brief Positions des attributs */ \
+    enum Position {Id = mere::Id, Id1 = mere::Id1, IdCible = mere::IdCible, Cible = mere::Cible, Num = mere::Num, Type = mere::Type, NbrAtt, Id ## ID1 = Id1};
+
+/*! \ingroup groupeBaseEntity
+ * \brief Classe de base des entités ayant un attribut clé étrangère, idCible, Cible, Num et Type.
+ */
+template<class Id1Att, int IDM> class CibleNumTypeEntityTemp : public EntityAttributsID<Attributs<Id1Att,CibleAttributs,NumAttribut,TypeAttribut>,IDM>
+{
+public:
+    //! Positions des attributs.
+    enum Position {Id = PositionEnum<IdAttribut,CibleNumTypeEntityTemp<Id1Att,IDM>>::Position,
+                   Id1 = PositionEnum<Id1Att,CibleNumTypeEntityTemp<Id1Att,IDM>>::Position,
+                   IdCible = PositionEnum<IdCibleAttribut,CibleNumTypeEntityTemp<Id1Att,IDM>>::Position,
+                   Cible = PositionEnum<CibleAttribut,CibleNumTypeEntityTemp<Id1Att,IDM>>::Position,
+                   Num = PositionEnum<NumAttribut,CibleNumTypeEntityTemp<Id1Att,IDM>>::Position,
+                   Type = PositionEnum<TypeAttribut,CibleNumTypeEntityTemp<Id1Att,IDM>>::Position,
+                   NbrAtt};
+    using EAID = EntityAttributsID<Attributs<Id1Att,CibleAttributs,NumAttribut,TypeAttribut>,IDM>;
+    using EntityAttributsID<Attributs<Id1Att,CibleAttributs,NumAttribut,TypeAttribut>,IDM>::EntityAttributsID;
+    using EAID::setId1;
+    using EAID::setIdCible;
+    using EAID::setCible;
+    using EAID::setNum;
+    using EAID::setType;
+    BASE_ENTITY(CibleNumTypeEntityTemp)
+
+    //! Constructeur à partir des valeurs attributs.
+    CibleNumTypeEntityTemp(int idCible, int cible, int num, int type, int id = 0)
+        : EAID(id)
+    {
+        setIdCible(idCible);
+        setCible(cible);
+        setNum(num);
+        setType(type);
+    }
+
+    //! Constructeur à partir des valeurs attributs.
+    CibleNumTypeEntityTemp(int id1, int idCible, int cible, int num, int type, int id = 0)
+        : CibleNumTypeEntityTemp(idCible, cible, num, type, id)
+        {setId1(id1);}
+};
+
+template<int IDM> using CibleNumTypeEntity = CibleNumTypeEntityTemp<Id1Attribut,IDM>;
+#define ENUM_CibleNumType(ID1) ENUM_CibleNumTypeTemp(ID1)
+
+template<int IDM> using CibleNullNumTypeEntity = CibleNumTypeEntityTemp<Id1NullAttribut,IDM>;
+#define ENUM_CibleNullNumType(ID1) ENUM_CibleNumTypeTemp(ID1)
 
 //! \ingroup groupeMacroEntity
 //! Macro définissant les positions des attributs pour une clé, une clé de cible, une cible et une DateTime.

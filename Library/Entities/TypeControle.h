@@ -11,7 +11,7 @@
 SINGLE_ATTRIBUT(AppreciationAttribut,AttributBool,AttributBool,Appreciation,appreciation,bool)
 
 /*! \ingroup groupeEntity
- * \brief Représentation de l'entité Controle.
+ * \brief Représentation de l'entité TypeControle.
  */
 class TypeControle : public EntityAttributsID<Attributs<ArbreSimpleAttribut,NcNomAttribut,AppreciationAttribut,DecimaleAttribut,ModifAttribut,TotalAttribut,TypeAttribut>,InfoEntity::TypeControleId>
 {

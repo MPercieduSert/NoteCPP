@@ -53,7 +53,7 @@ SOURCES += main.cpp \
     ../Library/Entities/EntityDivers.cpp \
     ../Library/Entities/EntityOfDefaultType.cpp \
     ../Library/Entities/EntityRelation.cpp \
-#    ../Library/Entities/Exercice.cpp \
+    ../Library/Entities/Forme.cpp \
     ../Library/Entities/Groupe.cpp \
     ../Library/Entities/InfoEntity.cpp \
     ../Library/Entities/InfoEntityBase.cpp \
@@ -61,8 +61,10 @@ SOURCES += main.cpp \
     ../Library/Entities/Niveau.cpp \
 #    ../Library/Entities/Point.cpp \
     ../Library/Entities/TypeControle.cpp \
+    ../Library/Entities/TypeCours.cpp \
     ../Library/Entities/TypeEtablissement.cpp \
     ../Library/Entities/TypeNiveau.cpp \
+    ../Library/Entities/Utilisation.cpp \
     ../Library/Entities/VersionBdd.cpp \
     ../Library/Fen/Fen.cpp \
 #    ../Library/Fen/FenExo.cpp \
@@ -162,7 +164,7 @@ HEADERS += \
     ../Library/Entities/EntityDivers.h \
     ../Library/Entities/EntityOfDefaultType.h \
     ../Library/Entities/EntityRelation.h \
-#    ../Library/Entities/Exercice.h \
+    ../Library/Entities/Forme.h \
     ../Library/Entities/Groupe.h \
     ../Library/Entities/InfoEntity.h \
     ../Library/Entities/InfoEntityBase.h \
@@ -170,8 +172,10 @@ HEADERS += \
     ../Library/Entities/Niveau.h \
 #    ../Library/Entities/Point.h \
     ../Library/Entities/TypeControle.h \
+    ../Library/Entities/TypeCours.h \
     ../Library/Entities/TypeEtablissement.h \
     ../Library/Entities/TypeNiveau.h \
+    ../Library/Entities/Utilisation.h \
     ../Library/Entities/VersionBdd.h \
     ../Library/Fen/Fen.h \
 #    ../Library/Fen/FenExo.h \

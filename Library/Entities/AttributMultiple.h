@@ -98,15 +98,18 @@ template<class AttFound, class Ent> using PositionEnum = PosisionEnumTemp<AttFou
 using CibleAttributs = Attributs<IdCibleAttribut, CibleAttribut>;
 using CibleDateTimeAttribut = Attributs<CibleAttributs, DateTimeValideAttribut>;
 using CibleDateTimeNumAttribut = Attributs<CibleDateTimeAttribut, NumAttribut>;
+using OrigineAttributs = Attributs<IdOrigineAttribut, OrigineAttribut>;
 template<class ValeurAttribut> using CibleDateTimeNumValeurAttribut = Attributs<CibleDateTimeNumAttribut, ValeurAttribut>;
 using RelationAttribut = Attributs<Id1Attribut, Id2Attribut>;
 using RelationDateTimeAttribut = Attributs<RelationAttribut, DateTimeValideAttribut>;
 using RelationNumAttribut = Attributs<RelationAttribut, NumAttribut>;
 using IdNumAttribut = Attributs<Id1Attribut, NumAttribut>;
+using IdProgNomAttribut = Attributs<IdProgAttribut,NomAttribut>;
 template<class ValeurAttribut> using IdNumValeurAttribut = Attributs<IdNumAttribut, ValeurAttribut>;
 using NomTypeAttribut = Attributs<NomAttribut, TypeAttribut>;
 using NcNomAttribut = Attributs<NcAttribut, NomAttribut>;
 using NcNomTypeAttribut = Attributs<NcNomAttribut, TypeAttribut>;
+using TexteAttributs = Attributs<CreationAttribut,ModificationAttribut,TexteAttribut>;
 
 /*! \ingroup groupeBaseAttributEntity
  * \brief Attributs contenant deux identifiant dont exactement un est non nul pour être valide.

@@ -48,17 +48,21 @@ void Bdd::listeMiseAJourBdd(int version)
         m_manager.get<CibleCommentaire>().creer();
         m_manager.get<CibleDonnee>().creer();
         m_manager.get<CibleMotCle>().creer();
+        m_manager.get<CibleTexte>().creer();
         m_manager.get<Classe>().creer();
         m_manager.get<ClasseEleve>().creer();
         m_manager.get<Coefficient>().creer();
         m_manager.get<Commentaire>().creer();
         m_manager.get<Controle>().creer();
+        m_manager.get<Cours>().creer();
         m_manager.get<Donnee>().creer();
         m_manager.get<DonneeCard>().creer();
         m_manager.get<Eleve>().creer();
         m_manager.get<Etablissement>().creer();
         m_manager.get<EtablissementNiveau>().creer();
         m_manager.get<EtablissementType>().creer();
+        m_manager.get<Exercice>().creer();
+        m_manager.get<Forme>().creer();
         m_manager.get<Groupe>().creer();
         m_manager.get<GroupeEleve>().creer();
         m_manager.get<MotCle>().creer();
@@ -68,9 +72,15 @@ void Bdd::listeMiseAJourBdd(int version)
         m_manager.get<Note>().creer();
         m_manager.get<RestrictionModification>().creer();
         m_manager.get<Source>().creer();
+        m_manager.get<Texte>().creer();
+        m_manager.get<TexteSource>().creer();
         m_manager.get<TypeControle>().creer();
+        m_manager.get<TypeCours>().creer();
         m_manager.get<TypeEtablissement>().creer();
+        m_manager.get<TypeExercice>().creer();
         m_manager.get<TypeNiveau>().creer();
+        m_manager.get<TypeUtilisation>().creer();
+        m_manager.get<Utilisation>().creer();
 
         // Types d'établissement
         TypeEtablissement primaire(-7,-11,"Primaire");

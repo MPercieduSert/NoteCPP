@@ -36,7 +36,6 @@
  * \brief Ensemble des Macros des entités.
  */
 
-
 /*! \ingroup groupeMacroEntity
  * \brief Macro définissant les menbre static d'une entité.
  */

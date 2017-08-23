@@ -25,30 +25,6 @@ namespace bdd {
                              EcoleInge
     };
 
-    //! Enumération des cibles.
-    enum cible {AnneeCb = 0,
-                AutorisationModificationCb = 1,
-                BaremeCb = 2,
-                ClasseCb = 3,
-                CommentaireCb = 4,
-                CoursCb = 5,
-                DonneeCb = 6,
-                EleveCb = 7,
-                EnonceCb = 8,
-                EtablissementCb = 9,
-                ExerciceCb = 10,
-                FormeCb = 11,
-                GroupeCb = 12,
-                NiveauCb = 13,
-                NoteCb = 14,
-                PointCb = 15,
-                TexteCb = 16,
-                TypeControleCb = 17,
-                TypeCoursCb = 18,
-                TypeNiveauCb = 19,
-                SourceCb = 20
-               };
-
     enum commentaireNum {AppreciationNum = 0};
 
     enum motClePermissionNum {VisibleAttNum = 0};

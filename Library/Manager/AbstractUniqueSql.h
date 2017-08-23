@@ -416,7 +416,6 @@ public:
                 return bdd::Aucun;
             }
         }
-
         return bdd::Conflit;
     }
 
@@ -457,22 +456,17 @@ public:
                 return bdd::Aucun;
             }
         }
-
         return bdd::Conflit;
     }
 
 protected:
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée 1.
     void bindValuesUnique_1(const Ent &entity)
-    {
-        bindValue(Id1Unique,entity.id1());
-    }
+        {bindValue(Id1Unique,entity.id1());}
 
     //! Transmet les valeurs des attributs uniques à la requète SQL préparée 2.
     void bindValuesUnique_2(const Ent &entity)
-    {
-        bindValue(Id2Unique,entity.id2());
-    }
+        {bindValue(Id2Unique,entity.id2());}
 };
 
 /*! \ingroup groupeUniqueSqlBase

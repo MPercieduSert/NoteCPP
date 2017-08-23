@@ -8,8 +8,6 @@
 #include "Entity.h"
 #include "InfoEntity.h"
 
-
-
 /*! \ingroup groupeEntity
  * \brief Représentation de l'entité DonneeCard.
  */
