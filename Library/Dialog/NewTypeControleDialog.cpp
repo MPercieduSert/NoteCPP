@@ -37,7 +37,7 @@ NewTypeControleDialog::NewTypeControleDialog(Tree<TypeControle> && treeTpCtr, QW
     // Sur Type
     m_labelSurType = new QLabel(tr("Sur Type :"));
     m_labelSurType->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-    treeTpCtr.insertChild(TypeControle(tr("Aucun"),NewTypeControleDialog::Aucun));
+    treeTpCtr.insertChild(0, TypeControle(tr("Aucun"),NewTypeControleDialog::Aucun));
     m_treeModelSurType = new ReadTreeWidget<TypeControle>(treeTpCtr,
                                             {TypeControle::Nom,TypeControle::Nc,
                                              TypeControle::Total,TypeControle::Decimale});

@@ -206,14 +206,26 @@ public:
             return list;
         }
 
+        //! Test si l'itérateur pointe vers une feuille de l'arbre.
+        bool isLeaf() const
+            {return m_ptr->m_childs.isEmpty();}
+
         /*! \brief Test si le noeud courant de l'itérateur est le noeud virtuel nul.
          * Cette méthode est plus éfficace que le test "itérateur == tree.end()" pour tester la fin de parcours.
          *
          * L'itérateur est placé sur la position virtuelle 0,
          * si l'itérateur n'est pas initialisé ou si l'on parcourt l'arbre au delà du dernier noeuds ou avant la racine.
          */
-        bool isNull()
+        bool isNull() const
             {return m_ptr == nullptr;}
+
+        //! Teste si le neud courant est le sommet de l'arbre
+        bool isRoot() const
+            {return !isNull() && m_ptr->m_parent == nullptr;}
+
+        //! Place l'itérateur sur le dernier des descendants de la ligné des ainés du noeud courant.
+        iterator & toLatestChild()
+            {m_ptr = m_ptr->lastestChild(); return (*this);}
 
         //! Positionne l'itérateur sur le noeud précédent dans le parcours de type suivant-précédent:
         //! les noeuds sont parcours deux fois, à la descente et à la remonté.
@@ -339,8 +351,13 @@ public:
     //! Destructeur. Détruit également récursivement l'ensemble des descendants.
     ~TreeItem()
     {
+        if(!isRoot())
+            m_parent->m_childs.removeOne(this);
         for(typename QList<TreeItem<T>* >::const_iterator i = m_childs.cbegin(); i != m_childs.cend(); ++i)
+        {
+            (*i)->m_parent = nullptr;
             delete *i;
+        }
     }
 
     //! Ajoute nbr descendants directs au noeud et renvoie un pointeur sur le dernier descendant créé.
@@ -392,16 +409,33 @@ public:
     iterator end() const
         {return iterator(nullptr);}
 
+    //! Renvoie un pointeur sur le premier descendant direct.
+    TreeItem<T> * firstChild() const
+        {return m_childs.first();}
+
     //! Test si le noeud posséde un descendant direct.
     bool hasChild() const
         {return !m_childs.isEmpty();}
 
     //! Insert le noeud pointé par child à l'indice position dans la liste des descendants directs.
-    void insertChild(TreeItem<T> *child, const int position = 0);
+    void insertChild(const int position, TreeItem<T> *child)
+    {
+        m_childs.insert(position,child);
+        changeHeredite(child);
+    }
+
 
     //! Créer une nouveau de valeur T est l'insert à l'indice position dans la liste des descendants directs.
-    void insertChild(const T & data, const int position = 0)
-        {insertChild(new TreeItem<T>(data), position);}
+    void insertChild(const int position, const T & data)
+        {insertChild(position, new TreeItem<T>(data));}
+
+    //! Test si le noeud est le première enfant.
+    bool isFirstChild() const
+        {return isRoot() ? true : this == parent()->firstChild();}
+
+    //! Test si le noeud est le première enfant.
+    bool isLastChild() const
+        {return isRoot() ? true : this == parent()->lastChild();}
 
     //! Test si le noeud est la racine de l'arbre.
     bool isRoot() const
@@ -411,7 +445,7 @@ public:
     TreeItem<T> * lastChild() const
         {return m_childs.last();}
 
-    //! Méthode récursive renvoyant un pointeur sur le dernier descendant du noeud.
+    //! Méthode récursive renvoyant un pointeur sur le dernier des descendants de la ligné des ainés du noeud.
     TreeItem<T> * lastestChild() const;
 
     //! Transmet une référence sur la donnée associée au noeud. La donnée pouvant être modifiée.
@@ -564,27 +598,6 @@ template<class T> TreeItem<T> * TreeItem<T>::addChild(const int nbr)
     }
 }*/
 
-template<class T> void TreeItem<T>::insertChild(TreeItem<T> *child, const int position)
-{
-    if(position == 0)
-    {
-        m_childs.prepend(child);
-        changeHeredite(child);
-    }
-    else if(0 < position && position < m_childs.size())
-    {
-        m_childs.insert(position,child);
-        changeHeredite(child);
-    }
-    else
-    {
-        throw std::runtime_error(QString("La position donnée :")
-                                 .append(QString::number(position))
-                                 .append(", dépasse le nombre de descendant:")
-                                 .append(QString::number(m_childs.size())).append(".").toStdString());
-    }
-}
-
 template<class T> TreeItem<T> * TreeItem<T>::lastestChild() const
 {
     if(m_childs.isEmpty())
@@ -611,10 +624,7 @@ template<class T> void TreeItem<T>::move(const int from, const int to)
 template<class T> void TreeItem<T>::removeChild(const int position)
 {
     if(0 <= position && position < m_childs.size())
-    {
         delete m_childs.at(position);
-        m_childs.removeAt(position);
-    }
     else
     {
         throw std::runtime_error(QString("La position donnée :")

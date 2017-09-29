@@ -4,6 +4,7 @@
 #ifndef ABSTRACTBDD_H
 #define ABSTRACTBDD_H
 
+#include <functional>
 #include <QString>
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -14,6 +15,66 @@
 #include "FileInterface.h"
 #include "Managers.h"
 #include "../Div/VectorPtr.h"
+
+/*! \ingroup groupeFile
+ * \brief Macro permettant déclarer les méthodes de suppression.
+ */
+#define DECL_DEL_METHODE /*! \brief Essaie de supprimer les éléments de la liste de la base de donnée,*/ \
+    /*! se termine au premièr échec et renvoye false et true si tout les éléments ont été supprimés.*/ \
+    template<class Ent> bool delList(ListPtr<Ent> liste); \
+    /*! \brief Méthode de suppression pour les entité à modification controlée. */ \
+    template<class Ent, class U> bool delArbre(Ent & entity, U delFonction); \
+    /*! \brief Méthode de suppression pour les entité à modification controlée. */ \
+    template<class Ent, class U> bool delArbre(const Ent & entity, U delFonction); \
+    /*! \brief Méthode de suppression pour les entité à modification controlée. */ \
+    template<class Ent, class U> bool delArbreModifControle(Ent & entity, U delFonction); \
+    /*! \brief Méthode de suppression pour les entité à modification controlée. */ \
+    template<class Ent, class U> bool delArbreModifControle(const Ent & entity, U delFonction); \
+    /*! \brief Méthode de suppression pour les entité à modification controlée. */ \
+    template<class Ent, class U> bool delModifControle(Ent & entity, U delFonction); \
+    /*! \brief Méthode de suppression pour les entité à modification controlée. */ \
+    template<class Ent, class U> bool delModifControle(const Ent & entity, U delFonction);
+
+/*! \ingroup groupeFile
+ * \brief Corps des deux méthodes delArbre.
+ */
+#define DEL_ARBRE {VectorPtr<MotCle> childs = getVectorChilds(entity); \
+    VectorPtr<MotCle>::iterator i = childs.begin(); \
+    while(i != childs.end() && del(*i)) ++i; \
+    if(i == childs.end() && delFonction(entity)) return AbstractBdd::del(entity); \
+    else return false;}
+
+/*! \ingroup groupeFile
+ * \brief Corps des deux méthodes delArbre.
+ */
+#define DEL_ARBRE_MODIF_CONTROLE {return delModifControle(entity,[this,&delFonction](const Ent & entity)->bool{ \
+    VectorPtr<MotCle> childs = getVectorChilds(entity); \
+    VectorPtr<MotCle>::iterator i = childs.begin(); \
+    while(i != childs.end() && del(*i)) ++i; \
+    return i == childs.end() && delFonction(entity);});}
+
+/*! \ingroup groupeFile
+ * \brief Corps des deux méthodes delModifControle.
+ */
+#define DEL_MODIF_CONTROLE {if(getAutorisation(entity, bdd::Suppr) && delFonction(entity) \
+    && delList(getList<RestrictionModification>(RestrictionModification::IdCible,entity.id(), \
+    RestrictionModification::Cible,Cible<MotCle>::value))) \
+    return AbstractBdd::del(entity); \
+    else return false;}
+
+/*! \ingroup groupeFile
+ * \brief Macro permettant définir les méthodes de suppression.
+ */
+#define DEF_DEL_METHODE template<class Ent> bool Bdd::delList(ListPtr<Ent> liste){ \
+    typename ListPtr<Ent>::iterator i = liste.begin(); \
+    while(i != liste.end() && del(*i)) ++i; \
+    return i == liste.end();} \
+    template<class Ent, class U> bool Bdd::delArbre(Ent & entity, U delFonction) DEL_ARBRE \
+    template<class Ent, class U> bool Bdd::delArbre(const Ent & entity, U delFonction) DEL_ARBRE \
+    template<class Ent, class U> bool Bdd::delArbreModifControle(Ent & entity, U delFonction) DEL_ARBRE_MODIF_CONTROLE \
+    template<class Ent, class U> bool Bdd::delArbreModifControle(const Ent & entity, U delFonction) DEL_ARBRE_MODIF_CONTROLE \
+    template<class Ent, class U> bool Bdd::delModifControle(Ent & entity, U delFonction) DEL_MODIF_CONTROLE \
+    template<class Ent, class U> bool Bdd::delModifControle(const Ent & entity, U delFonction) DEL_MODIF_CONTROLE
 
 /*! \ingroup groupeFile
  *  \brief Classe mère du gestionnaire de base de donnée.
@@ -60,6 +121,12 @@ public:
 
     //! Teste s'il existe une entité ayant les mêmes valeurs qu'un ensemble d'attributs uniques que entity en base de donnée.
     template<class Ent> bool existsUnique(const Ent & entity);
+
+    //! Supprime l'entité entity de la base de donnée et met l'identifiant de l'entité à zéro.
+    template<class Ent> bool del(Ent & entity);
+
+    //! Supprime l'entité entity de la base de donnée.
+    template<class Ent> bool del(const Ent & entity);
 
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que entity en base de donnée.
     template<class Ent> bdd::ExisteUni existsUniqueEnsemble(Ent & entity);
@@ -150,6 +217,9 @@ public:
     //! valeur de la colonne de la jointure d'identifiant cleWhere = valueWhere,
     //! ordonnée suivant la colonne de l'entité d'identifiant ordre.
     template<class Ent, class Join> ListPtr<Ent> getList(typename Join::Position cleJoin, typename Join::Position cleWhere, const QVariant & valueWhere, typename Ent::Position ordre = Ent::Id, bdd::Condition cond = bdd::Condition::Egal, bool crois = true);
+
+    //! Renvoie le liste des descendant direct d'entity.
+    template<class Ent> ListPtr<Ent> getListChilds(const Ent & entity);
 
     //! Renvoie la map des entités de la table des entités Ent.
     template<class Ent> MapPtr<Ent> getMap(typename Ent::Position cleMap = Ent::Id);
@@ -254,6 +324,9 @@ public:
     //! ordonnée suivant la colonne de l'entité d'identifiant ordre.
     template<class Ent, class Join> VectorPtr<Ent> getVector(typename Join::Position cleJoin, typename Join::Position cleWhere, const QVariant & valueWhere, typename Ent::Position ordre = Ent::Id, bdd::Condition cond = bdd::Condition::Egal, bool crois = true);
 
+    //! Renvoie le vecteur des descendant direct d'entity.
+    template<class Ent> VectorPtr<Ent> getVectorChilds(const Ent & entity);
+
     //! Teste si la base de donnée est valide.
     bool isValid()
         {return true;}
@@ -265,28 +338,35 @@ public:
     template<class Ent> bool sameInBdd(const Ent & entity);
 
     //! Enregistre l'entity dans la base de donnée.
+    //! Si l'entité est nouvelle en base de donnée l'identifiant de entity est mise-à-jour.
     template<class Ent> void save(Ent & entity);
 
     //! Enregistre l'entity dans la base de donnée.
-    template<class Ent> void save(const Ent && entity);
+    template<class Ent> void save(const Ent & entity);
 
     //! Enregistre l'entité entity en base de donnée ainsi que sa nouvelle autorisation de modification.
     template<class Ent> void save(Ent & entity, bdd::Autorisation autorisation, bool bb = false);
 
     //! Enregistre l'entité entity en base de donnée ainsi que sa nouvelle autorisation de modification.
-    template<class Ent> void save(const Ent && entity, bdd::Autorisation autorisation, bool bb = false);
+    template<class Ent> void save(const Ent & entity, bdd::Autorisation autorisation, bool bb = false);
 
     //! Enregistre l'entité entity en base de donnée ainsi que ses nouvelles autorisations de modification.
     template<class Ent> void save(Ent & entity, const QMap<bdd::Autorisation,bool> & autorisations);
 
     //! Enregistre l'entité entity en base de donnée ainsi que ses nouvelles autorisations de modification.
-    template<class Ent> void save(const Ent && entity, const QMap<bdd::Autorisation,bool> & autorisations);
+    template<class Ent> void save(const Ent & entity, const QMap<bdd::Autorisation,bool> & autorisations);
 
     //! Enregistre l'entité entity en base de donnée ainsi que ses nouvelles restriction de modification.
     template<class Ent> void save(Ent & entity, const QList<bdd::Autorisation> restriction);
 
     //! Enregistre l'entité entity en base de donnée ainsi que ses nouvelle restriction de modification.
     template<class Ent> void save(const Ent & entity, const QList<bdd::Autorisation> restriction);
+
+    //! Enregistre l'entité entity en base avec le parent et la position spécifiés.
+    template<class Ent> void save(Ent & entity, const Ent & parent, int num = 0);
+
+    //! Enregistre l'entité entity en base avec le parent et la position spécifiés.
+    template<class Ent> void save(const Ent & entity, const Ent & parent, int num = 0);
 
     //! Enregistre les entités de vector dans la base de donnée.
     template<class Ent> void save(ListPtr<Ent> & vector)
@@ -314,6 +394,22 @@ public:
     //! Enregistre les entités de vector dans la base de donnée.
     template<class Ent> void save(const VectorPtr<Ent> & vector)
         {saveConteneur<Ent,VectorPtr<Ent>>(vector);}
+
+    //! Enregistre l'entity dans la base de donnée, s'il existe en base de donnée une entité d'identifiant idU
+    //! ayant les mêmes attributs unique,
+    //! deux cas se présentent, soit entity à un identifiant nul alors l'entité d'identifiant idU est mise à jour
+    //! et l'identifiant de entity devient idU,
+    //! soit entity à un identifiant idE non nul alors l'entité d'identifiant idU est mise à jour
+    //! et l'entité d'identifiant idE est supprimé.
+    //! Si l'entité est nouvelle en base de donnée l'identifiant de entity est mise-à-jour.
+    template<class Ent> void saveUnique(Ent & entity);
+
+    //! Enregistre l'entity dans la base de donnée, s'il existe en base de donnée une entité d'identifiant idU
+    //! ayant les mêmes attributs unique,
+    //! deux cas se présentent, soit entity à un identifiant nul alors l'entité d'identifiant idU est seulement mise à jour,
+    //! soit entity à un identifiant idE non nul alors l'entité d'identifiant idU est mise à jour
+    //! et l'entité d'identifiant idE est supprimé.
+    template<class Ent> void saveUnique(const Ent & entity);
 
     //! Modifie une autorisation de modification pour une entité donnée.
     template<class Ent> void setAutorisation(const Ent & entity, bdd::Autorisation autorisation, bool bb = false);
@@ -351,19 +447,25 @@ template<class Ent> bool AbstractBdd::exists(const Ent & entity)
     {return entity.isNew() ? false : m_manager.get<Ent>().exists(entity);}
 
 template<class Ent> bool AbstractBdd::exists(typename Ent::Position cle, const QVariant & value, bdd::Condition cond)
-    { return m_manager.get<Ent>().exists(cle,value,cond);}
+    {return m_manager.get<Ent>().exists(cle,value,cond);}
 
 template<class Ent> bool AbstractBdd::existsUnique(Ent & entity)
-    { return m_manager.get<Ent>().existsUnique(entity) != bdd::Aucun;}
+    {return m_manager.get<Ent>().existsUnique(entity) != bdd::Aucun;}
 
 template<class Ent> bool AbstractBdd::existsUnique(const Ent & entity)
-    { return m_manager.get<Ent>().existsUnique(entity) != bdd::Aucun;}
+    {return m_manager.get<Ent>().existsUnique(entity) != bdd::Aucun;}
 
 template<class Ent> bdd::ExisteUni AbstractBdd::existsUniqueEnsemble(Ent & entity)
-    { return m_manager.get<Ent>().existsUnique(entity);}
+    {return m_manager.get<Ent>().existsUnique(entity);}
 
 template<class Ent> bdd::ExisteUni AbstractBdd::existsUniqueEnsemble(const Ent & entity)
-    { return m_manager.get<Ent>().existsUnique(entity);}
+    {return m_manager.get<Ent>().existsUnique(entity);}
+
+template<class Ent> bool AbstractBdd::del(Ent & entity)
+    {return m_manager.get<Ent>().del(entity);}
+
+template<class Ent> bool AbstractBdd::del(const Ent & entity)
+    {return m_manager.get<Ent>().del(entity);}
 
 template<class Ent, class T> T AbstractBdd::fonctionAgrega(bdd::Agrega fonc, typename Ent::Position att)
     {return m_manager.get<Ent>().template fonctionAgrega<T>(fonc, att);}
@@ -423,6 +525,9 @@ template<class Ent, class Join> ListPtr<Ent> AbstractBdd::getList(typename Join:
     return m_manager.get<Ent>().getListJoin(m_manager.get<Join>().table(),m_manager.get<Join>().attribut(cleJoin), m_manager.get<Join>().attribut(cleWhere),
                                                       valueWhere, ordre, cond, crois);
 }
+
+template<class Ent> ListPtr<Ent> AbstractBdd::getListChilds(const Ent & entity)
+    {return m_manager.get<Ent>().getListChilds(entity);}
 
 template<class Ent> MapPtr<Ent> AbstractBdd::getMap(typename Ent::Position cleMap)
     {return m_manager.get<Ent>().getMap(cleMap);}
@@ -501,25 +606,28 @@ template<class Ent, class Join> VectorPtr<Ent> AbstractBdd::getVector(typename J
                                                                            m_manager.get<Join>().attribut(cleWhere),
                                                                            valueWhere, ordre, cond, crois));}
 
+template<class Ent> VectorPtr<Ent> AbstractBdd::getVectorChilds(const Ent & entity)
+    {return m_manager.get<Ent>().getVectorChilds(entity);}
+
 template<class Ent> bool AbstractBdd::sameInBdd(const Ent & entity)
     {return m_manager.get<Ent>().sameInBdd(entity);}
 
 template<class Ent> void AbstractBdd::save(Ent & entity)
     {m_manager.get<Ent>().save(entity);}
 
-template<class Ent> void AbstractBdd::save(const Ent && entity)
+template<class Ent> void AbstractBdd::save(const Ent & entity)
     {m_manager.get<Ent>().save(entity);}
 
 template<class Ent> void AbstractBdd::save(Ent & entity, bdd::Autorisation autorisation, bool bb)
     {m_manager.get<Ent>().save(entity, autorisation, bb);}
 
-template<class Ent> void AbstractBdd::save(const Ent && entity, bdd::Autorisation autorisation, bool bb)
+template<class Ent> void AbstractBdd::save(const Ent & entity, bdd::Autorisation autorisation, bool bb)
     {m_manager.get<Ent>().save(entity, autorisation, bb);}
 
 template<class Ent> void AbstractBdd::save(Ent & entity, const QMap<bdd::Autorisation,bool> & autorisations)
     {m_manager.get<Ent>().save(entity, autorisations);}
 
-template<class Ent> void AbstractBdd::save(const Ent && entity, const QMap<bdd::Autorisation,bool> & autorisations)
+template<class Ent> void AbstractBdd::save(const Ent & entity, const QMap<bdd::Autorisation,bool> & autorisations)
     {m_manager.get<Ent>().save(entity, autorisations);}
 
 template<class Ent> void AbstractBdd::save(Ent & entity, const QList<bdd::Autorisation> restriction)
@@ -528,28 +636,27 @@ template<class Ent> void AbstractBdd::save(Ent & entity, const QList<bdd::Autori
 template<class Ent> void AbstractBdd::save(const Ent & entity, const QList<bdd::Autorisation> restriction)
     {m_manager.get<Ent>().save(entity, restriction);}
 
+template<class Ent> void AbstractBdd::save(Ent & entity, const Ent & parent, int num)
+    {m_manager.get<Ent>().save(entity,parent,num);}
+
+template<class Ent> void AbstractBdd::save(const Ent & entity, const Ent & parent, int num)
+    {m_manager.get<Ent>().save(entity,parent,num);}
+
+template<class Ent> void AbstractBdd::saveUnique(Ent & entity)
+    {m_manager.get<Ent>().saveUnique(entity);}
+
+template<class Ent> void AbstractBdd::saveUnique(const Ent & entity)
+    {m_manager.get<Ent>().saveUnique(entity);}
+
 template<class Ent, class Conteneur> void AbstractBdd::saveConteneur(const Conteneur & vector)
 {
     for(typename Conteneur::iterator i = vector.begin(); i != vector.end(); ++i)
        m_manager.get<Ent>().save(*i);
 }
-/*
-template<class Ent> void AbstractBdd::save(const MapPtr<Ent> & vector)
-{
-    for(typename MapPtr<Ent>::iterator i = vector.begin(); i != vector.end(); ++i)
-       m_manager.get<Ent>().save(*i);
-}
-*/
+
 template<class Ent> void AbstractBdd::save(Tree<Ent> & arbre, bdd::TreeSave n)
     {m_manager.get<Ent>().save(arbre,n);}
 
-/*
-template<class Ent> void AbstractBdd::save(const VectorPtr<Ent> & vector)
-{
-    for(typename VectorPtr<Ent>::iterator i = vector.begin(); i != vector.end(); ++i)
-       m_manager.get<Ent>().save(*i);
-}
-*/
 template<class Ent> void AbstractBdd::setAutorisation(const Ent & entity, bdd::Autorisation autorisation, bool bb)
     {m_manager.get<Ent>().setAutorisation(entity, autorisation, bb);}
 

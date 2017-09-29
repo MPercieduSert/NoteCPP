@@ -40,7 +40,11 @@ void ManagerArbre::add(Arbre &node)
                 }
                 else
                 {
-                    ListPtr<Arbre> nodes(getList(Arbre::Num,node.num(),Arbre::Num,bdd::Condition::SupEgal,false));
+                    ListPtr<Arbre> nodes(getList(Arbre::Parent,node.parent(),
+                                                 Arbre::Num,node.num(),
+                                                 Arbre::Num,
+                                                 bdd::Condition::Egal,bdd::Condition::SupEgal,
+                                                 false));
                     for(ListPtr<Arbre>::iterator i = nodes.begin(); i != nodes.end(); ++i)
                     {
                         (*i).setNum((*i).num() + 1);
@@ -193,20 +197,17 @@ void ManagerArbre::addUnstable(const Arbre &node)
         throw std::invalid_argument("Le nouveau noeud ajouté doit être une feuille.");
 }
 
-void ManagerArbre::del(int id)
+bool ManagerArbre::del(int id)
 {
     Arbre node(id);
     get(node);
-    del(node);
+    return del(node);
 }
 
-void ManagerArbre::del(const Arbre & node)
+bool ManagerArbre::del(const Arbre & node)
 {
-    if(node.feuille())
-        ManagerSqlArbre::del(node.id());
-    else
-        delUnstable(node);
-
+    if(!node.feuille() || !ManagerSqlArbre::del(node.id()))
+        return false;
     if(node.parent())
     {
         if(exists(Arbre::Parent,node.parent()))
@@ -226,18 +227,19 @@ void ManagerArbre::del(const Arbre & node)
             ManagerSqlArbre::modify(parent);
         }
     }
+    return true;
 }
 
-void ManagerArbre::delUnstable(const Arbre & node)
+/*void ManagerArbre::delUnstable(const Arbre & node)
 {
     if(!node.feuille())
     {
         ListPtr<Arbre> childs(getList(Arbre::Parent,node.id()));
         for(ListPtr<Arbre>::iterator i = childs.begin(); i != childs.end(); ++i)
-            del(*i);
+            delUnstable(*i);
     }
     ManagerSqlArbre::del(node.id());
-}
+}*/
 
 bool ManagerArbre::deplace(const Arbre & node)
 {
@@ -275,7 +277,7 @@ void ManagerArbre::modify(const Arbre & node)
             {
                 nodeBdd.setNum(-numBdd);
                 ManagerSqlArbre::modify(nodeBdd);
-                if(std::abs(numBdd- num) == 1)
+                if(std::abs(numBdd - num) == 1)
                 {
                     Arbre nodeSuivant(num,node.parent());
                     getUnique(nodeSuivant);

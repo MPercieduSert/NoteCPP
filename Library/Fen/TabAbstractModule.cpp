@@ -6,3 +6,10 @@ TabAbstractModule::TabAbstractModule(int index, TabModule *parent)
       m_parent(parent)
     {}
 
+void TabAbstractModule::becomeCurrent() const
+{
+    emit noyau()->collerPermis(false);
+    emit noyau()->copierPermis(false);
+    emit noyau()->couperPermis(false);
+    emit noyau()->savePermis(false);
+}

@@ -8,38 +8,37 @@ TARGET = Widget
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += c++11
-QT += core gui
+QT += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 SOURCES += \
+    BarPlotter.cpp \
+    EditTreeWidget.cpp \
+    HeaderView.cpp \
+    Histogramme.cpp \
+    MotCleWidget.cpp \
     Plotter.cpp \
     ReadTreeWidget.cpp \
     SelectInListBox.cpp \
     SpinBoxAnnee.cpp \
     SpinBoxDecimale.cpp \
-    SpinBoxNumExclu.cpp \
-    HeaderView.cpp \
     SpinBoxNote.cpp \
-    BarPlotter.cpp \
-    Histogramme.cpp \
-    EditTreeWidget.cpp
-
+    SpinBoxNumExclu.cpp
 
 HEADERS += \
+    BarPlotter.h \
+    EditTreeWidget.h \
+    HeaderView.h \
+    Histogramme.h \
+    MotCleWidget.h \
     Plotter.h \
     ReadTreeWidget.h \
     SelectInListBox.h \
     SpinBoxAnnee.h \
     SpinBoxDecimale.h \
-    SpinBoxNumExclu.h \
-    HeaderView.h \
     SpinBoxNote.h \
-    BarPlotter.h \
-    Histogramme.h \
-    EditTreeWidget.h
-
-
+    SpinBoxNumExclu.h
 
 unix {
     target.path = /usr/lib

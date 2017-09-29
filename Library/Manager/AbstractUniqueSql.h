@@ -42,9 +42,6 @@ class AbstractUniqueSql : public ReqSql
 {
 public:
     enum {idUnique = 0};
-    //! Constructeur.
-    AbstractUniqueSql()
-        {}
 
     //! Construit la chaine coorespondant à la requête sql d'unicité
     QString uniqueString(const QString & table, const QMap<int,QString> & att) const;
@@ -52,15 +49,6 @@ public:
     //! Construit la chaine sql de créations des conditions d'unicités.
     virtual QString creer(const QString & table, const QVector<QMap<int,QString>> & atts) const = 0;
 
-    /*
-    //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée.
-    //! Si le test est positif, l'identitfiant de l'entité entity est remplacé par celui l'entité en base de donnée
-    //! ayant les mêmes valeurs d'attributs uniques.
-    virtual bdd::ExisteUni existsUnique(Ent & entity) = 0;
-
-    //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée.
-    virtual bdd::ExisteUni existsUnique(const Ent & entity) = 0;
-    */
 protected:
     //! Accesseur de l'identifiant.
     int id(int pos = idUnique) const
@@ -68,9 +56,25 @@ protected:
 };
 
 /*! \ingroup groupeUniqueSqlBase
+ * \brief Interface mère des classes conditions d'unicité.
+ */
+template<class Ent> class AbstractUniqueSqlTemp : public AbstractUniqueSql
+{
+public:
+
+    //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée.
+    //! Si le test est positif, l'identitfiant de l'entité entity est remplacé par celui l'entité en base de donnée
+    //! ayant les mêmes valeurs d'attributs uniques.
+    virtual bdd::ExisteUni existsUnique(Ent & entity) = 0;
+
+    //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée.
+    virtual QPair<bdd::ExisteUni,int> existsUniqueId(const Ent & entity) = 0;
+};
+
+/*! \ingroup groupeUniqueSqlBase
  * \brief Classe conditions d'unicité pour les entité ne possédant pas de condition d'unicité.
  */
-class NoUniqueSql : public AbstractUniqueSql
+template<class Ent> class NoUniqueSql : public AbstractUniqueSqlTemp<Ent>
 {
 public:
     //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
@@ -86,23 +90,32 @@ public:
         {return QString();}
 
     //! L'attribut ne possède pas d'ensemble de valeur unique.
-    bdd::ExisteUni existsUnique(Entity & /*entity*/)
-        {return bdd::Aucun;}
+    bdd::ExisteUni existsUnique(Ent & /*entity*/)
+        {return bdd::ExisteUni::Aucun;}
 
     //! L'attribut ne possède pas d'ensemble de valeur unique.
-    bdd::ExisteUni existsUnique(const Entity & /*entity*/)
-        {return bdd::Aucun;}
+    QPair<bdd::ExisteUni,int> existsUniqueId(const Ent & /*entity*/)
+        {return QPair<bdd::ExisteUni,int>(bdd::ExisteUni::Aucun,0);}
 };
 
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe mère des classes condition d'unicité pour les entité possédant une condition d'unicité simple.
  */
-template<class Ent> class SimpleUniqueSql : public AbstractUniqueSql
+template<class Ent> class SimpleUniqueSql : public AbstractUniqueSqlTemp<Ent>
 {
 protected:
     const QString m_unique; //!< Requete Sql sur l'existence d'un ensemble d'attribus uniques.
+    using AbstractUniqueSqlTemp<Ent>::createSqlString;
+    using AbstractUniqueSqlTemp<Ent>::exec;
+    using AbstractUniqueSqlTemp<Ent>::finish;
+    using AbstractUniqueSqlTemp<Ent>::id;
+    using AbstractUniqueSqlTemp<Ent>::next;
+    using AbstractUniqueSqlTemp<Ent>::prepare;
 
 public:
+    using AbstractUniqueSqlTemp<Ent>::uniqueString;
+
+
     //! Construteur.
     SimpleUniqueSql(const QString & table, const QVector<QMap<int,QString>> & att)
         : m_unique(uniqueString(table,att.at(0)))
@@ -119,7 +132,7 @@ public:
     //! dans le cas particulier où il y a un seul ensemble de valeurs unique.
     //! Si le test est positif, l'identitfiant de l'entité entity est remplacé par celui l'entité en base de donnée
     //! ayant les mêmes valeurs d'attributs uniques.
-    virtual bdd::ExisteUni existsUnique(Ent & entity)
+    bdd::ExisteUni existsUnique(Ent & entity)
     {
         prepare(m_unique);
         bindValuesUnique(entity);
@@ -145,29 +158,22 @@ public:
 
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée,
     //! dans le cas particulier où il y a un seul ensemble de valeurs unique.
-    virtual bdd::ExisteUni existsUnique(const Ent & entity)
+    QPair<bdd::ExisteUni,int> existsUniqueId(const Ent & entity)
     {
+        QPair<bdd::ExisteUni,int> resultat(bdd::ExisteUni::Aucun,0);
         prepare(m_unique);
         bindValuesUnique(entity);
         exec();
         if(next())
-        {
+        {  
+            resultat.second = id();
             if(entity.id() == 0 || entity.id() == id())
-            {
-                finish();
-                return bdd::Tous;
-            }
+                resultat.first = bdd::ExisteUni::Tous;
             else
-            {
-                finish();
-                return bdd::Autre;
-            }
+                resultat.first = bdd::ExisteUni::Autre;
         }
-        else
-        {
-            finish();
-            return bdd::Aucun;
-        }
+        finish();
+        return resultat;
     }
 
 protected:
@@ -190,13 +196,21 @@ template<class Ent> QString SimpleUniqueSql<Ent>::creer(const QString & table,co
 /*! \ingroup groupeUniqueSqlBase
  * \brief Classe mère des classes conditions d'unicité pour les entité possédant deux conditions d'unicités.
  */
-template<class Ent> class DoubleUniqueSql : public AbstractUniqueSql
+template<class Ent> class DoubleUniqueSql : public AbstractUniqueSqlTemp<Ent>
 {
 protected:
     const QString m_unique_1; //!< Requete Sql sur l'existence de l'ensemble d'attribus uniques 1.
     const QString m_unique_2; //!< Requete Sql sur l'existence de l'ensemble d'attribus uniques 2.
+    using AbstractUniqueSqlTemp<Ent>::createSqlString;
+    using AbstractUniqueSqlTemp<Ent>::exec;
+    using AbstractUniqueSqlTemp<Ent>::finish;
+    using AbstractUniqueSqlTemp<Ent>::id;
+    using AbstractUniqueSqlTemp<Ent>::next;
+    using AbstractUniqueSqlTemp<Ent>::prepare;
 
 public:
+    using AbstractUniqueSqlTemp<Ent>::uniqueString;
+
     //! Construteur, transmettre en argument l'objet de requète utilisé par le manageur.
     DoubleUniqueSql(const QString & table, const QVector<QMap<int,QString>> & atts)
         : m_unique_1(uniqueString(table,atts.at(0))),
@@ -214,7 +228,7 @@ public:
     //! dans le cas particulier où il y a exactement deux ensembles de valeurs uniques.
     //! Si le test est positif, l'identitfiant de l'entité entity est remplacé par celui l'entité en base de donnée
     //! ayant les mêmes valeurs d'attributs uniques.
-    virtual bdd::ExisteUni existsUnique(Ent & entity)
+    bdd::ExisteUni existsUnique(Ent & entity)
     {
         int idUni1 = 0;
         prepare(m_unique_1);
@@ -272,8 +286,9 @@ public:
 
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée,
     //! dans le cas particulier où il y a exactement deux ensembles de valeurs uniques.
-    virtual bdd::ExisteUni existsUnique(const Ent & entity)
+    QPair<bdd::ExisteUni,int> existsUniqueId(const Ent & entity)
     {
+        QPair<bdd::ExisteUni,int> resultat(bdd::ExisteUni::Aucun,0);
         int idUni1 = 0;
         prepare(m_unique_1);
         bindValuesUnique_1(entity);
@@ -291,38 +306,43 @@ public:
 
         if(idUni1 == idUni2)
         {
-            if(idUni1 == 0)
-                return bdd::Aucun;
-            else
+            if(idUni1 != 0)
             {
+                resultat.second = idUni1;
                 if(entity.id() == 0 || entity.id() == idUni1)
-                    return bdd::Tous;
+                    resultat.first = bdd::ExisteUni::Tous;
                 else
-                    return bdd::Autre;
+                    resultat.first = bdd::ExisteUni::Autre;
             }
         }
         else
         {
             if(idUni1 == 0)
             {
+                resultat.second = idUni2;
                 if(entity.id() == 0 || entity.id() == idUni1)
-                    return bdd::Meme;
+                    resultat.first = bdd::ExisteUni::Meme;
                 else
-                    return bdd::Autre;
+                    resultat.first = bdd::ExisteUni::Autre;
             }
             else
             {
                 if(idUni2 == 0)
                 {
+                    resultat.second = idUni1;
                     if(entity.id() == 0 || entity.id() == idUni2)
-                        return bdd::Meme;
+                        resultat.first = bdd::ExisteUni::Meme;
                     else
-                        return bdd::Autre;
+                        resultat.first = bdd::ExisteUni::Autre;
                 }
                 else
-                    return bdd::Conflit;
+                {
+                    resultat.first = bdd::Conflit;
+                    resultat.second = idUni1;
+                }
             }
         }
+        return resultat;
     }
 
 protected:
@@ -388,7 +408,7 @@ public:
             exec();
             if(next())
             {
-                entity.setId( id());
+                entity.setId(id());
                 finish();
                 return bdd::Tous;
             }
@@ -421,8 +441,9 @@ public:
 
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée,
     //! dans le cas particulier où il y a exactement deux ensembles de valeurs uniques.
-    bdd::ExisteUni existsUnique(const Ent & entity)
+    QPair<bdd::ExisteUni,int> existsUniqueId(const Ent & entity)
     {
+        QPair<bdd::ExisteUni,int> resultat(bdd::ExisteUni::Aucun,0);
         if(entity.id1() != 0 && entity.id2() == 0)
         {
             prepare(m_unique_1);
@@ -430,33 +451,26 @@ public:
             exec();
             if(next())
             {
-                finish();
-                return bdd::Tous;
+                resultat.first = bdd::ExisteUni::Tous;
+                resultat.second = id();
             }
-            else
-            {
-                finish();
-                return bdd::Aucun;
-            }
+            finish();
         }
-
-        if(entity.id1() == 0 && entity.id2() != 0)
+        else if(entity.id1() == 0 && entity.id2() != 0)
         {
             prepare(m_unique_2);
             bindValuesUnique_2(entity);
             exec();
             if(next())
             {
-                finish();
-                return bdd::Tous;
+                resultat.first = bdd::ExisteUni::Tous;
+                resultat.second = id();
             }
-            else
-            {
-                finish();
-                return bdd::Aucun;
-            }
+            finish();
         }
-        return bdd::Conflit;
+        else
+            resultat.first = bdd::Conflit;
+        return resultat;
     }
 
 protected:

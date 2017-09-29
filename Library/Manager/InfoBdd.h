@@ -33,11 +33,11 @@ namespace bdd {
     //! Enumération des numéros de cible
     //! Enumération des cibles.
     enum cible {AnneeCb,
+                BaremeCb,
                 CibleCommentaireCb,
                 CibleDonneeCb,
                 CibleMotCleCb,
                 CibleTexteCb,
-                BaremeCb,
                 ClasseCb,
                 ClasseEleveCb,
                 CoefficientCb,
@@ -60,8 +60,8 @@ namespace bdd {
                 NiveauCb,
                 NiveauPrecedentCb,
                 NoteCb,
-                RestrictionModificationCb,
                 PointCb,
+                RestrictionModificationCb,
                 SourceCb,
                 TexteCb,
                 TexteSourceCb,
@@ -74,45 +74,53 @@ namespace bdd {
                 UtilisationCb
                };
 }
-
 using namespace bdd;
 
+class Bareme;
+class Enonce;
+class Point;
+
 template<class Ent> struct Cible : std::integral_constant<int,-1> {};
-template<> struct Cible<Annee> : std::integral_constant<int,AnneeCb> {};
-template<> struct Cible<CibleCommentaire> : std::integral_constant<int,CibleCommentaireCb> {};
-template<> struct Cible<CibleDonnee> : std::integral_constant<int,CibleDonneeCb> {};
-template<> struct Cible<CibleMotCle> : std::integral_constant<int,CibleMotCleCb> {};
-template<> struct Cible<CibleTexte> : std::integral_constant<int,CibleTexteCb> {};
-template<> struct Cible<Classe> : std::integral_constant<int,ClasseCb> {};
-template<> struct Cible<ClasseEleve> : std::integral_constant<int,ClasseEleveCb> {};
-template<> struct Cible<Coefficient> : std::integral_constant<int,CoefficientCb> {};
-template<> struct Cible<Commentaire> : std::integral_constant<int,CommentaireCb> {};
-template<> struct Cible<Controle> : std::integral_constant<int,ControleCb> {};
-template<> struct Cible<Cours> : std::integral_constant<int,CoursCb> {};
-template<> struct Cible<Donnee> : std::integral_constant<int,DonneeCb> {};
-template<> struct Cible<DonneeCard> : std::integral_constant<int,DonneeCardCb> {};
-template<> struct Cible<Eleve> : std::integral_constant<int,EleveCb> {};
-template<> struct Cible<Etablissement> : std::integral_constant<int,EtablissementCb> {};
-template<> struct Cible<EtablissementNiveau> : std::integral_constant<int,EtablissementNiveauCb> {};
-template<> struct Cible<EtablissementType> : std::integral_constant<int,EtablissementTypeCb> {};
-template<> struct Cible<Exercice> : std::integral_constant<int,ExerciceCb> {};
-template<> struct Cible<Groupe> : std::integral_constant<int,GroupeCb> {};
-template<> struct Cible<GroupeEleve> : std::integral_constant<int,GroupeEleveCb> {};
-template<> struct Cible<MotCle> : std::integral_constant<int,MotCleCb> {};
-template<> struct Cible<MotClePermission> : std::integral_constant<int,MotClePermissionCb> {};
-template<> struct Cible<Niveau> : std::integral_constant<int,NiveauCb> {};
-template<> struct Cible<NiveauPrecedent> : std::integral_constant<int,NiveauPrecedentCb> {};
-template<> struct Cible<Note> : std::integral_constant<int,NoteCb> {};
-template<> struct Cible<RestrictionModification> : std::integral_constant<int,RestrictionModificationCb> {};
-template<> struct Cible<Source> : std::integral_constant<int,SourceCb> {};
-template<> struct Cible<Texte> : std::integral_constant<int,TexteCb> {};
-template<> struct Cible<TexteSource> : std::integral_constant<int,TexteSourceCb> {};
-template<> struct Cible<TypeControle> : std::integral_constant<int,TypeControleCb> {};
-template<> struct Cible<TypeCours> : std::integral_constant<int,TypeCoursCb> {};
-template<> struct Cible<TypeEtablissement> : std::integral_constant<int,TypeEtablissementCb> {};
-template<> struct Cible<TypeExercice> : std::integral_constant<int,TypeExerciceCb> {};
-template<> struct Cible<TypeNiveau> : std::integral_constant<int,TypeNiveauCb> {};
-template<> struct Cible<TypeUtilisation> : std::integral_constant<int,TypeUtilisationCb> {};
+template<> struct Cible<Annee> : std::integral_constant<int,bdd::cible::AnneeCb> {};
+template<> struct Cible<Bareme> : std::integral_constant<int,bdd::cible::BaremeCb> {};
+template<> struct Cible<CibleCommentaire> : std::integral_constant<int,bdd::cible::CibleCommentaireCb> {};
+template<> struct Cible<CibleDonnee> : std::integral_constant<int,bdd::cible::CibleDonneeCb> {};
+template<> struct Cible<CibleMotCle> : std::integral_constant<int,bdd::cible::CibleMotCleCb> {};
+template<> struct Cible<CibleTexte> : std::integral_constant<int,bdd::cible::CibleTexteCb> {};
+template<> struct Cible<Classe> : std::integral_constant<int,bdd::cible::ClasseCb> {};
+template<> struct Cible<ClasseEleve> : std::integral_constant<int,bdd::cible::ClasseEleveCb> {};
+template<> struct Cible<Coefficient> : std::integral_constant<int,bdd::cible::CoefficientCb> {};
+template<> struct Cible<Commentaire> : std::integral_constant<int,bdd::cible::CommentaireCb> {};
+template<> struct Cible<Controle> : std::integral_constant<int,bdd::cible::ControleCb> {};
+template<> struct Cible<Cours> : std::integral_constant<int,bdd::cible::CoursCb> {};
+template<> struct Cible<Donnee> : std::integral_constant<int,bdd::cible::DonneeCb> {};
+template<> struct Cible<DonneeCard> : std::integral_constant<int,bdd::cible::DonneeCardCb> {};
+template<> struct Cible<Eleve> : std::integral_constant<int,bdd::cible::EleveCb> {};
+template<> struct Cible<Enonce> : std::integral_constant<int,bdd::cible::EnonceCb> {};
+template<> struct Cible<Etablissement> : std::integral_constant<int,bdd::cible::EtablissementCb> {};
+template<> struct Cible<EtablissementNiveau> : std::integral_constant<int,bdd::cible::EtablissementNiveauCb> {};
+template<> struct Cible<EtablissementType> : std::integral_constant<int,bdd::cible::EtablissementTypeCb> {};
+template<> struct Cible<Exercice> : std::integral_constant<int,bdd::cible::ExerciceCb> {};
+template<> struct Cible<Forme> : std::integral_constant<int,bdd::cible::FormeCb> {};
+template<> struct Cible<Groupe> : std::integral_constant<int,bdd::cible::GroupeCb> {};
+template<> struct Cible<GroupeEleve> : std::integral_constant<int,bdd::cible::GroupeEleveCb> {};
+template<> struct Cible<MotCle> : std::integral_constant<int,bdd::cible::MotCleCb> {};
+template<> struct Cible<MotClePermission> : std::integral_constant<int,bdd::cible::MotClePermissionCb> {};
+template<> struct Cible<Niveau> : std::integral_constant<int,bdd::cible::NiveauCb> {};
+template<> struct Cible<NiveauPrecedent> : std::integral_constant<int,bdd::cible::NiveauPrecedentCb> {};
+template<> struct Cible<Note> : std::integral_constant<int,bdd::cible::NoteCb> {};
+template<> struct Cible<Point> : std::integral_constant<int,bdd::cible::PointCb> {};
+template<> struct Cible<RestrictionModification> : std::integral_constant<int,bdd::cible::RestrictionModificationCb> {};
+template<> struct Cible<Source> : std::integral_constant<int,bdd::cible::SourceCb> {};
+template<> struct Cible<Texte> : std::integral_constant<int,bdd::cible::TexteCb> {};
+template<> struct Cible<TexteSource> : std::integral_constant<int,bdd::cible::TexteSourceCb> {};
+template<> struct Cible<TypeControle> : std::integral_constant<int,bdd::cible::TypeControleCb> {};
+template<> struct Cible<TypeCours> : std::integral_constant<int,bdd::cible::TypeCoursCb> {};
+template<> struct Cible<TypeEtablissement> : std::integral_constant<int,bdd::cible::TypeEtablissementCb> {};
+template<> struct Cible<TypeExercice> : std::integral_constant<int,bdd::cible::TypeExerciceCb> {};
+template<> struct Cible<TypeNiveau> : std::integral_constant<int,bdd::cible::TypeNiveauCb> {};
+template<> struct Cible<TypeUtilisation> : std::integral_constant<int,bdd::cible::TypeUtilisationCb> {};
+template<> struct Cible<Utilisation> : std::integral_constant<int,bdd::cible::UtilisationCb> {};
 
 
 
@@ -126,7 +134,7 @@ template<> struct TypeManager<Donnee> : std::integral_constant<int,bddInfo::type
 template<> struct TypeManager<DonneeCard> : std::integral_constant<int,bddInfo::typeManager::ModifControle> {};
 template<> struct TypeManager<Exercice> : std::integral_constant<int,bddInfo::typeManager::Arbre> {};
 template<> struct TypeManager<MotCle> : std::integral_constant<int,bddInfo::typeManager::ArbreModifControle> {};
-template<> struct TypeManager<MotClePermission> : std::integral_constant<int,bddInfo::typeManager::ModifControle> {};
+template<> struct TypeManager<MotClePermission> : std::integral_constant<int,bddInfo::typeManager::ModifControlePermission> {};
 template<> struct TypeManager<Niveau> : std::integral_constant<int,bddInfo::typeManager::ModifControle> {};
 template<> struct TypeManager<NiveauPrecedent> : std::integral_constant<int,bddInfo::typeManager::ModifControle> {};
 template<> struct TypeManager<TypeControle> : std::integral_constant<int,bddInfo::typeManager::ArbreSimpleModifControle> {};
@@ -145,21 +153,21 @@ template<> struct IsCible<Commentaire,Annee> : std::integral_constant<bool,true>
 template<> struct IsCible<Commentaire,Classe> : std::integral_constant<bool,true> {};
 template<> struct IsCible<Commentaire,Controle> : std::integral_constant<bool,true> {};
 template<> struct IsCible<Commentaire,Eleve> : std::integral_constant<bool,true> {};
-//template<> struct IsCible<Commentaire,Enonce> : std::integral_constant<bool,true> {};
+template<> struct IsCible<Commentaire,Enonce> : std::integral_constant<bool,true> {};
 template<> struct IsCible<Commentaire,Groupe> : std::integral_constant<bool,true> {};
 template<> struct IsCible<Commentaire,Note> : std::integral_constant<bool,true> {};
-//template<> struct IsCible<Commentaire,Point> : std::integral_constant<bool,true> {};
+template<> struct IsCible<Commentaire,Point> : std::integral_constant<bool,true> {};
 //Donnee
 template<> struct IsCible<Donnee,Etablissement> : std::integral_constant<bool,true> {};
 template<> struct IsCible<Donnee,Niveau> : std::integral_constant<bool,true> {};
 template<> struct IsCible<Donnee,TypeEtablissement> : std::integral_constant<bool,true> {};
 template<> struct IsCible<Donnee,TypeNiveau> : std::integral_constant<bool,true> {};
 //MotCle
-//template<> struct IsCible<MotCle,Bareme> : std::integral_constant<bool,true> {};
+template<> struct IsCible<MotCle,Bareme> : std::integral_constant<bool,true> {};
 template<> struct IsCible<MotCle,Commentaire> : std::integral_constant<bool,true> {};
 template<> struct IsCible<MotCle,Controle> : std::integral_constant<bool,true> {};
 template<> struct IsCible<MotCle,Cours> : std::integral_constant<bool,true> {};
-//template<> struct IsCible<MotCle,Enonce> : std::integral_constant<bool,true> {};
+template<> struct IsCible<MotCle,Enonce> : std::integral_constant<bool,true> {};
 template<> struct IsCible<MotCle,Exercice> : std::integral_constant<bool,true> {};
 template<> struct IsCible<MotCle,MotCle> : std::integral_constant<bool,true> {};
 template<> struct IsCible<MotCle,Texte> : std::integral_constant<bool,true> {};
@@ -403,7 +411,7 @@ public:
  */
 template<> class InfoBdd<Cours> : public InfoBddBase<Id1InfoBdd<Cours>,CreationInfoBdd<Cours>,ModificationInfoBdd<Cours>,NumInfoBdd<Cours>>,
             public NodeInfoBdd,
-            public NoUniqueInfoBdd
+            public NoUniqueInfoBdd<Cours>
 {
 public:
     //! Retourne les clés étrangère de la table sql.
@@ -534,7 +542,7 @@ public:
  */
 template<> class InfoBdd<Exercice> : public InfoBddBase<Id1InfoBdd<Exercice>,CreationInfoBdd<Exercice>,ModificationInfoBdd<Exercice>,NumInfoBdd<Exercice>>,
             public NodeInfoBdd,
-            public NoUniqueInfoBdd
+            public NoUniqueInfoBdd<Exercice>
 {
 public:
     //! Retourne les clés étrangère de la table sql.

@@ -38,6 +38,24 @@
      return dn.id();
  }
 
+ template<> bool Bdd::del(MotCle & entity)
+ {
+     return delArbreModifControle(entity,
+                                  [this](const MotCle & entity)->bool{
+         return delList(getList<CibleMotCle>(CibleMotCle::IdMC,entity.id()))
+                 && delList(getList<MotClePermission>(MotClePermission::IdMC,entity.id()))
+                 ;});
+ }
+
+ template<> bool Bdd::del(const MotCle & entity)
+ {
+     return delArbreModifControle(entity,
+                                  [this](const MotCle & entity)->bool{
+         return delList(getList<CibleMotCle>(CibleMotCle::IdMC,entity.id()))
+                 && delList(getList<MotClePermission>(MotClePermission::IdMC,entity.id()))
+                 ;});
+ }
+
 void Bdd::listeMiseAJourBdd(int version)
 {
     switch (version) {
@@ -284,7 +302,13 @@ void Bdd::listeMiseAJourBdd(int version)
         setRestriction(arbreDiff,rien);
 
         for(TreeItem<MotCle>::iterator i = arbreDiff.begin() + 1; i != arbreDiff.end(); i++)
-            save(MotClePermission((*i)->data().id(),Cible<Controle>::value,bdd::motClePermissionNum::VisibleAttNum),rien);
+        {
+            save(MotClePermission((*i)->data().id(),Cible<Bareme>::value,bdd::motClePermissionNum::PermisMCNum),rien);
+            save(MotClePermission((*i)->data().id(),Cible<Controle>::value,bdd::motClePermissionNum::PermisMCNum),rien);
+            save(MotClePermission((*i)->data().id(),Cible<Cours>::value,bdd::motClePermissionNum::PermisMCNum),rien);
+            save(MotClePermission((*i)->data().id(),Cible<Exercice>::value,bdd::motClePermissionNum::PermisMCNum),rien);
+            save(MotClePermission((*i)->data().id(),Cible<Utilisation>::value,bdd::motClePermissionNum::PermisMCNum),rien);
+        }
 
         //Compétence
         Tree<MotCle> arbreComp;
@@ -306,8 +330,20 @@ void Bdd::listeMiseAJourBdd(int version)
         save(arbreComp,bdd::TreeSave::AddLeaf);
         setRestriction(arbreComp,rien);
 
-        for(TreeItem<MotCle>::iterator i = arbreComp.begin() + 1; i != arbreComp.end(); i++)
-            save(MotClePermission((*i)->data().id(),Cible<Controle>::value,bdd::motClePermissionNum::VisibleAttNum),rien);
+        for(QList<TreeItem<MotCle> *>::const_iterator i = mathComp->childs().cbegin(); i != mathComp->childs().cend(); i++)
+        {
+            save(MotClePermission((*i)->data().id(),Cible<Bareme>::value,bdd::motClePermissionNum::PermisMCNum),rien);
+            save(MotClePermission((*i)->data().id(),Cible<Controle>::value,bdd::motClePermissionNum::PermisMCNum),rien);
+            save(MotClePermission((*i)->data().id(),Cible<Cours>::value,bdd::motClePermissionNum::PermisMCNum),rien);
+            save(MotClePermission((*i)->data().id(),Cible<Exercice>::value,bdd::motClePermissionNum::PermisMCNum),rien);
+        }
+        for(QList<TreeItem<MotCle> *>::const_iterator i = infoComp->childs().cbegin(); i != infoComp->childs().cend(); i++)
+        {
+            save(MotClePermission((*i)->data().id(),Cible<Bareme>::value,bdd::motClePermissionNum::PermisMCNum),rien);
+            save(MotClePermission((*i)->data().id(),Cible<Controle>::value,bdd::motClePermissionNum::PermisMCNum),rien);
+            save(MotClePermission((*i)->data().id(),Cible<Cours>::value,bdd::motClePermissionNum::PermisMCNum),rien);
+            save(MotClePermission((*i)->data().id(),Cible<Exercice>::value,bdd::motClePermissionNum::PermisMCNum),rien);
+        }
 
         //!Savoir
         Tree<MotCle> arbreSav;

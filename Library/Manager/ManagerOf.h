@@ -5,11 +5,9 @@
 #define MANAGEROF_H
 
 #include "InfoBdd.h"
-#include "ManagerOfArbre.h"
 #include "ManagerOfArbreModifControle.h"
-#include "ManagerOfArbreSimple.h"
 #include "ManagerOfArbreSimpleModifControle.h"
-#include "ManagerOfModifControle.h"
+#include "ManagerOfModifControlePermission.h"
 #include "ManagerSql.h"
 #include "UniqueSql.h"
 
@@ -26,14 +24,18 @@ template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeM
     {using ManagerOfType = ManagerSql<Ent,Unique>;};
 template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::Arbre>
     {using ManagerOfType = ManagerOfArbre<Ent,Unique>;};
-template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::ArbreSimple>
-    {using ManagerOfType = ManagerOfArbreSimple<Ent,Unique>;};
-template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::ModifControle>
-    {using ManagerOfType = ManagerOfModifControle<Ent,Unique>;};
 template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::ArbreModifControle>
     {using ManagerOfType = ManagerOfArbreModifControle<Ent,Unique>;};
+template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::ArbreSimple>
+    {using ManagerOfType = ManagerOfArbreSimple<Ent,Unique>;};
 template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::ArbreSimpleModifControle>
     {using ManagerOfType = ManagerOfArbreSimpleModifControle<Ent,Unique>;};
+template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::ModifControle>
+    {using ManagerOfType = ManagerOfModifControle<Ent,Unique>;};
+template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::ModifControlePermission>
+    {using ManagerOfType = ManagerOfModifControlePermission<Ent,Unique>;};
+template<class Ent, class Unique> struct TypeManagerOf<Ent,Unique,bddInfo::typeManager::Permission>
+    {using ManagerOfType = ManagerOfPermission<Ent,Unique>;};
 
 /*! \ingroup groupeBaseManager
  * \brief Classe template permettant d'instancier les différents manageurs.

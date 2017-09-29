@@ -10,9 +10,8 @@
 
 // Macro pour manageur.
 //! \ingroup groupeBaseManager
-//! Coprs des deux methodes save.
-#define SAVE if(entity.isValid()) \
-    {if(entity.isNew()) \
+//! Coprs des deux methodes saveValide.
+#define SAVE_VALIDE if(entity.isNew()) \
         {if(existsUnique(entity) == bdd::Aucun) \
             add(entity); \
          else \
@@ -22,17 +21,15 @@
             {if(existsUnique(entity) <= bdd::Meme) \
                 modify(entity); \
             else \
-                throw std::invalid_argument(messageErreursUnique(entity).append("\n Erreur d'unicité :  il existe déjà dans la base de donnée une entité ayant les mêmes valeurs d'attributs unique que l'entité modifiée.").toStdString());}}} \
-else \
-    throw std::invalid_argument(messageErreurs(entity).append("\n Erreur de validité").toStdString());
+                throw std::invalid_argument(messageErreursUnique(entity).append("\n Erreur d'unicité :  il existe déjà dans la base de donnée une entité ayant les mêmes valeurs d'attributs unique que l'entité modifiée.").toStdString());}}
 
 // Macro pour manageur.
 //! \ingroup groupeBaseManager
-//! Coprs des deux methodes modify.
-#define MODIFY prepare(m_sqlModify);\
-    m_link.bindValues(entity);\
-    m_link.setId(entity,m_link.nbrAtt()-1);\
-    execFinish();
+//! Coprs des deux methodes save.
+#define SAVE if(entity.isValid()) \
+    saveValide(entity); \
+else \
+    throw std::invalid_argument(messageErreurs(entity).append("\n Erreur de validité").toStdString());
 
 /*! \ingroup groupeBaseManager
  * \brief Classe template mère des différents manageurs de type SQL.
@@ -109,6 +106,7 @@ protected:
 public:
     using AbstractManagerTemp<Ent>::exists;
     using AbstractManagerTemp<Ent>::existsUnique;
+    using AbstractManagerTemp<Ent>::del;
     using AbstractManagerTemp<Ent>::get;
     using AbstractManagerTemp<Ent>::getList;
     using AbstractManagerTemp<Ent>::getUnique;
@@ -168,7 +166,7 @@ public:
     }
 
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que l'entité entity en base de donnée.
-    //! Si le test est positif, l'identitfiant de l'entité entity est remplacé par celui l'entité en base de donnée
+    //! Si le test est positif, l'identitfiant de l'entité entity est remplacé par celui de l'entité en base de donnée
     //! ayant les mêmes valeurs d'attributs uniques.
     bdd::ExisteUni existsUnique(Ent & entity)
         {return m_unique.existsUnique(entity);}
@@ -179,7 +177,11 @@ public:
 
     //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que entity en base de donnée.
     bdd::ExisteUni existsUnique(const Ent & entity)
-        {return m_unique.existsUnique(entity);}
+        {return existsUniqueId(entity).first;}
+
+    //! Teste s'il existe une entité ayant les mêmes valeurs d'attributs uniques que entity en base de donnée.
+    QPair<bdd::ExisteUni,int> existsUniqueId(const Ent & entity)
+        {return m_unique.existsUniqueId(entity);}
 
     //! Idem bdd::ExisteUni existsUnique(const Ent & entity) avec une conversion de référence.
     bdd::ExisteUni existsUnique(const Entity & entity)
@@ -502,6 +504,16 @@ public:
         return get(entityT) ? entityT == entity : false;
     }
 
+    //! Teste s'il y a dans la base de donnée une entité d'identifiant id ayant exactement les mêmes attributs.
+    bool sameInBdd(const Ent & entity, int id)
+    {
+        Ent entityT(id);
+        if(!get(entityT))
+            return false;
+        entityT.setId(entity.id());
+        return entityT == entity;
+    }
+
     //! Enregistre l'entité entity en base de donnée et assigne l'identifiant de l'entité insérée en base de donnée à entity.
     void save(Ent & entity)
         {SAVE}
@@ -509,6 +521,68 @@ public:
     //! Enregistre l'entité entity en base de donnée.
     void save(const Ent & entity)
         {SAVE}
+
+    //! Enregistre l'entity dans la base de donnée, s'il existe en base de donnée une entité d'identifiant idU
+    //! ayant les mêmes attributs unique,
+    //! deux cas se présentent, soit entity à un identifiant nul alors l'entité d'identifiant idU est mise à jour
+    //! et l'identifiant de entity devient idU,
+    //! soit entity à un identifiant idE non nul alors l'entité d'identifiant idU est mise à jour
+    //! et l'entité d'identifiant idE est supprimé.
+    //! Si l'entité est nouvelle en base de donnée l'identifiant de entity est mise-à-jour.
+    void saveUnique(Ent & entity)
+    {
+        if(entity.isValid())
+        {
+            bdd::ExisteUni n = existsUnique(entity);
+            if(n <= bdd::ExisteUni::Meme)
+            {
+                if(entity.isNew())
+                    add(entity);
+                else if(!sameInBdd(entity))
+                    modify(entity);
+            }
+            else
+                throw std::invalid_argument(messageErreursUnique(entity)
+                                            .append("\n Erreur d'unicité : il existe déjà dans la base de donnée une entité "
+                                                    "ayant les mêmes valeurs d'attributs unique qu'entity.").toStdString());
+        }
+        else
+            throw std::invalid_argument(messageErreurs(entity).append("\n Erreur de validité").toStdString());
+    }
+
+    //! Enregistre l'entity dans la base de donnée, s'il existe en base de donnée une entité d'identifiant idU
+    //! ayant les mêmes attributs unique,
+    //! deux cas se présentent, soit entity à un identifiant nul alors l'entité d'identifiant idU est seulement mise à jour,
+    //! soit entity à un identifiant idE non nul alors l'entité d'identifiant idU est mise à jour
+    //! et l'entité d'identifiant idE est supprimé.
+    void saveUnique(const Ent & entity)
+    {
+        if(entity.isValid())
+        {
+            QPair<bdd::ExisteUni,int> pairExists = existsUniqueId(entity);
+            if(pairExists.first <= bdd::ExisteUni::Meme)
+            {
+                if(entity.isNew())
+                {
+                    if(pairExists.second == 0)
+                        add(entity);
+                    else
+                    {
+                        if(!sameInBdd(entity,pairExists.second))
+                            modify(entity,pairExists.second);
+                    }
+                }
+                else if(!sameInBdd(entity))
+                    modify(entity);
+            }
+            else
+                throw std::invalid_argument(messageErreursUnique(entity)
+                                            .append("\n Erreur d'unicité : il existe déjà dans la base de donnée une entité "
+                                                    "ayant les mêmes valeurs d'attributs unique qu'entity.").toStdString());
+        }
+        else
+            throw std::invalid_argument(messageErreurs(entity).append("\n Erreur de validité").toStdString());
+    }
 
     //! Renvoie le nom de la table de l'entité dans la base de donnée.
     const QString & table() const
@@ -549,11 +623,12 @@ protected:
         {return crois ? QString(): " DESC";}
 
     //! Supprime de la table en base de donnée l'entité d'identifiant id.
-    void del(int id)
+    bool del(int id)
     {
         prepare(m_sqlDelete);
         bindValue(0,id);
         execFinish();
+        return true;
     }
 
     //! Construit la liste des entités correspondant une requète de type sqlGetList.
@@ -584,13 +659,31 @@ protected:
     //! Message d'erreurs s'il existe déjà en base de donnée une entité ayant les mêmes valeurs d'attributs uniques que entity.
     QString messageErreursUnique(const Entity & entity) const;
 
-    /*//! Met à jour l'entité entity en base de donnée.
-    virtual void modify(Ent & entity)
-        {MODIFY}*/
-
     //! Met à jour l'entité entity en base de donnée.
     virtual void modify(const Ent & entity)
-        {MODIFY}
+    {
+        prepare(m_sqlModify);
+        m_link.bindValues(entity);
+        m_link.setId(entity,m_link.nbrAtt()-1);
+        execFinish();
+    }
+
+    //! Met à jour l'entité entity en base de donnée d'identifiant id avec les valeurs d'entity.
+    virtual void modify(const Ent & entity, int id)
+    {
+        prepare(m_sqlModify);
+        m_link.bindValues(entity);
+        bindValue(m_link.nbrAtt()-1,id);
+        execFinish();
+    }
+
+    //! Enregistre l'entité valide entity en base de donnée et assigne l'identifiant de l'entité insérée en base de donnée à entity.
+    virtual void saveValide(Ent & entity)
+        {SAVE_VALIDE}
+
+    //! Enregistre l'entité valide entity en base de donnée.
+    virtual void saveValide(const Ent & entity)
+        {SAVE_VALIDE}
 
     //! Transforme QVector<QMap<int,int>> en QVector<QMap<int,QString>> avec les noms des attributs
     QVector<QMap<int,QString>> uniqueInit(const QVector<QMap<int,int>> & attsInt);
@@ -746,8 +839,8 @@ template<class Ent, class Unique> void ManagerSql<Ent,Unique>::writeStringSql()
     m_sqlGetList2Where1.squeeze();
 
     // Get list 3 where 1 ordre
-    m_sqlGetList2Where1.append(m_sqlGetListWhere.arg("%1%2? AND %3%4? AND %5%6? ORDER BY %7%8"));
-    m_sqlGetList2Where1.squeeze();
+    m_sqlGetList3Where1.append(m_sqlGetListWhere.arg("%1%2? AND %3%4? AND %5%6? ORDER BY %7%8"));
+    m_sqlGetList3Where1.squeeze();
 
     // Get list join
     m_sqlGetListJoin.append(selectJoin);

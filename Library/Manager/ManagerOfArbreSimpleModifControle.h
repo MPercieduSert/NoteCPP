@@ -40,16 +40,17 @@ protected:
     ManagerOfArbreSimpleModifControle() = default;
 
     //! Supprime de la table en base de donnée l'entité d'identifiant id.
-    void del(int id)
+    bool del(int id)
     {
         if(getAutorisation(Ent(id), bdd::Suppr))
-            ManagerArbreEnt::del(id);
+            return ManagerArbreEnt::del(id);
         else
-        {
+            return false;
+        /*{
             Ent entity(id);
             get(entity);
             throw std::invalid_argument(QString("Erreur d'autorisation de modification' :  l'entité suivante n'est pas suprimable:\n").append(entity.affiche()).toStdString());
-        }
+        }*/
     }
 };
 

@@ -23,6 +23,10 @@ public:
     bool getAutorisation(const Ent & entity, bdd::Autorisation autorisation)
         {return !m_managerRestriction->existsUnique(Restrict(entity.id(), m_cible, autorisation));}
 
+    //! Demande l'autorisation de modification pour une entité d'identifiant id avec les valeurs de entity.
+    bool getAutorisation(const Ent & /*entity*/, int id, bdd::Autorisation autorisation)
+        {return !m_managerRestriction->existsUnique(Restrict(id, m_cible, autorisation));}
+
     //! Demande la liste des restrictions de modification pour une entité donnée.
     QList<int> getRestriction(const Ent & entity)
     {

@@ -20,8 +20,10 @@ protected:
     Tree<Ent> m_tree;       //!< Arbre de donnée.
 
 public:
+    using MAbstractTreeModel::MAbstractTreeModel;
+
     //! Constructeur.
-    TreeModelReadTemp(const QList<typename Ent::Position> & atts = QList<typename Ent::Position>(), QObject *parent = 0) : MAbstractTreeModel(parent), m_atts(atts) {}
+    TreeModelReadTemp(const QList<typename Ent::Position> & atts, QObject *parent = 0) : MAbstractTreeModel(parent), m_atts(atts) {}
 
     //! Destructeur.
     ~TreeModelReadTemp() {}
@@ -55,7 +57,19 @@ public:
 
     //! Modifie l'arbre de donnée.
     void setDataTree(const Tree<Ent> & tree)
-        {m_tree = tree;}
+    {
+        beginResetModel();
+        m_tree = tree;
+        endResetModel();
+    }
+
+    //! Modifie l'arbre de donnée.
+    void setDataTree(Tree<Ent> && tree)
+    {
+        beginResetModel();
+        m_tree = std::move(tree);
+        endResetModel();
+    }
 
 protected:
     TreeItem<Ent> *getItem(const QModelIndex &index) const;
@@ -110,14 +124,14 @@ template<class Ent> QVariant TreeModelReadTemp<Ent>::headerData(int section, Qt:
 template<class Ent> QModelIndex TreeModelReadTemp<Ent>::index(int row, int column, const QModelIndex &parent) const
 {  
     if (parent.isValid() && parent.column() != 0)
-          return QModelIndex();
+        return QModelIndex();
 
-      TreeItem<Ent> *parentItem = getItem(parent);
-      TreeItem<Ent> *childItem = parentItem->child(row);
-      if (childItem)
-          return createIndex(row, column, childItem);
-      else
-          return QModelIndex();
+    TreeItem<Ent> *parentItem = getItem(parent);
+    TreeItem<Ent> *childItem = parentItem->child(row);
+    if (childItem)
+        return createIndex(row, column, childItem);
+    else
+        return QModelIndex();
 }
 
 template<class Ent> QModelIndex TreeModelReadTemp<Ent>::parent(const QModelIndex &index) const

@@ -57,7 +57,8 @@ enum entityId  {AnneeId,
                 TypeNiveauId,
                 TypeUtilisationId,
                 UtilisationId,
-                NbrEntity};
+                NbrEntity,
+                NbrArbre = 4};
 
 /*    AttributCorrectionId,
                 AttributCoursId,

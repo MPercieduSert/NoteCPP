@@ -14,9 +14,6 @@
  */
 template<class Ent> class ReadTreeWidget : public QTreeView
 {
-protected:
-    TreeModelReadTemp<Ent> * m_model;       //!< Model
-
 public:
     //! Constructeur.
     ReadTreeWidget(const Tree<Ent> & tree, const QList<typename Ent::Position> atts = QList<typename Ent::Position>(), QWidget * parent = 0);
@@ -24,12 +21,15 @@ public:
     //! Destructeur.
     ~ReadTreeWidget() {}
 
+    //! Renvoie un pointeur sur le model
+    TreeModelReadTemp<Ent> * model() const
+        {return static_cast<TreeModelReadTemp<Ent> *>(QTreeView::model());}
     //! Selectionne l'item correspondant au première item d'identifiant id dans l'arbre.
     void select(int id);
 
     //! Modifie les données affichées par le widget.
     void setDataTree(const Tree<Ent> & tree)
-        {m_model->setDataTree(tree);}
+        {model()->setDataTree(tree);}
 
     //! renvoie l'élément sélectionnée.
     Ent value() const
@@ -43,13 +43,12 @@ public:
 };
 
 template<class Ent> ReadTreeWidget<Ent>::ReadTreeWidget(const Tree<Ent> &tree,const QList<typename Ent::Position> atts, QWidget * parent) : QTreeView(parent)
-{
-    m_model = new TreeModelReadTemp<Ent>(atts, parent);
-    m_model->setDataTree(tree);
-    setModel(m_model);
+{ 
+    setModel(new TreeModelReadTemp<Ent>(atts, parent));
+    model()->setDataTree(tree);
 }
 
 template<class Ent> void ReadTreeWidget<Ent>::select(int id)
-    {selectionModel()->select(m_model->foundId(id),QItemSelectionModel::Select);}
+    {selectionModel()->select(model()->foundId(id),QItemSelectionModel::Select);}
 
 #endif // READTREEWIDGET_H

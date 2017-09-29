@@ -90,7 +90,8 @@ HEADERS += \
     TabModule.h \
     TabListeNote.h \
     TabCours.h \
-    TabMotCle.h
+    TabMotCle.h \
+    TabGestionBdd.h
 
 SOURCES += \
     Fen.cpp \
@@ -109,7 +110,8 @@ SOURCES += \
     TabModule.cpp \
     TabListeNote.cpp \
     TabCours.cpp \
-    TabMotCle.cpp
+    TabMotCle.cpp \
+    TabGestionBdd.cpp
 
 unix {
     target.path = /usr/lib

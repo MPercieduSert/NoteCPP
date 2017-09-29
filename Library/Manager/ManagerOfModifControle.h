@@ -1,7 +1,6 @@
 /*Auteur: PERCIE DU SERT Maxime
  *Date: 15/08/2017
  */
-
 #ifndef MANAGEROFMODIFCONTROLE_H
 #define MANAGEROFMODIFCONTROLE_H
 
@@ -54,6 +53,10 @@ public:
     virtual bool getAutorisation(const Ent & entity, bdd::Autorisation autorisation)
         {return m_gestionAutorisation->getAutorisation(entity, autorisation) || m_bypass;}
 
+    //! Demande l'autorisation de modification pour une entité d'identifiant id avec les valeurs de entity.
+    virtual bool getAutorisation(const Ent & entity, int id, bdd::Autorisation autorisation)
+        {return m_gestionAutorisation->getAutorisation(entity, id, autorisation) || m_bypass;}
+
     //! Demande la liste des restrictions de modification pour une entité donnée.
     virtual QList<int> getRestriction(const Ent & entity)
         {return m_gestionAutorisation->getRestriction(entity);}
@@ -96,7 +99,6 @@ protected:
     using ManagerSqlEnt::add;
     using ManagerSqlEnt::messageErreurs;
     using ManagerSqlEnt::messageErreursUnique;
-    using ManagerSqlEnt::modify;
     using ManagerSqlEnt::table;
     using ManagerBMC::ouvrir;
     using ManagerBMC::fermer;
@@ -104,6 +106,7 @@ protected:
 public:
     using ManagerSqlEnt::existsUnique;
     using ManagerSqlEnt::exists;
+    using ManagerSqlEnt::del;
     using ManagerSqlEnt::get;
     using ManagerSqlEnt::sameInBdd;
     using ManagerSqlEnt::save;
@@ -179,16 +182,18 @@ protected:
     ManagerOfModifControle() = default;
 
     //! Supprime de la table en base de donnée l'entité d'identifiant id.
-    void del(int id)
+    bool del(int id)
     {
         if(getAutorisation(Ent(id), bdd::Suppr))
-            ManagerSqlEnt::del(id);
+            return ManagerSqlEnt::del(id);
         else
-        {
+            return false;
+        /*{
             Ent entity(id);
             get(entity);
-            throw std::invalid_argument(QString("Erreur d'autorisation de modification' :  l'entité suivante n'est pas suprimable:\n").append(entity.affiche()).toStdString());
-        }
+            throw std::invalid_argument(QString("Erreur d'autorisation de modification' : "
+                                                "l'entité suivante n'est pas suprimable:\n").append(entity.affiche()).toStdString());
+        }*/
     }
 
     //! Met à jour l'entité entity en base de donnée.
@@ -197,7 +202,20 @@ protected:
         if(getAutorisation(entity, bdd::Autorisation::Modif))
             ManagerSqlEnt::modify(entity);
         else
-            throw std::invalid_argument(QString("Erreur d'autorisation de modification' :  l'entité suivante n'est pas modifiable:\n").append(entity.affiche()).toStdString());
+            throw std::invalid_argument(QString("Erreur d'autorisation de modification' : "
+                                                "l'entité suivante n'est pas modifiable:\n")
+                                        .append(entity.affiche()).toStdString());
+    }
+
+    //! Met à jour l'entité entity en base de donnée d'identifiant id avec les valeurs d'entity.
+    void modify(const Ent & entity, int id)
+    {
+        if(getAutorisation(entity, id, bdd::Autorisation::Modif))
+            ManagerSqlEnt::modify(entity,id);
+        else
+            throw std::invalid_argument(QString("Erreur d'autorisation de modification' : "
+                                                "l'entité suivante n'est pas modifiable:\n")
+                                        .append(entity.affiche()).toStdString());
     }
 };
 #endif // MANAGEROFMODIFCONTROLE_H

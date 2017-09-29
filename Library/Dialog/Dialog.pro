@@ -33,7 +33,8 @@ SOURCES += \
     SelectAnneeDialog.cpp \
     SelectDonneeDialog.cpp \
     NewTypeControleDialog.cpp \
-    ControleGraphDialog.cpp
+    ControleGraphDialog.cpp \
+    NewMotCleDialog.cpp
 
 
 HEADERS += \ 
@@ -44,7 +45,8 @@ HEADERS += \
     SelectAnneeDialog.h \
     SelectDonneeDialog.h \
     NewTypeControleDialog.h \
-    ControleGraphDialog.h
+    ControleGraphDialog.h \
+    NewMotCleDialog.h
 
 
 unix {

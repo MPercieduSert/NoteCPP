@@ -79,22 +79,42 @@ public:
     const T & data() const
         {return (*m_i)->data();}
 
+    //! Supprime les noeuds ne vérifiant pas le prédicat (bool predicat(TreeItem<T> *)) ainsi que leurs descendances.
+    template<class U> const Tree<T> & elagage(U predicat);
+
+    //! Supprime les noeuds ne vérifiant pas le prédicat (bool predicat(const & T)) ainsi que leurs descendances.
+    template<class U> const Tree<T> & elagageData(U predicat)
+    {
+        elagage([&predicat](TreeItem<T> * node)->bool{return predicat(node->data());});
+        return *this;
+    }
+
+    //! Supprime les feuilles ne vérifiant pas le prédicat (bool predicat(TreeItem<T> *)) ainsi que leurs descendances.
+    template<class U> const Tree<T> & elagageFeuille(U predicat);
+
+    //! Supprime les noeuds ne vérifiant pas le prédicat (bool predicat(const & T)) ainsi que leurs descendances.
+    template<class U> const Tree<T> & elagageFeuilleData(U predicat)
+    {
+        elagageFeuille([&predicat](TreeItem<T> * node)->bool{return predicat(node->data());});
+        return *this;
+    }
+
     //! Crée un itérateur initialisé sur le noeud virtuel nul. Cette fonction permet la compatibilité avec les algorithmes standards. Utiliser de préférence la méthode isNull directement sur le pointeur.
     typename TreeItem<T>::iterator end() const
         {return nullptr;}
 
     //! Créer une nouveau de valeur T est l'insert à l'indice position dans la liste des descendants directs du noeud courant.
-    void insertChild(const T & data, const int position = 0)
-        {(*m_i)->insertChild(data, position);}
+    void insertChild(const int position, const T & data)
+        {(*m_i)->insertChild(position, data);}
 
     //! Insert une copie de tree à l'indice position dans la liste des descendants directs du noeud courant.
-    void insertChild(const Tree<T> & tree, const int position = 0)
-        {(*m_i)->insertChild(new TreeItem<T>(tree.root()), position);}
+    void insertChild(const int position, const Tree<T> & tree)
+        {(*m_i)->insertChild(position, new TreeItem<T>(tree.root()));}
 
     //! Insert tree à l'indice position dans la liste des descendants directs du noeud courant.
-    void insertChild(Tree<T> && tree, const int position = 0)
+    void insertChild(const int position, Tree<T> && tree)
     {
-        (*m_i)->insertChild(tree.root(), position);
+        (*m_i)->insertChild(position, tree.root());
         tree.rootNull();
     }
 
@@ -104,6 +124,9 @@ public:
         ++m_i;
         return !m_i.isNull();
     }
+
+    //! Renvoie un arbre contenant seulement la racine et ses enfants directs.
+    Tree<T> static parentWithChilds(TreeItem<T> * parent);
 
     //! Replace l'itérateur sur le noeud précédent (méthode de parcours suivant-précédent) puis test si le nouveau noeud n'est pas la racine.
     bool precedent() const
@@ -231,6 +254,46 @@ protected:
 //    m_root = new TreeItem<U>(&tree.root());
 //    m_i = m_root;
 //}
+
+template<class T> template <class U> const Tree<T> & Tree<T>::elagage(U predicat)
+{
+    begin();
+    while(m_i != end())
+    {
+        if(m_i.isRoot() || predicat(*m_i))
+            m_i.suivant();
+        else
+        {
+            TreeItem<T> * node = *m_i;
+            m_i.setSens(false);
+            m_i.suivant();
+            delete node;
+        }
+    }
+    return *this;
+}
+
+template<class T> template <class U> const Tree<T> & Tree<T>::elagageFeuille(U predicat)
+{
+    begin();
+    while(m_i != end())
+    {
+        if(!m_i.isLeaf())
+            m_i.toLatestChild();
+        else
+        {
+            if(m_i.isRoot() || predicat(*m_i))
+                ++m_i;
+            else
+            {
+                TreeItem<T> * node = *m_i;
+                m_i.toParent();
+                delete node;
+            }
+        }
+    }
+    return *this;
+}
 
 template<class T> Tree<T> & Tree<T>::seek(const QList<int> & list, bool root, bool verif)
 {

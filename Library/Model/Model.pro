@@ -34,8 +34,10 @@ SOURCES += \
     TreeModelReadTemp.cpp \
     TreeModelTemp.cpp \
     ListeNoteModel.cpp \
-    TreeModelReadAttributs.cpp \
-    ListeElevesModel.cpp
+    ListeElevesModel.cpp \
+    TreeModelMotCle.cpp \
+    TreeModelEditTemp.cpp \
+    MotCleModel.cpp
 
 HEADERS += \
     ListeEleveModel.h \
@@ -44,8 +46,10 @@ HEADERS += \
     TreeModelReadTemp.h \
     TreeModelTemp.h \
     ListeNoteModel.h \
-    TreeModelReadAttributs.h \
-    ListeElevesModel.h
+    ListeElevesModel.h \
+    TreeModelMotCle.h \
+    TreeModelEditTemp.h \
+    MotCleModel.h
 
 unix {
     target.path = /usr/lib

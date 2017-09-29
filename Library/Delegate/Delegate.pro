@@ -14,11 +14,13 @@ CONFIG += staticlib
 CONFIG += c++11
 SOURCES += \
     ListeNoteDelegate.cpp \
-    ListeElevesDelegate.cpp
+    ListeElevesDelegate.cpp \
+    MotCleDelegate.cpp
 
 HEADERS += \
     ListeNoteDelegate.h \
-    ListeElevesDelegate.h
+    ListeElevesDelegate.h \
+    MotCleDelegate.h
 
 unix {
     target.path = /usr/lib

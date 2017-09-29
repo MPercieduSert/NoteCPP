@@ -24,6 +24,7 @@
 #include "../Div/ListPtr.h"
 #include "../Div/MapPtr.h"
 #include "../Div/Tree.h"
+#include "../Div/VectorPtr.h"
 
 /*! \ingroup groupeBaseManager
  * \brief Espace de nom pour la base de donnée.
@@ -72,7 +73,7 @@ namespace bdd {
                    WithoutDeleteWhitoutRoot,
                    InternalChangeWhitoutRoot,
                    ExternalChangeWhitoutRoot};
-};
+}
 
 /*! \ingroup groupeBaseManager
  * \brief Classe abstraite de base des manageurs.
@@ -95,15 +96,16 @@ public:
     virtual void creer() = 0;
 
     //! Supprime de la table en base de donnée l'entité entity.
-    virtual void del(Entity & entity)
+    virtual bool del(Entity & entity)
     {
-        del(entity.id());
+        bool bb = del(entity.id());
         entity.setId(0);
+        return bb;
     }
 
     //! Supprime de la table en base de donnée l'entité entity.
-    virtual void del(const Entity & entity)
-        {del(entity.id());}
+    virtual bool del(const Entity & entity)
+        {return del(entity.id());}
 
     //! Teste s'il existe une entité de même identifiant que entity en base de donnée.
     virtual bool exists(const Entity & entity) = 0;
@@ -153,7 +155,7 @@ public:
 
 protected:
     //! Supprime de la table en base de donnée l'entité d'identifiant id.
-    virtual void del(int id) = 0;
+    virtual bool del(int id) = 0;
 
     //! Message d'erreurs si l'entité entity n'est pas valide.
     virtual QString messageErreurs(const Entity & entity) const = 0;
@@ -288,6 +290,10 @@ public:
                                              bdd::Condition cond3 = bdd::Condition::Egal,
                                              bool crois = true) = 0;
 
+    //! Renvoie le liste des descendant direct d'entity.
+    virtual ListPtr<Ent> getListChilds(const Ent & /*entity*/)
+        {throw std::invalid_argument(QString("La méthode 'ListPtr<Ent> getListChilds(const Ent & entity)' n'est pas définie pour le manager des : ").append(Ent::Name()).append(".").toStdString());}
+
     // Liste de Jointure
     //! Renvoie la liste des entités de la table vérifiant une condition sur une jointure (colonneTable = colonneJoin),
     //! valeur des colonnes de la table Ent d'identifiant key = value de QMap whereMapTable,
@@ -356,6 +362,10 @@ public:
     //! Renvoie la liste des restrictions de modification de l'entité donnée en argument.
     virtual QList<int> getRestriction(const Ent & /*entity*/)
         {return QList<int>();}
+
+    //! Renvoie le vecteur des descendant direct d'entity.
+    VectorPtr<Ent> getVectorChilds(const Ent & /*entity*/)
+        {throw std::invalid_argument(QString("La méthode 'ListPtr<Ent> getListChilds(const Ent & entity)' n'est pas définie pour le manager des : ").append(Ent::Name()).append(".").toStdString());}
 
     //! Hydrate l'entité entity avec les valeurs des attributs de l'entité enregistrées en base de donnée
     //! ayant les mêmes valeurs pour au moins un ensemble des attributs uniques.
@@ -432,9 +442,33 @@ public:
         setRestriction(entity, restriction);
     }
 
+    //! Enregistre l'entité entity en base avec le parent et la position spécifiés.
+    void save(Ent & /*entity*/, const Ent & /*parent*/, int /*num*/ = 0)
+        {throw std::invalid_argument(QString("La méthode 'save(Ent & entity, const Ent & parent, int num)' n'est pas définie pour le manager des : ").append(Ent::Name()).append(".").toStdString());}
+
+    //! Enregistre l'entité entity en base avec le parent et la position spécifiés.
+    void save(const Ent & /*entity*/, const Ent & /*parent*/, int /*num*/ = 0)
+    {throw std::invalid_argument(QString("La méthode 'save(const Ent & entity, const Ent & parent, int num)' n'est pas définie pour le manager des : ").append(Ent::Name()).append(".").toStdString());}
+
     //! Enregistre l'arbre d'entités dans la base de donnée pour les entités de type arbre.
     virtual void save(Tree<Ent> & /*arbre*/, bdd::TreeSave /*n*/ = bdd::TreeSave::ExternalChange)
         {throw std::invalid_argument(QString("La méthode 'save(Tree<Ent>,...)' n'est pas définie pour le manager des : ").append(Ent::Name()).append(".").toStdString());}
+
+    //! Enregistre l'entity dans la base de donnée, s'il existe en base de donnée une entité d'identifiant idU
+    //! ayant les mêmes attributs unique,
+    //! deux cas se présentent, soit entity à un identifiant nul alors l'entité d'identifiant idU est mise à jour
+    //! et l'identifiant de entity devient idU,
+    //! soit entity à un identifiant idE non nul alors l'entité d'identifiant idU est mise à jour
+    //! et l'entité d'identifiant idE est supprimé.
+    //! Si l'entité est nouvelle en base de donnée l'identifiant de entity est mise-à-jour.
+    virtual void saveUnique(Ent & entity) = 0;
+
+    //! Enregistre l'entity dans la base de donnée, s'il existe en base de donnée une entité d'identifiant idU
+    //! ayant les mêmes attributs unique,
+    //! deux cas se présentent, soit entity à un identifiant nul alors l'entité d'identifiant idU est seulement mise à jour,
+    //! soit entity à un identifiant idE non nul alors l'entité d'identifiant idU est mise à jour
+    //! et l'entité d'identifiant idE est supprimé.
+    virtual void saveUnique(const Ent & entity) = 0;
 
     //! Modifie une autorisation de modification pour une entité donnée.
     virtual void setAutorisation(const Ent & entity, bdd::Autorisation /*autorisation*/, bool bb = false)

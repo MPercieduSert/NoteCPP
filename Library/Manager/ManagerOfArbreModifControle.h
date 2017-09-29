@@ -23,8 +23,9 @@ protected:
     using ManagerMC::ouvrir;
 
 public:
-    using ManagerArbreEnt::save;
+    using ManagerArbreEnt::del;
     using ManagerArbreEnt::get;
+    using ManagerArbreEnt::save;
     using ManagerMC::getAutorisation;
     using ManagerMC::getRestriction;
     using ManagerMC::setAutorisation;
@@ -82,16 +83,18 @@ protected:
     ManagerOfArbreModifControle(const QString & tableArbre,const QMap<int,QString> & attArbre = ArbreInfoBdd<Arbre>::attribut());
 
     //! Supprime de la table en base de donnée l'entité d'identifiant id.
-    void del(int id)
+    bool del(int id)
     {
         if(getAutorisation(Ent(id), bdd::Suppr))
-            ManagerArbreEnt::del(id);
+            return ManagerArbreEnt::del(id);
         else
-        {
+            return false;
+        /*{
             Ent entity(id);
             get(entity);
-            throw std::invalid_argument(QString("Erreur d'autorisation de modification' :  l'entité suivante n'est pas suprimable:\n").append(entity.affiche()).toStdString());
-        }
+            throw std::invalid_argument(QString("Erreur d'autorisation de modification' : "
+                                                "l'entité suivante n'est pas suprimable:\n").append(entity.affiche()).toStdString());
+        }*/
     }
 };
 

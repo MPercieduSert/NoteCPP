@@ -21,6 +21,7 @@ public:
     enum typeTab {MenuTab,
                  ClasseTab,
                  CoursTab,
+                 GestionBddTab,
                  ListeEleveTab,
                  ListeNoteTab,
                  GroupeTab,
@@ -49,17 +50,19 @@ public slots:
     //! Action à effectuer si la fenêtre courante change.
     void currentIndexChanged();
     //void effacer();
-    //! Ouvre un nouvel onglet classe
+    //! Ouvre un nouvel onglet classe.
     void newOngletClasse(int idClasse);
-    //! Ouvre un onglet donnant acces au cours
+    //! Ouvre un onglet donnant acces au cours.
     void openCours();
-    //! Ouvre un onglet liste des éléves
+    //! Ouvre un onglet donnant acces à la base de données.
+    void openGestionBdd();
+    //! Ouvre un onglet liste des éléves.
     void openListeEleve(int idClasse);
-    //! Ouvre un onglet donnant acces au cours
+    //! Ouvre un onglet donnant acces au cours.
     void openMotCle();
-    //! Ouvre un ouglet liste des groupe
+    //! Ouvre un ouglet liste des groupe.
     //void openListeGroupe(int idClasse);
-    //! Ouvre un onglet liste des notes
+    //! Ouvre un onglet liste des notes.
     void openListeNote(int idClasse);
 
 };

@@ -60,6 +60,8 @@ void MAbstractTableModel::coller(const QModelIndexList & selection)
                     }
                 }
             }
+        case Annuler:
+            break;
         }
     }
 }

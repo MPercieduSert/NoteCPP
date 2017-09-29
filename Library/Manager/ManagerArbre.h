@@ -73,7 +73,7 @@ public:
     }
 
     //! Supprime de la base de donnée le noeud node ainsi que tous ses déscendants (opération stable).
-    void del(const Arbre & node);
+    bool del(const Arbre & node);
 
     //! Returne l'identifiant du parent du noeud d'identifiant id.
     int getParent(int id)
@@ -135,10 +135,10 @@ protected:
     void addUnstable(const Arbre & node);
 
     //! Supprime de la base de donnée le noeud d'identifiant id ainsi que tous ses déscendants (opération stable).
-    void del(int id);
+    bool del(int id);
 
-    //! Supprime de la base de donnée le noeud node ainsi que tous ses déscendants.
-    void delUnstable(const Arbre &node);
+    /*//! Supprime de la base de donnée le noeud node ainsi que tous ses déscendants.
+    void delUnstable(const Arbre &node);*/
 
     //! Modifie en base de données le noeud de de couple (parent, num) identique à node en (parent,-num). Renvoie false si le noeud de couple (parent, num) correspond à node.
     bool deplace(const Arbre & node);

@@ -47,10 +47,12 @@ namespace bddInfo {
     enum typeManager {
         Simple,
         Arbre,
-        ArbreSimple,
-        ModifControle,
         ArbreModifControle,
-        ArbreSimpleModifControle
+        ArbreSimple,
+        ArbreSimpleModifControle,
+        ModifControle,
+        ModifControlePermission,
+        Permission
     };
 }
 
@@ -122,10 +124,13 @@ SINGLE_INFOBDD(ValeurVariant,Valeur,vl,Variant,false)
 /*! \ingroup groupeInfoBddBase
  * \brief Classe mère des InfoBdd sans condition d'unicité.
  */
-class NoUniqueInfoBdd
+template<class Ent> class NoUniqueInfoBdd
 {public:
-    typedef NoUniqueSql EntUniqueSql;
+    typedef NoUniqueSql<Ent> EntUniqueSql;
     FONC_UNIQUE_LINK};
+
+template<class Ent> QVector<QMap<int,int>> NoUniqueInfoBdd<Ent>::attributUnique()
+    {return QVector<QMap<int,int>>();}
 
 /*! \ingroup groupeInfoBddBase
  * \brief Classe mère des InfoBdd sans clé étrangère.

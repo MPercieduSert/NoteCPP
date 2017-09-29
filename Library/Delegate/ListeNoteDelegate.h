@@ -22,7 +22,9 @@ protected:
 public:
     using Indice = ListeElevesModel::Indice;
     //! Constructeur.
-    ListeNoteDelegate(QObject * parent = 0);
+    ListeNoteDelegate(QObject * parent = 0)
+        : QStyledItemDelegate(parent)
+    {}
     //! Creer un item pour édité une donnée.
     QWidget * createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const;
     //! Renvoie l'indice correspondant à index.

@@ -14,30 +14,25 @@ TabMenu::TabMenu(int idAn, TabModule *parent)
     }
     else if(bdd()->get(m_annee))
     {
-        classeLayout();
-        m_newClasseButton = new QPushButton(tr("Créer une classe"));
+        classeLayout();       
         m_coursButton = new QPushButton(tr("Cours"));
+        m_gestionBddButton = new QPushButton(tr("Base de Données"));
         m_motCleButton = new QPushButton(tr("Mots Clés"));
+        m_newClasseButton = new QPushButton(tr("Créer une classe"));
         m_mainLayout->addWidget(m_newClasseButton);
         m_mainLayout->addWidget(m_coursButton);
         m_mainLayout->addWidget(m_motCleButton);
+        m_mainLayout->addWidget(m_gestionBddButton);
         connect(m_newClasseButton,&QPushButton::clicked,this,&TabMenu::creerClasse);
         connect(m_coursButton,&QPushButton::clicked,[this](){m_parent->openCours();});
         connect(m_motCleButton,&QPushButton::clicked,[this](){m_parent->openMotCle();});
+        connect(m_gestionBddButton,&QPushButton::clicked,[this](){m_parent->openGestionBdd();});
     }
     else
         throw std::invalid_argument(QString("L'année d'identifiant ")
                                     .append(QString::number(idAn))
                                     .append(" n'existe dans la base de donnée.")
                                     .toStdString());
-}
-
-void TabMenu::becomeCurrent() const
-{
-    emit noyau()->collerPermis(false);
-    emit noyau()->copierPermis(false);
-    emit noyau()->couperPermis(false);
-    emit noyau()->savePermis(false);
 }
 
 // %%%%% protected %%%%%%

@@ -31,8 +31,7 @@ class ArbreAttribut : public Attributs<ArbreSimpleAttribut,FeuilleAttribut,NumAt
 {
 public:
     //! Positions des attributs.
-    enum Position {
-                   Parent,
+    enum Position {Parent,
                    Feuille,
                    Num,
                    NbrAtt};

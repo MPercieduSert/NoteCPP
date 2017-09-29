@@ -458,7 +458,7 @@ public:
     BASE_ENTITY(IdCibleNumEntityTemp)
 
     //! Constructeur à partir des valeurs attributs.
-    IdCibleNumEntityTemp(int id1, int cible, int num, int id = 0)
+    IdCibleNumEntityTemp(int id1, int cible, int num = 0, int id = 0)
         : EAID(id)
     {
         setId1(id1);

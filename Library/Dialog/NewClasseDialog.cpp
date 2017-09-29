@@ -142,9 +142,7 @@ void NewClasseDialog::nameUpdate(int num)
             m_nameLine->setText((*j).nc()+QString("-")+QString::number(num));
     }
     else
-    {
         m_nameLine->clear();
-    }
 }
 
 

@@ -40,6 +40,8 @@ HEADERS += \
     ManagerOfArbreSimple.h \
     ManagerOfArbreSimpleModifControle.h \
     ManagerOfModifControle.h \
+    ManagerOfModifControlePermission.h \
+    ManagerOfPermission.h \
     ManagerSql.h \
     ReqSql.h \
     UniqueSql.h \
@@ -61,6 +63,8 @@ SOURCES += \
     ManagerOfArbreSimple.cpp \
     ManagerOfArbreSimpleModifControle.cpp \
     ManagerOfModifControle.cpp \
+    ManagerOfModifControlePermission.cpp \
+    ManagerOfPermission.cpp \
     ManagerSql.cpp \
     ReqSql.cpp \
     UniqueSql.cpp \

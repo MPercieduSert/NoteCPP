@@ -39,7 +39,7 @@ signals:
 
 public slots:
     //! Action à effectuer lorsque l'onglet devient actif.
-    virtual void becomeCurrent() const = 0;
+    virtual void becomeCurrent() const;
 
     //! A réimplémenter pour effectuer l'action coller.
     virtual void coller()   {}

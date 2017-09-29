@@ -31,10 +31,11 @@ protected:
     QList<QGroupBox *> m_listeGroupeEtab;           //!< Liste des groupes de classes par établissement.
     // QMap<int,QPushButton*> m_classeButtonMap;
 
-    // Widget
-    QPushButton *m_newClasseButton;                 //!< Bouton pour créer une nouvelle classe.
+    // Widget 
     QPushButton *m_coursButton;                     //!< Bouton ouvrant l'onglet des cours.
+    QPushButton *m_gestionBddButton;                      //!< Bouton ouvrant l'onglet de gestion de la base de donnée.
     QPushButton *m_motCleButton;                    //!< Bouton ouvrant l'onglet des mots clés.
+    QPushButton *m_newClasseButton;                 //!< Bouton pour créer une nouvelle classe.
     QSignalMapper *m_classeMapper;                  //!< Lie les boutons des classes à leur actions.
 
     // Layout
@@ -51,9 +52,6 @@ protected:
 signals:
 
 public slots:
-    //! Action à effectuer lorsque l'onglet devient actif.
-    void becomeCurrent() const;
-
     //! Ouvre la fenêtre de création d'une classe et rafraichit les boutons des classes.
     void creerClasse();
 };

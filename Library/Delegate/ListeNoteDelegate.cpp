@@ -1,10 +1,5 @@
 #include "ListeNoteDelegate.h"
 
-ListeNoteDelegate::ListeNoteDelegate(QObject *parent): QStyledItemDelegate(parent)
-{
-
-}
-
 QWidget * ListeNoteDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
     int pos = indice(index).first;

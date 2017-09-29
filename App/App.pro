@@ -17,11 +17,13 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 SOURCES += main.cpp \
     ../Library/Delegate/ListeElevesDelegate.cpp \
     ../Library/Delegate/ListeNoteDelegate.cpp \
+    ../Library/Delegate/MotCleDelegate.cpp \
     ../Library/Dialog/ControleGraphDialog.cpp \
     ../Library/Dialog/NewAnneeDialog.cpp \
     ../Library/Dialog/NewClasseDialog.cpp \
     ../Library/Dialog/NewControleDialog.cpp \
     ../Library/Dialog/NewEtablissementDialog.cpp \
+    ../Library/Dialog/NewMotCleDialog.cpp \
     ../Library/Dialog/NewTypeControleDialog.cpp \
     ../Library/Dialog/SelectAnneeDialog.cpp \
     ../Library/Dialog/SelectDonneeDialog.cpp \
@@ -77,6 +79,7 @@ SOURCES += main.cpp \
     ../Library/Fen/TabAbstractTableau.cpp \
     ../Library/Fen/TabClasse.cpp \
     ../Library/Fen/TabCours.cpp \
+    ../Library/Fen/TabGestionBdd.cpp \
     ../Library/Fen/TabListeEleve.cpp \
     ../Library/Fen/TabListeNote.cpp \
 #    ../Library/Fen/TabListeGroupe.cpp \
@@ -97,6 +100,8 @@ SOURCES += main.cpp \
     ../Library/Manager/ManagerOfArbreSimple.cpp \
     ../Library/Manager/ManagerOfArbreSimpleModifControle.cpp \
     ../Library/Manager/ManagerOfModifControle.cpp \
+    ../Library/Manager/ManagerOfModifControlePermission.cpp \
+    ../Library/Manager/ManagerOfPermission.cpp \
     ../Library/Manager/ManagerSql.cpp \
     ../Library/Manager/ReqSql.cpp \
     ../Library/Manager/UniqueSql.cpp \
@@ -107,11 +112,14 @@ SOURCES += main.cpp \
     ../Library/Model/ListeNoteModel.cpp \
     ../Library/Model/MAbstractTableModel.cpp \
     ../Library/Model/MAbstractTreeModel.cpp \
+    ../Library/Model/MotCleModel.cpp \
+    ../Library/Model/TreeModelMotCle.cpp \
     ../Library/Model/TreeModelReadTemp.cpp \
     ../Library/Model/TreeModelTemp.cpp \
     ../Library/Widget/BarPlotter.cpp \
     ../Library/Widget/HeaderView.cpp \
     ../Library/Widget/Histogramme.cpp \
+    ../Library/Widget/MotCleWidget.cpp \
     ../Library/Widget/Plotter.cpp \
     ../Library/Widget/ReadTreeWidget.cpp \
     ../Library/Widget/SelectInListBox.cpp \
@@ -127,11 +135,13 @@ SOURCES += main.cpp \
 HEADERS += \
     ../Library/Delegate/ListeElevesDelegate.h \
     ../Library/Delegate/ListeNoteDelegate.h \
+    ../Library/Delegate/MotCleDelegate.h \
     ../Library/Dialog/ControleGraphDialog.h \
     ../Library/Dialog/NewAnneeDialog.h \
     ../Library/Dialog/NewClasseDialog.h \
     ../Library/Dialog/NewControleDialog.h \
     ../Library/Dialog/NewEtablissementDialog.h \
+    ../Library/Dialog/NewMotCleDialog.h \
     ../Library/Dialog/NewTypeControleDialog.h \
     ../Library/Dialog/SelectAnneeDialog.h \
     ../Library/Dialog/SelectDonneeDialog.h \
@@ -190,6 +200,7 @@ HEADERS += \
     ../Library/Fen/TabCours.h \
     ../Library/Fen/TabListeEleve.h \
     ../Library/Fen/TabListeNote.h \
+    ../Library/Fen/TabGestionBdd.h \
 #    ../Library/Fen/TabListeGroupe.h \
     ../Library/Fen/TabMenu.h \
     ../Library/Fen/TabModule.h \
@@ -208,6 +219,8 @@ HEADERS += \
     ../Library/Manager/ManagerOfArbreSimple.h \
     ../Library/Manager/ManagerOfArbreSimpleModifControle.h \
     ../Library/Manager/ManagerOfModifControle.h \
+    ../Library/Manager/ManagerOfModifControlePermission.h \
+    ../Library/Manager/ManagerOfPermission.h \
     ../Library/Manager/ManagerSql.h \
     ../Library/Manager/ReqSql.h \
     ../Library/Manager/UniqueSql.h \
@@ -218,11 +231,14 @@ HEADERS += \
     ../Library/Model/ListeNoteModel.h \
     ../Library/Model/MAbstractTableModel.h \
     ../Library/Model/MAbstractTreeModel.h \
+    ../Library/Model/MotCleModel.h \
+    ../Library/Model/TreeModelMotCle.h \
     ../Library/Model/TreeModelReadTemp.h \
     ../Library/Model/TreeModelTemp.h \
     ../Library/Widget/BarPlotter.h \
     ../Library/Widget/HeaderView.h \
     ../Library/Widget/Histogramme.h \
+    ../Library/Widget/MotCleWidget.h \
     ../Library/Widget/Plotter.h \
     ../Library/Widget/ReadTreeWidget.h \
     ../Library/Widget/SelectInListBox.h \

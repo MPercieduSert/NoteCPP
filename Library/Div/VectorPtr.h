@@ -124,7 +124,7 @@ public:
     VectorPtr(ListPtr<T> && liste);
 
     //! Constructeur
-    VectorPtr(int n,const T & value) : QVector<T*>(n)
+    VectorPtr(int n,const T & value = T()) : QVector<T*>(n)
     {
         for(typename QVector<T*>::iterator i = begin(); i != end(); ++i)
             *i = new T(value);

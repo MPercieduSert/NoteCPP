@@ -2,6 +2,7 @@
 #include "TabAbstractModule.h"
 #include "TabClasse.h"
 #include "TabCours.h"
+#include "TabGestionBdd.h"
 #include "TabListeEleve.h"
 #include "TabListeGroupe.h"
 #include "TabListeNote.h"
@@ -40,6 +41,18 @@ void TabModule::openCours()
         TabCours * tabCours = new TabCours(0,this);
         m_listeTab[CoursTab].insert(0,tabCours);
         setCurrentIndex(addTab(tabCours,tr("Cours")));
+    }
+}
+
+void TabModule::openGestionBdd()
+{
+    if(!m_listeTab[GestionBddTab].isEmpty())
+        setCurrentIndex(indexOf(m_listeTab[GestionBddTab].first()));
+    else
+    {
+        TabGestionBdd * tabGestionBdd = new TabGestionBdd(bdd()->db(),0,this);
+        m_listeTab[GestionBddTab].insert(0,tabGestionBdd);
+        setCurrentIndex(addTab(tabGestionBdd,tr("Base de données")));
     }
 }
 

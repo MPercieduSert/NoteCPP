@@ -87,7 +87,7 @@ public:
 
 protected:
     //! Supprime de la base de donnée le noeud d'identifiant id ainsi que tous ses déscendants (opération stable).
-    void del(int id);
+    bool del(int id);
 
     //! Supprime de la Base de données les noeuds hors de l'arbre.
     void deleteLeafOutOf(TreeItem<Ent> * tree);
@@ -102,16 +102,31 @@ protected:
     //! Permet de lire réccursivement un arbre.
     void getArbreRec(TreeItem<Ent> * tree);
 
+    //! Renvoie le liste des descendant direct d'entity.
+    ListPtr<Ent> getListChilds(const Ent & entity)
+        {return getList(Ent::Parent,entity.id());}
+
+    //! Renvoie le vecteur des descendant direct d'entity.
+    VectorPtr<Ent> getVectorChilds(const Ent & entity)
+        {return getListChilds(entity);}
     //! Sauve un arbre où le changement de structure consite seulement l'ajout de nouveaux noeuds et des permutations à l'interieur de l'arbre.
     void saveWithoutDelete(TreeItem<Ent> * tree);
 };
 
-template<class Ent, class Unique> void ManagerOfArbreSimple<Ent,Unique>::del(int id)
+template<class Ent, class Unique> bool ManagerOfArbreSimple<Ent, Unique>::del(int id)
 {
-    ListPtr<Ent> childs = getList(Ent::Parent,id);
-    for(typename ListPtr<Ent>::iterator i = childs.begin(); i != childs.end(); ++i)
-        del((*i).id());
-    ManagerSqlEnt::del(id);
+    if(!exists(Ent::Parent,id))
+        return ManagerSqlEnt::del(id);
+    else
+        return false;
+    /*ListPtr<Ent> childs = getList(Ent::Parent,id);
+    typename ListPtr<Ent>::iterator i = childs.begin();
+    while(i != childs.end() && del((*i).id()))
+        ++i;
+    if(i == childs.end())
+        return ManagerSqlEnt::del(id);
+    else
+        return false;*/
 }
 
 template<class Ent, class Unique> void ManagerOfArbreSimple<Ent,Unique>::deleteLeafOutOf(TreeItem<Ent> * tree)

@@ -4,14 +4,18 @@
 #ifndef EDITTREEWIDGET_H
 #define EDITTREEWIDGET_H
 
-#include <QScrollArea>
-#include <QTreeView>
-#include <QWidget>
 
-class EditTreeWidget
+#include "ReadTreeWidget.h"
+#include "../Model/TreeModelEditTemp.h"
+
+template<class Ent> class EditTreeWidget : ReadTreeWidget<Ent>
 {
 public:
-    EditTreeWidget();
+    using ReadTreeWidget<Ent>::ReadTreeWidget;
+
+    //! Renvoie un pointeur sur le model
+    TreeModelEditTemp<Ent> * model() const
+        {return static_cast<TreeModelEditTemp<Ent> *>(QTreeView::model());}
 };
 
 #endif // EDITTREEWIDGET_H
