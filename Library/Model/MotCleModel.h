@@ -4,6 +4,7 @@
 #ifndef MOTCLEMODEL_H
 #define MOTCLEMODEL_H
 
+#include <QSet>
 #include "TreeModelReadTemp.h"
 #include "../Div/Bdd.h"
 #include "../Entities/MotCle.h"
@@ -15,27 +16,28 @@ class MotCleModel : public TreeModelReadTemp<MotCle>
 {
     Q_OBJECT
 protected:
+    enum {PasTous,TousJusquaPresent,Tous};
     Bdd * m_bdd;        //!< Pointeur vers la base de donnée.
     const int m_cible;  //!< Numero de cible du type d'entité pour les quels on souhaite gérer les mots clés.
-    QList<int> m_idEntityList;           //!< Identifiant de l'entité dont les mots clés sont affichés.
-    QMap<int,int> m_idMotCleComp;  //!< Liste des identifiants des mots clés associés l'entité d'identifiant m_id.
+    QSet<int> m_idSet;           //!< Ensemble des identifiants des entités dont les mots clés sont affichés.
+    QMap<int,bool> m_idMotCle;  //!< Map dont les clés sont les identifiants des mots clés associés aux entités d'identifiant contenus dans m_idSet et de valeur true si le mot clé est associé à toutes les entités dont les identifiants sont contenus dans m_idSet et false sinon..
 
 public:
     //! Constructeur.
     MotCleModel(Bdd *bd, int cible, QObject * parent);
 
-    //! Renvoie la liste des mots clés associés à l'entité d'identifiant m_id.
+    //! Renvoie la liste des mots clés associés aux entités dont d'identifiant est contenu dans m_idSet.
     QString dataListeNomMotCle() const;
 
     //! Mes à jour l'arbre des mots clès.
     void setTreeMotCle();
 
 signals:
-    void changedIdEntityList(QList<int> IdList);
+    void changedIdSet(QSet<int> IdSet);
 
 public slots:
     //!< Mutateur de m_idEntityList, l'identifiant de l'entité pour laquelle sont affiché les mots clés.
-    void setIdEntityList(const QList<int> & idEntityList);
+    void setIdSet(const QSet<int> & idSet);
 
 };
 

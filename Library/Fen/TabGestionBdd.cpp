@@ -4,6 +4,7 @@ TabGestionBdd::TabGestionBdd(QSqlDatabase & bdd,int index, TabModule *parent) : 
 {
     m_listName = new QListWidget();
     m_stack = new QStackedWidget();
+    //m_stack = new QStackedLayout();
     QMap<int,QString> nomAttributsBdd;
     DECL_TABLE_ENTITY(Annee)
     DECL_TABLE_ENTITY(CibleCommentaire)
@@ -43,7 +44,7 @@ TabGestionBdd::TabGestionBdd(QSqlDatabase & bdd,int index, TabModule *parent) : 
     DECL_TABLE_ENTITY_NAME(TypeUtilisation)
     DECL_TABLE_ENTITY(Utilisation)
     QStringList nomArbreAttributs;
-    nomArbreAttributs<<"Parent"<<"Feuille"<<"Num";
+    nomArbreAttributs<<"Id"<<"Parent"<<"Feuille"<<"Num";
     m_tables[ArbreCoursId].nom = "ArbreCours";
     m_tables[ArbreCoursId].nomBdd = InfoBdd<Cours>::tableArbre();
     m_tables[ArbreCoursId].nomAttributs = nomArbreAttributs;
@@ -67,12 +68,29 @@ TabGestionBdd::TabGestionBdd(QSqlDatabase & bdd,int index, TabModule *parent) : 
         (*i).view = new QTableView();
         (*i).view->setModel((*i).model);
         m_listName->addItem((*i).nom);
-        m_stack->addWidget((*i).view);
+        //m_stack->addWidget((*i).view);
+        QPushButton * insertButton = new QPushButton("Ajouter");
+        QPushButton * supprButton = new QPushButton("Supprimer");
+        connect(insertButton,&QPushButton::clicked,[i](){(*i).model->insertRow((*i).model->rowCount());});
+        connect(supprButton,&QPushButton::clicked,[i]()
+            {
+                QModelIndexList indexList = (*i).view->selectionModel()->selectedRows();
+                for(QModelIndexList::const_iterator j = indexList.cbegin(); j != indexList.cend(); ++j)
+                    (*i).model->removeRow((*j).row());
+            });
+        QWidget * wdgt = new QWidget();
+        QVBoxLayout * vLayout = new QVBoxLayout(wdgt);
+        vLayout->addWidget((*i).view);
+        vLayout->addWidget(insertButton);
+        vLayout->addWidget(supprButton);
+        vLayout->setContentsMargins(0,0,0,0);
+        m_stack->addWidget(wdgt);
     }
     connect(m_listName,SIGNAL(currentRowChanged(int)),m_stack,SLOT(setCurrentIndex(int)));
     m_splitter = new QSplitter();
     m_splitter->addWidget(m_listName);
     m_splitter->addWidget(m_stack);
+    //m_splitter->addWidget(m_stack);
     /*m_secondLayout = new QHBoxLayout();
     m_secondLayout->addWidget(m_listName);
     m_secondLayout->addWidget(m_stack);*/

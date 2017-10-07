@@ -4,6 +4,8 @@
 #ifndef TREEMODELEDITTEMP_H
 #define TREEMODELEDITTEMP_H
 
+#include <QStack>
+#include "../Manager/AbstractManager.h"
 #include "TreeModelReadTemp.h"
 
 /*! \ingroup groupeModel
@@ -12,11 +14,11 @@
 template<class Ent> class TreeModelEditTemp : public TreeModelReadTemp<Ent>
 {
 public:
-    enum itemRole{
-        EstSupprimable = Qt::UserRole
-    };
-
     using TreeModelReadTemp<Ent>::TreeModelReadTemp;
+
+    //! Renvoie les autorisations de modification pour un index donné.
+    virtual bool autorisation(const QModelIndex & /*index*/, bdd::Autorisation /*role*/) const
+        {return true;}
 
     //! Renvoie les drapeaux de l'index spécifié.
     Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -36,11 +38,15 @@ public:
     bool removeRows(int row, int count, const QModelIndex &parent);
 
 protected:
-    using TreeModelReadTemp<Ent>::getItem;
     using TreeModelReadTemp<Ent>::beginInsertRows;
     using TreeModelReadTemp<Ent>::beginRemoveRows;
-    using TreeModelReadTemp<Ent>::endRemoveRows;
+    using TreeModelReadTemp<Ent>::beginResetModel;
+    using TreeModelReadTemp<Ent>::createIndex;
     using TreeModelReadTemp<Ent>::endInsertRows;
+    using TreeModelReadTemp<Ent>::endRemoveRows;  
+    using TreeModelReadTemp<Ent>::endResetModel;
+    using TreeModelReadTemp<Ent>::getItem;
+    using TreeModelReadTemp<Ent>::parent;
 };
 
 template<class Ent> Qt::ItemFlags TreeModelEditTemp<Ent>::flags(const QModelIndex &index) const
@@ -70,21 +76,35 @@ template<class Ent> bool TreeModelEditTemp<Ent>::insertRows(int row, int count, 
     return comp == count;
 }
 
-template<class Ent> bool TreeModelEditTemp<Ent>::removeRows(int row, int count, const QModelIndex &parent)
+template<class Ent> bool TreeModelEditTemp<Ent>::removeRows(int row, int count, const QModelIndex &parentIndex)
 {
-    if(!parent.isValid())
+    if(!parentIndex.isValid())
         return false;
     int comp = 0;
     for(int i = 0; i != count; ++i)
     {
-        if(removeEntity(getItem(parent)->child(row)->data()))
+        QStack<TreeItem<Ent> *> pile;
+        pile.push(getItem(parentIndex)->child(row));
+        bool remove = true;
+        while(!pile.isEmpty() && remove)
         {
-            beginRemoveRows(parent,row,row);
-                getItem(parent)->removeChild(row);
-            endRemoveRows();
-            ++row;
-            ++comp;
+            if(pile.top()->hasChild())
+                pile.push(pile.top()->lastChild());
+            else
+            {
+                int n = pile.top()->position();
+                remove = removeEntity(pile.top()->data());
+                if(remove)
+                {
+                    beginRemoveRows(parent(createIndex(0,0,pile.top())),n,n);
+                        delete pile.pop();
+                    endRemoveRows();
+                }
+            }
         }
+        if(pile.isEmpty())
+            ++comp;
+        ++row;
     }
     return comp == count;
 }

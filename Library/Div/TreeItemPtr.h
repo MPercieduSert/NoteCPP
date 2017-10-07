@@ -83,8 +83,8 @@ public:
         {return static_cast<TreeItemPtr<T>*>(TreeItem<T*>::lastChild());}
 
     //! Méthode récursive renvoyant un pointeur sur le dernier descendant du noeud.
-    TreeItemPtr<T> * lastestChild() const
-        {return static_cast<TreeItemPtr<T>*>(TreeItem<T*>::lastestChild());}
+    TreeItemPtr<T> * lastLeaf() const
+        {return static_cast<TreeItemPtr<T>*>(TreeItem<T*>::lastLeaf());}
 
     //! Renvoie un pointeur sur le parent du noeud ou 0 si le noeud est la racine.
     TreeItemPtr<T> * parent() const

@@ -14,9 +14,9 @@ MotCleWidget::MotCleWidget(Bdd * bd, int cible, QWidget *parent) : QWidget(paren
     m_mainLayout->addWidget(m_treeView);
 }
 
-void MotCleWidget::setIdList(QList<int> idList)
+void MotCleWidget::setIdSet(QSet<int> idSet)
 {
-    m_model->setIdEntityList(idList);
+    m_model->setIdSet(idSet);
 
 
     //emit idChanged(id);

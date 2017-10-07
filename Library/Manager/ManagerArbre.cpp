@@ -212,7 +212,7 @@ bool ManagerArbre::del(const Arbre & node)
     {
         if(exists(Arbre::Parent,node.parent()))
         {
-            ListPtr<Arbre> nodes(getList(Arbre::Num,node.num(),Arbre::Num,bdd::Condition::Sup));
+            ListPtr<Arbre> nodes(getList(Arbre::Num,node.num(),Arbre::Parent,node.parent(),Arbre::Num,bdd::Condition::Sup));
             for(ListPtr<Arbre>::iterator i = nodes.begin(); i != nodes.end(); ++i)
             {
                 (*i).setNum((*i).num() - 1);

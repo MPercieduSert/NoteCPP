@@ -54,13 +54,28 @@ TreeModelMotCle::TreeModelMotCle(Bdd * bdd, QObject *parent)
     }
 }
 
+bool TreeModelMotCle::autorisation(const QModelIndex & index, bdd::Autorisation autoris) const
+{
+    if(autoris == bdd::Autorisation::Suppr)
+        return m_bdd->getAutorisation(getItem(index)->data(),autoris);
+    if(autoris == bdd::Autorisation::Modif)
+    {
+        if(index.column() < NbrColumnMotCle)
+            return m_bdd->getAutorisation(getItem(index)->data(),autoris);
+        else
+        {
+            MotClePermission perm(getItem(index)->data().id(),cible(index));
+            return !m_bdd->getUnique(perm) || m_bdd->getAutorisation(perm,bdd::Modif);
+        }
+    }
+    return TreeModelMotCle::autorisation(index,autoris);
+}
+
+
 QVariant TreeModelMotCle::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-
-    if(role == itemRole::EstSupprimable)
-        return m_bdd->getAutorisation(getItem(index)->data(),bdd::Suppr);
 
     if (role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::FontRole && role != Qt::ForegroundRole)
         return QVariant();
@@ -96,17 +111,8 @@ Qt::ItemFlags TreeModelMotCle::flags(const QModelIndex &index) const
 {
     if(!index.isValid())
         return Qt::NoItemFlags;
-    if(index.column() < NbrColumnMotCle)
-    {
-        if(!m_bdd->getAutorisation(getItem(index)->data(),bdd::Modif))
-            return QAbstractItemModel::flags(index);
-    }
-    else
-    {
-        MotClePermission perm(getItem(index)->data().id(),cible(index));
-        if(m_bdd->getUnique(perm) && !m_bdd->getAutorisation(getItem(index)->data(),bdd::Modif))
-            return QAbstractItemModel::flags(index);
-    }
+    if(!autorisation(index,bdd::Autorisation::Modif))
+        return QAbstractItemModel::flags(index);
     return TreeModelEditTemp::flags(index);
 }
 
@@ -138,11 +144,18 @@ bool TreeModelMotCle::hydrateNewEntity(MotCle & entity, int row, const QModelInd
         return false;
 }
 
+int TreeModelMotCle::id(const QModelIndex & index) const
+{
+    if(!index.isValid())
+        return 0;
+    return getItem(index)->data().id();
+}
+
 bool TreeModelMotCle::removeEntity(const MotCle & entity)
 {
     if(QMessageBox::question(0,tr("Suppression d'un mot clé"),QString(tr("Êtes-vous certain de vouloir supprimer le mot clé : ").append(entity.nom()).append(".")),QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
-        m_bdd->del(entity);
-    return true;
+        return m_bdd->del(entity);
+    return false;
 }
 
 bool TreeModelMotCle::setData(const QModelIndex &index, const QVariant &value, int role)

@@ -51,7 +51,7 @@ protected:
     QListWidget * m_listName;   //!< Liste des noms des entitées
     QSplitter * m_splitter;     //!< Splitter entre la liste des noms des entités et les tables
     QStackedWidget * m_stack;   //!< Staked widget.
-
+    //QStackedLayout * m_stack;   //!< Staked widget.
     //QHBoxLayout * m_secondLayout;   //!< Calque secondaire.
 
 public:

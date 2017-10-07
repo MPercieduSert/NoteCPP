@@ -9,6 +9,7 @@
 #define TREEITEM_H
 
 #include<QList>
+#include<QStack>
 #include <stdexcept>
 
 /*! \ingroup groupeTree
@@ -66,11 +67,13 @@ public:
 
     public:
         //! Constructeur de conversion à partir d'un pointeur sur un noeud.
-        iterator(TreeItem<T> * node = nullptr): m_ptr(node), m_sens(true)
+        iterator(TreeItem<T> * node = nullptr)
+            : m_ptr(node), m_sens(true)
             {}
 
         //! Constructeur de recopie.
-        iterator(const iterator & i): m_ptr(i.m_ptr), m_sens(i.m_sens)
+        iterator(const iterator & i)
+            : m_ptr(i.m_ptr), m_sens(i.m_sens)
             {}
 
         //! Opérateur d'affectation.
@@ -92,12 +95,12 @@ public:
         //! Opératateur de pré-incrémentation. Positionne l'itérateur sur le noeud suivant, les noeuds sont parcourus uniquement à la descente.
         iterator & operator ++()
         {
-            if(m_ptr != nullptr)
+            if(m_ptr)
             {
-                if(m_ptr->m_childs.isEmpty())
-                    next();
+                if(m_ptr->hasChild())
+                    m_ptr = m_ptr->firstChild();
                 else
-                    m_ptr = m_ptr->m_childs.first();
+                    next();
             }
             return *this;
         }
@@ -113,16 +116,16 @@ public:
         //! Opérateur de pré-décrémentation.
         iterator & operator --()
         {
-            if(!isNull())
+            if(m_ptr)
             {
-                if(!m_ptr->isRoot())
+                if(m_ptr->m_parent)
                 {
-                    if(m_ptr == m_ptr->m_parent->m_childs.first())
+                    if(m_ptr->isFirstChild())
                         m_ptr = m_ptr->m_parent;
                     else
                     {
-                        m_ptr = m_ptr->m_parent->m_childs.at(m_ptr->m_parent->m_childs.indexOf(m_ptr)-1);
-                        m_ptr = m_ptr->lastestChild();
+                        m_ptr = *(--m_ptr->itPosition());
+                        m_ptr = m_ptr->lastLeaf();
                     }
                 }
                 else
@@ -199,10 +202,15 @@ public:
         }
 
         //! Détermine la position du noeud courant par rapport à la racine.
-        QList<int> index()
+        QList<int> index() const
         {
             QList<int> list;
-            recIndex(m_ptr, list);
+            TreeItem<T> * node = m_ptr;
+            while(node->m_parent)
+            {
+                list.prepend(node->position());
+                node = node->m_parent;
+            }
             return list;
         }
 
@@ -219,13 +227,17 @@ public:
         bool isNull() const
             {return m_ptr == nullptr;}
 
-        //! Teste si le neud courant est le sommet de l'arbre
+        //! Teste si le neud courant est le sommet de l'arbre.
         bool isRoot() const
             {return !isNull() && m_ptr->m_parent == nullptr;}
 
         //! Place l'itérateur sur le dernier des descendants de la ligné des ainés du noeud courant.
-        iterator & toLatestChild()
-            {m_ptr = m_ptr->lastestChild(); return (*this);}
+        iterator & toFirstLeaf()
+            {m_ptr = m_ptr->firstLeaf(); return (*this);}
+
+        //! Place l'itérateur sur le dernier des descendants de la ligné des cadets du noeud courant.
+        iterator & toLastLeaf()
+            {m_ptr = m_ptr->lastLeaf(); return (*this);}
 
         //! Positionne l'itérateur sur le noeud précédent dans le parcours de type suivant-précédent:
         //! les noeuds sont parcours deux fois, à la descente et à la remonté.
@@ -234,9 +246,9 @@ public:
         //! Place l'itérateur à la racine de l'arbre. L'itérateur doit être préalablement positionné sur un noeud non nul de l'arbre.
         iterator & root()
         {
-            if(!isNull())
+            if(m_ptr)
             {
-                recRoot();
+                toRoot();
                 m_sens = true;
             }
             return *this;
@@ -290,22 +302,17 @@ public:
         iterator & toParent(int n = 1);
 
     protected:
-        //! Positionne l'itérateur sur le frère suivant du noeud courant. Si le noeud courant est le dernier des frères, on réapplique la méthode avec le parent. Si le noeud courant est le tout dernier des descendants de l'arbre, l'itérateur est placé sur le noeud virtuel nul.
+        //! Positionne l'itérateur sur le frère suivant du noeud courant. Si le noeud courant est le dernier des frères.
+        //! Si le noeud courant est le tout dernier des descendants de l'arbre, l'itérateur est placé sur le noeud virtuel nul.
         void next();
 
-        //! Parcours de manière récursive les noeuds en décrémentant le compteur comp jusqu'a ce que celui-ci s'annule, puis positionne l'itérateur sur le noeud correspondant.
-        void nextComp(int comp);
+        //! Méthode positionnant l'itérateur sur la racine de l'arbre. L'itérateur ne doit pas être nul.
+        void toRoot()
+        {
+            while(m_ptr->m_parent)
+                m_ptr = m_ptr->m_parent;
+        }
 
-        /*! \brief Parcours de manière récursive l'ensemble des descendants du noeud pointé par ptr en décrémentant le compteur comp.
-         * De plus, si ce compteur s'annule l'itérateur est placé sur le noeuds correspondant à l'annulation et le parcours s'arrète.
-         */
-        int nextCompChild(int comp, TreeItem<T> * ptr);
-
-        //! Méthode récursive déterminant la position du noeud courant par rapport à la racine.
-        static void recIndex(TreeItem<T> * node, QList<int> & list);
-
-        //! Méthode récursive positionnant l'itérateur sur la racine de l'arbre. L'itérateur ne doit pas être nul.
-        void recRoot();
     };
     friend class iterator;
 
@@ -316,7 +323,8 @@ protected:
 
 public:
     //! Constructeur sans donnée associée au noeud. Par défaut un noeud est la racine d'un arbre.
-    TreeItem(TreeItem<T> * parent = nullptr) : m_parent(parent)
+    TreeItem(TreeItem<T> * parent = nullptr)
+        : m_parent(parent)
     {
         if(parent)
             parent->m_childs.append(this);
@@ -328,6 +336,9 @@ public:
     //! Constructeur de recopie. Recopie également récursivement l'ensemble des descendants, T doit posséder un constreur à partie de U.
     template<class U> TreeItem(const TreeItem<U> & tree);
 
+    //! Constructeur à partir d'un TreeItem de donnée U et une usine construisant une donnée T grâce à une donnée U.
+    template<class U, class F> TreeItem(const TreeItem<U> & tree, F & usine);
+
     //! Constructeur par déplacement.
     TreeItem(TreeItem<T> && tree)
         : m_parent(tree.m_parent),
@@ -336,13 +347,15 @@ public:
     {
         if(m_parent)
         {
-            m_parent->m_childs[m_parent->m_childs.indexOf(&tree)] = this;
+            *std::find(m_parent->m_childs.cbegin(), m_parent->m_childs.cend(), &tree) = this;
             tree.m_parent = nullptr;
         }
     }
 
     //! Constructeur avec une donnée associée au noeud. Par défaut un noeud est la racine d'un arbre.
-    TreeItem(const T & data, TreeItem * parent = nullptr) : m_parent(parent), m_data(data)
+    TreeItem(const T & data, TreeItem * parent = nullptr)
+        : m_parent(parent),
+          m_data(data)
     {
         if(parent)
             parent->m_childs.append(this);
@@ -351,7 +364,7 @@ public:
     //! Destructeur. Détruit également récursivement l'ensemble des descendants.
     ~TreeItem()
     {
-        if(!isRoot())
+        if(m_parent)
             m_parent->m_childs.removeOne(this);
         for(typename QList<TreeItem<T>* >::const_iterator i = m_childs.cbegin(); i != m_childs.cend(); ++i)
         {
@@ -381,9 +394,9 @@ public:
         changeHeredite(child);
     }
 
-    //! Renvoie un pointeur sur le descendant direct d'indice position. Cette fonction ne vérifie pas si position excéde le nombre de descendants directs contrairement à child.
-    TreeItem<T> * child(int position) const
-        {return m_childs.at(position);}
+    //! Renvoie un pointeur le frère d'indice position. Cette fonction ne vérifie pas si position excéde le nombre de frère.
+    TreeItem<T> * brother(int position) const
+        {return m_parent ? m_parent->child(position) : this;}
 
     //! Crée un itérateur initialisé sur le noeud.
     iterator begin() const
@@ -392,6 +405,10 @@ public:
     //! Crée un itérateur initialisé sur la racine.
     iterator beginRoot() const
         {return iterator(root());}
+
+    //! Renvoie un pointeur sur le descendant direct d'indice position. Cette fonction ne vérifie pas si position excéde le nombre de descendants directs contrairement à child.
+    TreeItem<T> * child(int position) const
+        {return m_childs.at(position);}
 
     //! Renvoie la liste liste des pointerurs vers les descendants directs.
     const QList<TreeItem<T>*> & childs() const
@@ -409,9 +426,22 @@ public:
     iterator end() const
         {return iterator(nullptr);}
 
+    //! Renvoie un pointeur sur le premier frère.
+    TreeItem<T> * firstBrother() const
+        {return m_parent ? m_parent->firstChild() : this;}
+
     //! Renvoie un pointeur sur le premier descendant direct.
     TreeItem<T> * firstChild() const
         {return m_childs.first();}
+
+    //! Renvoie un pointeur sur la feuille correspondant aux descendants ainés.
+    TreeItem<T> * firstLeaf() const
+    {
+        TreeItem<T> * node = const_cast<TreeItem *>(this);
+        while(node->hasChild())
+            node = node->firstChild();
+        return node;
+    }
 
     //! Test si le noeud posséde un descendant direct.
     bool hasChild() const
@@ -424,29 +454,42 @@ public:
         changeHeredite(child);
     }
 
-
     //! Créer une nouveau de valeur T est l'insert à l'indice position dans la liste des descendants directs.
     void insertChild(const int position, const T & data)
         {insertChild(position, new TreeItem<T>(data));}
 
     //! Test si le noeud est le première enfant.
     bool isFirstChild() const
-        {return isRoot() ? true : this == parent()->firstChild();}
+        {return m_parent ? this == firstBrotherNoRoot() : true;}
 
     //! Test si le noeud est le première enfant.
     bool isLastChild() const
-        {return isRoot() ? true : this == parent()->lastChild();}
+        {return m_parent ? this == lastBrotherNoRoot() : true;}
 
     //! Test si le noeud est la racine de l'arbre.
     bool isRoot() const
         {return m_parent == nullptr;}
+
+    //! Renvoie un itérateur sur le noeud dans la list des enfants si le noeud n'est pas la racine.
+    typename QList<TreeItem<T> *>::const_iterator itPosition() const
+        {return std::find(m_parent->m_childs.cbegin(), m_parent->m_childs.cend(), this);}
+
+    //! Renvoie un pointeur sur le dernier frère.
+    TreeItem<T> * lastBrother() const
+        {return m_parent ? m_parent->lastChild() : this;}
 
     //! Renvoie un pointeur sur le dernier descendant direct.
     TreeItem<T> * lastChild() const
         {return m_childs.last();}
 
     //! Méthode récursive renvoyant un pointeur sur le dernier des descendants de la ligné des ainés du noeud.
-    TreeItem<T> * lastestChild() const;
+    TreeItem<T> * lastLeaf() const
+    {
+        TreeItem<T> * node = const_cast<TreeItem *>(this);
+        while(node->hasChild())
+            node = node->lastChild();
+        return node;
+    }
 
     //! Transmet une référence sur la donnée associée au noeud. La donnée pouvant être modifiée.
     T & modifData()
@@ -463,15 +506,18 @@ public:
     TreeItem<T> * parent() const
         {return m_parent;}
 
-    //! Renvoie l'indice du noeud parmis les descendant direct de son parent et -1 si le noeud est la racine.
+    //! Renvoie l'indice du noeud parmis les descendants directs de son parent et 0 si le noeud est la racine.
     int position() const
-        {return isRoot() ? 0 : m_parent->m_childs.indexOf(const_cast<TreeItem<T>*>(this));}
+        {return m_parent ? m_parent->m_childs.indexOf(const_cast<TreeItem<T>*>(this)) : 0;}
 
     //! Détruit tous les descendants du noeud.
     void removeAllChild()
     {
         for(typename QList<TreeItem<T>*>::const_iterator i = m_childs.cbegin(); i != m_childs.cend(); ++i)
+        {
+            (*i)->m_parent = nullptr;
             delete *i;
+        }
         m_childs.clear();
     }
      /*! \brief Retire le descendant d'indice position de la liste des descendants directs.
@@ -528,7 +574,7 @@ public:
         m_childs = std::move(tree.m_childs);
         if(tree.m_parent)
         {
-            m_parent->m_childs[m_parent->m_childs.indexOf(&tree)] = this;
+            *std::find(m_parent->m_childs.cbegin(), m_parent->m_childs.cend(), &tree) = this;
             tree.m_parent = nullptr;
         }
     }
@@ -553,27 +599,50 @@ public:
         {return *(addChild(data));}
 
 protected:
+    //! Renvoie un pointeur sur le frère d'indice position (ne doit pas être appliqué à la racine).
+    TreeItem<T> * brotherNoRoot(int position) const
+        {return m_parent->m_childs.at(position);}
+
     //! Change l'hérédité d'un noeud en le supprimant de la liste des descendants de son noeud parent avant de remplacer le pointeur sur ce dernier par this.
     void changeHeredite(TreeItem<T> *child)
     {
-        if(!child->isRoot())
-        {
+        if(child->m_parent)
             child->m_parent->m_childs.removeOne(child);
-        }
         child->m_parent = this;
     }
+
+    //! Renvoie un pointeur sur le premier feère (ne doit pas être appliqué à la racine).
+    TreeItem<T> * firstBrotherNoRoot() const
+        {return m_parent->m_childs.first();}
+
+    //! Renvoie un pointeur sur le premier feère (ne doit pas être appliqué à la racine).
+    TreeItem<T> * lastBrotherNoRoot() const
+        {return m_parent->m_childs.last();}
+
+    //! Renvoie la position du noeud dans la fratrie (ne doit pas être appliqué à la racine).
+    int positionNoRoot() const
+        {return m_parent->m_childs.indexOf(const_cast<TreeItem<T>*>(this));}
 };
 
-template<class T> TreeItem<T>::TreeItem(const TreeItem<T> & tree): m_parent(nullptr), m_data(tree.m_data)
+template<class T> TreeItem<T>::TreeItem(const TreeItem<T> & tree)
+    : m_parent(nullptr), m_data(tree.m_data)
 {
     for(typename QList<TreeItem<T> *>::const_iterator i = tree.m_childs.cbegin(); i != tree.m_childs.cend(); ++i)
         appendChild(new TreeItem<T>(**i));
 }
 
-template<class T> template<class U> TreeItem<T>::TreeItem(const TreeItem<U> & tree): m_parent(nullptr), m_data(tree.data())
+template<class T> template<class U> TreeItem<T>::TreeItem(const TreeItem<U> & tree)
+    : m_parent(nullptr), m_data(tree.data())
 {
     for(typename QList<TreeItem<U> *>::const_iterator i = tree.childs().cbegin(); i != tree.childs().cend(); ++i)
         appendChild(new TreeItem<T>(**i));
+}
+
+template<class T> template<class U,class F> TreeItem<T>::TreeItem(const TreeItem<U> & tree, F & usine)
+    : m_parent(nullptr), m_data(usine(tree.data()))
+{
+    for(typename QList<TreeItem<U> *>::const_iterator i = tree.childs().cbegin(); i != tree.childs().cend(); ++i)
+        appendChild(new TreeItem<T>(**i,usine));
 }
 
 template<class T> TreeItem<T> * TreeItem<T>::addChild(const int nbr)
@@ -583,42 +652,15 @@ template<class T> TreeItem<T> * TreeItem<T>::addChild(const int nbr)
     return lastChild();
 }
 
-/*template<class T> TreeItem<T> * TreeItem<T>::child(const int position) const
-{
-    if(0 <= position && position < m_childs.size())
-    {
-        return m_childs.at(position);
-    }
-    else
-    {
-        throw std::runtime_error(QString("La position donnée :")
-                                 .append(QString::number(position))
-                                 .append(", dépasse le nombre de descendant:")
-                                 .append(QString::number(m_childs.size())).append(".").toStdString());
-    }
-}*/
-
-template<class T> TreeItem<T> * TreeItem<T>::lastestChild() const
-{
-    if(m_childs.isEmpty())
-        return (TreeItem<T> *) this;
-    else
-        return m_childs.last()->lastestChild();
-}
-
 template<class T> void TreeItem<T>::move(const int from, const int to)
 {
     if(0 <= from && 0 <= to && from < m_childs.size() && to < m_childs.size() )
     {
         if(from != to)
-        {
             m_childs.move(from, to);
-        }
     }
     else
-    {
         throw std::runtime_error("from ou to dépassent le nombre de child");
-    }
 }
 
 template<class T> void TreeItem<T>::removeChild(const int position)
@@ -626,74 +668,99 @@ template<class T> void TreeItem<T>::removeChild(const int position)
     if(0 <= position && position < m_childs.size())
         delete m_childs.at(position);
     else
-    {
         throw std::runtime_error(QString("La position donnée :")
                                  .append(QString::number(position))
                                  .append(", dépasse le nombre de descendant:")
                                  .append(QString::number(m_childs.size())).append(".").toStdString());
-    }
 }
 
 template<class T> void TreeItem<T>::removeChild(const int position, const int nbr)
 {
-    if(0 <= position && 0 < nbr && position < m_childs.size()  && position + nbr < m_childs.size())
+    if(0 <= position && 0 <= nbr && position < m_childs.size()  && position + nbr < m_childs.size())
     {
         for(int i = position; i != position + nbr; ++i)
         {
+            m_childs.at(i)->m_parent = nullptr;
             delete m_childs.at(i);
             m_childs.removeAt(i);
         }
     }
     else
-    {
         throw std::runtime_error(QString("La position donnée :")
                                  .append(QString::number(position))
                                  .append(", ou position+nbr:")
                                  .append(QString::number(position+nbr))
                                  .append(", dépasse le nombre de descendant:")
                                  .append(QString::number(m_childs.size())).append(".").toStdString());
-    }
 }
 
 template<class T> TreeItem<T> * TreeItem<T>::root() const
 {
-    if(!isRoot())
-        return m_parent->root();
-    else
-        return this;
+    TreeItem<T> * node = const_cast<TreeItem<T> *>(this);
+    while(node->m_parent)
+        node = node->m_parent;
+    return node;
 }
 
 template<class T> int TreeItem<T>::size() const
 {
-    int c=1;
+    int compteur = 1;
+    if(hasChild())
+    {
+        QStack<typename QList<TreeItem<T> *>::const_iterator> pile;
+        pile.push(m_childs.cbegin());
+        while(!pile.isEmpty())
+        {
+            while((*pile.top())->hasChild())
+            {
+                pile.push((*pile.top())->m_childs.cbegin());
+                compteur += 1;
+            }
+            while(!pile.isEmpty() && (*pile.top())->m_parent->m_childs.cend() == ++(pile.top()))
+                pile.pop();
+            compteur += 1;
+        }
+    }
+    return compteur;
+
+    /*
+    int c = 1;
     for(typename QList<T>::const_iterator i = m_childs.cbegin(); i != m_childs.cend(); ++i)
         c += (*i)->size();
     return c;
+    */
 }
 
 // %%%%%%%%%%%%%% iterator %%%%%%%%%%%%%
 
 template<class T> typename TreeItem<T>::iterator & TreeItem<T>::iterator::operator += (int n)
 {
-    if(!isNull() && n != 0)
+    if(m_ptr && n)
     {
         if (n < 0)
             return *this -= -n;
         else
-            nextComp(n);
+            while(n && m_ptr)
+            {
+                n -= 1;
+                if(m_ptr->hasChild())
+                    m_ptr = m_ptr->firstChild();
+                else
+                    next();
+            }
     }
     return *this;
 }
 
 template<class T> typename TreeItem<T>::iterator & TreeItem<T>::iterator::operator -=(int n)
 {
-    if(!isNull() && n != 0)
+    if(m_ptr && n)
     {
         if (n < 0)
             return *this += -n;
         else
         {
-            while(n && !isNull())
+            while(m_ptr && n)
             {
                 --(*this);
                 --n;
@@ -705,17 +772,17 @@ template<class T> typename TreeItem<T>::iterator & TreeItem<T>::iterator::operat
 
 template<class T> typename TreeItem<T>::iterator & TreeItem<T>::iterator::precedent()
 {
-    if(!isNull())
+    if(m_ptr)
     {
         if(m_sens)
         {
-            if(!m_ptr->isRoot())
+            if(m_ptr->m_parent)
             {
-                if(m_ptr == m_ptr->m_parent->m_childs.first())
+                if(m_ptr == m_ptr->firstBrotherNoRoot())
                     m_ptr = m_ptr->m_parent;
                 else
                 {
-                    m_ptr = m_ptr->m_parent->m_childs.at(m_ptr->m_parent->m_childs.indexOf(m_ptr)-1);
+                    m_ptr = *(--m_ptr->itPosition());
                     m_sens = false;
                 }
             }
@@ -725,7 +792,7 @@ template<class T> typename TreeItem<T>::iterator & TreeItem<T>::iterator::preced
         else
         {
             if(m_ptr->hasChild())
-                m_ptr = m_ptr->m_childs.last();
+                m_ptr = m_ptr->lastChild();
             else
                 m_sens = true;
         }
@@ -737,7 +804,7 @@ template<class T> typename TreeItem<T>::iterator & TreeItem<T>::iterator::seek(c
 {
     m_sens = true;
     if(root)
-        recRoot();
+        toRoot();
     for(QList<int>::const_iterator i = list.cbegin(); i != list.cend(); ++i)
     {
         if(verif && !(0<= *i && *i < m_ptr->m_childs.size()))
@@ -754,7 +821,7 @@ template<class T> typename TreeItem<T>::iterator & TreeItem<T>::iterator::seek(c
 {
     m_sens = true;
     if(root)
-        recRoot();
+        toRoot();
     bool controle = true;
     typename QList< TreeItem<T> *>::const_iterator j;
     for(typename QList<T>::const_iterator i = list.cbegin(); controle && i != list.cend(); ++i)
@@ -773,24 +840,24 @@ template<class T> typename TreeItem<T>::iterator & TreeItem<T>::iterator::seek(c
 
 template<class T> typename TreeItem<T>::iterator & TreeItem<T>::iterator::suivant()
 {
-    if(!isNull())
+    if(m_ptr)
     {
         if(m_sens)
         {
             if(m_ptr->hasChild())
-                m_ptr = m_ptr->m_childs.first();
+                m_ptr = m_ptr->firstChild();
             else
                 m_sens = false;
         }
         else
         {
-            if(!m_ptr->isRoot())
+            if(m_ptr->m_parent)
             {
-                if(m_ptr == m_ptr->m_parent->m_childs.last())
+                if(m_ptr == m_ptr->lastBrotherNoRoot())
                     m_ptr = m_ptr->m_parent;
                 else
                 {
-                    m_ptr = m_ptr->m_parent->m_childs.at(m_ptr->m_parent->m_childs.indexOf(m_ptr)+1);
+                    m_ptr = *(++m_ptr->itPosition());
                     m_sens = true;
                 }
             }
@@ -803,22 +870,22 @@ template<class T> typename TreeItem<T>::iterator & TreeItem<T>::iterator::suivan
 
 template<class T> typename TreeItem<T>::iterator & TreeItem<T>::iterator::toNextChild(int n)
 {
-    int l = m_ptr->m_parent->m_childs.indexOf(m_ptr);
+    int l = m_ptr->position();
     if (l+n <= 0)
-        m_ptr = m_ptr->m_parent->m_childs.first();
+        m_ptr = m_ptr->firstBrotherNoRoot();
     else if (l+n >= m_ptr->m_parent->m_childs.size())
-        m_ptr = m_ptr->m_parent->m_childs.last();
+        m_ptr = m_ptr->lastBrotherNoRoot();
     else
-        m_ptr = m_ptr->m_parent->m_childs.at(l+n);
+        m_ptr = m_ptr->brother(l+n);
     return *this;
 }
 
 template<class T> typename TreeItem<T>::iterator & TreeItem<T>::iterator::toParent(int n)
 {
     if(n>0)
-        for(int i = 0; i < n && !isNull(); ++i) m_ptr = m_ptr->m_parent;
+        for(int i = 0; i < n && m_ptr; ++i) m_ptr = m_ptr->m_parent;
     else if(n<0)
-        for(int i = 0; i < n && !m_ptr->m_childs.isEmpty(); ++i) m_ptr = m_ptr->m_childs.first();
+        for(int i = 0; i < n && m_ptr->hasChild(); ++i) m_ptr = m_ptr->firstChild();
     return *this;
 }
 
@@ -826,69 +893,12 @@ template<class T> typename TreeItem<T>::iterator & TreeItem<T>::iterator::toPare
 
 template<class T> void TreeItem<T>::iterator::next()
 {
-    if(!m_ptr->isRoot())
-    {
-        if(m_ptr == m_ptr->m_parent->m_childs.last())
-        {
-            m_ptr = m_ptr->m_parent;
-            next();
-        }
-        else
-            m_ptr = m_ptr->m_parent->m_childs.at(m_ptr->m_parent->m_childs.indexOf(m_ptr)+1);
-    }
-    else
-        m_ptr = nullptr;
-}
-
-template<class T> void TreeItem<T>::iterator::nextComp(int comp)
-{
-       comp = nextCompChild(comp,m_ptr);
-       if(comp)
-       {
-           next();
-           if(!isNull())
-           {
-               --comp;
-               nextComp(comp);
-           }
-       }
-}
-
-template<class T> int TreeItem<T>::iterator::nextCompChild(int comp,TreeItem<T> * ptr)
-{
-    if(comp)
-    {
-        if(!ptr->m_childs.isEmpty())
-        {
-            for(typename QList<TreeItem<T> *>::const_iterator i = ptr->m_childs.cbegin(); comp && i != ptr->m_childs.cend(); ++i)
-            {
-                --comp;
-                comp = nextCompChild(comp,*i);
-            }
-        }
-    }
-    else
-        m_ptr = ptr;
-    return comp;
-}
-
-template<class T> void TreeItem<T>::iterator::recIndex(TreeItem<T> * node, QList<int> & list)
-{
-    if(!node->isRoot())
-    {
-        list.prepend(node->m_parent->m_childs.indexOf(node));
-        node = node->parent();
-        recIndex(node, list);
-    }
-}
-
-template<class T> void TreeItem<T>::iterator::recRoot()
-{
-    if(!m_ptr->isRoot())
-    {
+    while(m_ptr->m_parent && m_ptr == m_ptr->lastBrotherNoRoot())
         m_ptr = m_ptr->m_parent;
-        recRoot();
-    }
+    if(!m_ptr->m_parent)
+        m_ptr = nullptr;
+    else
+        m_ptr = *(++m_ptr->itPosition());
 }
 
 #endif // TREEITEM_H

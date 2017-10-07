@@ -152,7 +152,7 @@ protected:
         if(m_managerArbre.get(node))
         {
             if(node.feuille() && ManagerSqlEnt::del(id))
-                return  m_managerArbre.del(Arbre(id));
+                return  m_managerArbre.del(node);
             else
                 return false;
         }

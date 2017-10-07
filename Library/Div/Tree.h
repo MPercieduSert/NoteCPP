@@ -39,18 +39,21 @@ public:
         tree.m_i = nullptr;
     }
 
-    //! Constructeur de recopie.
-    template<class U> Tree(const Tree<U> & tree)
-        : Tree(new TreeItem<T>(*(tree.root())))
-        {}
-
     //! Constructeur, crée une racine de donnée associée data et initialise l'itérateur sur cette racine.
     Tree(const T & data)
         : Tree(new TreeItem<T>(data))
         {}
 
     //! Constructeur, créer un arbre possédant la même structure et les même valeur que tree, T doit posséder un constructeur à partir de U.
-    //template<class U> Tree(const Tree<U> & tree);
+    template<class U> Tree(const Tree<U> & tree)
+        : Tree(new TreeItem<T>(*tree.root()))
+        {}
+
+    //! Constructeur d'un arbre de donnée de type T à partir d'un arbre de donnée de type U,
+    //! le foncteur usine construit une donnée de type T à partir d'une donnée de type U.
+    template<class U, class F> Tree(const Tree<U> & tree, F usine)
+        : Tree(new TreeItem<T>(*tree.root(),usine))
+        {}
 
     //! Destructeur. Détruit tous les noeuds de l'arbre.
     ~Tree()
@@ -249,12 +252,6 @@ protected:
         {m_root = nullptr;}
 };
 
-//template<class T> template<class U> Tree<T>::Tree(const Tree<U> & tree)
-//{
-//    m_root = new TreeItem<U>(&tree.root());
-//    m_i = m_root;
-//}
-
 template<class T> template <class U> const Tree<T> & Tree<T>::elagage(U predicat)
 {
     begin();
@@ -279,7 +276,7 @@ template<class T> template <class U> const Tree<T> & Tree<T>::elagageFeuille(U p
     while(m_i != end())
     {
         if(!m_i.isLeaf())
-            m_i.toLatestChild();
+            m_i.toFirstLeaf();
         else
         {
             if(m_i.isRoot() || predicat(*m_i))

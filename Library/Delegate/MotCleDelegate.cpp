@@ -74,7 +74,7 @@ void MotCleDelegate::showContextMenu(QAbstractItemModel *model, const QModelInde
 
     connect(addSon,&QAction::triggered,[model,&index]{static_cast<TreeModelMotCle *>(model)->insertRow(0,index);});
     connect(addBro,&QAction::triggered,[model,&index]{static_cast<TreeModelMotCle *>(model)->insertRow(index.row()+1,index.parent());});
-    if(model->data(index,TreeModelMotCle::EstSupprimable).toBool())
+    if(static_cast<TreeModelMotCle *>(model)->autorisation(index,bdd::Autorisation::Suppr))
     {
         menu.addSeparator();
         QAction * delMotCle = menu.addAction(QString(tr("Supprimer le mot clé ")).append(model->data(model->index(index.row(),TreeModelMotCle::NomMotCleIndex,index.parent())).toString()));

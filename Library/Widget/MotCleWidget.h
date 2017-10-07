@@ -35,7 +35,7 @@ signals:
     void idChanged(int newId);
 
 public slots:
-    void setIdList(QList<int> idList);
+    void setIdSet(QSet<int> idSet);
     //void setIndexSelected();
 };
 

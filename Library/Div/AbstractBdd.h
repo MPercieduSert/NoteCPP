@@ -21,7 +21,7 @@
  */
 #define DECL_DEL_METHODE /*! \brief Essaie de supprimer les éléments de la liste de la base de donnée,*/ \
     /*! se termine au premièr échec et renvoye false et true si tout les éléments ont été supprimés.*/ \
-    template<class Ent> bool delList(ListPtr<Ent> liste); \
+    template<class Ent> bool delList(const ListPtr<Ent> & liste); \
     /*! \brief Méthode de suppression pour les entité à modification controlée. */ \
     template<class Ent, class U> bool delArbre(Ent & entity, U delFonction); \
     /*! \brief Méthode de suppression pour les entité à modification controlée. */ \
@@ -39,7 +39,7 @@
  * \brief Corps des deux méthodes delArbre.
  */
 #define DEL_ARBRE {VectorPtr<MotCle> childs = getVectorChilds(entity); \
-    VectorPtr<MotCle>::iterator i = childs.begin(); \
+    typename VectorPtr<Ent>::iterator i = childs.begin(); \
     while(i != childs.end() && del(*i)) ++i; \
     if(i == childs.end() && delFonction(entity)) return AbstractBdd::del(entity); \
     else return false;}
@@ -48,8 +48,8 @@
  * \brief Corps des deux méthodes delArbre.
  */
 #define DEL_ARBRE_MODIF_CONTROLE {return delModifControle(entity,[this,&delFonction](const Ent & entity)->bool{ \
-    VectorPtr<MotCle> childs = getVectorChilds(entity); \
-    VectorPtr<MotCle>::iterator i = childs.begin(); \
+    VectorPtr<Ent> childs = getVectorChilds(entity); \
+    typename VectorPtr<Ent>::iterator i = childs.begin(); \
     while(i != childs.end() && del(*i)) ++i; \
     return i == childs.end() && delFonction(entity);});}
 
@@ -58,14 +58,14 @@
  */
 #define DEL_MODIF_CONTROLE {if(getAutorisation(entity, bdd::Suppr) && delFonction(entity) \
     && delList(getList<RestrictionModification>(RestrictionModification::IdCible,entity.id(), \
-    RestrictionModification::Cible,Cible<MotCle>::value))) \
+    RestrictionModification::Cible,Cible<Ent>::value))) \
     return AbstractBdd::del(entity); \
     else return false;}
 
 /*! \ingroup groupeFile
  * \brief Macro permettant définir les méthodes de suppression.
  */
-#define DEF_DEL_METHODE template<class Ent> bool Bdd::delList(ListPtr<Ent> liste){ \
+#define DEF_DEL_METHODE template<class Ent> bool Bdd::delList(const ListPtr<Ent> & liste){ \
     typename ListPtr<Ent>::iterator i = liste.begin(); \
     while(i != liste.end() && del(*i)) ++i; \
     return i == liste.end();} \

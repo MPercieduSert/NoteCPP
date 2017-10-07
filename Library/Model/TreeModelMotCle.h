@@ -57,6 +57,9 @@ public:
     //! Destructeur.
     ~TreeModelMotCle() {}
 
+    //! Renvoie les autorisations de modification pour un index donné.
+    bool autorisation(const QModelIndex & index, bdd::Autorisation autoris) const;
+
     //! Renvoie le numero de cible correspond à l'index
     int cible(const QModelIndex & index) const
     {
@@ -81,6 +84,9 @@ public:
 
     //! Créer une nouvelle entité
     virtual bool hydrateNewEntity(MotCle &entity, int row = 0, const QModelIndex &parent = QModelIndex());
+
+    //! Renvoie l'identifiant de l'entité associée à la donnée.
+    int id(const QModelIndex & index) const;
 
     //! Supprime l'entité de la base de donnée si nécéssaire.
     bool removeEntity(const MotCle & entity);
